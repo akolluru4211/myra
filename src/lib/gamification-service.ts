@@ -100,6 +100,19 @@ export async function awardPoints(params: AwardPointsParams): Promise<AwardPoint
     created_at: new Date().toISOString()
   });
 
+  try {
+    await supabase.from("xp_events").insert({
+      user_id: userId,
+      source_feature: sourceFeature,
+      source_id: sourceId,
+      amount: points,
+      description: `Earned ${points} XP from ${sourceFeature}`,
+      created_at: new Date().toISOString()
+    });
+  } catch {
+    // Non-blocking fallback for existing environments
+  }
+
   // 3. Timezone-aware streak calculation
   const todayStr = getUserLocalDateString(timezone);
 

@@ -4,9 +4,9 @@
  * and EdWorld Academic Guidance frameworks for students.
  */
 
-import benchmarkData from "@/lib/ai/data/myra-benchmark-dataset.json";
-import guidanceData from "@/lib/ai/data/myra-academic-guidance-dataset.json";
-import qaTrainingData from "@/lib/ai/data/myra-qa-training-dataset.json";
+import benchmarkData from "./data/myra-benchmark-dataset.json" with { type: "json" };
+import guidanceData from "./data/myra-academic-guidance-dataset.json" with { type: "json" };
+import qaTrainingData from "./data/myra-qa-training-dataset.json" with { type: "json" };
 
 export interface MyraBenchmarkRecord {
   id: string;

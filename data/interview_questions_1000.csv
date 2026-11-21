@@ -1,0 +1,1001 @@
+﻿id,sector,round,level,question
+IQ0001,General (all sectors),HR basics,Fresher,Tell me about yourself.
+IQ0002,General (all sectors),HR basics,Fresher,Why should we hire you?
+IQ0003,General (all sectors),HR basics,Fresher,What are your three biggest strengths?
+IQ0004,General (all sectors),HR basics,Fresher,"What is your biggest weakness, and what are you doing about it?"
+IQ0005,General (all sectors),HR basics,Fresher,Why do you want to join our company?
+IQ0006,General (all sectors),HR basics,Fresher,Why did you choose this career or field?
+IQ0007,General (all sectors),HR basics,Fresher,Where do you see yourself in five years?
+IQ0008,General (all sectors),HR basics,Fresher,What do you know about our company and its products?
+IQ0009,General (all sectors),HR basics,Fresher,What motivates you to do your best work?
+IQ0010,General (all sectors),HR basics,Fresher,Describe your ideal work environment.
+IQ0011,General (all sectors),HR basics,Fresher,What are you looking for in your first job?
+IQ0012,General (all sectors),HR basics,Fresher,Why did you choose your college and course?
+IQ0013,General (all sectors),HR basics,Fresher,What is the one achievement you are most proud of?
+IQ0014,General (all sectors),HR basics,Fresher,How do your friends or classmates describe you?
+IQ0015,General (all sectors),HR basics,Fresher,What do you do when you are not studying or working?
+IQ0016,General (all sectors),HR basics,Fresher,"Which books, courses or channels have you learned from recently?"
+IQ0017,General (all sectors),HR basics,Fresher,Do you prefer working alone or in a team? Why?
+IQ0018,General (all sectors),HR basics,Fresher,Are you willing to relocate or travel for work?
+IQ0019,General (all sectors),HR basics,Fresher,Are you comfortable with night shifts or flexible hours?
+IQ0020,General (all sectors),HR basics,Fresher,Do you have any questions for us?
+IQ0021,General (all sectors),Behavioural (STAR),All levels,Tell me about a time you failed. What did you learn?
+IQ0022,General (all sectors),Behavioural (STAR),All levels,Describe a time you worked in a team that had a conflict.
+IQ0023,General (all sectors),Behavioural (STAR),All levels,Give an example of a time you showed leadership without a title.
+IQ0024,General (all sectors),Behavioural (STAR),All levels,Tell me about a time you had to meet a tight deadline.
+IQ0025,General (all sectors),Behavioural (STAR),All levels,Describe a situation where you had to learn something new very quickly.
+IQ0026,General (all sectors),Behavioural (STAR),All levels,Tell me about a time you disagreed with a teammate or manager. How did you handle it?
+IQ0027,General (all sectors),Behavioural (STAR),All levels,Give an example of a goal you set and how you achieved it.
+IQ0028,General (all sectors),Behavioural (STAR),All levels,Describe a time you made a mistake at work or college. What did you do next?
+IQ0029,General (all sectors),Behavioural (STAR),All levels,Tell me about a time you went beyond what was expected.
+IQ0030,General (all sectors),Behavioural (STAR),All levels,Describe a time you handled pressure or a stressful situation.
+IQ0031,General (all sectors),Behavioural (STAR),All levels,Tell me about a time you had to persuade someone.
+IQ0032,General (all sectors),Behavioural (STAR),All levels,Give an example of when you took initiative.
+IQ0033,General (all sectors),Behavioural (STAR),All levels,Describe a time you received critical feedback. How did you react?
+IQ0034,General (all sectors),Behavioural (STAR),All levels,Tell me about a time you helped a struggling teammate.
+IQ0035,General (all sectors),Behavioural (STAR),All levels,Describe a time you had too many tasks. How did you prioritise?
+IQ0036,General (all sectors),Behavioural (STAR),All levels,Tell me about a decision you made with incomplete information.
+IQ0037,General (all sectors),Behavioural (STAR),All levels,Give an example of how you handled a difficult person.
+IQ0038,General (all sectors),Behavioural (STAR),All levels,Describe a time you changed your mind after hearing someone else's view.
+IQ0039,General (all sectors),Behavioural (STAR),All levels,Tell me about a time you had to adapt to a big change.
+IQ0040,General (all sectors),Behavioural (STAR),All levels,Describe a project you are most proud of and your exact role in it.
+IQ0041,General (all sectors),Behavioural (STAR),All levels,Tell me about a time you solved a problem in a creative way.
+IQ0042,General (all sectors),Behavioural (STAR),All levels,Describe a time you had to say no to a request.
+IQ0043,General (all sectors),Behavioural (STAR),All levels,"Tell me about a time you missed a deadline. Why, and what changed afterwards?"
+IQ0044,General (all sectors),Behavioural (STAR),All levels,Give an example of when you used data to make a decision.
+IQ0045,General (all sectors),Behavioural (STAR),All levels,Describe a time you built a relationship with someone who was hard to work with.
+IQ0046,General (all sectors),Behavioural (STAR),All levels,Tell me about a time you kept going when things were not working.
+IQ0047,General (all sectors),Behavioural (STAR),All levels,Describe a time you represented your team or college at an event.
+IQ0048,General (all sectors),Behavioural (STAR),All levels,Give an example of a time you took responsibility for something that was not your fault.
+IQ0049,General (all sectors),Behavioural (STAR),All levels,Tell me about a time you improved a process.
+IQ0050,General (all sectors),Behavioural (STAR),All levels,Describe a time you had to deliver bad news.
+IQ0051,General (all sectors),Situational,All levels,Your teammate is not doing their share of the work. What do you do?
+IQ0052,General (all sectors),Situational,All levels,You realise you will miss a deadline tomorrow. What do you do today?
+IQ0053,General (all sectors),Situational,All levels,Your manager gives you two urgent tasks at the same time. How do you choose?
+IQ0054,General (all sectors),Situational,All levels,A client or customer is angry about a mistake. How do you respond?
+IQ0055,General (all sectors),Situational,All levels,You find an error in your own work after you have submitted it. What next?
+IQ0056,General (all sectors),Situational,All levels,You are asked to do a task you have never done before. How do you start?
+IQ0057,General (all sectors),Situational,All levels,A colleague takes credit for your work. What do you do?
+IQ0058,General (all sectors),Situational,All levels,You disagree with your manager's decision in front of the team. How do you handle it?
+IQ0059,General (all sectors),Situational,All levels,You see a coworker breaking a company rule. What would you do?
+IQ0060,General (all sectors),Situational,All levels,You are given vague instructions. How do you proceed?
+IQ0061,General (all sectors),Situational,All levels,How would you handle a task that you think is a waste of time?
+IQ0062,General (all sectors),Situational,All levels,Your team is split between two ideas. How would you help decide?
+IQ0063,General (all sectors),Situational,All levels,You are new and everyone seems to know more than you. How do you cope?
+IQ0064,General (all sectors),Situational,All levels,A friend asks you to share confidential company information. What do you say?
+IQ0065,General (all sectors),Situational,All levels,You are offered a gift by a vendor. What do you do?
+IQ0066,General (all sectors),Situational,All levels,How would you manage if your manager is always unavailable?
+IQ0067,General (all sectors),Situational,All levels,What would you do in your first 30 days in this job?
+IQ0068,General (all sectors),Situational,All levels,You made a promise to a customer that the company cannot keep. What now?
+IQ0069,General (all sectors),Situational,All levels,Your team's work is behind schedule and morale is low. What would you do?
+IQ0070,General (all sectors),Situational,All levels,You get a better offer one day before joining us. What do you do?
+IQ0071,General (all sectors),Situational,All levels,A teammate is struggling with personal problems and it affects the project. How do you respond?
+IQ0072,General (all sectors),Situational,All levels,You must work with someone who has a very different working style. How do you adjust?
+IQ0073,General (all sectors),Situational,All levels,How would you handle receiving feedback you think is unfair?
+IQ0074,General (all sectors),Situational,All levels,You have to present to senior leaders with only one hour to prepare. What is your plan?
+IQ0075,General (all sectors),Situational,All levels,What would you do if you were asked to bend the truth in a report?
+IQ0076,General (all sectors),Communication and personality,All levels,How would you explain your work to a ten-year-old?
+IQ0077,General (all sectors),Communication and personality,All levels,How do you handle criticism?
+IQ0078,General (all sectors),Communication and personality,All levels,How do you manage stress?
+IQ0079,General (all sectors),Communication and personality,All levels,What does success mean to you?
+IQ0080,General (all sectors),Communication and personality,All levels,What does professionalism mean to you?
+IQ0081,General (all sectors),Communication and personality,All levels,How do you stay organised?
+IQ0082,General (all sectors),Communication and personality,All levels,How do you make decisions when you are unsure?
+IQ0083,General (all sectors),Communication and personality,All levels,What do you do when you do not know the answer to a question at work?
+IQ0084,General (all sectors),Communication and personality,All levels,Rate your communication skills out of 10 and justify it.
+IQ0085,General (all sectors),Communication and personality,All levels,What would your last manager or teacher say about you?
+IQ0086,General (all sectors),Communication and personality,All levels,What is something you learned from a person you disagree with?
+IQ0087,General (all sectors),Communication and personality,All levels,Tell me something that is not on your resume.
+IQ0088,General (all sectors),Communication and personality,All levels,"If you could change one thing about yourself, what would it be?"
+IQ0089,General (all sectors),Communication and personality,All levels,What kind of manager brings out your best work?
+IQ0090,General (all sectors),Communication and personality,All levels,How do you build trust with new people?
+IQ0091,General (all sectors),Salary and joining,All levels,What are your salary expectations?
+IQ0092,General (all sectors),Salary and joining,All levels,Why are you asking for this salary?
+IQ0093,General (all sectors),Salary and joining,All levels,What if we can offer less than you expect?
+IQ0094,General (all sectors),Salary and joining,All levels,When can you join?
+IQ0095,General (all sectors),Salary and joining,All levels,Do you have other offers right now?
+IQ0096,General (all sectors),Salary and joining,All levels,Are you interviewing at other companies?
+IQ0097,General (all sectors),Salary and joining,All levels,What would make you accept our offer over others?
+IQ0098,General (all sectors),Salary and joining,All levels,What is your current notice period and can it be shortened?
+IQ0099,General (all sectors),Salary and joining,All levels,Are you comfortable signing a service agreement or bond?
+IQ0100,General (all sectors),Salary and joining,All levels,What are your expectations from your manager and the company in the first year?
+IQ0101,General (all sectors),Modern work and AI era,All levels,How do you use AI tools such as chatbots in your daily work or studies?
+IQ0102,General (all sectors),Modern work and AI era,All levels,Show me how you would check an AI answer before trusting it.
+IQ0103,General (all sectors),Modern work and AI era,All levels,"Where should people not rely on AI, in your view?"
+IQ0104,General (all sectors),Modern work and AI era,All levels,Which part of your job do you think AI will change most in the next five years?
+IQ0105,General (all sectors),Modern work and AI era,All levels,How are you preparing yourself for a world where AI does routine tasks?
+IQ0106,General (all sectors),Modern work and AI era,All levels,Tell me about a task where you used AI and saved time. What did you check manually?
+IQ0107,General (all sectors),Modern work and AI era,All levels,How would you protect company or customer data when using public AI tools?
+IQ0108,General (all sectors),Modern work and AI era,All levels,How do you decide when to use AI and when to do it yourself?
+IQ0109,General (all sectors),Modern work and AI era,All levels,How do you keep your skills up to date?
+IQ0110,General (all sectors),Modern work and AI era,All levels,What new skill have you learned in the last six months and how did you learn it?
+IQ0111,General (all sectors),Modern work and AI era,All levels,How comfortable are you working remotely or in a hybrid team?
+IQ0112,General (all sectors),Modern work and AI era,All levels,How do you stay productive when working from home?
+IQ0113,General (all sectors),Modern work and AI era,All levels,How do you communicate with a team across time zones?
+IQ0114,General (all sectors),Modern work and AI era,All levels,What tools do you use for collaboration and tracking tasks?
+IQ0115,General (all sectors),Modern work and AI era,All levels,How do you handle distractions from your phone and social media?
+IQ0116,General (all sectors),Modern work and AI era,All levels,What does a good meeting look like to you?
+IQ0117,General (all sectors),Modern work and AI era,All levels,How do you give clear updates in a written message?
+IQ0118,General (all sectors),Modern work and AI era,All levels,Tell me about a project you completed independently with little supervision.
+IQ0119,General (all sectors),Modern work and AI era,All levels,"How do you build your online professional profile, such as LinkedIn or a portfolio?"
+IQ0120,General (all sectors),Modern work and AI era,All levels,What is one trend in our industry that excites or worries you?
+IQ0121,General (all sectors),Fresher and campus,Fresher,What did you learn from your final year project?
+IQ0122,General (all sectors),Fresher and campus,Fresher,Which subject did you enjoy most in college and why?
+IQ0123,General (all sectors),Fresher and campus,Fresher,"Which subject did you find hardest, and how did you cope?"
+IQ0124,General (all sectors),Fresher and campus,Fresher,Tell me about your internship and what you contributed.
+IQ0125,General (all sectors),Fresher and campus,Fresher,"What activities or clubs were you part of, and what did you gain from them?"
+IQ0126,General (all sectors),Fresher and campus,Fresher,You have low marks in one semester. What happened?
+IQ0127,General (all sectors),Fresher and campus,Fresher,You have a backlog or a gap in studies. Can you explain it?
+IQ0128,General (all sectors),Fresher and campus,Fresher,How do you plan to apply your degree in this role?
+IQ0129,General (all sectors),Fresher and campus,Fresher,Why are you moving into a field different from your degree?
+IQ0130,General (all sectors),Fresher and campus,Fresher,What skills do you want to build in your first two years?
+IQ0131,General (all sectors),Fresher and campus,Fresher,What did you do during your college holidays?
+IQ0132,General (all sectors),Fresher and campus,Fresher,"What is your CGPA or percentage, and what does it say about you?"
+IQ0133,General (all sectors),Fresher and campus,Fresher,Do you plan to study further? How will it fit with this job?
+IQ0134,General (all sectors),Fresher and campus,Fresher,What would you do if you were assigned work outside your specialisation?
+IQ0135,General (all sectors),Fresher and campus,Fresher,How do you think college has prepared you for work?
+IQ0136,General (all sectors),Career gap and switch,Experienced,Why do you want to leave your current job?
+IQ0137,General (all sectors),Career gap and switch,Experienced,Can you explain the gap in your resume?
+IQ0138,General (all sectors),Career gap and switch,Experienced,Why have you changed jobs so often?
+IQ0139,General (all sectors),Career gap and switch,Experienced,What did you learn from your last role that you will bring here?
+IQ0140,General (all sectors),Career gap and switch,Experienced,Why are you switching careers?
+IQ0141,General (all sectors),Career gap and switch,Experienced,What was the biggest challenge in your last job?
+IQ0142,General (all sectors),Career gap and switch,Experienced,Why were you let go or laid off? (answer honestly and calmly)
+IQ0143,General (all sectors),Career gap and switch,Experienced,What would your previous manager say about your weaknesses?
+IQ0144,General (all sectors),Career gap and switch,Experienced,How do you plan to adjust to a smaller or larger company?
+IQ0145,General (all sectors),Career gap and switch,Experienced,How will you handle reporting to someone younger than you?
+IQ0146,General (all sectors),Leadership and management,Experienced,How do you motivate a team during a difficult period?
+IQ0147,General (all sectors),Leadership and management,Experienced,How do you give negative feedback to a team member?
+IQ0148,General (all sectors),Leadership and management,Experienced,How do you handle an underperforming employee?
+IQ0149,General (all sectors),Leadership and management,Experienced,"How do you delegate work, and how do you follow up?"
+IQ0150,General (all sectors),Leadership and management,Experienced,Describe your leadership style.
+IQ0151,General (all sectors),Leadership and management,Experienced,How do you handle conflict between two team members?
+IQ0152,General (all sectors),Leadership and management,Experienced,How do you set goals and measure team performance?
+IQ0153,General (all sectors),Leadership and management,Experienced,How do you make sure a diverse team feels included?
+IQ0154,General (all sectors),Leadership and management,Experienced,Tell me about the toughest decision you made as a leader.
+IQ0155,General (all sectors),Leadership and management,Experienced,How do you manage up when your manager has unclear priorities?
+IQ0156,General (all sectors),Leadership and management,Experienced,How do you handle layoffs or budget cuts in your team?
+IQ0157,General (all sectors),Leadership and management,Experienced,How do you develop future leaders in your team?
+IQ0158,Software development,Core concepts,Fresher,"What is the difference between an array and a linked list, and when would you use each?"
+IQ0159,Software development,Core concepts,Fresher,Explain object-oriented programming and its four pillars with an example.
+IQ0160,Software development,Core concepts,Fresher,What is the difference between a process and a thread?
+IQ0161,Software development,Core concepts,Fresher,What is time complexity? Compare O(n) and O(log n) with an example.
+IQ0162,Software development,Core concepts,Fresher,What is recursion? Write a recursive function and explain its base case.
+IQ0163,Software development,Core concepts,Fresher,What is the difference between a stack and a queue? Give real-world uses.
+IQ0164,Software development,Core concepts,Fresher,Explain how a hash map works internally and what a collision is.
+IQ0165,Software development,Core concepts,Fresher,What is the difference between SQL and NoSQL databases?
+IQ0166,Software development,Core concepts,Fresher,What are ACID properties in a database?
+IQ0167,Software development,Core concepts,Fresher,What is the difference between abstract classes and interfaces?
+IQ0168,Software development,Core concepts,Fresher,What is a deadlock and how can it be avoided?
+IQ0169,Software development,Core concepts,Fresher,What happens when you type a URL into a browser and press Enter?
+IQ0170,Software development,Core concepts,Fresher,Explain Git: what is the difference between merge and rebase?
+IQ0171,Software development,Core concepts,Fresher,What is the difference between stack memory and heap memory?
+IQ0172,Software development,Core concepts,Fresher,"What are REST APIs and what do the HTTP methods GET, POST, PUT and DELETE do?"
+IQ0173,Software development,Coding round,Fresher,Reverse a string without using built-in reverse functions.
+IQ0174,Software development,Coding round,Fresher,Check whether a string is a palindrome.
+IQ0175,Software development,Coding round,Fresher,Find the second largest number in an array.
+IQ0176,Software development,Coding round,Fresher,Two Sum: find two numbers in an array that add up to a target.
+IQ0177,Software development,Coding round,Fresher,Find duplicates in an array and explain the complexity of your approach.
+IQ0178,Software development,Coding round,Fresher,Merge two sorted arrays into one sorted array.
+IQ0179,Software development,Coding round,Fresher,Check whether a given linked list has a cycle.
+IQ0180,Software development,Coding round,Fresher,Find the missing number in an array of 1 to N.
+IQ0181,Software development,Coding round,Fresher,Validate balanced parentheses in a string.
+IQ0182,Software development,Coding round,Fresher,Implement binary search and explain when it works.
+IQ0183,Software development,Coding round,Fresher,Count the frequency of each word in a sentence.
+IQ0184,Software development,Coding round,Fresher,Print the Fibonacci series and optimise it with memoisation.
+IQ0185,Software development,Coding round,Fresher,Find the longest substring without repeating characters.
+IQ0186,Software development,Coding round,Fresher,Rotate an array by K positions.
+IQ0187,Software development,Coding round,Fresher,Explain how you would find the shortest path in a graph.
+IQ0188,Software development,System design and experience,Experienced,How would you design a URL shortener?
+IQ0189,Software development,System design and experience,Experienced,How would you design a chat application for millions of users?
+IQ0190,Software development,System design and experience,Experienced,How do you decide between a monolith and microservices?
+IQ0191,Software development,System design and experience,Experienced,How would you handle a sudden 10x increase in traffic?
+IQ0192,Software development,System design and experience,Experienced,What is caching and where would you use it? What are its risks?
+IQ0193,Software development,System design and experience,Experienced,How do you design for failure in a distributed system?
+IQ0194,Software development,System design and experience,Experienced,Explain eventual consistency and where it is acceptable.
+IQ0195,Software development,System design and experience,Experienced,How do you design a rate limiter?
+IQ0196,Software development,System design and experience,Experienced,Tell me about a production bug you fixed. How did you find the root cause?
+IQ0197,Software development,System design and experience,Experienced,How do you review code and what do you look for?
+IQ0198,Software development,System design and experience,Experienced,How do you handle technical debt?
+IQ0199,Software development,System design and experience,Experienced,How do you estimate the time a feature will take?
+IQ0200,Software development,System design and experience,Experienced,How do you decide what to test and what not to test?
+IQ0201,Software development,System design and experience,Experienced,Explain how you would migrate a database with zero downtime.
+IQ0202,Software development,System design and experience,Experienced,What does a good pull request look like?
+IQ0203,Frontend and web development,Technical,All levels,"Explain the difference between var, let and const in JavaScript."
+IQ0204,Frontend and web development,Technical,All levels,What is the event loop in JavaScript?
+IQ0205,Frontend and web development,Technical,All levels,What is the difference between == and === in JavaScript?
+IQ0206,Frontend and web development,Technical,All levels,Explain closures with an example.
+IQ0207,Frontend and web development,Technical,All levels,"What are promises and async/await, and how do they differ?"
+IQ0208,Frontend and web development,Technical,All levels,Explain the CSS box model.
+IQ0209,Frontend and web development,Technical,All levels,"What is the difference between flexbox and grid, and when do you use each?"
+IQ0210,Frontend and web development,Technical,All levels,How do you make a website responsive?
+IQ0211,Frontend and web development,Technical,All levels,What is the virtual DOM in React and why is it used?
+IQ0212,Frontend and web development,Technical,All levels,What are React hooks? Explain useState and useEffect.
+IQ0213,Frontend and web development,Technical,All levels,How do you improve the performance of a slow web page?
+IQ0214,Frontend and web development,Technical,All levels,What is accessibility in web design and how do you test it?
+IQ0215,Frontend and web development,Technical,All levels,"What is the difference between cookies, localStorage and sessionStorage?"
+IQ0216,Frontend and web development,Technical,All levels,What is CORS and why does it cause errors?
+IQ0217,Frontend and web development,Technical,All levels,How do you protect a web app from cross-site scripting (XSS)?
+IQ0218,Frontend and web development,Technical,All levels,How do you manage state in a large front-end application?
+IQ0219,Frontend and web development,Technical,All levels,What is server-side rendering and why would you use it?
+IQ0220,Frontend and web development,Technical,All levels,How do you debug a layout that looks different in two browsers?
+IQ0221,Frontend and web development,Technical,All levels,What is semantic HTML and why does it matter?
+IQ0222,Frontend and web development,Technical,All levels,Walk me through a front-end project you built and the hardest bug you solved.
+IQ0223,Backend and databases,Technical,All levels,What is the difference between authentication and authorisation?
+IQ0224,Backend and databases,Technical,All levels,Explain JWT tokens and how they are used.
+IQ0225,Backend and databases,Technical,All levels,What is database indexing and how does it speed up queries?
+IQ0226,Backend and databases,Technical,All levels,"What is the difference between INNER JOIN, LEFT JOIN and FULL JOIN?"
+IQ0227,Backend and databases,Technical,All levels,Write a SQL query to find the second highest salary.
+IQ0228,Backend and databases,Technical,All levels,What is normalisation and when would you denormalise?
+IQ0229,Backend and databases,Technical,All levels,What is an N+1 query problem and how do you fix it?
+IQ0230,Backend and databases,Technical,All levels,How do you prevent SQL injection?
+IQ0231,Backend and databases,Technical,All levels,What is the difference between synchronous and asynchronous processing?
+IQ0232,Backend and databases,Technical,All levels,When would you use a message queue such as Kafka or RabbitMQ?
+IQ0233,Backend and databases,Technical,All levels,How do you design an API that can change without breaking old clients?
+IQ0234,Backend and databases,Technical,All levels,What is idempotency in an API and why does it matter for payments?
+IQ0235,Backend and databases,Technical,All levels,How do you handle file uploads securely?
+IQ0236,Backend and databases,Technical,All levels,How would you store passwords safely?
+IQ0237,Backend and databases,Technical,All levels,How do you handle database transactions across two services?
+IQ0238,Backend and databases,Technical,All levels,What logs and metrics do you add to a new service?
+IQ0239,Backend and databases,Technical,All levels,How do you handle pagination for large datasets?
+IQ0240,Backend and databases,Technical,All levels,What is connection pooling?
+IQ0241,Backend and databases,Technical,All levels,How do you roll back a bad release?
+IQ0242,Backend and databases,Technical,All levels,Describe the architecture of the last backend project you built.
+IQ0243,Data analytics and business intelligence,Technical and case,All levels,What steps do you take when you first receive a messy dataset?
+IQ0244,Data analytics and business intelligence,Technical and case,All levels,How do you handle missing values and outliers?
+IQ0245,Data analytics and business intelligence,Technical and case,All levels,What is the difference between a primary key and a foreign key?
+IQ0246,Data analytics and business intelligence,Technical and case,All levels,Write a SQL query to find the top 3 customers by revenue in each region.
+IQ0247,Data analytics and business intelligence,Technical and case,All levels,Explain the difference between WHERE and HAVING.
+IQ0248,Data analytics and business intelligence,Technical and case,All levels,What are window functions and when are they useful?
+IQ0249,Data analytics and business intelligence,Technical and case,All levels,"How would you use VLOOKUP or XLOOKUP, and what are better alternatives?"
+IQ0250,Data analytics and business intelligence,Technical and case,All levels,What is a pivot table and how would you use one to summarise sales data?
+IQ0251,Data analytics and business intelligence,Technical and case,All levels,What makes a good dashboard? What do you avoid?
+IQ0252,Data analytics and business intelligence,Technical and case,All levels,Sales dropped 15% last month. How would you investigate?
+IQ0253,Data analytics and business intelligence,Technical and case,All levels,How would you measure the success of a new feature or campaign?
+IQ0254,Data analytics and business intelligence,Technical and case,All levels,What is the difference between correlation and causation? Give an example.
+IQ0255,Data analytics and business intelligence,Technical and case,All levels,How do you check whether your data is trustworthy?
+IQ0256,Data analytics and business intelligence,Technical and case,All levels,Explain what an A/B test is and how you decide the result is significant.
+IQ0257,Data analytics and business intelligence,Technical and case,All levels,"Which chart would you use to show a trend over time, and which for comparison between categories?"
+IQ0258,Data analytics and business intelligence,Technical and case,All levels,How do you explain your findings to a non-technical manager?
+IQ0259,Data analytics and business intelligence,Technical and case,All levels,What is the difference between a data warehouse and a data lake?
+IQ0260,Data analytics and business intelligence,Technical and case,All levels,How have you automated a repetitive reporting task?
+IQ0261,Data analytics and business intelligence,Technical and case,All levels,Describe a time your analysis changed a business decision.
+IQ0262,Data analytics and business intelligence,Technical and case,All levels,Which metrics would you track for an online learning platform?
+IQ0263,"Data science, machine learning and AI",Technical,All levels,"Explain the difference between supervised, unsupervised and reinforcement learning."
+IQ0264,"Data science, machine learning and AI",Technical,All levels,What is overfitting and how do you prevent it?
+IQ0265,"Data science, machine learning and AI",Technical,All levels,What is the bias-variance tradeoff?
+IQ0266,"Data science, machine learning and AI",Technical,All levels,How do you choose between precision and recall? Give an example.
+IQ0267,"Data science, machine learning and AI",Technical,All levels,Explain how a decision tree and a random forest work.
+IQ0268,"Data science, machine learning and AI",Technical,All levels,What is cross-validation and why is it used?
+IQ0269,"Data science, machine learning and AI",Technical,All levels,How do you handle an imbalanced dataset?
+IQ0270,"Data science, machine learning and AI",Technical,All levels,What is gradient descent?
+IQ0271,"Data science, machine learning and AI",Technical,All levels,What is feature engineering? Give an example from a project.
+IQ0272,"Data science, machine learning and AI",Technical,All levels,How do you explain a model's prediction to a business user?
+IQ0273,"Data science, machine learning and AI",Technical,All levels,Explain the transformer architecture at a high level.
+IQ0274,"Data science, machine learning and AI",Technical,All levels,"What is a large language model, and what are hallucinations?"
+IQ0275,"Data science, machine learning and AI",Technical,All levels,What is retrieval-augmented generation (RAG) and when would you use it instead of fine-tuning?
+IQ0276,"Data science, machine learning and AI",Technical,All levels,How do you evaluate an LLM-based application?
+IQ0277,"Data science, machine learning and AI",Technical,All levels,"What is prompt engineering, and what are its limits?"
+IQ0278,"Data science, machine learning and AI",Technical,All levels,What is data leakage and how can it ruin a model?
+IQ0279,"Data science, machine learning and AI",Technical,All levels,How would you detect when a deployed model's performance is dropping?
+IQ0280,"Data science, machine learning and AI",Technical,All levels,"What are the ethical risks of using AI in hiring or education, and how would you reduce them?"
+IQ0281,"Data science, machine learning and AI",Technical,All levels,Walk me through an end-to-end machine learning project you built.
+IQ0282,"Data science, machine learning and AI",Technical,All levels,How do you decide whether a problem needs machine learning at all?
+IQ0283,"Data science, machine learning and AI",Technical,All levels,What is the difference between L1 and L2 regularisation?
+IQ0284,"Data science, machine learning and AI",Technical,All levels,How would you build a recommendation system for students?
+IQ0285,"Data science, machine learning and AI",Technical,All levels,How do you handle sensitive personal data in training sets?
+IQ0286,"Data science, machine learning and AI",Technical,All levels,What is MLOps and why is it needed?
+IQ0287,"Data science, machine learning and AI",Technical,All levels,How would you reduce the cost and delay of serving a large model?
+IQ0288,Cybersecurity,Technical,All levels,Explain the CIA triad.
+IQ0289,Cybersecurity,Technical,All levels,What is the difference between symmetric and asymmetric encryption?
+IQ0290,Cybersecurity,Technical,All levels,What are the OWASP Top 10 and which would you check first on a new web app?
+IQ0291,Cybersecurity,Technical,All levels,Explain SQL injection and cross-site scripting. How do you prevent each?
+IQ0292,Cybersecurity,Technical,All levels,"What is the difference between a vulnerability, a threat and a risk?"
+IQ0293,Cybersecurity,Technical,All levels,What happens in a phishing attack and how would you train employees against it?
+IQ0294,Cybersecurity,Technical,All levels,What is multi-factor authentication and why is it important?
+IQ0295,Cybersecurity,Technical,All levels,"Explain how a firewall, an IDS and an IPS differ."
+IQ0296,Cybersecurity,Technical,All levels,"What is the difference between a virus, a worm and ransomware?"
+IQ0297,Cybersecurity,Technical,All levels,What would you do in the first hour after finding a suspected breach?
+IQ0298,Cybersecurity,Technical,All levels,What is the principle of least privilege?
+IQ0299,Cybersecurity,Technical,All levels,Explain the TCP three-way handshake.
+IQ0300,Cybersecurity,Technical,All levels,What is a zero-day vulnerability?
+IQ0301,Cybersecurity,Technical,All levels,How does HTTPS protect data in transit?
+IQ0302,Cybersecurity,Technical,All levels,What is penetration testing and how is it different from a vulnerability scan?
+IQ0303,Cybersecurity,Technical,All levels,How would you secure a cloud storage bucket?
+IQ0304,Cybersecurity,Technical,All levels,What are security logs you would monitor in a SOC?
+IQ0305,Cybersecurity,Technical,All levels,How do you stay updated on new threats and attacks?
+IQ0306,Cybersecurity,Technical,All levels,Explain how password hashing and salting work.
+IQ0307,Cybersecurity,Technical,All levels,How would you handle an employee reporting a lost laptop with company data?
+IQ0308,Cloud and DevOps,Technical,All levels,What is DevOps and how is it different from traditional software delivery?
+IQ0309,Cloud and DevOps,Technical,All levels,Explain the stages of a CI/CD pipeline.
+IQ0310,Cloud and DevOps,Technical,All levels,What is the difference between a container and a virtual machine?
+IQ0311,Cloud and DevOps,Technical,All levels,What is Docker and why do teams use it?
+IQ0312,Cloud and DevOps,Technical,All levels,What is Kubernetes and what problems does it solve?
+IQ0313,Cloud and DevOps,Technical,All levels,What is infrastructure as code? Name tools and benefits.
+IQ0314,Cloud and DevOps,Technical,All levels,"Explain the difference between IaaS, PaaS and SaaS."
+IQ0315,Cloud and DevOps,Technical,All levels,How do you design a highly available application on the cloud?
+IQ0316,Cloud and DevOps,Technical,All levels,How do you monitor an application in production? Which metrics matter most?
+IQ0317,Cloud and DevOps,Technical,All levels,What is a blue-green deployment?
+IQ0318,Cloud and DevOps,Technical,All levels,How do you manage secrets such as passwords and API keys?
+IQ0319,Cloud and DevOps,Technical,All levels,A service is slow in production. How do you find the cause?
+IQ0320,Cloud and DevOps,Technical,All levels,What is auto-scaling and what are its risks?
+IQ0321,Cloud and DevOps,Technical,All levels,How do you control cloud costs?
+IQ0322,Cloud and DevOps,Technical,All levels,Explain what load balancing is and name common algorithms.
+IQ0323,Cloud and DevOps,Technical,All levels,How would you handle a failed deployment at 2 a.m.?
+IQ0324,Cloud and DevOps,Technical,All levels,What is the difference between horizontal and vertical scaling?
+IQ0325,Cloud and DevOps,Technical,All levels,How do you back up and restore data in the cloud?
+IQ0326,Cloud and DevOps,Technical,All levels,"What is observability, and how is it different from monitoring?"
+IQ0327,Cloud and DevOps,Technical,All levels,Describe a pipeline you built and the problem it solved.
+IQ0328,Software testing and QA,Technical,All levels,What is the difference between verification and validation?
+IQ0329,Software testing and QA,Technical,All levels,Explain the software testing life cycle.
+IQ0330,Software testing and QA,Technical,All levels,What is the difference between smoke testing and regression testing?
+IQ0331,Software testing and QA,Technical,All levels,How do you write good test cases for a login page?
+IQ0332,Software testing and QA,Technical,All levels,What is the difference between black-box and white-box testing?
+IQ0333,Software testing and QA,Technical,All levels,What makes a good bug report?
+IQ0334,Software testing and QA,Technical,All levels,When should you automate a test and when not?
+IQ0335,Software testing and QA,Technical,All levels,"Which automation tools have you used, such as Selenium, Playwright or Cypress?"
+IQ0336,Software testing and QA,Technical,All levels,What is the testing pyramid?
+IQ0337,Software testing and QA,Technical,All levels,How do you test an API?
+IQ0338,Software testing and QA,Technical,All levels,How do you prioritise testing when time is short?
+IQ0339,Software testing and QA,Technical,All levels,A bug is found in production. What do you do?
+IQ0340,Software testing and QA,Technical,All levels,What is performance testing and which tools have you used?
+IQ0341,Software testing and QA,Technical,All levels,How would you test a mobile app on many devices?
+IQ0342,Software testing and QA,Technical,All levels,How would you test a pen or a lift? (classic thinking question)
+IQ0343,Product management,Product sense and strategy,All levels,How would you improve a study app for Class 12 students?
+IQ0344,Product management,Product sense and strategy,All levels,How do you decide what to build first when everything seems important?
+IQ0345,Product management,Product sense and strategy,All levels,Tell me about a product you love and what you would change.
+IQ0346,Product management,Product sense and strategy,All levels,How do you define and measure success for a new feature?
+IQ0347,Product management,Product sense and strategy,All levels,"What is the difference between a product, a feature and a roadmap?"
+IQ0348,Product management,Product sense and strategy,All levels,How do you work with engineers who say a feature is too hard?
+IQ0349,Product management,Product sense and strategy,All levels,A key metric dropped 10% this week. What do you do?
+IQ0350,Product management,Product sense and strategy,All levels,"How would you decide whether to build, buy or partner?"
+IQ0351,Product management,Product sense and strategy,All levels,How do you gather and prioritise user feedback?
+IQ0352,Product management,Product sense and strategy,All levels,Explain a prioritisation framework such as RICE or MoSCoW.
+IQ0353,Product management,Product sense and strategy,All levels,How would you launch a new product in a market where you have no users?
+IQ0354,Product management,Product sense and strategy,All levels,How would you decide a price for a subscription product?
+IQ0355,Product management,Product sense and strategy,All levels,Tell me about a time you said no to a stakeholder.
+IQ0356,Product management,Product sense and strategy,All levels,What would be your north-star metric for a career guidance platform?
+IQ0357,Product management,Product sense and strategy,All levels,How do you run an A/B test and decide what to ship?
+IQ0358,Product management,Product sense and strategy,All levels,How do you write a good product requirement document?
+IQ0359,Product management,Product sense and strategy,All levels,How would you design an alarm clock for blind users?
+IQ0360,Product management,Product sense and strategy,All levels,What is product-market fit and how do you know you have it?
+IQ0361,Product management,Product sense and strategy,All levels,How do you use AI features responsibly in a product?
+IQ0362,Product management,Product sense and strategy,All levels,Walk me through a product you shipped from idea to launch.
+IQ0363,UI/UX and graphic design,Portfolio and process,All levels,Walk me through your design process from problem to final screen.
+IQ0364,UI/UX and graphic design,Portfolio and process,All levels,Choose one case study from your portfolio. What was your exact role?
+IQ0365,UI/UX and graphic design,Portfolio and process,All levels,How do you do user research with limited time and budget?
+IQ0366,UI/UX and graphic design,Portfolio and process,All levels,How do you decide between two design options?
+IQ0367,UI/UX and graphic design,Portfolio and process,All levels,What is the difference between UX and UI?
+IQ0368,UI/UX and graphic design,Portfolio and process,All levels,How do you design for accessibility?
+IQ0369,UI/UX and graphic design,Portfolio and process,All levels,What design systems or component libraries have you used?
+IQ0370,UI/UX and graphic design,Portfolio and process,All levels,How do you handle feedback from a client who dislikes your design?
+IQ0371,UI/UX and graphic design,Portfolio and process,All levels,How do you work with developers during hand-off?
+IQ0372,UI/UX and graphic design,Portfolio and process,All levels,How would you redesign a government website for ease of use?
+IQ0373,UI/UX and graphic design,Portfolio and process,All levels,What makes a good onboarding flow for first-time users?
+IQ0374,UI/UX and graphic design,Portfolio and process,All levels,"What tools do you use (Figma, Adobe) and which shortcuts do you rely on?"
+IQ0375,UI/UX and graphic design,Portfolio and process,All levels,Which app has bad UX in your opinion and how would you fix it?
+IQ0376,UI/UX and graphic design,Portfolio and process,All levels,How do you measure whether your design worked?
+IQ0377,UI/UX and graphic design,Portfolio and process,All levels,How do you choose colours and typography for a brand?
+IQ0378,UI/UX and graphic design,Portfolio and process,All levels,How do you design for mobile first?
+IQ0379,UI/UX and graphic design,Portfolio and process,All levels,Explain what a user persona and a user journey map are.
+IQ0380,UI/UX and graphic design,Portfolio and process,All levels,"How do you use AI tools in your design workflow, and what do you not leave to them?"
+IQ0381,UI/UX and graphic design,Portfolio and process,All levels,What is your approach to designing a dashboard with a lot of data?
+IQ0382,UI/UX and graphic design,Portfolio and process,All levels,Tell me about a design you were wrong about and what you changed.
+IQ0383,Mobile app development,Technical,All levels,"What is the difference between native, hybrid and cross-platform apps?"
+IQ0384,Mobile app development,Technical,All levels,Explain the Android activity lifecycle or the iOS view controller lifecycle.
+IQ0385,Mobile app development,Technical,All levels,How do you store data locally on a device?
+IQ0386,Mobile app development,Technical,All levels,How do you handle app performance and battery use?
+IQ0387,Mobile app development,Technical,All levels,How do you make an app work offline?
+IQ0388,Mobile app development,Technical,All levels,How do you handle push notifications?
+IQ0389,Mobile app development,Technical,All levels,How do you secure API keys and user data in a mobile app?
+IQ0390,Mobile app development,Technical,All levels,How do you handle different screen sizes?
+IQ0391,Mobile app development,Technical,All levels,What is the process to publish an app to the Play Store or App Store?
+IQ0392,Mobile app development,Technical,All levels,How do you handle app crashes in production?
+IQ0393,Mobile app development,Technical,All levels,Compare Flutter and React Native.
+IQ0394,Mobile app development,Technical,All levels,How do you manage state in a mobile app?
+IQ0395,Mobile app development,Technical,All levels,How do you test a mobile app before release?
+IQ0396,Mobile app development,Technical,All levels,How would you build a feature that works on slow networks?
+IQ0397,Mobile app development,Technical,All levels,Describe an app you built and what you would improve in it.
+IQ0398,IT support and networking,Technical,Fresher,What is the difference between a router and a switch?
+IQ0399,IT support and networking,Technical,Fresher,"What is an IP address, and what is the difference between IPv4 and IPv6?"
+IQ0400,IT support and networking,Technical,Fresher,What is DNS and what happens when it fails?
+IQ0401,IT support and networking,Technical,Fresher,A user cannot connect to the internet. Walk me through your troubleshooting steps.
+IQ0402,IT support and networking,Technical,Fresher,What is DHCP?
+IQ0403,IT support and networking,Technical,Fresher,What is the OSI model? Name the seven layers.
+IQ0404,IT support and networking,Technical,Fresher,How do you reset a user's password securely?
+IQ0405,IT support and networking,Technical,Fresher,What is a VPN and why is it used?
+IQ0406,IT support and networking,Technical,Fresher,How do you handle a user who is frustrated with a slow computer?
+IQ0407,IT support and networking,Technical,Fresher,How do you prioritise multiple support tickets?
+IQ0408,IT support and networking,Technical,Fresher,What is Active Directory?
+IQ0409,IT support and networking,Technical,Fresher,What is the difference between RAM and storage?
+IQ0410,IT support and networking,Technical,Fresher,How do you back up a user's data before reinstalling an operating system?
+IQ0411,IT support and networking,Technical,Fresher,What is a subnet mask?
+IQ0412,IT support and networking,Technical,Fresher,How would you set up a new employee's laptop?
+IQ0413,Mechanical and manufacturing engineering,Technical,All levels,Explain the difference between stress and strain.
+IQ0414,Mechanical and manufacturing engineering,Technical,All levels,What are the laws of thermodynamics? Give a real example of each.
+IQ0415,Mechanical and manufacturing engineering,Technical,All levels,Explain the working of a four-stroke petrol engine.
+IQ0416,Mechanical and manufacturing engineering,Technical,All levels,What is the difference between a Rankine and a Carnot cycle?
+IQ0417,Mechanical and manufacturing engineering,Technical,All levels,What is the difference between ductile and brittle materials?
+IQ0418,Mechanical and manufacturing engineering,Technical,All levels,What is a free body diagram and why do we use it?
+IQ0419,Mechanical and manufacturing engineering,Technical,All levels,"Explain the difference between turning, milling and drilling."
+IQ0420,Mechanical and manufacturing engineering,Technical,All levels,What is GD&T and why is it used in drawings?
+IQ0421,Mechanical and manufacturing engineering,Technical,All levels,What are the common types of welding and where is each used?
+IQ0422,Mechanical and manufacturing engineering,Technical,All levels,What is heat treatment? Explain annealing and hardening.
+IQ0423,Mechanical and manufacturing engineering,Technical,All levels,"What is the difference between a gear, a belt and a chain drive?"
+IQ0424,Mechanical and manufacturing engineering,Technical,All levels,What is fatigue failure and how do you prevent it?
+IQ0425,Mechanical and manufacturing engineering,Technical,All levels,"What CAD or simulation software have you used, and for what?"
+IQ0426,Mechanical and manufacturing engineering,Technical,All levels,What is lean manufacturing? Explain 5S and Kaizen.
+IQ0427,Mechanical and manufacturing engineering,Technical,All levels,What is Six Sigma and what does DMAIC stand for?
+IQ0428,Mechanical and manufacturing engineering,Technical,All levels,How would you reduce a defect rate on a production line?
+IQ0429,Mechanical and manufacturing engineering,Technical,All levels,What is the difference between preventive and predictive maintenance?
+IQ0430,Mechanical and manufacturing engineering,Technical,All levels,Explain how a centrifugal pump works and what cavitation is.
+IQ0431,Mechanical and manufacturing engineering,Technical,All levels,What is the role of lubrication in machines?
+IQ0432,Mechanical and manufacturing engineering,Technical,All levels,How do you select a material for a given load and temperature?
+IQ0433,Mechanical and manufacturing engineering,Technical,All levels,What is CNC machining and what is G-code?
+IQ0434,Mechanical and manufacturing engineering,Technical,All levels,What is 3D printing and where is it useful in industry?
+IQ0435,Mechanical and manufacturing engineering,Technical,All levels,Explain the working of a refrigeration cycle.
+IQ0436,Mechanical and manufacturing engineering,Technical,All levels,A machine is vibrating more than normal. How would you diagnose it?
+IQ0437,Mechanical and manufacturing engineering,Technical,All levels,Describe your final-year project and the design calculations you made.
+IQ0438,Civil and construction engineering,Technical,All levels,What are the different types of foundations and how do you select one?
+IQ0439,Civil and construction engineering,Technical,All levels,What is the difference between RCC and PCC?
+IQ0440,Civil and construction engineering,Technical,All levels,What is the slump test and what does it show?
+IQ0441,Civil and construction engineering,Technical,All levels,What is the grade of concrete M25 mean?
+IQ0442,Civil and construction engineering,Technical,All levels,"Explain the difference between a beam, a column and a slab."
+IQ0443,Civil and construction engineering,Technical,All levels,What is curing of concrete and why is it important?
+IQ0444,Civil and construction engineering,Technical,All levels,What are the types of loads on a building?
+IQ0445,Civil and construction engineering,Technical,All levels,What is the difference between working stress and limit state design?
+IQ0446,Civil and construction engineering,Technical,All levels,What is the bearing capacity of soil and how is it tested?
+IQ0447,Civil and construction engineering,Technical,All levels,"What software have you used, such as AutoCAD, STAAD Pro, Revit or ETABS?"
+IQ0448,Civil and construction engineering,Technical,All levels,What is a BOQ and how is it prepared?
+IQ0449,Civil and construction engineering,Technical,All levels,How do you check the quality of cement and steel at a site?
+IQ0450,Civil and construction engineering,Technical,All levels,What safety measures do you ensure at a construction site?
+IQ0451,Civil and construction engineering,Technical,All levels,What is the role of a site engineer on a day-to-day basis?
+IQ0452,Civil and construction engineering,Technical,All levels,How do you plan a project using a Gantt chart or critical path method?
+IQ0453,Civil and construction engineering,Technical,All levels,Explain the water supply and wastewater treatment process.
+IQ0454,Civil and construction engineering,Technical,All levels,What is the difference between surveying with a total station and a theodolite?
+IQ0455,Civil and construction engineering,Technical,All levels,How do you handle a delay caused by weather or material shortage?
+IQ0456,Civil and construction engineering,Technical,All levels,What are green building ratings such as IGBC or LEED?
+IQ0457,Civil and construction engineering,Technical,All levels,What is the process to design a simple road or highway section?
+IQ0458,Civil and construction engineering,Technical,All levels,How do you handle a disagreement with a contractor over quality?
+IQ0459,Civil and construction engineering,Technical,All levels,What is earthquake-resistant design?
+IQ0460,Civil and construction engineering,Technical,All levels,What is the difference between shallow and deep foundations?
+IQ0461,Civil and construction engineering,Technical,All levels,Explain how you would estimate the quantity of bricks for a wall.
+IQ0462,Civil and construction engineering,Technical,All levels,Tell me about a site visit or internship and what you learned.
+IQ0463,Electrical and power engineering,Technical,All levels,State Ohm's law and Kirchhoff's laws and use them in an example.
+IQ0464,Electrical and power engineering,Technical,All levels,"What is the difference between AC and DC, and why do we transmit power in AC?"
+IQ0465,Electrical and power engineering,Technical,All levels,Explain the working of a transformer.
+IQ0466,Electrical and power engineering,Technical,All levels,What is the difference between a synchronous and an induction motor?
+IQ0467,Electrical and power engineering,Technical,All levels,What is power factor and how do you improve it?
+IQ0468,Electrical and power engineering,Technical,All levels,"What is the function of a circuit breaker, a fuse and a relay?"
+IQ0469,Electrical and power engineering,Technical,All levels,What is earthing and why is it essential?
+IQ0470,Electrical and power engineering,Technical,All levels,Explain three-phase supply and star-delta connections.
+IQ0471,Electrical and power engineering,Technical,All levels,What is the difference between a generator and an alternator?
+IQ0472,Electrical and power engineering,Technical,All levels,What is a PLC and where is it used?
+IQ0473,Electrical and power engineering,Technical,All levels,What is SCADA?
+IQ0474,Electrical and power engineering,Technical,All levels,How does a solar PV system work and what is an inverter?
+IQ0475,Electrical and power engineering,Technical,All levels,What is the role of a battery management system in electric vehicles?
+IQ0476,Electrical and power engineering,Technical,All levels,What causes voltage drop and how do you reduce it?
+IQ0477,Electrical and power engineering,Technical,All levels,What are the types of power plants and how do they differ?
+IQ0478,Electrical and power engineering,Technical,All levels,Explain the difference between overcurrent and short-circuit protection.
+IQ0479,Electrical and power engineering,Technical,All levels,What are harmonics in a power system?
+IQ0480,Electrical and power engineering,Technical,All levels,What is a smart grid?
+IQ0481,Electrical and power engineering,Technical,All levels,How would you troubleshoot a motor that trips repeatedly?
+IQ0482,Electrical and power engineering,Technical,All levels,What safety rules do you follow while working on live equipment?
+IQ0483,Electrical and power engineering,Technical,All levels,What is the difference between HT and LT lines?
+IQ0484,Electrical and power engineering,Technical,All levels,"Which software have you used, such as MATLAB, ETAP or AutoCAD Electrical?"
+IQ0485,Electrical and power engineering,Technical,All levels,How are renewable sources changing the power grid?
+IQ0486,Electrical and power engineering,Technical,All levels,What is energy auditing?
+IQ0487,Electrical and power engineering,Technical,All levels,Describe a project where you designed or repaired an electrical system.
+IQ0488,"Electronics, VLSI and embedded systems",Technical,All levels,What is the difference between a microprocessor and a microcontroller?
+IQ0489,"Electronics, VLSI and embedded systems",Technical,All levels,"Explain how a diode, a transistor and an op-amp work."
+IQ0490,"Electronics, VLSI and embedded systems",Technical,All levels,What is the difference between analog and digital signals?
+IQ0491,"Electronics, VLSI and embedded systems",Technical,All levels,Explain the working of an ADC and a DAC.
+IQ0492,"Electronics, VLSI and embedded systems",Technical,All levels,"What are I2C, SPI and UART, and when would you use each?"
+IQ0493,"Electronics, VLSI and embedded systems",Technical,All levels,What is an interrupt and how does it differ from polling?
+IQ0494,"Electronics, VLSI and embedded systems",Technical,All levels,What is an RTOS and why is it used?
+IQ0495,"Electronics, VLSI and embedded systems",Technical,All levels,What is the difference between combinational and sequential circuits?
+IQ0496,"Electronics, VLSI and embedded systems",Technical,All levels,Explain setup time and hold time.
+IQ0497,"Electronics, VLSI and embedded systems",Technical,All levels,What is CMOS and why is it low power?
+IQ0498,"Electronics, VLSI and embedded systems",Technical,All levels,What is the difference between Verilog and VHDL?
+IQ0499,"Electronics, VLSI and embedded systems",Technical,All levels,What is a finite state machine?
+IQ0500,"Electronics, VLSI and embedded systems",Technical,All levels,How do you debug a board that does not power up?
+IQ0501,"Electronics, VLSI and embedded systems",Technical,All levels,What is PCB design and which tools have you used?
+IQ0502,"Electronics, VLSI and embedded systems",Technical,All levels,What are pull-up and pull-down resistors?
+IQ0503,"Electronics, VLSI and embedded systems",Technical,All levels,What is the difference between an FPGA and an ASIC?
+IQ0504,"Electronics, VLSI and embedded systems",Technical,All levels,How does a PWM signal control a motor?
+IQ0505,"Electronics, VLSI and embedded systems",Technical,All levels,What is the Internet of Things and what are its security challenges?
+IQ0506,"Electronics, VLSI and embedded systems",Technical,All levels,How do you reduce noise in a circuit?
+IQ0507,"Electronics, VLSI and embedded systems",Technical,All levels,"Which microcontrollers have you programmed, such as Arduino, STM32 or ESP32?"
+IQ0508,"Electronics, VLSI and embedded systems",Technical,All levels,"Explain the memory types in an embedded system: RAM, ROM and Flash."
+IQ0509,"Electronics, VLSI and embedded systems",Technical,All levels,What is a watchdog timer?
+IQ0510,"Electronics, VLSI and embedded systems",Technical,All levels,What is DFT in chip design?
+IQ0511,"Electronics, VLSI and embedded systems",Technical,All levels,What are the common challenges in chip design today?
+IQ0512,"Electronics, VLSI and embedded systems",Technical,All levels,Tell me about an embedded project and what went wrong during testing.
+IQ0513,"Chemical, petroleum and process engineering",Technical,All levels,Explain the difference between batch and continuous processes.
+IQ0514,"Chemical, petroleum and process engineering",Technical,All levels,What is a unit operation? Name five.
+IQ0515,"Chemical, petroleum and process engineering",Technical,All levels,Explain the working of a distillation column.
+IQ0516,"Chemical, petroleum and process engineering",Technical,All levels,What is the difference between laminar and turbulent flow?
+IQ0517,"Chemical, petroleum and process engineering",Technical,All levels,What is Bernoulli's principle and where is it used?
+IQ0518,"Chemical, petroleum and process engineering",Technical,All levels,What is a heat exchanger and what types do you know?
+IQ0519,"Chemical, petroleum and process engineering",Technical,All levels,What is a P&ID diagram?
+IQ0520,"Chemical, petroleum and process engineering",Technical,All levels,What does HAZOP mean and why is it done?
+IQ0521,"Chemical, petroleum and process engineering",Technical,All levels,What safety equipment is needed in a chemical plant?
+IQ0522,"Chemical, petroleum and process engineering",Technical,All levels,What is the difference between exothermic and endothermic reactions in reactor design?
+IQ0523,"Chemical, petroleum and process engineering",Technical,All levels,What is catalysis and give an industrial example.
+IQ0524,"Chemical, petroleum and process engineering",Technical,All levels,How do you calculate the efficiency of a pump or a compressor?
+IQ0525,"Chemical, petroleum and process engineering",Technical,All levels,What are the main steps in crude oil refining?
+IQ0526,"Chemical, petroleum and process engineering",Technical,All levels,What is process control and what is a PID controller?
+IQ0527,"Chemical, petroleum and process engineering",Technical,All levels,What is the difference between mass transfer and heat transfer?
+IQ0528,"Chemical, petroleum and process engineering",Technical,All levels,How do you handle a chemical spill?
+IQ0529,"Chemical, petroleum and process engineering",Technical,All levels,What is an effluent treatment plant?
+IQ0530,"Chemical, petroleum and process engineering",Technical,All levels,What is corrosion and how can it be prevented?
+IQ0531,"Chemical, petroleum and process engineering",Technical,All levels,What is the role of a shift engineer in a plant?
+IQ0532,"Chemical, petroleum and process engineering",Technical,All levels,"Which simulation tools have you used, such as Aspen Plus or HYSYS?"
+IQ0533,"Chemical, petroleum and process engineering",Technical,All levels,What are green chemistry and sustainability in the process industry?
+IQ0534,"Chemical, petroleum and process engineering",Technical,All levels,What are MSDS or SDS sheets and why do they matter?
+IQ0535,"Chemical, petroleum and process engineering",Technical,All levels,What is a permit-to-work system?
+IQ0536,"Chemical, petroleum and process engineering",Technical,All levels,How is hydrogen being used as a fuel and what are the challenges?
+IQ0537,"Chemical, petroleum and process engineering",Technical,All levels,Tell me about your plant visit or internship.
+IQ0538,Banking and finance,Technical and case,All levels,What is the difference between the repo rate and the reverse repo rate?
+IQ0539,Banking and finance,Technical and case,All levels,What is inflation and how does the central bank control it?
+IQ0540,Banking and finance,Technical and case,All levels,What is the difference between a savings account and a current account?
+IQ0541,Banking and finance,Technical and case,All levels,What is KYC and why is it required?
+IQ0542,Banking and finance,Technical and case,All levels,Explain NPA and how banks manage it.
+IQ0543,Banking and finance,Technical and case,All levels,What are the types of loans a bank offers?
+IQ0544,Banking and finance,Technical and case,All levels,What is CIBIL or credit score and how is it calculated?
+IQ0545,Banking and finance,Technical and case,All levels,What is the difference between equity and debt?
+IQ0546,Banking and finance,Technical and case,All levels,"Explain mutual funds, SIP and NAV."
+IQ0547,Banking and finance,Technical and case,All levels,What is the difference between primary and secondary markets?
+IQ0548,Banking and finance,Technical and case,All levels,What is a stock market index and what do Sensex and Nifty measure?
+IQ0549,Banking and finance,Technical and case,All levels,What is UPI and how has it changed payments?
+IQ0550,Banking and finance,Technical and case,All levels,What is money laundering and how do banks detect it?
+IQ0551,Banking and finance,Technical and case,All levels,How do you sell a financial product to a customer who is not interested?
+IQ0552,Banking and finance,Technical and case,All levels,A customer disputes a transaction. How do you handle it?
+IQ0553,Banking and finance,Technical and case,All levels,What is a derivative? Explain futures and options simply.
+IQ0554,Banking and finance,Technical and case,All levels,How do you value a company? Explain DCF in simple words.
+IQ0555,Banking and finance,Technical and case,All levels,What is the difference between EBITDA and net profit?
+IQ0556,Banking and finance,Technical and case,All levels,What are the three financial statements and how are they linked?
+IQ0557,Banking and finance,Technical and case,All levels,Pitch me a stock or investment idea.
+IQ0558,Banking and finance,Technical and case,All levels,What current economic news affects banks the most?
+IQ0559,Banking and finance,Technical and case,All levels,What is Basel III?
+IQ0560,Banking and finance,Technical and case,All levels,What is the role of digital banking and fintech apps?
+IQ0561,Banking and finance,Technical and case,All levels,How do you protect customers from online fraud?
+IQ0562,Banking and finance,Technical and case,All levels,Why do you want a career in banking?
+IQ0563,"Accounting, audit and taxation",Technical,All levels,Explain the accounting equation.
+IQ0564,"Accounting, audit and taxation",Technical,All levels,What is the difference between debit and credit? State the golden rules.
+IQ0565,"Accounting, audit and taxation",Technical,All levels,What is the difference between accrual and cash accounting?
+IQ0566,"Accounting, audit and taxation",Technical,All levels,What are the steps to prepare a trial balance?
+IQ0567,"Accounting, audit and taxation",Technical,All levels,What is depreciation and which methods do you know?
+IQ0568,"Accounting, audit and taxation",Technical,All levels,Explain GST and the concept of input tax credit.
+IQ0569,"Accounting, audit and taxation",Technical,All levels,What is TDS and when is it deducted?
+IQ0570,"Accounting, audit and taxation",Technical,All levels,What is a bank reconciliation statement?
+IQ0571,"Accounting, audit and taxation",Technical,All levels,Explain the difference between internal and statutory audit.
+IQ0572,"Accounting, audit and taxation",Technical,All levels,What is materiality in audit?
+IQ0573,"Accounting, audit and taxation",Technical,All levels,What are Ind AS and how do they differ from older standards?
+IQ0574,"Accounting, audit and taxation",Technical,All levels,How do you detect fraud during an audit?
+IQ0575,"Accounting, audit and taxation",Technical,All levels,What is working capital and why does it matter?
+IQ0576,"Accounting, audit and taxation",Technical,All levels,What is the difference between direct and indirect taxes?
+IQ0577,"Accounting, audit and taxation",Technical,All levels,"Which software have you used, such as Tally, SAP, QuickBooks or Excel?"
+IQ0578,"Accounting, audit and taxation",Technical,All levels,How do you handle month-end closing under tight deadlines?
+IQ0579,"Accounting, audit and taxation",Technical,All levels,A client asks you to adjust numbers to show higher profit. What do you do?
+IQ0580,"Accounting, audit and taxation",Technical,All levels,What is the difference between a provision and a reserve?
+IQ0581,"Accounting, audit and taxation",Technical,All levels,How would you handle a mistake you find in last year's accounts?
+IQ0582,"Accounting, audit and taxation",Technical,All levels,"What are your career plans after CA, CMA or CS?"
+IQ0583,Marketing and digital marketing,Technical and case,All levels,What is the marketing mix (4Ps) and how does it apply to a product you like?
+IQ0584,Marketing and digital marketing,Technical and case,All levels,What is the difference between SEO and SEM?
+IQ0585,Marketing and digital marketing,Technical and case,All levels,"How do you decide a budget between Google ads, Instagram and email?"
+IQ0586,Marketing and digital marketing,Technical and case,All levels,What metrics do you track for a social media campaign?
+IQ0587,Marketing and digital marketing,Technical and case,All levels,What is a conversion funnel and how do you improve it?
+IQ0588,Marketing and digital marketing,Technical and case,All levels,"Explain CAC, LTV and ROAS."
+IQ0589,Marketing and digital marketing,Technical and case,All levels,How would you launch a new product on a small budget?
+IQ0590,Marketing and digital marketing,Technical and case,All levels,How do you write a strong ad headline?
+IQ0591,Marketing and digital marketing,Technical and case,All levels,A campaign is not delivering. What do you check first?
+IQ0592,Marketing and digital marketing,Technical and case,All levels,What is content marketing and how do you measure its impact?
+IQ0593,Marketing and digital marketing,Technical and case,All levels,What is an influencer strategy and how do you pick the right creators?
+IQ0594,Marketing and digital marketing,Technical and case,All levels,"How do you use AI tools for content, and how do you keep the brand voice?"
+IQ0595,Marketing and digital marketing,Technical and case,All levels,What is the difference between brand marketing and performance marketing?
+IQ0596,Marketing and digital marketing,Technical and case,All levels,How do you segment and target customers?
+IQ0597,Marketing and digital marketing,Technical and case,All levels,"What tools have you used, such as Google Analytics, Meta Ads Manager or HubSpot?"
+IQ0598,Marketing and digital marketing,Technical and case,All levels,Show me a campaign you admire and explain why it worked.
+IQ0599,Marketing and digital marketing,Technical and case,All levels,"How would you grow a student app from 1,000 to 100,000 users?"
+IQ0600,Marketing and digital marketing,Technical and case,All levels,What is email marketing and how do you reduce unsubscribes?
+IQ0601,Marketing and digital marketing,Technical and case,All levels,What is the impact of privacy rules on digital advertising?
+IQ0602,Marketing and digital marketing,Technical and case,All levels,Describe a campaign you ran and its results in numbers.
+IQ0603,Sales and business development,Technical and role-play,All levels,Sell me this pen.
+IQ0604,Sales and business development,Technical and role-play,All levels,How do you handle rejection?
+IQ0605,Sales and business development,Technical and role-play,All levels,How do you generate new leads?
+IQ0606,Sales and business development,Technical and role-play,All levels,Describe your sales process from first call to closing.
+IQ0607,Sales and business development,Technical and role-play,All levels,How do you handle the objection 'your price is too high'?
+IQ0608,Sales and business development,Technical and role-play,All levels,What is the difference between B2B and B2C sales?
+IQ0609,Sales and business development,Technical and role-play,All levels,How do you build a long-term relationship with clients?
+IQ0610,Sales and business development,Technical and role-play,All levels,What CRM tools have you used?
+IQ0611,Sales and business development,Technical and role-play,All levels,How do you decide which leads to focus on?
+IQ0612,Sales and business development,Technical and role-play,All levels,How do you handle a target you are unlikely to meet?
+IQ0613,Sales and business development,Technical and role-play,All levels,Tell me about your best sale and what made it work.
+IQ0614,Sales and business development,Technical and role-play,All levels,How do you negotiate without discounting too much?
+IQ0615,Sales and business development,Technical and role-play,All levels,What do you do after a customer says no?
+IQ0616,Sales and business development,Technical and role-play,All levels,How do you prepare for a client meeting?
+IQ0617,Sales and business development,Technical and role-play,All levels,How do you sell a product you do not fully believe in?
+IQ0618,Sales and business development,Technical and role-play,All levels,What is a sales pipeline and how do you forecast it?
+IQ0619,Sales and business development,Technical and role-play,All levels,How do you work with the marketing team to improve leads?
+IQ0620,Sales and business development,Technical and role-play,All levels,How would you sell an online course to parents?
+IQ0621,Sales and business development,Technical and role-play,All levels,What does cross-selling and upselling mean?
+IQ0622,Sales and business development,Technical and role-play,All levels,How do you manage your time while handling many accounts?
+IQ0623,Human resources and talent,Technical and situational,All levels,What are the main stages of the recruitment process?
+IQ0624,Human resources and talent,Technical and situational,All levels,How do you assess whether a candidate is a good culture fit?
+IQ0625,Human resources and talent,Technical and situational,All levels,How do you reduce bias in hiring?
+IQ0626,Human resources and talent,Technical and situational,All levels,How do you handle an employee complaint of harassment?
+IQ0627,Human resources and talent,Technical and situational,All levels,What is the difference between performance management and appraisal?
+IQ0628,Human resources and talent,Technical and situational,All levels,How do you reduce employee attrition?
+IQ0629,Human resources and talent,Technical and situational,All levels,What are the key labour laws an HR professional should know?
+IQ0630,Human resources and talent,Technical and situational,All levels,How do you design an onboarding programme for new joiners?
+IQ0631,Human resources and talent,Technical and situational,All levels,How do you handle a conflict between a manager and an employee?
+IQ0632,Human resources and talent,Technical and situational,All levels,How do you measure employee engagement?
+IQ0633,Human resources and talent,Technical and situational,All levels,What HR tools or HRMS have you used?
+IQ0634,Human resources and talent,Technical and situational,All levels,How would you run a layoff in the most humane way?
+IQ0635,Human resources and talent,Technical and situational,All levels,How do you source candidates for a hard-to-fill role?
+IQ0636,Human resources and talent,Technical and situational,All levels,What is the role of HR in a hybrid workplace?
+IQ0637,Human resources and talent,Technical and situational,All levels,How do you use AI in recruitment responsibly?
+IQ0638,Human resources and talent,Technical and situational,All levels,How do you handle salary negotiation with a candidate?
+IQ0639,Human resources and talent,Technical and situational,All levels,What are KPIs and OKRs and how do they differ?
+IQ0640,Human resources and talent,Technical and situational,All levels,How do you build a learning and development plan?
+IQ0641,Human resources and talent,Technical and situational,All levels,What would you do if a senior leader asks you to ignore a policy?
+IQ0642,Human resources and talent,Technical and situational,All levels,Why HR as a career?
+IQ0643,Operations and supply chain,Technical and case,All levels,What is supply chain management and what are its main parts?
+IQ0644,Operations and supply chain,Technical and case,All levels,What is the difference between demand forecasting and demand planning?
+IQ0645,Operations and supply chain,Technical and case,All levels,Explain inventory management methods such as EOQ and ABC analysis.
+IQ0646,Operations and supply chain,Technical and case,All levels,What is just-in-time inventory and what are the risks?
+IQ0647,Operations and supply chain,Technical and case,All levels,How would you reduce delivery time without raising cost?
+IQ0648,Operations and supply chain,Technical and case,All levels,What is a bottleneck and how do you find it?
+IQ0649,Operations and supply chain,Technical and case,All levels,What is the difference between 3PL and 4PL?
+IQ0650,Operations and supply chain,Technical and case,All levels,How do you handle a supplier who fails to deliver on time?
+IQ0651,Operations and supply chain,Technical and case,All levels,What KPIs do you track in a warehouse?
+IQ0652,Operations and supply chain,Technical and case,All levels,What is last-mile delivery and why is it costly?
+IQ0653,Operations and supply chain,Technical and case,All levels,How do you choose between suppliers?
+IQ0654,Operations and supply chain,Technical and case,All levels,What is the bullwhip effect?
+IQ0655,Operations and supply chain,Technical and case,All levels,"What tools have you used, such as SAP, Excel or a WMS?"
+IQ0656,Operations and supply chain,Technical and case,All levels,How do you manage returns in an e-commerce business?
+IQ0657,Operations and supply chain,Technical and case,All levels,How do you plan for peak season?
+IQ0658,Operations and supply chain,Technical and case,All levels,What is cold chain logistics?
+IQ0659,Operations and supply chain,Technical and case,All levels,How would you cut costs in a factory by 10 percent?
+IQ0660,Operations and supply chain,Technical and case,All levels,Tell me about a process you improved.
+IQ0661,Operations and supply chain,Technical and case,All levels,How do you ensure quality across several vendors?
+IQ0662,Operations and supply chain,Technical and case,All levels,What risks can disrupt a supply chain and how do you prepare?
+IQ0663,Consulting and management case interviews,Case,All levels,A client's profit has fallen 20 percent. How would you structure the problem?
+IQ0664,Consulting and management case interviews,Case,All levels,How many mobile phones are sold in India each year? (market sizing)
+IQ0665,Consulting and management case interviews,Case,All levels,Should a coffee chain open a new outlet in a city? Walk me through your approach.
+IQ0666,Consulting and management case interviews,Case,All levels,How would you price a new smartphone?
+IQ0667,Consulting and management case interviews,Case,All levels,A hospital wants to cut waiting time. What would you recommend?
+IQ0668,Consulting and management case interviews,Case,All levels,How would you help an airline increase revenue?
+IQ0669,Consulting and management case interviews,Case,All levels,Estimate the number of students taking competitive exams every year.
+IQ0670,Consulting and management case interviews,Case,All levels,How would you decide whether to acquire a start-up?
+IQ0671,Consulting and management case interviews,Case,All levels,What framework would you use to enter a new market and why?
+IQ0672,Consulting and management case interviews,Case,All levels,A client's customers are leaving. How do you find out why?
+IQ0673,Consulting and management case interviews,Case,All levels,Why consulting and why us?
+IQ0674,Consulting and management case interviews,Case,All levels,Tell me about a time you structured a messy problem.
+IQ0675,Consulting and management case interviews,Case,All levels,How do you present a recommendation to a sceptical client?
+IQ0676,Consulting and management case interviews,Case,All levels,What are the pros and cons of a subscription model?
+IQ0677,Consulting and management case interviews,Case,All levels,How would you improve the delivery speed of an online grocery app?
+IQ0678,Consulting and management case interviews,Case,All levels,Walk me through a recent business news item and what you would advise the company.
+IQ0679,Consulting and management case interviews,Case,All levels,How do you handle ambiguity and incomplete data?
+IQ0680,Consulting and management case interviews,Case,All levels,Brainteaser: how many ways can you use a brick?
+IQ0681,Consulting and management case interviews,Case,All levels,What would you do in your first week on a client project?
+IQ0682,Consulting and management case interviews,Case,All levels,How would you improve a government school's results with a small budget?
+IQ0683,"E-commerce, retail and FMCG",Technical and case,All levels,How do you decide which products to stock and which to remove?
+IQ0684,"E-commerce, retail and FMCG",Technical and case,All levels,What is category management?
+IQ0685,"E-commerce, retail and FMCG",Technical and case,All levels,How do you handle a flash sale with huge traffic?
+IQ0686,"E-commerce, retail and FMCG",Technical and case,All levels,How would you reduce cart abandonment?
+IQ0687,"E-commerce, retail and FMCG",Technical and case,All levels,What does a good product listing look like?
+IQ0688,"E-commerce, retail and FMCG",Technical and case,All levels,How do you handle a customer return and refund dispute?
+IQ0689,"E-commerce, retail and FMCG",Technical and case,All levels,"What are the key metrics in retail: footfall, conversion and average order value?"
+IQ0690,"E-commerce, retail and FMCG",Technical and case,All levels,How do you manage shelf space and visual merchandising?
+IQ0691,"E-commerce, retail and FMCG",Technical and case,All levels,How would you launch a new brand of snacks in a small town?
+IQ0692,"E-commerce, retail and FMCG",Technical and case,All levels,What is the difference between distributors and retailers?
+IQ0693,"E-commerce, retail and FMCG",Technical and case,All levels,How do you maintain freshness and expiry control in FMCG?
+IQ0694,"E-commerce, retail and FMCG",Technical and case,All levels,How do quick-commerce companies make money?
+IQ0695,"E-commerce, retail and FMCG",Technical and case,All levels,How do you handle a shortage of staff on a busy day?
+IQ0696,"E-commerce, retail and FMCG",Technical and case,All levels,What is a planogram?
+IQ0697,"E-commerce, retail and FMCG",Technical and case,All levels,How do you train a new employee on the shop floor?
+IQ0698,"E-commerce, retail and FMCG",Technical and case,All levels,How do you handle shoplifting or internal theft?
+IQ0699,"E-commerce, retail and FMCG",Technical and case,All levels,What is omnichannel retail?
+IQ0700,"E-commerce, retail and FMCG",Technical and case,All levels,How would you motivate a sales team on a festival weekend?
+IQ0701,Entrepreneurship and startups,Founder and early-stage roles,All levels,Tell me about your business idea in one minute.
+IQ0702,Entrepreneurship and startups,Founder and early-stage roles,All levels,Who is your target customer and how do you know they need this?
+IQ0703,Entrepreneurship and startups,Founder and early-stage roles,All levels,How will you earn money and what are your unit economics?
+IQ0704,Entrepreneurship and startups,Founder and early-stage roles,All levels,How did you validate your idea before building it?
+IQ0705,Entrepreneurship and startups,Founder and early-stage roles,All levels,Who are your competitors and what is your advantage?
+IQ0706,Entrepreneurship and startups,Founder and early-stage roles,All levels,What is your biggest risk and how will you handle it?
+IQ0707,Entrepreneurship and startups,Founder and early-stage roles,All levels,How will you acquire your first 100 customers?
+IQ0708,Entrepreneurship and startups,Founder and early-stage roles,All levels,What is your plan if you run out of money in six months?
+IQ0709,Entrepreneurship and startups,Founder and early-stage roles,All levels,Why are you the right person to build this?
+IQ0710,Entrepreneurship and startups,Founder and early-stage roles,All levels,How do you handle uncertainty and long working hours at a start-up?
+IQ0711,Entrepreneurship and startups,Founder and early-stage roles,All levels,What would you do in a start-up where your role is unclear?
+IQ0712,Entrepreneurship and startups,Founder and early-stage roles,All levels,Tell me about something you built or sold on your own.
+IQ0713,Entrepreneurship and startups,Founder and early-stage roles,All levels,How do you decide what not to do?
+IQ0714,Entrepreneurship and startups,Founder and early-stage roles,All levels,How would you hire your first five employees?
+IQ0715,Entrepreneurship and startups,Founder and early-stage roles,All levels,What did you learn from a business that did not work?
+IQ0716,Entrepreneurship and startups,Founder and early-stage roles,All levels,How would you use AI to run a small business with a small team?
+IQ0717,Medicine and doctors,Clinical and admission interviews,All levels,Why do you want to become a doctor?
+IQ0718,Medicine and doctors,Clinical and admission interviews,All levels,What qualities should a good doctor have?
+IQ0719,Medicine and doctors,Clinical and admission interviews,All levels,How would you break bad news to a patient's family?
+IQ0720,Medicine and doctors,Clinical and admission interviews,All levels,A patient refuses treatment. What do you do?
+IQ0721,Medicine and doctors,Clinical and admission interviews,All levels,What is informed consent?
+IQ0722,Medicine and doctors,Clinical and admission interviews,All levels,How do you handle long duty hours and exhaustion?
+IQ0723,Medicine and doctors,Clinical and admission interviews,All levels,What are medical ethics and the four main principles?
+IQ0724,Medicine and doctors,Clinical and admission interviews,All levels,Describe a time you showed empathy to someone who was ill.
+IQ0725,Medicine and doctors,Clinical and admission interviews,All levels,How would you handle a mistake made by a senior doctor?
+IQ0726,Medicine and doctors,Clinical and admission interviews,All levels,What is evidence-based medicine?
+IQ0727,Medicine and doctors,Clinical and admission interviews,All levels,How do you decide who to treat first when several patients arrive together?
+IQ0728,Medicine and doctors,Clinical and admission interviews,All levels,"What is the role of AI in diagnosis, and what are its limits?"
+IQ0729,Medicine and doctors,Clinical and admission interviews,All levels,What are your views on rural health service?
+IQ0730,Medicine and doctors,Clinical and admission interviews,All levels,How do you deal with the death of a patient?
+IQ0731,Medicine and doctors,Clinical and admission interviews,All levels,What is the difference between a government and a private hospital in your view?
+IQ0732,Medicine and doctors,Clinical and admission interviews,All levels,How would you handle a patient who has found wrong information online?
+IQ0733,Medicine and doctors,Clinical and admission interviews,All levels,What is patient confidentiality and when can it be broken?
+IQ0734,Medicine and doctors,Clinical and admission interviews,All levels,What is your plan for postgraduate specialisation?
+IQ0735,Medicine and doctors,Clinical and admission interviews,All levels,What happens in your first day as an intern in the emergency room?
+IQ0736,Medicine and doctors,Clinical and admission interviews,All levels,Explain a clinical case you saw during your rotation.
+IQ0737,Medicine and doctors,Clinical and admission interviews,All levels,How would you counsel a patient about quitting smoking?
+IQ0738,Medicine and doctors,Clinical and admission interviews,All levels,How do you handle an aggressive patient or relative?
+IQ0739,Nursing and allied health,Clinical and HR,All levels,Why did you choose nursing?
+IQ0740,Nursing and allied health,Clinical and HR,All levels,How do you prioritise patients on a busy ward?
+IQ0741,Nursing and allied health,Clinical and HR,All levels,What would you do if a doctor's order looked wrong to you?
+IQ0742,Nursing and allied health,Clinical and HR,All levels,How do you handle a patient who is in pain and anxious?
+IQ0743,Nursing and allied health,Clinical and HR,All levels,What are the steps of infection control and hand hygiene?
+IQ0744,Nursing and allied health,Clinical and HR,All levels,How do you take care of a patient with diabetes in the ward?
+IQ0745,Nursing and allied health,Clinical and HR,All levels,What would you do if you made a medication error?
+IQ0746,Nursing and allied health,Clinical and HR,All levels,How do you handle night shifts and fatigue?
+IQ0747,Nursing and allied health,Clinical and HR,All levels,How do you communicate with a patient who speaks a different language?
+IQ0748,Nursing and allied health,Clinical and HR,All levels,What is the nursing process (ADPIE)?
+IQ0749,Nursing and allied health,Clinical and HR,All levels,How do you deal with an angry family member?
+IQ0750,Nursing and allied health,Clinical and HR,All levels,What would you do in a cardiac arrest while you are the first responder?
+IQ0751,Nursing and allied health,Clinical and HR,All levels,What is your experience with patient documentation and electronic records?
+IQ0752,Nursing and allied health,Clinical and HR,All levels,How do you cope emotionally with the death of a patient?
+IQ0753,Nursing and allied health,Clinical and HR,All levels,What are the signs of sepsis you would watch for?
+IQ0754,Nursing and allied health,Clinical and HR,All levels,"Why should we hire you as a physiotherapist, lab technician or radiographer?"
+IQ0755,Pharma and life sciences,Technical,All levels,What is the difference between a generic and a branded drug?
+IQ0756,Pharma and life sciences,Technical,All levels,What are GMP and GLP?
+IQ0757,Pharma and life sciences,Technical,All levels,Explain the phases of clinical trials.
+IQ0758,Pharma and life sciences,Technical,All levels,What is pharmacovigilance?
+IQ0759,Pharma and life sciences,Technical,All levels,"What is the role of the regulatory authority, such as CDSCO or the FDA, in drug approval?"
+IQ0760,Pharma and life sciences,Technical,All levels,What is bioavailability?
+IQ0761,Pharma and life sciences,Technical,All levels,What is quality control versus quality assurance?
+IQ0762,Pharma and life sciences,Technical,All levels,"What instruments have you worked with, such as HPLC, GC or UV spectrophotometer?"
+IQ0763,Pharma and life sciences,Technical,All levels,What is method validation?
+IQ0764,Pharma and life sciences,Technical,All levels,How do you handle an out-of-specification result?
+IQ0765,Pharma and life sciences,Technical,All levels,What is data integrity and why is it a big issue in pharma?
+IQ0766,Pharma and life sciences,Technical,All levels,Explain the role of a medical representative.
+IQ0767,Pharma and life sciences,Technical,All levels,How do you explain a new drug to a doctor in two minutes?
+IQ0768,Pharma and life sciences,Technical,All levels,What is the difference between an adverse event and a side effect?
+IQ0769,Pharma and life sciences,Technical,All levels,What is biotechnology's role in new medicine such as vaccines and biosimilars?
+IQ0770,Pharma and life sciences,Technical,All levels,How do you maintain records so they pass an audit?
+IQ0771,Law and legal profession,Technical and personal,All levels,Why did you choose law?
+IQ0772,Law and legal profession,Technical and personal,All levels,What is the difference between civil and criminal law?
+IQ0773,Law and legal profession,Technical and personal,All levels,Explain the basic structure doctrine.
+IQ0774,Law and legal profession,Technical and personal,All levels,What are fundamental rights and which are not suspended during an emergency?
+IQ0775,Law and legal profession,Technical and personal,All levels,What is the difference between bail and anticipatory bail?
+IQ0776,Law and legal profession,Technical and personal,All levels,What is a contract and what are its essential elements?
+IQ0777,Law and legal profession,Technical and personal,All levels,Explain the difference between void and voidable contracts.
+IQ0778,Law and legal profession,Technical and personal,All levels,What is the role of precedent in the legal system?
+IQ0779,Law and legal profession,Technical and personal,All levels,Which recent Supreme Court judgment interested you and why?
+IQ0780,Law and legal profession,Technical and personal,All levels,"What are the new criminal laws (BNS, BNSS, BSA) and how do they replace the older laws?"
+IQ0781,Law and legal profession,Technical and personal,All levels,What is the difference between arbitration and mediation?
+IQ0782,Law and legal profession,Technical and personal,All levels,How do you handle a client who is lying to you?
+IQ0783,Law and legal profession,Technical and personal,All levels,What is attorney-client privilege?
+IQ0784,Law and legal profession,Technical and personal,All levels,What is intellectual property and what are its types?
+IQ0785,Law and legal profession,Technical and personal,All levels,What is data protection law and how does it affect companies?
+IQ0786,Law and legal profession,Technical and personal,All levels,How would you draft a simple rent agreement?
+IQ0787,Law and legal profession,Technical and personal,All levels,How do you research a legal question you have never seen before?
+IQ0788,Law and legal profession,Technical and personal,All levels,How do you view the use of AI in legal research and drafting? What are the risks?
+IQ0789,Law and legal profession,Technical and personal,All levels,How would you advise a start-up about legal compliance?
+IQ0790,Law and legal profession,Technical and personal,All levels,Tell me about your moot court or internship experience.
+IQ0791,Teaching and education,Demo and personal,All levels,Why do you want to be a teacher?
+IQ0792,Teaching and education,Demo and personal,All levels,Give a five-minute demo lesson on a topic of your choice.
+IQ0793,Teaching and education,Demo and personal,All levels,How do you handle a student who is always disruptive?
+IQ0794,Teaching and education,Demo and personal,All levels,How do you teach a child who is struggling in your subject?
+IQ0795,Teaching and education,Demo and personal,All levels,How do you make a boring topic interesting?
+IQ0796,Teaching and education,Demo and personal,All levels,How do you assess whether students have really understood?
+IQ0797,Teaching and education,Demo and personal,All levels,What is your classroom management style?
+IQ0798,Teaching and education,Demo and personal,All levels,How do you handle a parent who complains about their child's marks?
+IQ0799,Teaching and education,Demo and personal,All levels,What is the National Education Policy and how does it change teaching?
+IQ0800,Teaching and education,Demo and personal,All levels,How do you use technology and AI tools in the classroom?
+IQ0801,Teaching and education,Demo and personal,All levels,What is inclusive education and how do you practise it?
+IQ0802,Teaching and education,Demo and personal,All levels,How do you prepare students for competitive exams as well as the school syllabus?
+IQ0803,Teaching and education,Demo and personal,All levels,How do you handle a class with students of very different levels?
+IQ0804,Teaching and education,Demo and personal,All levels,What is your approach to discipline without punishment?
+IQ0805,Teaching and education,Demo and personal,All levels,What do you do when a student tells you they are being bullied?
+IQ0806,Teaching and education,Demo and personal,All levels,How would you teach a concept to an online class with low attendance?
+IQ0807,Teaching and education,Demo and personal,All levels,How do you plan a lesson and a term?
+IQ0808,Teaching and education,Demo and personal,All levels,What is formative versus summative assessment?
+IQ0809,Teaching and education,Demo and personal,All levels,How do you stay updated in your subject?
+IQ0810,Teaching and education,Demo and personal,All levels,What is your biggest strength as a teacher and your area to improve?
+IQ0811,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,Why do you want to join the civil services?
+IQ0812,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,Why did you choose this optional subject?
+IQ0813,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,Tell me about your home state or district and its biggest problems.
+IQ0814,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,What would you do in your first week as a district collector?
+IQ0815,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,What is your view on a recent national policy or scheme?
+IQ0816,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,How can technology and AI improve governance?
+IQ0817,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,What would you do if a local politician pressures you to bend a rule?
+IQ0818,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,How would you handle a communal tension in your district?
+IQ0819,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,What are the challenges of rural education and healthcare?
+IQ0820,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,"What is the difference between an IAS, IPS and IFS officer's work?"
+IQ0821,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,What are your service preferences and why?
+IQ0822,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,"What is your view on reservation, in a balanced way?"
+IQ0823,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,How would you deal with corruption in your office?
+IQ0824,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,What are the biggest issues of climate change for India?
+IQ0825,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,What is the importance of the Right to Information Act?
+IQ0826,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,You are asked to evict people for a road project. How do you proceed?
+IQ0827,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,What hobbies do you have and what have they taught you?
+IQ0828,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,What did you do during your preparation break to stay mentally strong?
+IQ0829,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,How would you handle failure if you do not clear the exam?
+IQ0830,Civil services and government (UPSC and state PSC personality test),Personality test,All levels,Explain a current international issue and India's stand.
+IQ0831,Defence services and SSB,SSB personal interview and group tasks,All levels,Why do you want to join the armed forces?
+IQ0832,Defence services and SSB,SSB personal interview and group tasks,All levels,What do you know about the service you are applying to?
+IQ0833,Defence services and SSB,SSB personal interview and group tasks,All levels,What will you do if you are not selected?
+IQ0834,Defence services and SSB,SSB personal interview and group tasks,All levels,Tell me about your daily routine.
+IQ0835,Defence services and SSB,SSB personal interview and group tasks,All levels,Describe your family background and what you learned from it.
+IQ0836,Defence services and SSB,SSB personal interview and group tasks,All levels,What are your strengths and weaknesses as seen by your friends?
+IQ0837,Defence services and SSB,SSB personal interview and group tasks,All levels,What are officer-like qualities (OLQs)?
+IQ0838,Defence services and SSB,SSB personal interview and group tasks,All levels,What is your biggest achievement in sports or NCC?
+IQ0839,Defence services and SSB,SSB personal interview and group tasks,All levels,How would you lead a team in a difficult situation?
+IQ0840,Defence services and SSB,SSB personal interview and group tasks,All levels,You are leading a patrol and a team member is hurt. What do you do?
+IQ0841,Defence services and SSB,SSB personal interview and group tasks,All levels,What do you know about the current border and security situation?
+IQ0842,Defence services and SSB,SSB personal interview and group tasks,All levels,How do you handle fear?
+IQ0843,Defence services and SSB,SSB personal interview and group tasks,All levels,What does discipline mean to you?
+IQ0844,Defence services and SSB,SSB personal interview and group tasks,All levels,How do you handle homesickness and long separation from family?
+IQ0845,Defence services and SSB,SSB personal interview and group tasks,All levels,What is the difference between courage and recklessness?
+IQ0846,Defence services and SSB,SSB personal interview and group tasks,All levels,What is your opinion on recent defence technology such as drones and AI?
+IQ0847,"Media, journalism and content creation",Portfolio and editorial,All levels,Why journalism or content as a career?
+IQ0848,"Media, journalism and content creation",Portfolio and editorial,All levels,"What is the difference between fact, opinion and rumour?"
+IQ0849,"Media, journalism and content creation",Portfolio and editorial,All levels,How do you verify news before publishing?
+IQ0850,"Media, journalism and content creation",Portfolio and editorial,All levels,Pitch me three story ideas for this week.
+IQ0851,"Media, journalism and content creation",Portfolio and editorial,All levels,"What is your view on deepfakes and misinformation, and how can they be detected?"
+IQ0852,"Media, journalism and content creation",Portfolio and editorial,All levels,How do you handle a story that may hurt an advertiser?
+IQ0853,"Media, journalism and content creation",Portfolio and editorial,All levels,What are your writing or editing tools and what does your workflow look like?
+IQ0854,"Media, journalism and content creation",Portfolio and editorial,All levels,"How do you write for different platforms such as web, video and newsletter?"
+IQ0855,"Media, journalism and content creation",Portfolio and editorial,All levels,Show me a piece of work you are proud of and explain your choices.
+IQ0856,"Media, journalism and content creation",Portfolio and editorial,All levels,How do you grow an audience for a new channel?
+IQ0857,"Media, journalism and content creation",Portfolio and editorial,All levels,What is SEO writing and how do you balance it with quality?
+IQ0858,"Media, journalism and content creation",Portfolio and editorial,All levels,How do you handle criticism online?
+IQ0859,"Media, journalism and content creation",Portfolio and editorial,All levels,How do you shoot and edit a short video with limited equipment?
+IQ0860,"Media, journalism and content creation",Portfolio and editorial,All levels,"What are the legal and ethical limits for a journalist (defamation, privacy)?"
+IQ0861,"Media, journalism and content creation",Portfolio and editorial,All levels,How do you use AI tools without losing originality and accuracy?
+IQ0862,"Media, journalism and content creation",Portfolio and editorial,All levels,Which news organisations do you follow and what do they do well?
+IQ0863,"Hospitality, hotel and tourism",Role-play and HR,All levels,Why do you want a career in hospitality?
+IQ0864,"Hospitality, hotel and tourism",Role-play and HR,All levels,How would you handle a guest who complains about the room?
+IQ0865,"Hospitality, hotel and tourism",Role-play and HR,All levels,What does excellent customer service mean to you?
+IQ0866,"Hospitality, hotel and tourism",Role-play and HR,All levels,How do you handle a very busy breakfast service?
+IQ0867,"Hospitality, hotel and tourism",Role-play and HR,All levels,How would you handle a guest who has a food allergy?
+IQ0868,"Hospitality, hotel and tourism",Role-play and HR,All levels,What would you do if two guests are fighting over a booking?
+IQ0869,"Hospitality, hotel and tourism",Role-play and HR,All levels,How do you work with a team through long hours and holidays?
+IQ0870,"Hospitality, hotel and tourism",Role-play and HR,All levels,"What do you know about front office, housekeeping and food and beverage departments?"
+IQ0871,"Hospitality, hotel and tourism",Role-play and HR,All levels,How would you upsell a premium room?
+IQ0872,"Hospitality, hotel and tourism",Role-play and HR,All levels,How do you deal with a lost item reported by a guest?
+IQ0873,"Hospitality, hotel and tourism",Role-play and HR,All levels,What would you do if you found a guest's wallet?
+IQ0874,"Hospitality, hotel and tourism",Role-play and HR,All levels,How do you maintain hygiene standards in a kitchen?
+IQ0875,"Hospitality, hotel and tourism",Role-play and HR,All levels,How do you handle a language barrier with an international guest?
+IQ0876,"Hospitality, hotel and tourism",Role-play and HR,All levels,How would you design a three-day itinerary for a family in your city?
+IQ0877,"Hospitality, hotel and tourism",Role-play and HR,All levels,How do you handle online reviews that are negative?
+IQ0878,"Hospitality, hotel and tourism",Role-play and HR,All levels,What is revenue management in hotels?
+IQ0879,Aviation and cabin crew,Selection interview,All levels,Why do you want to be cabin crew or work in aviation?
+IQ0880,Aviation and cabin crew,Selection interview,All levels,How would you handle a passenger who refuses to follow safety instructions?
+IQ0881,Aviation and cabin crew,Selection interview,All levels,What would you do if a passenger falls ill during a flight?
+IQ0882,Aviation and cabin crew,Selection interview,All levels,"How do you handle long hours, jet lag and time away from home?"
+IQ0883,Aviation and cabin crew,Selection interview,All levels,How would you calm a nervous flyer?
+IQ0884,Aviation and cabin crew,Selection interview,All levels,What do you know about our airline?
+IQ0885,Aviation and cabin crew,Selection interview,All levels,What are the main safety procedures on an aircraft?
+IQ0886,Aviation and cabin crew,Selection interview,All levels,How do you work with a team you have just met?
+IQ0887,Aviation and cabin crew,Selection interview,All levels,How would you handle a delayed flight and angry passengers?
+IQ0888,Aviation and cabin crew,Selection interview,All levels,What grooming and professional standards do you maintain?
+IQ0889,Aviation and cabin crew,Selection interview,All levels,What would you do if you saw a security risk or an unattended bag?
+IQ0890,Aviation and cabin crew,Selection interview,All levels,"What are the roles of the pilot, flight dispatcher and air traffic controller?"
+IQ0891,Agriculture and food technology,Technical and field,All levels,Why did you choose agriculture or food technology?
+IQ0892,Agriculture and food technology,Technical and field,All levels,What are the main soil types and which crops suit each?
+IQ0893,Agriculture and food technology,Technical and field,All levels,What is integrated pest management?
+IQ0894,Agriculture and food technology,Technical and field,All levels,What is precision farming and how can drones and sensors help?
+IQ0895,Agriculture and food technology,Technical and field,All levels,What is the difference between organic and conventional farming?
+IQ0896,Agriculture and food technology,Technical and field,All levels,How would you help a small farmer increase income?
+IQ0897,Agriculture and food technology,Technical and field,All levels,What are the government schemes for farmers that you know?
+IQ0898,Agriculture and food technology,Technical and field,All levels,"What is food processing and what are the quality standards (FSSAI, HACCP)?"
+IQ0899,Agriculture and food technology,Technical and field,All levels,How do you reduce post-harvest losses?
+IQ0900,Agriculture and food technology,Technical and field,All levels,What are the effects of climate change on farming?
+IQ0901,Agriculture and food technology,Technical and field,All levels,How do you explain a new technique to farmers who are sceptical?
+IQ0902,Agriculture and food technology,Technical and field,All levels,What is the role of agri-tech start-ups?
+IQ0903,Architecture and interior design,Portfolio,All levels,Walk me through your best design project.
+IQ0904,Architecture and interior design,Portfolio,All levels,How do you start a design when you have a plot and a brief?
+IQ0905,Architecture and interior design,Portfolio,All levels,How do you consider climate and sustainability in your design?
+IQ0906,Architecture and interior design,Portfolio,All levels,"What software do you use, such as AutoCAD, Revit, SketchUp or Rhino?"
+IQ0907,Architecture and interior design,Portfolio,All levels,How do you handle a client who changes the brief often?
+IQ0908,Architecture and interior design,Portfolio,All levels,What is the difference between an architect and an interior designer?
+IQ0909,Architecture and interior design,Portfolio,All levels,Which architect inspires you and why?
+IQ0910,Architecture and interior design,Portfolio,All levels,What are the building bye-laws and FSI?
+IQ0911,Architecture and interior design,Portfolio,All levels,How do you plan the budget of an interior project?
+IQ0912,Architecture and interior design,Portfolio,All levels,How do you work with contractors and engineers on site?
+IQ0913,Architecture and interior design,Portfolio,All levels,How do you decide on a colour and material palette?
+IQ0914,Architecture and interior design,Portfolio,All levels,How do you use AI-based rendering without losing your own design thinking?
+IQ0915,"BPO, customer support and service",Voice and role-play,Fresher,Why do you want to work in customer support?
+IQ0916,"BPO, customer support and service",Voice and role-play,Fresher,How do you handle an angry customer on a call?
+IQ0917,"BPO, customer support and service",Voice and role-play,Fresher,What would you do if you do not know the answer to a customer's question?
+IQ0918,"BPO, customer support and service",Voice and role-play,Fresher,How do you stay calm when you receive the same complaint all day?
+IQ0919,"BPO, customer support and service",Voice and role-play,Fresher,Tell me about a time you helped someone solve a problem.
+IQ0920,"BPO, customer support and service",Voice and role-play,Fresher,How comfortable are you with night shifts and rotational shifts?
+IQ0921,"BPO, customer support and service",Voice and role-play,Fresher,How would you explain a technical problem to someone who is not technical?
+IQ0922,"BPO, customer support and service",Voice and role-play,Fresher,What does a good call or chat look like?
+IQ0923,"BPO, customer support and service",Voice and role-play,Fresher,What would you do if a customer asks to speak to a manager?
+IQ0924,"BPO, customer support and service",Voice and role-play,Fresher,How do you handle a customer who is rude or abusive?
+IQ0925,"BPO, customer support and service",Voice and role-play,Fresher,How do you keep your typing speed and accuracy high?
+IQ0926,"BPO, customer support and service",Voice and role-play,Fresher,What is the difference between inbound and outbound support?
+IQ0927,"BPO, customer support and service",Voice and role-play,Fresher,What does first-call resolution mean?
+IQ0928,"BPO, customer support and service",Voice and role-play,Fresher,How do you maintain a positive tone through a long day?
+IQ0929,"BPO, customer support and service",Voice and role-play,Fresher,Read this paragraph aloud and then summarise it.
+IQ0930,"BPO, customer support and service",Voice and role-play,Fresher,How would you handle a customer who wants a refund that is against the policy?
+IQ0931,"BPO, customer support and service",Voice and role-play,Fresher,What do you do if you make a mistake on a customer's account?
+IQ0932,"BPO, customer support and service",Voice and role-play,Fresher,How would you use AI chat tools to help customers while keeping a personal touch?
+IQ0933,MBA and PGDM admission interviews,Admission interview,Fresher,Why do you want an MBA?
+IQ0934,MBA and PGDM admission interviews,Admission interview,Fresher,Why this institute and not another one?
+IQ0935,MBA and PGDM admission interviews,Admission interview,Fresher,What are your short-term and long-term career goals?
+IQ0936,MBA and PGDM admission interviews,Admission interview,Fresher,Why now and not after more work experience?
+IQ0937,MBA and PGDM admission interviews,Admission interview,Fresher,Tell me about your work experience and your biggest learning.
+IQ0938,MBA and PGDM admission interviews,Admission interview,Fresher,What is your view on a recent business or economic news story?
+IQ0939,MBA and PGDM admission interviews,Admission interview,Fresher,Explain your graduation subject to a non-expert.
+IQ0940,MBA and PGDM admission interviews,Admission interview,Fresher,What would you contribute to your class?
+IQ0941,MBA and PGDM admission interviews,Admission interview,Fresher,What are your hobbies and what do they say about you?
+IQ0942,MBA and PGDM admission interviews,Admission interview,Fresher,What is a company you admire and why?
+IQ0943,MBA and PGDM admission interviews,Admission interview,Fresher,What is the difference between marketing and sales?
+IQ0944,MBA and PGDM admission interviews,Admission interview,Fresher,What if you do not get into your first-choice specialisation?
+IQ0945,MBA and PGDM admission interviews,Admission interview,Fresher,Is an MBA still worth it in the age of AI?
+IQ0946,MBA and PGDM admission interviews,Admission interview,Fresher,How do you handle group work with people who think differently?
+IQ0947,MBA and PGDM admission interviews,Admission interview,Fresher,What was your biggest failure and how did you recover?
+IQ0948,MBA and PGDM admission interviews,Admission interview,Fresher,Convince me in one minute that you should be selected.
+IQ0949,Study abroad and visa interviews,Visa and university interviews,All levels,Why do you want to study in this country?
+IQ0950,Study abroad and visa interviews,Visa and university interviews,All levels,Why this university and this course?
+IQ0951,Study abroad and visa interviews,Visa and university interviews,All levels,How will you pay for your studies and living costs?
+IQ0952,Study abroad and visa interviews,Visa and university interviews,All levels,Who is sponsoring you and what is their income source?
+IQ0953,Study abroad and visa interviews,Visa and university interviews,All levels,What will you do after your studies?
+IQ0954,Study abroad and visa interviews,Visa and university interviews,All levels,Do you plan to return to India? Why?
+IQ0955,Study abroad and visa interviews,Visa and university interviews,All levels,Why not study the same course in India?
+IQ0956,Study abroad and visa interviews,Visa and university interviews,All levels,Do you have relatives living in this country?
+IQ0957,Study abroad and visa interviews,Visa and university interviews,All levels,"What are your test scores (IELTS, TOEFL, GRE, GMAT) and how did you prepare?"
+IQ0958,Study abroad and visa interviews,Visa and university interviews,All levels,What is your academic background and why do you want to change fields?
+IQ0959,Study abroad and visa interviews,Visa and university interviews,All levels,How will you manage part-time work rules?
+IQ0960,Study abroad and visa interviews,Visa and university interviews,All levels,What are the risks you see in studying abroad?
+IQ0961,Study abroad and visa interviews,Visa and university interviews,All levels,Tell me about your research or project work.
+IQ0962,Study abroad and visa interviews,Visa and university interviews,All levels,Which professors or labs interest you and why?
+IQ0963,Study abroad and visa interviews,Visa and university interviews,All levels,What do you know about the city and the university?
+IQ0964,Study abroad and visa interviews,Visa and university interviews,All levels,How will you handle culture shock and living alone?
+IQ0965,"Research, PhD and MS interviews",Academic interview,All levels,Describe your research interest and why it matters.
+IQ0966,"Research, PhD and MS interviews",Academic interview,All levels,Explain your thesis or final-year project in simple words.
+IQ0967,"Research, PhD and MS interviews",Academic interview,All levels,What problem in your field would you like to solve?
+IQ0968,"Research, PhD and MS interviews",Academic interview,All levels,How do you handle an experiment that fails repeatedly?
+IQ0969,"Research, PhD and MS interviews",Academic interview,All levels,What papers have you read recently and what did you think of them?
+IQ0970,"Research, PhD and MS interviews",Academic interview,All levels,What are the limitations of your work?
+IQ0971,"Research, PhD and MS interviews",Academic interview,All levels,How do you plan your time across coursework and research?
+IQ0972,"Research, PhD and MS interviews",Academic interview,All levels,Why do you want a PhD instead of a job?
+IQ0973,"Research, PhD and MS interviews",Academic interview,All levels,How would you work with a supervisor who gives little guidance?
+IQ0974,"Research, PhD and MS interviews",Academic interview,All levels,What methods and tools do you know for analysing data in your area?
+IQ0975,"Research, PhD and MS interviews",Academic interview,All levels,How do you handle authorship and credit in a team paper?
+IQ0976,"Research, PhD and MS interviews",Academic interview,All levels,How would you explain your research to a school student?
+IQ0977,Insurance and wealth advisory,Technical and sales,All levels,What is the difference between life insurance and general insurance?
+IQ0978,Insurance and wealth advisory,Technical and sales,All levels,"What is a premium, a sum assured and a claim?"
+IQ0979,Insurance and wealth advisory,Technical and sales,All levels,What is the difference between term insurance and endowment?
+IQ0980,Insurance and wealth advisory,Technical and sales,All levels,How do you convince a young person to buy health insurance?
+IQ0981,Insurance and wealth advisory,Technical and sales,All levels,What is IRDAI and what does it do?
+IQ0982,Insurance and wealth advisory,Technical and sales,All levels,A customer's claim has been rejected. How do you explain it and help?
+IQ0983,Insurance and wealth advisory,Technical and sales,All levels,What is a financial plan and how do you build one?
+IQ0984,Insurance and wealth advisory,Technical and sales,All levels,What is the difference between a mutual fund and a ULIP?
+IQ0985,"PSU, GATE and technical government interviews",Interview round,Fresher,Why do you want to join a public sector company?
+IQ0986,"PSU, GATE and technical government interviews",Interview round,Fresher,What do you know about our organisation and its projects?
+IQ0987,"PSU, GATE and technical government interviews",Interview round,Fresher,Explain your GATE branch subjects in which you are strongest.
+IQ0988,"PSU, GATE and technical government interviews",Interview round,Fresher,What is the difference between working in the public and private sector?
+IQ0989,"PSU, GATE and technical government interviews",Interview round,Fresher,Are you willing to work in remote areas and be posted anywhere in India?
+IQ0990,"PSU, GATE and technical government interviews",Interview round,Fresher,What is your final-year project and what did you design?
+IQ0991,"PSU, GATE and technical government interviews",Interview round,Fresher,How would you handle a safety issue at a plant or site?
+IQ0992,"PSU, GATE and technical government interviews",Interview round,Fresher,What do you know about the 'Make in India' initiative and energy security?
+IQ0993,"Psychology, counselling and social work",Clinical and personal,All levels,Why did you choose psychology or social work?
+IQ0994,"Psychology, counselling and social work",Clinical and personal,All levels,How do you build trust with a client who does not want to talk?
+IQ0995,"Psychology, counselling and social work",Clinical and personal,All levels,"What is the difference between a psychologist, a psychiatrist and a counsellor?"
+IQ0996,"Psychology, counselling and social work",Clinical and personal,All levels,"How do you maintain confidentiality, and when must it be broken?"
+IQ0997,"Psychology, counselling and social work",Clinical and personal,All levels,What would you do if a client mentions thoughts of self-harm?
+IQ0998,"Psychology, counselling and social work",Clinical and personal,All levels,"What counselling approaches do you know, such as CBT or person-centred therapy?"
+IQ0999,"Psychology, counselling and social work",Clinical and personal,All levels,How do you look after your own mental health in this work?
+IQ1000,"Psychology, counselling and social work",Clinical and personal,All levels,How would you work with a teenager whose parents want them to study something else?

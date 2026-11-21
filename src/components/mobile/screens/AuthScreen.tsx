@@ -303,7 +303,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
       <div className="pt-4 text-center">
         <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center justify-center gap-1.5">
           <ShieldCheck className="w-4 h-4 text-emerald-500" />
-          <span>Bank-grade 256-bit encrypted authentication</span>
+          <span>Secure and verified authentication</span>
         </p>
       </div>
     </div>

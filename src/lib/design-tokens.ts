@@ -83,21 +83,6 @@ export const SUBJECT_THEMES: Record<string, PlatformPillarTheme> = {
     iconName: "ShieldCheck",
     href: "/career/scam-checker",
   },
-  edfix: {
-    id: "edfix",
-    name: "EdFix Production Labs",
-    tagline: "Diagnose live race conditions, memory leaks, and connection pool exhaustion",
-    color: "#8E6CEF", // Grape
-    bgColor: "#F5F1FF",
-    textColor: "#FFFFFF",
-    badgeBg: "#8E6CEF",
-    badgeText: "#FFFFFF",
-    borderColor: "#1B1B2F",
-    lightShade: "#EDE9FE",
-    accentShadow: "4px 4px 0px #1B1B2F",
-    iconName: "Terminal",
-    href: "/edfix",
-  },
   network: {
     id: "network",
     name: "Verified Student Network",
@@ -153,4 +138,58 @@ export const STUDIO_PALETTE = {
     xl: "8px 8px 0px #1B1B2F",
     hover: "6px 6px 0px #1B1B2F",
   },
+};
+
+/**
+ * Human Figma Studio v5.0 Design System Tokens
+ * Maximalist precision, layered tactile depth, and jewel-tone accents.
+ */
+export const FIGMA_STUDIO_TOKENS = {
+  surfaces: {
+    glassWhite: "bg-white/90 backdrop-blur-2xl border border-white/90 shadow-[0_12px_40px_rgba(15,23,42,0.06)]",
+    glassFrosted: "bg-white/75 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgba(15,23,42,0.04)]",
+    glassRaised: "bg-white/95 backdrop-blur-2xl border border-white shadow-[0_20px_50px_rgba(15,23,42,0.08),inset_0_1px_0_rgba(255,255,255,0.9)]",
+    darkGlass: "bg-slate-900/90 backdrop-blur-2xl border border-slate-800 text-white shadow-2xl",
+    insetWell: "bg-slate-50/80 border border-slate-200/70 shadow-inner rounded-2xl",
+  },
+  jewels: {
+    emerald: {
+      dot: "bg-emerald-500",
+      text: "text-emerald-700",
+      badge: "bg-emerald-50 text-emerald-800 border-emerald-200",
+      glow: "shadow-[0_0_20px_rgba(16,185,129,0.25)]",
+    },
+    amber: {
+      dot: "bg-amber-500",
+      text: "text-amber-700",
+      badge: "bg-amber-50 text-amber-800 border-amber-200",
+      glow: "shadow-[0_0_20px_rgba(245,158,11,0.25)]",
+    },
+    blue: {
+      dot: "bg-blue-500",
+      text: "text-blue-700",
+      badge: "bg-blue-50 text-blue-800 border-blue-200",
+      glow: "shadow-[0_0_20px_rgba(59,130,246,0.25)]",
+    },
+    coral: {
+      dot: "bg-rose-500",
+      text: "text-rose-700",
+      badge: "bg-rose-50 text-rose-800 border-rose-200",
+      glow: "shadow-[0_0_20px_rgba(244,63,94,0.25)]",
+    },
+    violet: {
+      dot: "bg-indigo-500",
+      text: "text-indigo-700",
+      badge: "bg-indigo-50 text-indigo-800 border-indigo-200",
+      glow: "shadow-[0_0_20px_rgba(99,102,241,0.25)]",
+    },
+  },
+  stamps: [
+    "4D STAR VERIFIED",
+    "HARVARD ATS 98%",
+    "DPDP 2023 COMPLIANT",
+    "1,000 Q / 46 SECTORS",
+    "GITHUB PROOF VERIFIED",
+    "LOCKDOWN ANTI-CHEAT",
+  ],
 };

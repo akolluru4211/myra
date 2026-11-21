@@ -17,7 +17,8 @@ interface ProactiveSuggestionData {
 
 export default function MyraProactiveSuggestionCard() {
   const { user } = useAuth();
-  const [suggestion, setSuggestion] = useState<ProactiveSuggestionData | null>(null);
+  const [loadedSuggestion, setLoadedSuggestion] = useState<{ userId: string; data: ProactiveSuggestionData } | null>(null);
+  const suggestion = loadedSuggestion?.userId === user?.uid ? loadedSuggestion?.data : undefined;
   const [loading, setLoading] = useState(true);
   const [isDismissing, setIsDismissing] = useState(false);
 
@@ -33,28 +34,34 @@ export default function MyraProactiveSuggestionCard() {
       return;
     }
 
-    fetch(`/api/ai/myra/proactive-suggestion?userId=${user.uid}`)
-      .then((res) => res.json())
+    const controller = new AbortController();
+    setLoading(true);
+    fetch(`/api/ai/myra/proactive-suggestion?userId=${encodeURIComponent(user.uid)}`, { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error("Unable to load Myra's suggestion.");
+        return res.json();
+      })
       .then((data) => {
-        if (data.suggestion && !data.suggestion.dismissed) {
-          setSuggestion(data.suggestion);
-        }
+        if (controller.signal.aborted) return;
+        setLoadedSuggestion(data.suggestion && !data.suggestion.dismissed
+          ? { userId: user.uid, data: data.suggestion }
+          : null);
       })
       .catch((err) => {
-        console.warn("[Proactive suggestion fetch note]:", err);
+        if (!controller.signal.aborted) console.warn("[Proactive suggestion fetch note]:", err);
       })
       .finally(() => {
-        setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       });
+    return () => controller.abort();
   }, [user?.uid, user?.ageBand]);
 
   const handleDismiss = async () => {
     if (!user?.uid || !suggestion || isDismissing) return;
     setIsDismissing(true);
-    setSuggestion(null); // Immediate optimistic dismissal
 
     try {
-      await fetch("/api/ai/myra/proactive-suggestion", {
+      const response = await fetch("/api/ai/myra/proactive-suggestion", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -63,6 +70,8 @@ export default function MyraProactiveSuggestionCard() {
           action: "dismiss",
         }),
       });
+      if (!response.ok) throw new Error("Unable to dismiss Myra's suggestion.");
+      setLoadedSuggestion((current) => current?.userId === user.uid && current.data.id === suggestion.id ? null : current);
     } catch (err) {
       console.warn("[Failed to dismiss proactive suggestion]:", err);
     } finally {
@@ -70,7 +79,7 @@ export default function MyraProactiveSuggestionCard() {
     }
   };
 
-  if (loading || !suggestion) return null;
+  if (loading || !suggestion || user?.ageBand === "13-15" || user?.ageBand === "16-18") return null;
 
   return (
     <div className="relative overflow-hidden rounded-2xl bg-white border border-neutral-200/90 shadow-xs hover:shadow-md transition-all p-4 sm:p-5 group font-sans">

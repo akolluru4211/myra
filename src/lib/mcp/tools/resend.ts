@@ -4,14 +4,15 @@
  * and dispatching broadcast emails via Resend.
  */
 
-import { MCPToolDefinition, MCPToolResult, MCPAuthContext } from "../types";
+import type { MCPToolDefinition, MCPToolResult, MCPAuthContext } from "../types.ts";
 import { 
   sendEmailNotification, 
+  sendOtpVerificationEmail,
   addNewsletterSubscriber, 
   broadcastToSubscribers, 
   getNewsletterSubscribers,
   PRIMARY_ADMIN_EMAIL 
-} from "@/lib/email-service";
+} from "../../email-service.ts";
 
 export const resendTools: MCPToolDefinition[] = [
   {
@@ -183,6 +184,59 @@ export const resendTools: MCPToolDefinition[] = [
           count: subscribers.length,
           subscribers,
         },
+      };
+    },
+  },
+  {
+    name: "resend_send_otp_email",
+    domain: "email",
+    description: "Sends an Auth Strong 6-digit verification code to a user's email via Resend.",
+    requiredRoles: ["CLIENT", "EMPLOYEE", "ADMIN", "SUPER_ADMIN", "FOUNDER", "HR"],
+    isSensitive: true,
+    parameters: {
+      email: {
+        type: "string",
+        description: "Target user email address.",
+        required: true,
+      },
+      otp: {
+        type: "string",
+        description: "6-digit verification code.",
+        required: true,
+      },
+      purpose: {
+        type: "string",
+        description: "Purpose: 'login', 'signup', or 'auth'.",
+        required: false,
+        default: "login",
+      },
+      expiresMinutes: {
+        type: "number",
+        description: "Expiration window in minutes.",
+        required: false,
+        default: 5,
+      },
+    },
+    handler: async (
+      params: { email: string; otp: string; purpose?: string; expiresMinutes?: number },
+      context: MCPAuthContext
+    ): Promise<MCPToolResult> => {
+      const result = await sendOtpVerificationEmail({
+        email: params.email,
+        otp: params.otp,
+        purpose: (params.purpose as any) || "login",
+        expiresMinutes: params.expiresMinutes || 5,
+      });
+
+      return {
+        success: result.success,
+        data: {
+          recipient: params.email,
+          purpose: params.purpose || "login",
+          id: result.id || "local-dispatch",
+          isMock: result.isMock,
+        },
+        error: result.error,
       };
     },
   },

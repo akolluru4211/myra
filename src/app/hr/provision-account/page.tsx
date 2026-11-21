@@ -371,7 +371,7 @@ export default function HrProvisionAccountPage() {
               </div>
             ) : (
               <div className="p-4 rounded-2xl bg-[#FCFCFB] border border-[#EBECEF] text-center text-xs text-[#5E6573]">
-                Complete the provisioning form to generate the encrypted first-login invitation token.
+                Complete the provisioning form to generate the secure first-login invitation token.
               </div>
             )}
           </div>

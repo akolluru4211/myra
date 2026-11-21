@@ -29,7 +29,6 @@ import {
 import AuthGuard from "@/components/auth/AuthGuard";
 import { useAuth } from "@/lib/auth-context";
 import { PROBLEM_STATEMENTS_DATA } from "@/lib/projects/problem-statements-data";
-import { StudioSticker } from "@/components/studio/StudioSticker";
 
 interface GroupMember {
   user_id: string;
@@ -120,12 +119,10 @@ function EdBuildContent() {
       setLoading(true);
       const res = await fetch(`/api/edbuild/groups?userId=${user?.uid || ""}`);
       const data = await res.json();
-      if (data.success) {
-        setPublicGroups(data.publicGroups || []);
-        setMyGroups(data.myGroups || []);
-      }
+      if (data.publicGroups) setPublicGroups(data.publicGroups);
+      if (data.myGroups) setMyGroups(data.myGroups);
     } catch (err) {
-      console.warn("Failed to load EdBuild groups:", err);
+      console.error("Failed to load EdBuild groups:", err);
     } finally {
       setLoading(false);
     }
@@ -135,23 +132,22 @@ function EdBuildContent() {
     loadGroups();
   }, [user]);
 
-  // Handle problem preset selection
-  const handleSelectPreset = (id: string) => {
-    setSelectedProblemPreset(id);
-    const found = PROBLEM_STATEMENTS_DATA.find((p) => p.id === id);
+  const handleSelectPreset = (presetId: string) => {
+    setSelectedProblemPreset(presetId);
+    if (!presetId) return;
+    const found = PROBLEM_STATEMENTS_DATA.find((p) => p.id === presetId);
     if (found) {
-      if (!projectName) setProjectName(found.title);
+      setProjectName(found.title);
       setProblemStatement(found.problemStatement);
     }
   };
 
-  // Submit group creation
   const handleCreateGroup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!projectName.trim() || !problemStatement.trim()) return;
 
-    setIsSubmitting(true);
     try {
+      setIsSubmitting(true);
       const res = await fetch("/api/edbuild/groups", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -159,12 +155,12 @@ function EdBuildContent() {
           name: projectName,
           access_type: accessType,
           team_size: teamSize,
+          leader_id: user?.uid,
           leader_name: leaderName,
           leader_email: leaderEmail,
           leader_phone: leaderPhone,
           problem_statement: problemStatement,
-          userId: user?.uid,
-          avatar_url: (profile as any)?.avatar_url || (profile as any)?.photo_url,
+          preset_id: selectedProblemPreset || null,
         }),
       });
 
@@ -180,25 +176,24 @@ function EdBuildContent() {
         alert(data.error || "Failed to create group");
       }
     } catch (err: any) {
-      alert(err.message || "Network error creating group");
+      alert(err.message || "Failed to create group");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Submit join by key
   const handleJoinByKey = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!enteredKey.trim()) return;
 
-    setIsJoiningKey(true);
-    setKeyError(null);
     try {
-      const res = await fetch(`/api/edbuild/groups/by-key/join`, {
+      setIsJoiningKey(true);
+      setKeyError(null);
+      const res = await fetch("/api/edbuild/join-by-key", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          key: enteredKey.trim(),
+          join_key: enteredKey.trim(),
           userId: user?.uid,
           name: profile?.name || user?.name || "Student",
           email: profile?.email || user?.email,
@@ -212,16 +207,15 @@ function EdBuildContent() {
         setIsJoinKeyModalOpen(false);
         router.push(`/edbuild/${data.groupId}`);
       } else {
-        setKeyError(data.error || "Invalid join key or group is full.");
+        setKeyError(data.error || "Invalid join key or room is full.");
       }
     } catch (err: any) {
-      setKeyError(err.message || "Failed to join private group");
+      setKeyError(err.message || "Failed to verify key.");
     } finally {
       setIsJoiningKey(false);
     }
   };
 
-  // Join public group directly
   const handleJoinPublicGroup = async (group: EdBuildGroup) => {
     try {
       const res = await fetch(`/api/edbuild/groups/${group.id}/join`, {
@@ -267,23 +261,26 @@ function EdBuildContent() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-[#F8F9FA] text-[#111827] font-sans pb-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 space-y-6 animate-in fade-in duration-200">
-          
-          {/* 1. HERO & ACTION BAR */}
-          <section className="bg-white rounded-2xl border border-[#E5E7EB] p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-5">
-            <div className="space-y-1.5 max-w-2xl">
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                  EdBuild &bull; Collaborative Workspace
+      <div className="w-full text-white font-sans space-y-6 sm:space-y-8 animate-in fade-in duration-200">
+        {/* 1. HERO & ACTION BAR */}
+          <section className="tactile-chassis bg-[#0C101A] border border-white/10 p-6 sm:p-8 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-5 relative overflow-hidden shadow-xl text-white">
+            <div className="space-y-2.5 max-w-2xl relative z-10">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20 font-display">
+                  ✦ EdBuild Squads
                 </span>
-                <span className="text-xs text-[#6B7280] font-medium">Proof-of-Work Squads</span>
+                <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-white/5 text-slate-300 border border-white/10 font-mono">
+                  GitHub Proof Verified
+                </span>
+                <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-mono">
+                  Certificates Enabled
+                </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#111827] tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-black text-white font-display tracking-tight">
                 Team Up, Build Real Projects &amp; Earn Verified Certificates
               </h1>
-              <p className="text-xs sm:text-sm text-[#4B5563] leading-relaxed">
-                Create public or private engineering squads. Collaborate with live chat and media sharing, submit your completed repository for official review, and receive your personalized Certificate of Completion.
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+                Collaborate in live chat rooms, submit code repositories for review, and receive verified certificates of completion.
               </p>
             </div>
 
@@ -294,9 +291,9 @@ function EdBuildContent() {
                   setCreateSuccessData(null);
                   setIsCreateModalOpen(true);
                 }}
-                className="bg-[#111827] hover:bg-black text-white text-xs font-semibold py-2.5 px-4 rounded-xl shadow-xs transition-colors inline-flex items-center gap-2 cursor-pointer"
+                className="px-5 py-2.5 rounded-xl font-bold text-xs bg-white hover:bg-slate-200 text-slate-950 inline-flex items-center gap-2 cursor-pointer shadow-md transition-all"
               >
-                <Plus className="w-4 h-4 text-white" />
+                <Plus className="w-4 h-4 text-slate-950" />
                 <span>Create a Group</span>
               </button>
 
@@ -307,9 +304,9 @@ function EdBuildContent() {
                   setEnteredKey("");
                   setIsJoinKeyModalOpen(true);
                 }}
-                className="bg-white hover:bg-gray-50 text-[#111827] border border-[#E5E7EB] text-xs font-semibold py-2.5 px-4 rounded-xl shadow-xs transition-colors inline-flex items-center gap-2 cursor-pointer"
+                className="px-4 py-2.5 rounded-xl font-bold text-xs bg-[#0F1422] hover:bg-white/10 border border-white/10 text-white inline-flex items-center gap-2 cursor-pointer transition-all"
               >
-                <Key className="w-4 h-4 text-[#2563EB]" />
+                <Key className="w-4 h-4 text-white" />
                 <span>Join with Private Key</span>
               </button>
             </div>
@@ -319,8 +316,8 @@ function EdBuildContent() {
           {myGroups.length > 0 && (
             <section className="space-y-3">
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold uppercase tracking-wider text-[#6B7280] flex items-center gap-2">
-                  <Layers className="w-4 h-4 text-[#2563EB]" />
+                <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-white" />
                   <span>My Active EdBuild Workspaces ({myGroups.length})</span>
                 </h2>
               </div>
@@ -329,39 +326,39 @@ function EdBuildContent() {
                 {myGroups.map((group) => (
                   <div
                     key={group.id}
-                    className="p-5 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs hover:border-gray-300 transition-colors flex flex-col justify-between space-y-3"
+                    className="tactile-chassis bg-[#0C101A] border border-white/10 hover:border-white/20 p-5 rounded-2xl transition-all flex flex-col justify-between space-y-3 group shadow-xl text-white"
                   >
                     <div className="space-y-2">
                       <div className="flex items-center justify-between gap-2">
-                        <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-md border ${
-                          group.access_type === "private" ? "bg-amber-50 text-amber-700 border-amber-200" : "bg-blue-50 text-blue-700 border-blue-200"
+                        <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
+                          group.access_type === "private" ? "bg-amber-500/10 text-amber-300 border-amber-500/20" : "bg-blue-500/10 text-blue-300 border-blue-500/20"
                         }`}>
                           {group.access_type === "private" ? "Private Room" : "Public Room"}
                         </span>
-                        <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${
+                        <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${
                           group.status === "APPROVED"
-                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                            ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/20"
                             : group.status === "PENDING_REVIEW"
-                            ? "bg-amber-50 text-amber-700 border-amber-200"
-                            : "bg-gray-50 text-gray-700 border-gray-200"
+                            ? "bg-amber-500/10 text-amber-300 border-amber-500/20"
+                            : "bg-white/5 text-slate-400 border-white/10"
                         }`}>
                           {group.status}
                         </span>
                       </div>
-                      <h3 className="text-base font-bold text-[#111827] mt-1 line-clamp-1">{group.name}</h3>
-                      <p className="text-xs text-[#6B7280] line-clamp-2">{group.problem_statement}</p>
+                      <h3 className="text-base font-bold text-white mt-1 line-clamp-1 group-hover:text-cyan-400 transition-colors font-display">{group.name}</h3>
+                      <p className="text-xs text-slate-300 line-clamp-2 font-normal leading-relaxed">{group.problem_statement}</p>
                     </div>
 
-                    <div className="pt-3 border-t border-[#F3F4F6] flex items-center justify-between">
-                      <span className="text-xs text-[#6B7280]">
+                    <div className="pt-3 border-t border-white/10 flex items-center justify-between">
+                      <span className="text-xs text-slate-400 font-mono">
                         {group.current_members_count} / {group.team_size} Members
                       </span>
                       <Link
                         href={`/edbuild/${group.id}`}
-                        className="bg-[#111827] hover:bg-black text-white text-xs font-semibold py-2 px-3.5 rounded-xl shadow-xs inline-flex items-center gap-1.5 transition-colors"
+                        className="px-3.5 py-1.5 rounded-xl font-bold text-xs bg-white hover:bg-slate-200 text-slate-950 inline-flex items-center gap-1.5 cursor-pointer shadow-md transition-all"
                       >
                         <span>Open Studio</span>
-                        <ArrowRight className="w-3.5 h-3.5 text-white" />
+                        <ArrowRight className="w-3.5 h-3.5 text-slate-950" />
                       </Link>
                     </div>
                   </div>
@@ -374,23 +371,23 @@ function EdBuildContent() {
           <section className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h2 className="text-xl font-bold text-[#111827]">
+                <h2 className="text-xl font-bold text-white font-display">
                   Public Project Teams Directory
                 </h2>
-                <p className="text-xs text-[#6B7280]">
+                <p className="text-xs text-slate-400 font-normal">
                   Find an open squad or join an existing build team before capacity fills up.
                 </p>
               </div>
 
               {/* Search Bar */}
               <div className="relative w-full sm:w-72">
-                <Search className="w-4 h-4 text-[#9CA3AF] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   placeholder="Search public groups..."
                   value={searchFilter}
                   onChange={(e) => setSearchFilter(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-[#E5E7EB] rounded-xl focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] text-[#111827] placeholder:text-[#9CA3AF] shadow-xs"
+                  className="w-full pl-9 pr-3 py-2 text-xs bg-[#0F1422] border border-white/15 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-white/30"
                 />
               </div>
             </div>
@@ -405,42 +402,42 @@ function EdBuildContent() {
                   return (
                     <div
                       key={group.id}
-                      className="bg-white rounded-2xl border border-[#E5E7EB] p-6 shadow-xs hover:border-gray-300 transition-colors flex flex-col justify-between space-y-4"
+                      className="tactile-chassis bg-[#0C101A] border border-white/10 hover:border-white/20 p-6 rounded-3xl transition-all flex flex-col justify-between space-y-4 group text-white shadow-xl"
                     >
                       <div className="space-y-2">
                         {/* Status / Capacity Header */}
                         <div className="flex items-center justify-between gap-2">
-                          <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200">
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-500/10 text-blue-300 border border-blue-500/20">
                             Public Group
                           </span>
 
                           {isFull ? (
-                            <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
+                            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-500/10 text-rose-300 border border-rose-500/20">
                               Room Full
                             </span>
                           ) : (
-                            <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
                               {Number(group.team_size) - Number(group.current_members_count)} Slots Open
                             </span>
                           )}
                         </div>
 
                         {/* Title */}
-                        <h3 className="text-base font-bold text-[#111827] leading-snug line-clamp-1">
+                        <h3 className="text-base font-bold text-white leading-snug line-clamp-1 group-hover:text-cyan-400 transition-colors font-display">
                           {group.name}
                         </h3>
 
                         {/* Problem Statement */}
-                        <p className="text-xs text-[#6B7280] leading-relaxed line-clamp-3">
+                        <p className="text-xs text-slate-300 leading-relaxed line-clamp-3 font-normal">
                           {group.problem_statement}
                         </p>
                       </div>
 
                       {/* Team Members with Portfolios */}
-                      <div className="pt-3 border-t border-[#F3F4F6] space-y-2">
-                        <div className="flex items-center justify-between text-[11px] text-[#6B7280]">
+                      <div className="pt-3 border-t border-white/10 space-y-2">
+                        <div className="flex items-center justify-between text-[11px] text-slate-400">
                           <span>Team Roster ({group.current_members_count}/{group.team_size}):</span>
-                          <span className="font-semibold text-[#111827]">Lead: {group.leader_name}</span>
+                          <span className="font-semibold text-white">Lead: {group.leader_name}</span>
                         </div>
 
                         <div className="flex flex-wrap items-center gap-1.5">
@@ -448,48 +445,48 @@ function EdBuildContent() {
                             group.members.map((m, mIdx) => (
                               <Link
                                 key={mIdx}
-                                href={`/portfolio/${m.user_id}`}
+                                href={`/u/${m.user_id}/portfolio`}
                                 title={`View ${m.name}'s Portfolio`}
-                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] hover:bg-white text-[11px] text-[#374151] font-medium transition-colors shadow-xs"
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#0F1422] hover:bg-white/10 text-[11px] text-slate-300 font-medium transition-all rounded-lg border border-white/10"
                               >
                                 {m.avatar_url ? (
-                                  <img src={m.avatar_url} alt="" className="w-4 h-4 rounded-full object-cover border border-[#E5E7EB]" />
+                                  <img src={m.avatar_url} alt="" className="w-4 h-4 rounded-full object-cover border border-white/15" />
                                 ) : (
-                                  <User className="w-3.5 h-3.5 text-[#6B7280]" />
+                                  <User className="w-3.5 h-3.5 text-slate-400" />
                                 )}
                                 <span className="truncate max-w-[90px]">{m.name.split(" ")[0]}</span>
                               </Link>
                             ))
                           ) : (
-                            <span className="text-xs font-semibold text-[#111827]">{group.leader_name}</span>
+                            <span className="text-xs font-semibold text-white">{group.leader_name}</span>
                           )}
                         </div>
                       </div>
 
                       {/* Action Button */}
-                      <div className="pt-3 border-t border-[#F3F4F6]">
+                      <div className="pt-3 border-t border-white/10">
                         {isMember ? (
                           <Link
                             href={`/edbuild/${group.id}`}
-                            className="w-full py-2.5 px-3.5 rounded-xl bg-[#111827] hover:bg-black text-white text-xs font-semibold inline-flex items-center justify-center gap-1.5 shadow-xs transition-colors"
+                            className="w-full py-2.5 px-3.5 text-xs font-bold rounded-xl bg-white hover:bg-slate-200 text-slate-950 inline-flex items-center justify-center gap-1.5 shadow-md cursor-pointer transition-all"
                           >
                             <span>Open Workspace</span>
-                            <ArrowRight className="w-3.5 h-3.5 text-white" />
+                            <ArrowRight className="w-3.5 h-3.5 text-slate-950" />
                           </Link>
                         ) : isFull ? (
                           <button
                             disabled
-                            className="w-full py-2.5 px-3.5 rounded-xl bg-gray-100 text-[#9CA3AF] border border-[#E5E7EB] text-xs font-medium cursor-not-allowed text-center"
+                            className="w-full py-2.5 px-3.5 rounded-xl bg-white/5 text-slate-500 border border-white/10 text-xs font-medium cursor-not-allowed text-center"
                           >
                             Room Full (Max {group.team_size})
                           </button>
                         ) : (
                           <button
                             onClick={() => handleJoinPublicGroup(group)}
-                            className="w-full py-2.5 px-3.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-semibold inline-flex items-center justify-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+                            className="w-full py-2.5 px-3.5 text-xs font-bold rounded-xl bg-white hover:bg-slate-200 text-slate-950 inline-flex items-center justify-center gap-1.5 shadow-md cursor-pointer transition-all"
                           >
                             <span>Join Squad</span>
-                            <ArrowRight className="w-3.5 h-3.5 text-white" />
+                            <ArrowRight className="w-3.5 h-3.5 text-slate-950" />
                           </button>
                         )}
                       </div>
@@ -498,17 +495,17 @@ function EdBuildContent() {
                 })}
               </div>
             ) : (
-              <div className="bg-white rounded-2xl border border-[#E5E7EB] p-10 text-center space-y-3 shadow-xs">
-                <div className="w-12 h-12 rounded-xl bg-gray-100 text-gray-600 flex items-center justify-center mx-auto border border-gray-200">
-                  <Users className="w-6 h-6 text-gray-500" />
+              <div className="tactile-chassis bg-[#0C101A] border border-white/10 p-10 text-center space-y-3 rounded-3xl shadow-xl text-white">
+                <div className="w-12 h-12 rounded-2xl bg-[#0F1422] text-slate-400 flex items-center justify-center mx-auto border border-white/10 shadow-md">
+                  <Users className="w-6 h-6 text-slate-400" />
                 </div>
-                <h3 className="text-base font-bold text-[#111827]">No public groups found</h3>
-                <p className="text-xs text-[#6B7280]">
+                <h3 className="text-base font-bold text-white font-display">No public groups found</h3>
+                <p className="text-xs text-slate-300 font-normal">
                   Be the first to launch a public team for your engineering project.
                 </p>
                 <button
                   onClick={() => setIsCreateModalOpen(true)}
-                  className="mt-2 px-4 py-2 rounded-xl bg-[#111827] hover:bg-black text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                  className="mt-2 px-5 py-2.5 text-xs font-bold rounded-xl bg-white hover:bg-slate-200 text-slate-950 shadow-md cursor-pointer transition-all inline-flex items-center"
                 >
                   Create Group
                 </button>
@@ -518,16 +515,16 @@ function EdBuildContent() {
 
           {/* 4. CREATE GROUP MODAL */}
           {isCreateModalOpen && (
-            <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 animate-in fade-in duration-150">
-              <div className="bg-white rounded-2xl border border-[#E5E7EB] shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden text-[#111827] font-sans">
+            <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 animate-in fade-in duration-150">
+              <div className="tactile-chassis bg-[#0C101A] border border-white/10 shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden text-white font-sans rounded-3xl">
                 
                 {/* Modal Header */}
-                <div className="p-5 sm:p-6 border-b border-[#E5E7EB] flex items-center justify-between bg-white shrink-0">
+                <div className="p-5 sm:p-6 border-b border-white/10 flex items-center justify-between bg-[#0F1422] shrink-0">
                   <div>
-                    <h3 className="text-lg font-bold text-[#111827]">
+                    <h3 className="text-lg font-bold text-white font-display">
                       Create an EdBuild Project Group
                     </h3>
-                    <p className="text-xs text-[#6B7280] mt-0.5">
+                    <p className="text-xs text-slate-400 mt-0.5 font-normal">
                       Configure your team size, access type, and engineering problem statement.
                     </p>
                   </div>
@@ -536,7 +533,7 @@ function EdBuildContent() {
                       setIsCreateModalOpen(false);
                       setCreateSuccessData(null);
                     }}
-                    className="text-[#6B7280] hover:text-[#111827] p-1.5 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                    className="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -545,24 +542,24 @@ function EdBuildContent() {
                 {/* Success View */}
                 {createSuccessData ? (
                   <div className="p-8 text-center space-y-5 my-auto">
-                    <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto">
+                    <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 flex items-center justify-center mx-auto shadow-md">
                       <Check className="w-7 h-7" />
                     </div>
-                    <h3 className="text-xl font-bold text-[#111827]">
+                    <h3 className="text-xl font-bold text-white font-display">
                       EdBuild Group Created Successfully!
                     </h3>
 
                     {createSuccessData.accessType === "private" && createSuccessData.joinKey && (
-                      <div className="p-5 rounded-2xl bg-gray-50 border border-[#E5E7EB] max-w-sm mx-auto space-y-2.5">
-                        <span className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wider block">
+                      <div className="p-5 rounded-2xl bg-[#0F1422] border border-white/10 max-w-sm mx-auto space-y-2.5">
+                        <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
                           Your Private Room Join Key
                         </span>
-                        <div className="text-2xl font-mono font-bold text-[#111827] tracking-wider select-all">
+                        <div className="text-2xl font-mono font-bold text-white tracking-wider select-all">
                           {createSuccessData.joinKey}
                         </div>
                         <button
                           onClick={() => handleCopyKey(createSuccessData.joinKey!)}
-                          className="px-4 py-1.5 rounded-xl bg-white hover:bg-gray-50 border border-[#E5E7EB] text-xs font-semibold inline-flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+                          className="px-4 py-1.5 rounded-xl text-xs font-bold bg-white hover:bg-slate-200 text-slate-950 inline-flex items-center gap-1.5 cursor-pointer shadow-md transition-all"
                         >
                           {copiedKey === createSuccessData.joinKey ? (
                             <>
@@ -571,12 +568,12 @@ function EdBuildContent() {
                             </>
                           ) : (
                             <>
-                              <Copy className="w-3.5 h-3.5 text-[#111827]" />
+                              <Copy className="w-3.5 h-3.5 text-slate-950" />
                               <span>Copy Key</span>
                             </>
                           )}
                         </button>
-                        <p className="text-[11px] text-[#6B7280] mt-1">
+                        <p className="text-[11px] text-slate-400 mt-1 font-normal">
                           Share this key with your teammates so they can join your workspace.
                         </p>
                       </div>
@@ -588,7 +585,7 @@ function EdBuildContent() {
                           setIsCreateModalOpen(false);
                           router.push(`/edbuild/${createSuccessData.groupId}`);
                         }}
-                        className="px-6 py-2.5 bg-[#111827] hover:bg-black text-white text-xs font-semibold rounded-xl shadow-xs transition-colors cursor-pointer"
+                        className="px-6 py-2.5 rounded-xl font-bold text-xs bg-white hover:bg-slate-200 text-slate-950 cursor-pointer shadow-md transition-all"
                       >
                         Enter Workspace Now
                       </button>
@@ -600,7 +597,7 @@ function EdBuildContent() {
                     
                     {/* Access Type Toggle */}
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
                         Workspace Access Type
                       </label>
                       <div className="grid grid-cols-2 gap-3">
@@ -609,16 +606,16 @@ function EdBuildContent() {
                           onClick={() => setAccessType("public")}
                           className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
                             accessType === "public"
-                              ? "bg-blue-50/70 border-blue-300 ring-1 ring-blue-300"
-                              : "bg-white border-[#E5E7EB] hover:bg-gray-50"
+                              ? "bg-white text-slate-950 border-white shadow-md font-bold"
+                              : "bg-[#0F1422] border-white/10 text-white hover:border-white/20"
                           }`}
                         >
-                          <div className="flex items-center gap-2 font-bold text-xs text-[#111827]">
-                            <Globe className="w-4 h-4 text-blue-600" />
+                          <div className="flex items-center gap-2 font-bold text-xs">
+                            <Globe className="w-4 h-4" />
                             <span>Public Group</span>
                           </div>
-                          <p className="text-[11px] text-[#6B7280] mt-1">
-                            Listed in the directory. Any student can discover and join until team size reaches limit.
+                          <p className={`text-[11px] mt-1 font-normal ${accessType === "public" ? "text-slate-800" : "text-slate-400"}`}>
+                            Listed in the directory. Any student can discover and join.
                           </p>
                         </button>
 
@@ -627,16 +624,16 @@ function EdBuildContent() {
                           onClick={() => setAccessType("private")}
                           className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
                             accessType === "private"
-                              ? "bg-amber-50/70 border-amber-300 ring-1 ring-amber-300"
-                              : "bg-white border-[#E5E7EB] hover:bg-gray-50"
+                              ? "bg-white text-slate-950 border-white shadow-md font-bold"
+                              : "bg-[#0F1422] border-white/10 text-white hover:border-white/20"
                           }`}
                         >
-                          <div className="flex items-center gap-2 font-bold text-xs text-[#111827]">
-                            <Lock className="w-4 h-4 text-amber-600" />
+                          <div className="flex items-center gap-2 font-bold text-xs">
+                            <Lock className="w-4 h-4" />
                             <span>Private Group</span>
                           </div>
-                          <p className="text-[11px] text-[#6B7280] mt-1">
-                            Generates a private key. Only teammates with the key can join and view your workspace.
+                          <p className={`text-[11px] mt-1 font-normal ${accessType === "private" ? "text-slate-800" : "text-slate-400"}`}>
+                            Generates a private key. Only teammates with the key can join.
                           </p>
                         </button>
                       </div>
@@ -644,9 +641,9 @@ function EdBuildContent() {
 
                     {/* Team Size Selector */}
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold uppercase tracking-wider text-[#6B7280] flex items-center justify-between">
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
                         <span>Max Team Size (Members)</span>
-                        <span className="text-[#111827] font-bold">{teamSize} Members</span>
+                        <span className="text-white font-bold">{teamSize} Members</span>
                       </label>
                       <div className="flex items-center gap-2">
                         {[2, 3, 4, 5, 6].map((size) => (
@@ -654,10 +651,10 @@ function EdBuildContent() {
                             key={size}
                             type="button"
                             onClick={() => setTeamSize(size)}
-                            className={`flex-1 py-2 text-xs font-semibold rounded-xl border transition-all cursor-pointer ${
+                            className={`flex-1 py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
                               teamSize === size
-                                ? "bg-[#111827] text-white border-[#111827] shadow-xs"
-                                : "bg-white border-[#E5E7EB] text-[#374151] hover:bg-gray-50"
+                                ? "bg-white text-slate-950 border-white shadow-sm"
+                                : "bg-[#0F1422] border-white/10 text-slate-300 hover:text-white"
                             }`}
                           >
                             {size}
@@ -668,7 +665,7 @@ function EdBuildContent() {
 
                     {/* Project Name */}
                     <div className="space-y-1">
-                      <label className="text-xs font-semibold text-[#111827]">
+                      <label className="text-xs font-bold text-white uppercase tracking-wider">
                         Project Name *
                       </label>
                       <input
@@ -677,54 +674,54 @@ function EdBuildContent() {
                         placeholder="e.g. Distributed Rate Limiting Proxy, RAG Copilot..."
                         value={projectName}
                         onChange={(e) => setProjectName(e.target.value)}
-                        className="w-full px-3.5 py-2.5 text-xs bg-white border border-[#E5E7EB] rounded-xl text-[#111827] shadow-xs focus:outline-none focus:border-[#2563EB]"
+                        className="w-full px-3.5 py-2.5 text-xs bg-[#0F1422] border border-white/15 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-white/30"
                       />
                     </div>
 
                     {/* Leader Information (for public verification) */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-[#111827]">Team Leader Name *</label>
+                        <label className="text-xs font-bold text-white uppercase tracking-wider">Team Leader *</label>
                         <input
                           type="text"
                           required
                           value={leaderName}
                           onChange={(e) => setLeaderName(e.target.value)}
-                          className="w-full px-3.5 py-2 text-xs bg-white border border-[#E5E7EB] rounded-xl text-[#111827] shadow-xs focus:outline-none focus:border-[#2563EB]"
+                          className="w-full px-3.5 py-2 text-xs bg-[#0F1422] border border-white/15 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-white/30"
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-[#111827]">Email ID *</label>
+                        <label className="text-xs font-bold text-white uppercase tracking-wider">Email ID *</label>
                         <input
                           type="email"
                           required
                           value={leaderEmail}
                           onChange={(e) => setLeaderEmail(e.target.value)}
-                          className="w-full px-3.5 py-2 text-xs bg-white border border-[#E5E7EB] rounded-xl text-[#111827] shadow-xs focus:outline-none focus:border-[#2563EB]"
+                          className="w-full px-3.5 py-2 text-xs bg-[#0F1422] border border-white/15 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-white/30"
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-xs font-semibold text-[#111827]">Phone Number</label>
+                        <label className="text-xs font-bold text-white uppercase tracking-wider">Phone</label>
                         <input
                           type="tel"
                           placeholder="+91..."
                           value={leaderPhone}
                           onChange={(e) => setLeaderPhone(e.target.value)}
-                          className="w-full px-3.5 py-2 text-xs bg-white border border-[#E5E7EB] rounded-xl text-[#111827] shadow-xs focus:outline-none focus:border-[#2563EB]"
+                          className="w-full px-3.5 py-2 text-xs bg-[#0F1422] border border-white/15 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-white/30"
                         />
                       </div>
                     </div>
 
                     {/* Problem Statement Preset Picker */}
                     <div className="space-y-1">
-                      <label className="text-xs font-semibold text-[#111827] flex items-center justify-between">
-                        <span>Select from Curated Problem Statements (Optional)</span>
-                        <span className="text-[11px] text-blue-600 font-medium">Auto-fills statement</span>
+                      <label className="text-xs font-bold text-white uppercase tracking-wider flex items-center justify-between">
+                        <span>Select Curated Problem Statement (Optional)</span>
+                        <span className="text-[11px] text-cyan-400 font-medium">Auto-fills</span>
                       </label>
                       <select
                         value={selectedProblemPreset}
                         onChange={(e) => handleSelectPreset(e.target.value)}
-                        className="w-full px-3.5 py-2 text-xs bg-white border border-[#E5E7EB] rounded-xl text-[#111827] shadow-xs focus:outline-none focus:border-[#2563EB] cursor-pointer"
+                        className="w-full px-3.5 py-2 text-xs bg-[#0F1422] border border-white/15 rounded-xl text-white focus:outline-none focus:border-white/30 cursor-pointer"
                       >
                         <option value="">-- Choose a standard industry problem --</option>
                         {PROBLEM_STATEMENTS_DATA.map((p) => (
@@ -737,7 +734,7 @@ function EdBuildContent() {
 
                     {/* Problem Statement Text Area */}
                     <div className="space-y-1">
-                      <label className="text-xs font-semibold text-[#111827]">
+                      <label className="text-xs font-bold text-white uppercase tracking-wider">
                         Problem Statement &amp; Scope *
                       </label>
                       <textarea
@@ -746,23 +743,23 @@ function EdBuildContent() {
                         placeholder="Describe the real-world technical problem your team will solve..."
                         value={problemStatement}
                         onChange={(e) => setProblemStatement(e.target.value)}
-                        className="w-full px-3.5 py-2.5 text-xs bg-white border border-[#E5E7EB] rounded-xl text-[#111827] shadow-xs focus:outline-none focus:border-[#2563EB]"
+                        className="w-full px-3.5 py-2.5 text-xs bg-[#0F1422] border border-white/15 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-white/30 leading-relaxed"
                       />
                     </div>
 
                     {/* Submit Button */}
-                    <div className="pt-3 border-t border-[#F3F4F6] flex items-center justify-end gap-2">
+                    <div className="pt-3 border-t border-white/10 flex items-center justify-end gap-2">
                       <button
                         type="button"
                         onClick={() => setIsCreateModalOpen(false)}
-                        className="px-4 py-2 text-xs font-semibold text-[#6B7280] hover:bg-gray-100 rounded-xl cursor-pointer"
+                        className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white cursor-pointer"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="px-5 py-2.5 bg-[#111827] hover:bg-black text-white text-xs font-semibold rounded-xl shadow-xs transition-colors cursor-pointer"
+                        className="px-5 py-2.5 rounded-xl text-xs font-bold bg-white hover:bg-slate-200 text-slate-950 cursor-pointer shadow-md transition-all"
                       >
                         {isSubmitting ? "Creating Group..." : accessType === "private" ? "Create Private Group & Key" : "Publish Public Group"}
                       </button>
@@ -775,23 +772,23 @@ function EdBuildContent() {
 
           {/* 5. JOIN WITH PRIVATE KEY MODAL */}
           {isJoinKeyModalOpen && (
-            <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
-              <div className="bg-white rounded-2xl border border-[#E5E7EB] shadow-2xl w-full max-w-md overflow-hidden text-[#111827] font-sans">
-                <div className="p-5 border-b border-[#E5E7EB] flex items-center justify-between bg-white">
+            <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-150">
+              <div className="tactile-chassis bg-[#0C101A] border border-white/10 shadow-2xl w-full max-w-md overflow-hidden text-white font-sans rounded-3xl">
+                <div className="p-5 border-b border-white/10 flex items-center justify-between bg-[#0F1422]">
                   <div className="flex items-center gap-2">
-                    <Key className="w-5 h-5 text-[#2563EB]" />
-                    <h3 className="text-base font-bold text-[#111827]">
+                    <Key className="w-5 h-5 text-white" />
+                    <h3 className="text-base font-bold text-white font-display">
                       Join Private EdBuild Workspace
                     </h3>
                   </div>
-                  <button onClick={() => setIsJoinKeyModalOpen(false)} className="text-[#6B7280] hover:text-[#111827] p-1.5 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                  <button onClick={() => setIsJoinKeyModalOpen(false)} className="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">
                     <X className="w-5 h-5" />
                   </button>
                 </div>
 
                 <form onSubmit={handleJoinByKey} className="p-6 space-y-4">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-[#111827]">
+                    <label className="text-xs font-bold text-white uppercase tracking-wider">
                       Enter Private Join Key
                     </label>
                     <input
@@ -800,13 +797,13 @@ function EdBuildContent() {
                       placeholder="e.g. EDBUILD-7X9KP"
                       value={enteredKey}
                       onChange={(e) => setEnteredKey(e.target.value.toUpperCase())}
-                      className="w-full px-3.5 py-3 text-center text-sm font-mono font-bold tracking-wider uppercase bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] focus:outline-none text-[#111827]"
+                      className="w-full px-3.5 py-3 text-center text-sm font-mono font-bold tracking-wider uppercase bg-[#0F1422] border border-white/15 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-white/30"
                     />
                   </div>
 
                   {keyError && (
-                    <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs font-medium text-rose-700 flex items-center gap-2">
-                      <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                    <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs font-medium text-rose-300 flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
                       <span>{keyError}</span>
                     </div>
                   )}
@@ -815,14 +812,14 @@ function EdBuildContent() {
                     <button
                       type="button"
                       onClick={() => setIsJoinKeyModalOpen(false)}
-                      className="px-4 py-2 text-xs font-semibold text-[#6B7280] hover:bg-gray-100 rounded-xl cursor-pointer"
+                      className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white cursor-pointer"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={isJoiningKey}
-                      className="px-5 py-2.5 bg-[#111827] hover:bg-black text-white text-xs font-semibold rounded-xl shadow-xs transition-colors cursor-pointer"
+                      className="px-5 py-2.5 rounded-xl text-xs font-bold bg-white hover:bg-slate-200 text-slate-950 cursor-pointer shadow-md transition-all"
                     >
                       {isJoiningKey ? "Verifying..." : "Join Workspace"}
                     </button>
@@ -833,17 +830,16 @@ function EdBuildContent() {
           )}
 
         </div>
-      </div>
-    </AuthGuard>
-  );
+      </AuthGuard>
+    );
 }
 
 export default function EdBuildPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-white flex items-center justify-center">
-          <div className="w-6 h-6 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin" />
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >

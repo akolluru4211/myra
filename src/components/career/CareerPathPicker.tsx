@@ -337,19 +337,19 @@ export default function CareerPathPicker({
   }, [allPaths, selectedIds]);
 
   return (
-    <div className="w-full bg-white text-[#111827] font-sans space-y-4" ref={containerRef}>
+    <div className="w-full bg-transparent text-white font-sans space-y-4" ref={containerRef}>
       {/* Top Header & Quick Exploring Button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-[#111827]">
+            <span className="text-sm font-bold text-white font-display">
               Designated Career Paths
             </span>
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#F7F8FA] border border-[#E5E7EB] text-[#6B7280]">
+            <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-[#0F1422] border border-white/10 text-white">
               {selectedIds.length} / 3 selected
             </span>
           </div>
-          <p className="text-xs text-[#6B7280] mt-0.5">
+          <p className="text-xs text-slate-300 mt-0.5">
             Pick 1 primary focus and up to 2 secondary tracks to adapt your courses, mock interviews, and practice.
           </p>
         </div>
@@ -360,8 +360,8 @@ export default function CareerPathPicker({
           onClick={handleSelectOtherExploring}
           className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors flex items-center gap-1.5 shrink-0 cursor-pointer ${
             selectedIds.includes("other_exploring")
-              ? "bg-[#111827] text-white border-[#111827] shadow-xs"
-              : "bg-white text-[#4B5563] border-[#E5E7EB] hover:bg-[#F7F8FA] hover:text-[#111827]"
+              ? "bg-white text-slate-950 font-bold border-white"
+              : "bg-[#0F1422] text-white border-white/10 hover:bg-white/10"
           }`}
         >
           <HelpCircle className="w-3.5 h-3.5" />
@@ -371,9 +371,9 @@ export default function CareerPathPicker({
       </div>
 
       {/* Selected Paths Tray (Compact horizontal tags) */}
-      <div className="p-3 bg-[#F7F8FA] border border-[#E5E7EB] rounded-xl space-y-2">
+      <div className="p-3.5 bg-[#0F1422] border border-white/10 rounded-xl space-y-2.5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="text-[11px] font-semibold text-[#6B7280]">
+          <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
             Active Trajectory:
           </span>
           {selectedIds.length > 0 && (
@@ -384,7 +384,7 @@ export default function CareerPathPicker({
                 setPrimaryId("");
                 notifyParent([], "");
               }}
-              className="text-[11px] text-[#6B7280] hover:text-[#111827] hover:underline cursor-pointer"
+              className="text-[11px] text-slate-400 hover:text-white hover:underline cursor-pointer transition-colors"
             >
               Clear all
             </button>
@@ -393,7 +393,7 @@ export default function CareerPathPicker({
 
         <div className="flex flex-wrap items-center gap-2">
           {selectedIds.length === 0 ? (
-            <span className="text-xs text-[#9CA3AF] italic">
+            <span className="text-xs text-slate-400 italic">
               No target paths selected yet. Use the search bar below to choose.
             </span>
           ) : (
@@ -407,33 +407,33 @@ export default function CareerPathPicker({
                   key={id}
                   className={`inline-flex items-center gap-2 pl-2.5 pr-1.5 py-1 rounded-lg border text-xs font-medium transition-all ${
                     isPrimary
-                      ? "bg-white text-[#2563EB] border-[#2563EB] shadow-2xs ring-1 ring-[#2563EB]/20"
-                      : "bg-white text-[#111827] border-[#E5E7EB]"
+                      ? "bg-white text-slate-950 font-bold border-white shadow-md"
+                      : "bg-[#0C101A] text-white border-white/15 hover:border-white/30"
                   }`}
                 >
                   <div className="flex items-center gap-1.5">
                     {isPrimary ? (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-50 text-[#2563EB]">
-                        <Star className="w-3 h-3 fill-current" />
+                      <span className="inline-flex items-center gap-1 text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-slate-950 text-white">
+                        <Star className="w-3 h-3 fill-current text-white" />
                         Primary
                       </span>
                     ) : (
                       <button
                         type="button"
                         onClick={(e) => handleSetPrimary(id, e)}
-                        className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-[#F7F8FA] hover:bg-[#E5E7EB] text-[#6B7280] hover:text-[#111827] transition-colors cursor-pointer"
+                        className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
                         title="Set as primary career focus"
                       >
                         Make Primary
                       </button>
                     )}
-                    <span className="font-semibold text-xs text-[#111827]">{name}</span>
+                    <span className="font-semibold text-xs">{name}</span>
                   </div>
 
                   <button
                     type="button"
                     onClick={() => handleTogglePath(id)}
-                    className="p-1 rounded-md text-[#9CA3AF] hover:text-[#111827] hover:bg-gray-100 transition-colors cursor-pointer"
+                    className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                     aria-label={`Remove ${name}`}
                   >
                     <X className="w-3.5 h-3.5" />
@@ -447,8 +447,8 @@ export default function CareerPathPicker({
 
       {/* Error / Alert feedback */}
       {error && (
-        <div className="p-3 bg-rose-50 border border-rose-200 rounded-lg text-xs text-rose-700 flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+        <div className="p-3 bg-rose-950/40 border border-rose-500/30 rounded-lg text-xs text-rose-300 flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
           <span>{error}</span>
         </div>
       )}
@@ -456,7 +456,7 @@ export default function CareerPathPicker({
       {/* Search Input Bar with Combobox Options Dropdown */}
       <div className="relative">
         <div className="relative">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
           <input
             ref={searchInputRef}
             type="text"
@@ -468,7 +468,7 @@ export default function CareerPathPicker({
             onFocus={() => setIsDropdownOpen(true)}
             onKeyDown={handleKeyDown}
             placeholder="Type to search and select career paths (e.g. Full Stack, AI, DevOps, FinTech)..."
-            className="w-full pl-10 pr-20 py-2.5 text-xs sm:text-sm bg-white border border-[#E5E7EB] rounded-xl text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition-all shadow-2xs"
+            className="w-full pl-10 pr-20 py-2.5 text-xs sm:text-sm bg-[#0F1422] border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20 transition-all shadow-inner"
           />
 
           <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
@@ -479,7 +479,7 @@ export default function CareerPathPicker({
                   setSearchQuery("");
                   searchInputRef.current?.focus();
                 }}
-                className="p-1 text-[#9CA3AF] hover:text-[#111827] rounded-md transition-colors"
+                className="p-1 text-slate-400 hover:text-white rounded-md transition-colors"
                 title="Clear query"
               >
                 <X className="w-4 h-4" />
@@ -488,7 +488,7 @@ export default function CareerPathPicker({
             <button
               type="button"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="p-1 text-[#9CA3AF] hover:text-[#111827] rounded-md transition-colors cursor-pointer"
+              className="p-1 text-slate-400 hover:text-white rounded-md transition-colors cursor-pointer"
               aria-label="Toggle options menu"
             >
               {isDropdownOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -498,24 +498,24 @@ export default function CareerPathPicker({
 
         {/* Dynamic Options Dropdown Panel */}
         {isDropdownOpen && (
-          <div className="absolute left-0 right-0 top-full mt-1.5 bg-white border border-[#E5E7EB] rounded-xl shadow-xl z-40 max-h-72 overflow-y-auto divide-y divide-[#E5E7EB] animate-in fade-in zoom-in-95 duration-100">
+          <div className="absolute left-0 right-0 top-full mt-1.5 bg-[#0C101A] border border-white/10 rounded-xl shadow-2xl z-40 max-h-72 overflow-y-auto divide-y divide-white/10 animate-in fade-in zoom-in-95 duration-100">
             {loading ? (
-              <div className="p-6 text-center text-[#6B7280] flex items-center justify-center gap-2">
-                <Loader2 className="w-4 h-4 animate-spin text-[#2563EB]" />
+              <div className="p-6 text-center text-slate-300 flex items-center justify-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin text-white" />
                 <span className="text-xs">Loading career options...</span>
               </div>
             ) : totalMatchingPaths === 0 ? (
               <div className="p-5 text-center space-y-2">
-                <p className="text-xs font-semibold text-[#111827]">
+                <p className="text-xs font-semibold text-white">
                   No career paths matched &ldquo;{searchQuery}&rdquo;
                 </p>
-                <p className="text-[11px] text-[#6B7280]">
+                <p className="text-[11px] text-slate-400">
                   Try searching a different keyword or choose &ldquo;Exploring / Not Sure Yet&rdquo;.
                 </p>
                 <button
                   type="button"
                   onClick={handleSelectOtherExploring}
-                  className="mt-1 px-3 py-1.5 text-xs font-semibold bg-[#111827] text-white rounded-lg hover:bg-black transition-colors cursor-pointer"
+                  className="mt-1 px-3 py-1.5 text-xs font-semibold bg-white text-slate-950 rounded-lg hover:bg-slate-200 transition-colors cursor-pointer"
                 >
                   Select Exploring / Not Sure Yet
                 </button>
@@ -523,7 +523,7 @@ export default function CareerPathPicker({
             ) : (
               filteredCategories.map((cat) => (
                 <div key={cat.name} className="p-2">
-                  <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[#6B7280] bg-[#F7F8FA] rounded-md mb-1">
+                  <div className="px-2 py-1 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 bg-white/5 rounded-md mb-1">
                     {cat.name} ({cat.paths.length})
                   </div>
                   <div className="space-y-0.5">
@@ -537,16 +537,16 @@ export default function CareerPathPicker({
                           onClick={() => handleTogglePath(path.id)}
                           className={`w-full text-left px-3 py-2 rounded-lg flex items-start justify-between gap-3 transition-colors cursor-pointer ${
                             isSelected
-                              ? "bg-blue-50/70 text-[#111827]"
-                              : "hover:bg-[#F7F8FA] text-[#111827]"
+                              ? "bg-white/10 text-white border border-white/20"
+                              : "hover:bg-white/5 text-slate-200"
                           }`}
                         >
                           <div className="flex items-start gap-2.5 min-w-0">
                             <div
                               className={`w-4 h-4 rounded mt-0.5 flex items-center justify-center shrink-0 border transition-colors ${
                                 isSelected
-                                  ? "bg-[#2563EB] border-[#2563EB] text-white"
-                                  : "border-[#D1D5DB] bg-white"
+                                  ? "bg-white border-white text-slate-950 font-bold"
+                                  : "border-white/20 bg-[#0F1422]"
                               }`}
                             >
                               {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
@@ -554,18 +554,18 @@ export default function CareerPathPicker({
 
                             <div className="min-w-0 space-y-0.5">
                               <div className="flex items-center gap-2">
-                                <span className="text-xs font-bold text-[#111827] truncate">
+                                <span className="text-xs font-bold text-white truncate">
                                   {highlightMatch(path.name, searchQuery)}
                                 </span>
                               </div>
-                              <p className="text-[11px] text-[#6B7280] line-clamp-1">
+                              <p className="text-[11px] text-slate-400 line-clamp-1">
                                 {path.description}
                               </p>
                               <div className="flex flex-wrap gap-1 pt-0.5">
                                 {path.typical_skills.slice(0, 3).map((skill, sIdx) => (
                                   <span
                                     key={sIdx}
-                                    className="text-[9px] px-1.5 py-0.2 rounded bg-white border border-[#E5E7EB] text-[#4B5563]"
+                                    className="text-[9px] px-1.5 py-0.2 rounded bg-white/5 border border-white/10 text-slate-300 font-mono"
                                   >
                                     {skill}
                                   </span>
@@ -579,8 +579,8 @@ export default function CareerPathPicker({
                               <span
                                 className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
                                   isPrimary
-                                    ? "bg-[#2563EB] text-white"
-                                    : "bg-gray-200 text-[#374151]"
+                                    ? "bg-white text-slate-950 font-bold"
+                                    : "bg-white/15 text-white"
                                 }`}
                               >
                                 {isPrimary ? "Primary" : "Secondary"}
@@ -605,7 +605,7 @@ export default function CareerPathPicker({
             type="button"
             disabled={saving || selectedIds.length === 0}
             onClick={handleSave}
-            className="px-5 py-2 bg-[#111827] hover:bg-black disabled:opacity-50 text-white text-xs font-semibold rounded-lg transition-colors inline-flex items-center gap-2 shadow-xs cursor-pointer"
+            className="px-5 py-2 bg-white hover:bg-slate-200 disabled:opacity-40 text-slate-950 text-xs font-bold rounded-lg transition-colors inline-flex items-center gap-2 shadow-sm cursor-pointer"
           >
             {saving ? (
               <>

@@ -30,22 +30,92 @@ const PUBLIC_PAGE_PREFIXES = [
   "/auth/signup",
   "/auth/forgot-password",
   "/auth/reset-password",
+  "/auth/verify-email",
+  "/for",
   "/for-career",
   "/for-college",
   "/for-professionals",
+  "/sector",
   "/sector-landing",
   "/privacy",
   "/terms",
+  "/cookies",
+  "/refund",
   "/feedback",
   "/about",
   "/contact",
   "/pricing",
   "/consent/verify",
-  "/mobile",
   "/learn",
   "/verify",
   "/certificate",
+  "/u",
+  "/portfolio",
+  "/colleges",
+  "/network",
+  "/newsletter",
 ];
+
+// Reserved first-level route segments that belong to authenticated or app-internal sections
+const RESERVED_FIRST_LEVEL_ROUTES = new Set([
+  "about",
+  "admin",
+  "ambassador",
+  "api",
+  "aptitude",
+  "auth",
+  "billing",
+  "career",
+  "colleges",
+  "college",
+  "companies",
+  "consent",
+  "contact",
+  "cookies",
+  "dashboard",
+  "dsa",
+  "edbuild",
+  "employee",
+  "employer",
+  "focus",
+  "for",
+  "for-career",
+  "for-college",
+  "for-professionals",
+  "founder",
+  "hr",
+  "interview-experiences",
+  "interviews",
+  "jobs",
+  "leadership-assessment",
+  "learn",
+  "login",
+  "messages",
+  "mobile",
+  "network",
+  "networking",
+  "newsletter",
+  "offers",
+  "onboarding",
+  "portfolio",
+  "practice",
+  "pricing",
+  "privacy",
+  "problems",
+  "profile",
+  "projects",
+  "projectstudio",
+  "refund",
+  "resumes",
+  "sector",
+  "sector-landing",
+  "settings",
+  "signup",
+  "styleguide",
+  "terms",
+  "u",
+  "verify",
+]);
 
 // Public API endpoints accessible without authentication
 const PUBLIC_API_PREFIXES = [
@@ -57,6 +127,8 @@ const PUBLIC_API_PREFIXES = [
   "/api/auth/reset-password",
   "/api/auth/logout",
   "/api/auth/session",
+  "/api/profile/check-username",
+  "/api/profile/public",
   "/api/health",
   "/api/landing",
   "/api/billing/webhook",
@@ -66,7 +138,9 @@ const PUBLIC_API_PREFIXES = [
   "/api/events",
   "/api/interview/tts",
   "/api/interview/turn",
+  "/api/interview/question-bank",
   "/api/ai/myra",
+  "/api/ai/ocr",
   "/api/learn",
   "/api/certificates",
   "/api/feature-flags",
@@ -183,14 +257,84 @@ export function middleware(req: NextRequest) {
     }
   }
 
-  // 3. Allow root landing page
+  // 3. Dev-Only Routes: Hide in production
+  if (
+    process.env.NODE_ENV === "production" &&
+    (pathname === "/mobile" ||
+      pathname.startsWith("/mobile/") ||
+      pathname === "/styleguide" ||
+      pathname.startsWith("/styleguide/"))
+  ) {
+    const notFoundRes = new NextResponse("Not Found", { status: 404 });
+    return applySecurityHeaders(notFoundRes, requestId);
+  }
+
+  // --- UNIFIED COMING SOON GATE ---
+  // A single middleware flag gating the entire site
+  const isComingSoonActive =
+    process.env.COMING_SOON_MODE === "true" ||
+    process.env.NEXT_PUBLIC_COMING_SOON === "true";
+
+  const hasPreviewQuery = req.nextUrl.searchParams.get("preview") === "true";
+  const hasPreviewCookie = req.cookies.get("edw_preview")?.value === "true";
+  const hasPreviewBypass = hasPreviewQuery || hasPreviewCookie;
+
+  const isGateExemptRoute =
+    pathname === "/admin" ||
+    pathname.startsWith("/admin/") ||
+    pathname === "/login" ||
+    pathname === "/signup" ||
+    pathname.startsWith("/auth/") ||
+    pathname.startsWith("/api/auth/") ||
+    pathname === "/api/feature-flags";
+
+  if (isComingSoonActive && !hasPreviewBypass && !isGateExemptRoute) {
+    if (pathname === "/") {
+      const reqHeaders = new Headers(req.headers);
+      reqHeaders.set("x-coming-soon-gated", "true");
+      const res = NextResponse.next({ request: { headers: reqHeaders } });
+      return applySecurityHeaders(res, requestId);
+    }
+
+    const gateRedirectUrl = new URL("/?coming_soon=true", req.url);
+    const gateRes = NextResponse.redirect(gateRedirectUrl);
+    return applySecurityHeaders(gateRes, requestId);
+  }
+
+  // Helper to persist preview cookie if preview query is provided
+  const setPreviewCookieIfPresent = (res: NextResponse) => {
+    if (hasPreviewQuery) {
+      res.cookies.set("edw_preview", "true", {
+        path: "/",
+        maxAge: 86400,
+        sameSite: "lax",
+      });
+    }
+    return res;
+  };
+
+  // 4. Allow root landing page
   if (pathname === "/") {
     const res = NextResponse.next();
+    setPreviewCookieIfPresent(res);
     return applySecurityHeaders(res, requestId);
   }
 
-  // 4. Allow public pages
+  // 5. Intercept root-level student handle URLs (e.g. edworld.co.in/adarsh_2026) and 301-redirect to /u/:username
+  const segments = pathname.split("/").filter(Boolean);
+  const isDirectUsernamePage =
+    segments.length === 1 &&
+    !RESERVED_FIRST_LEVEL_ROUTES.has(segments[0].toLowerCase()) &&
+    !segments[0].includes(".");
+
+  if (isDirectUsernamePage) {
+    const redirectUrl = new URL(`/u/${segments[0]}`, req.url);
+    const redirectRes = NextResponse.redirect(redirectUrl, 301);
+    return applySecurityHeaders(redirectRes, requestId);
+  }
+
   const isPublicPage = PUBLIC_PAGE_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+
   if (isPublicPage) {
     const res = NextResponse.next();
     return applySecurityHeaders(res, requestId);

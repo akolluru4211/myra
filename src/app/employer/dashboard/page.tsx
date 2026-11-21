@@ -52,7 +52,7 @@ export default function EmployerDashboardPage() {
 
           <div className="flex items-center gap-2.5">
             <Link
-              href="/jobs/employer"
+              href="/employer/jobs"
               className="px-4 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold flex items-center gap-2 shadow-sm transition-all"
             >
               <Users className="w-4 h-4" />
@@ -80,7 +80,7 @@ export default function EmployerDashboardPage() {
                 Create your first job posting to source pre-calibrated candidates with verified skill backgrounds.
               </p>
               <Link
-                href="/jobs/employer"
+                href="/employer/jobs"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-800 text-white text-xs font-bold mt-2 hover:bg-emerald-900 transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -107,7 +107,7 @@ export default function EmployerDashboardPage() {
                       <span>View</span>
                     </Link>
                     <Link
-                      href="/jobs/employer"
+                      href="/employer/jobs"
                       className="px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 text-xs font-bold text-emerald-800 flex items-center gap-1.5"
                     >
                       <Users className="w-3.5 h-3.5" />

@@ -9,8 +9,8 @@ export const metadata = {
 
 export default function TermsOfServicePage() {
   return (
-    <div className="min-h-screen bg-[#FCFCFB] py-16 px-4 sm:px-6 lg:px-8 text-[#13141B] font-sans selection:bg-[#00D2B4]/20 selection:text-[#0A5245]">
-      <div className="max-w-4xl mx-auto space-y-10 bg-white p-6 sm:p-12 rounded-3xl border border-[#EBECEF] shadow-xs leading-relaxed">
+    <div className="w-full text-slate-900 font-sans py-4 sm:py-6 animate-in fade-in duration-200">
+      <div className="max-w-4xl mx-auto space-y-10 liquid-glass-card p-6 sm:p-12 rounded-3xl shadow-xs leading-relaxed">
         
         {/* Header */}
         <div className="border-b border-[#EBECEF] pb-6 space-y-2">

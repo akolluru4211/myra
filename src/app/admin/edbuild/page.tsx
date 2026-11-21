@@ -439,7 +439,7 @@ export default function AdminEdbuildPage() {
                         </div>
 
                         <Link
-                          href={`/portfolio/${m.user_id}`}
+                          href={`/u/${m.user_id}/portfolio`}
                           target="_blank"
                           className="text-[10px] text-[#2563EB] hover:underline shrink-0"
                         >

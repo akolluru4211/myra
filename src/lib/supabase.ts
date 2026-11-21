@@ -1,4 +1,4 @@
-import { createClient as createBrowserSupabaseClient } from "./supabase/client";
+import { createClient as createBrowserSupabaseClient } from "./supabase/client.ts";
 
 // Export standard singleton browser client for client components
 export const supabase = createBrowserSupabaseClient();

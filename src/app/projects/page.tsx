@@ -136,22 +136,22 @@ export default function ProjectStudioPage() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-[#F8F9FA] text-[#111827] font-sans pb-20">
+      <div className="min-h-screen text-slate-100 font-sans pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 space-y-6 animate-in fade-in duration-200">
           
           {/* 1. HEADER */}
-          <section className="bg-white rounded-2xl border border-[#E5E7EB] p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-5">
+          <section className="tactile-chassis bg-[#0C101A] border border-white/10 p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-5 shadow-xl rounded-2xl">
             <div className="space-y-1.5 max-w-3xl">
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/30">
                   Project Studio &bull; Capstone Track
                 </span>
-                <span className="text-xs text-[#6B7280] font-medium">Real-World Engineering Challenges</span>
+                <span className="text-xs text-slate-300 font-medium">Real-World Engineering Challenges</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#111827] tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-white font-display tracking-tight">
                 Industry Problem Statements
               </h1>
-              <p className="text-xs sm:text-sm text-[#4B5563] leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
                 Filter and inspect real-world production engineering briefs. Build verifiable proof-of-work capstones tailored to high-tier software engineering, AI, and distributed systems roles.
               </p>
             </div>
@@ -160,7 +160,7 @@ export default function ProjectStudioPage() {
               <button
                 type="button"
                 onClick={() => handleOpenMyra()}
-                className="bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-semibold py-2.5 px-4 rounded-xl shadow-xs transition-colors inline-flex items-center gap-2 cursor-pointer"
+                className="liquid-btn-primary text-xs font-semibold py-2.5 px-4 shadow-sm inline-flex items-center gap-2 cursor-pointer"
               >
                 <Sparkles className="w-4 h-4 text-amber-300" />
                 <span>Recommend with Myra</span>
@@ -169,22 +169,22 @@ export default function ProjectStudioPage() {
           </section>
 
           {/* 2. TOP SEARCH & FILTER BAR */}
-          <section className="bg-white rounded-2xl border border-[#E5E7EB] p-5 sm:p-6 shadow-xs space-y-4">
+          <section className="tactile-chassis bg-[#0C101A] border border-white/10 p-5 sm:p-6 space-y-4 shadow-lg rounded-2xl">
             
             {/* Primary Search Input */}
             <div className="relative">
-              <Search className="w-4 h-4 text-[#9CA3AF] absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Search problem statements by keyword, technology, or scenario (e.g. Redis, RAG, Kafka, Rate Limiter)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-9 py-2.5 text-xs sm:text-sm bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] text-[#111827] placeholder:text-[#9CA3AF] transition-colors"
+                className="w-full pl-10 pr-9 py-2.5 text-xs sm:text-sm bg-[#0F1422] border border-white/15 text-white placeholder-slate-500 rounded-xl focus:outline-hidden focus:border-cyan-400 transition-colors"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#111827] p-1 cursor-pointer"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1 cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -192,7 +192,7 @@ export default function ProjectStudioPage() {
             </div>
 
             {/* Quick Domain Pills & Sponsored Filter Toggle */}
-            <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#F3F4F6]">
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10">
               <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto py-1">
                 {ALL_DOMAINS.map((domain) => {
                   const isActive = selectedDomain === domain;
@@ -201,10 +201,10 @@ export default function ProjectStudioPage() {
                       key={domain}
                       type="button"
                       onClick={() => setSelectedDomain(domain)}
-                      className={`text-xs font-medium px-3 py-1.5 rounded-lg border transition-all cursor-pointer ${
+                      className={`text-xs font-medium px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
                         isActive
-                          ? "bg-[#111827] text-white border-[#111827] shadow-xs"
-                          : "bg-white text-[#4B5563] hover:bg-[#F3F4F6] border-[#E5E7EB]"
+                          ? "bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-500/25"
+                          : "bg-[#0F1422] text-slate-300 hover:text-white hover:bg-white/10 border-white/10"
                       }`}
                     >
                       {domain}
@@ -216,15 +216,15 @@ export default function ProjectStudioPage() {
               <button
                 type="button"
                 onClick={() => setSponsorOnly(!sponsorOnly)}
-                className={`text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all inline-flex items-center gap-1.5 cursor-pointer shrink-0 ${
+                className={`text-xs font-semibold px-3 py-1.5 rounded-xl border transition-all inline-flex items-center gap-1.5 cursor-pointer shrink-0 ${
                   sponsorOnly
-                    ? "bg-amber-50 text-amber-800 border-amber-200 shadow-xs"
-                    : "bg-white text-[#4B5563] hover:bg-[#F3F4F6] border-[#E5E7EB]"
+                    ? "bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-xs"
+                    : "bg-[#0F1422] text-slate-300 hover:text-white hover:bg-white/10 border-white/10"
                 }`}
               >
-                <Award className={`w-3.5 h-3.5 ${sponsorOnly ? "text-amber-600" : "text-[#9CA3AF]"}`} />
+                <Award className={`w-3.5 h-3.5 ${sponsorOnly ? "text-amber-400" : "text-slate-400"}`} />
                 <span>Sponsored Challenges Only</span>
-                {sponsorOnly && <Check className="w-3.5 h-3.5 text-amber-600" />}
+                {sponsorOnly && <Check className="w-3.5 h-3.5 text-amber-400" />}
               </button>
             </div>
 
@@ -233,16 +233,16 @@ export default function ProjectStudioPage() {
               
               {/* Domain Filter */}
               <div>
-                <label className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wider block mb-1">
+                <label className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider block mb-1">
                   Domain / Category
                 </label>
                 <select
                   value={selectedDomain}
                   onChange={(e) => setSelectedDomain(e.target.value as any)}
-                  className="w-full px-3 py-2 text-xs bg-white border border-[#E5E7EB] rounded-xl text-[#111827] focus:outline-none focus:border-[#2563EB] cursor-pointer"
+                  className="w-full px-3 py-2 text-xs cursor-pointer bg-[#0F1422] border border-white/15 text-white rounded-xl focus:outline-hidden focus:border-cyan-400 transition-colors"
                 >
                   {ALL_DOMAINS.map((domain) => (
-                    <option key={domain} value={domain}>
+                    <option key={domain} value={domain} className="bg-[#0C101A] text-white">
                       {domain === "All" ? "All Domains" : domain}
                     </option>
                   ))}
@@ -251,16 +251,16 @@ export default function ProjectStudioPage() {
 
               {/* Difficulty Filter */}
               <div>
-                <label className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wider block mb-1">
+                <label className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider block mb-1">
                   Difficulty Level
                 </label>
                 <select
                   value={selectedDifficulty}
                   onChange={(e) => setSelectedDifficulty(e.target.value as any)}
-                  className="w-full px-3 py-2 text-xs bg-white border border-[#E5E7EB] rounded-xl text-[#111827] focus:outline-none focus:border-[#2563EB] cursor-pointer"
+                  className="w-full px-3 py-2 text-xs cursor-pointer bg-[#0F1422] border border-white/15 text-white rounded-xl focus:outline-hidden focus:border-cyan-400 transition-colors"
                 >
                   {ALL_DIFFICULTIES.map((diff) => (
-                    <option key={diff} value={diff}>
+                    <option key={diff} value={diff} className="bg-[#0C101A] text-white">
                       {diff === "All" ? "All Difficulties" : diff}
                     </option>
                   ))}
@@ -269,16 +269,16 @@ export default function ProjectStudioPage() {
 
               {/* Tech Stack Filter */}
               <div>
-                <label className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wider block mb-1">
+                <label className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider block mb-1">
                   Specific Technology
                 </label>
                 <select
                   value={selectedTech}
                   onChange={(e) => setSelectedTech(e.target.value)}
-                  className="w-full px-3 py-2 text-xs bg-white border border-[#E5E7EB] rounded-xl text-[#111827] focus:outline-none focus:border-[#2563EB] cursor-pointer"
+                  className="w-full px-3 py-2 text-xs cursor-pointer bg-[#0F1422] border border-white/15 text-white rounded-xl focus:outline-hidden focus:border-cyan-400 transition-colors"
                 >
                   {availableTechStacks.map((tech) => (
-                    <option key={tech} value={tech}>
+                    <option key={tech} value={tech} className="bg-[#0C101A] text-white">
                       {tech === "All" ? "All Technologies" : tech}
                     </option>
                   ))}
@@ -292,8 +292,8 @@ export default function ProjectStudioPage() {
                   onClick={handleResetFilters}
                   className={`w-full py-2 px-3 text-xs font-semibold rounded-xl border transition-colors inline-flex items-center justify-center gap-1.5 ${
                     hasActiveFilters
-                      ? "bg-white text-[#111827] hover:bg-gray-50 border-[#E5E7EB] cursor-pointer shadow-xs"
-                      : "bg-[#F9FAFB] text-[#9CA3AF] border-[#E5E7EB] cursor-not-allowed"
+                      ? "liquid-btn-secondary cursor-pointer"
+                      : "bg-[#0F1422] text-slate-500 border-white/5 cursor-not-allowed"
                   }`}
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
@@ -303,42 +303,42 @@ export default function ProjectStudioPage() {
             </div>
 
             {/* Results Count and Active Filter Pills */}
-            <div className="pt-3 border-t border-[#F3F4F6] flex flex-wrap items-center justify-between gap-2.5 text-xs">
-              <div className="text-[#6B7280]">
-                Showing <strong className="text-[#111827] font-semibold">{filteredProblems.length}</strong> of{" "}
+            <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-2.5 text-xs">
+              <div className="text-slate-300">
+                Showing <strong className="text-white font-bold">{filteredProblems.length}</strong> of{" "}
                 {PROBLEM_STATEMENTS_DATA.length} problem statements
               </div>
 
               {hasActiveFilters && (
                 <div className="flex flex-wrap items-center gap-1.5">
                   {selectedDomain !== "All" && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#F3F4F6] border border-[#E5E7EB] text-[#374151] text-xs font-medium">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#0F1422] border border-white/10 text-slate-200 text-xs font-medium">
                       Domain: {selectedDomain}
-                      <button onClick={() => setSelectedDomain("All")} className="hover:text-red-500 cursor-pointer">
+                      <button onClick={() => setSelectedDomain("All")} className="hover:text-red-400 cursor-pointer">
                         <X className="w-3 h-3" />
                       </button>
                     </span>
                   )}
                   {selectedDifficulty !== "All" && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#F3F4F6] border border-[#E5E7EB] text-[#374151] text-xs font-medium">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#0F1422] border border-white/10 text-slate-200 text-xs font-medium">
                       Level: {selectedDifficulty}
-                      <button onClick={() => setSelectedDifficulty("All")} className="hover:text-red-500 cursor-pointer">
+                      <button onClick={() => setSelectedDifficulty("All")} className="hover:text-red-400 cursor-pointer">
                         <X className="w-3 h-3" />
                       </button>
                     </span>
                   )}
                   {selectedTech !== "All" && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#F3F4F6] border border-[#E5E7EB] text-[#374151] text-xs font-medium">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#0F1422] border border-white/10 text-slate-200 text-xs font-medium">
                       Tech: {selectedTech}
-                      <button onClick={() => setSelectedTech("All")} className="hover:text-red-500 cursor-pointer">
+                      <button onClick={() => setSelectedTech("All")} className="hover:text-red-400 cursor-pointer">
                         <X className="w-3 h-3" />
                       </button>
                     </span>
                   )}
                   {sponsorOnly && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-semibold">
                       Sponsored Only
-                      <button onClick={() => setSponsorOnly(false)} className="hover:text-red-500 cursor-pointer">
+                      <button onClick={() => setSponsorOnly(false)} className="hover:text-red-400 cursor-pointer">
                         <X className="w-3 h-3" />
                       </button>
                     </span>
@@ -354,22 +354,22 @@ export default function ProjectStudioPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
                 {filteredProblems.map((problem) => {
                   const difficultyBadge = {
-                    Beginner: "bg-emerald-50 text-emerald-700 border-emerald-200",
-                    Intermediate: "bg-amber-50 text-amber-700 border-amber-200",
-                    Advanced: "bg-blue-50 text-blue-700 border-blue-200",
-                    "Industry Grade": "bg-indigo-50 text-indigo-700 border-indigo-200",
-                  }[problem.difficulty] || "bg-gray-50 text-gray-700 border-gray-200";
+                    Beginner: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+                    Intermediate: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+                    Advanced: "bg-blue-500/20 text-blue-300 border-blue-500/30",
+                    "Industry Grade": "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
+                  }[problem.difficulty] || "bg-white/10 text-slate-200 border-white/10";
 
                   return (
                     <div
                       key={problem.id}
-                      className="bg-white rounded-2xl border border-[#E5E7EB] p-6 shadow-xs hover:border-gray-300 transition-colors flex flex-col justify-between space-y-4"
+                      className="tactile-chassis bg-[#0C101A] hover:bg-[#0F1424] border border-white/10 hover:border-white/20 p-6 transition-all flex flex-col justify-between space-y-4 group rounded-2xl shadow-md"
                     >
                       {/* Card Header Tags */}
                       <div className="space-y-3">
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <div className="flex items-center gap-2">
-                            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-[#F9FAFB] border border-[#E5E7EB] text-[#4B5563]">
+                            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-[#0F1422] border border-white/10 text-slate-300">
                               {problem.domain}
                             </span>
                             <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-md border ${difficultyBadge}`}>
@@ -377,42 +377,42 @@ export default function ProjectStudioPage() {
                             </span>
                           </div>
 
-                          <span className="text-xs text-[#6B7280] flex items-center gap-1 font-medium">
-                            <Clock className="w-3.5 h-3.5" />
+                          <span className="text-xs text-slate-300 flex items-center gap-1 font-medium">
+                            <Clock className="w-3.5 h-3.5 text-slate-400" />
                             {problem.timeEstimate}
                           </span>
                         </div>
 
                         {/* Company Sponsor Callout */}
                         {problem.companySponsor && (
-                          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50/70 border border-blue-200/80 text-xs text-[#111827]">
-                            <Award className="w-4 h-4 text-blue-600 shrink-0" />
-                            <span className="font-bold text-[#111827]">{problem.companySponsor.name}</span>
-                            <span className="text-gray-300">&bull;</span>
-                            <span className="text-[#4B5563] truncate">{problem.companySponsor.hiringTrack}</span>
+                          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-slate-200">
+                            <Award className="w-4 h-4 text-blue-400 shrink-0" />
+                            <span className="font-bold text-white">{problem.companySponsor.name}</span>
+                            <span className="text-slate-400">&bull;</span>
+                            <span className="text-slate-300 truncate">{problem.companySponsor.hiringTrack}</span>
                           </div>
                         )}
 
                         {/* Title */}
-                        <h2 className="text-base sm:text-lg font-bold text-[#111827] leading-snug tracking-tight">
+                        <h2 className="text-base sm:text-lg font-bold text-white font-display leading-snug tracking-tight group-hover:text-cyan-300 transition-colors">
                           {problem.title}
                         </h2>
 
                         {/* Summary */}
-                        <p className="text-xs text-[#6B7280] leading-relaxed line-clamp-3">
+                        <p className="text-xs text-slate-300 leading-relaxed line-clamp-3">
                           {problem.summary}
                         </p>
                       </div>
 
                       {/* Functional Snippets */}
-                      <div className="pt-3 border-t border-[#F3F4F6] space-y-2">
-                        <span className="text-[10px] font-semibold uppercase tracking-wider text-[#9CA3AF] block">
+                      <div className="pt-3 border-t border-white/10 space-y-2">
+                        <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">
                           Key Deliverable Highlights:
                         </span>
                         <ul className="space-y-1">
                           {problem.functionalRequirements.slice(0, 2).map((req, rIdx) => (
-                            <li key={rIdx} className="text-xs text-[#4B5563] flex items-start gap-1.5 line-clamp-1">
-                              <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                            <li key={rIdx} className="text-xs text-slate-300 flex items-start gap-1.5 line-clamp-1">
+                              <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
                               <span className="truncate">{req}</span>
                             </li>
                           ))}
@@ -424,7 +424,7 @@ export default function ProjectStudioPage() {
                         {problem.techStack.map((tech, tIdx) => (
                           <span
                             key={tIdx}
-                            className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-[#F9FAFB] border border-[#E5E7EB] text-[#4B5563]"
+                            className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-[#0F1422] border border-white/10 text-slate-300"
                           >
                             {tech}
                           </span>
@@ -432,18 +432,18 @@ export default function ProjectStudioPage() {
                       </div>
 
                       {/* Action Buttons */}
-                      <div className="pt-3 border-t border-[#F3F4F6] flex flex-wrap items-center justify-between gap-2">
+                      <div className="pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-2">
                         <Link
                           href={`/edbuild?problemId=${problem.id}&create=true`}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-[#E5E7EB] bg-white hover:bg-gray-50 text-[#111827] text-xs font-semibold transition-colors shadow-xs"
+                          className="liquid-btn-secondary inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold cursor-pointer"
                         >
-                          <Users className="w-3.5 h-3.5 text-blue-600" />
+                          <Users className="w-3.5 h-3.5 text-blue-400" />
                           <span>Build in EdBuild</span>
                         </Link>
 
                         <button
                           onClick={() => handleOpenProblem(problem)}
-                          className="bg-[#111827] hover:bg-black text-white text-xs font-semibold py-2 px-4 rounded-xl transition-colors shadow-xs inline-flex items-center gap-1.5 cursor-pointer"
+                          className="liquid-btn-primary text-xs font-semibold py-2 px-4 inline-flex items-center gap-1.5 cursor-pointer shadow-sm"
                         >
                           <span>View Problem</span>
                           <ArrowRight className="w-3.5 h-3.5 text-white" />
@@ -455,19 +455,19 @@ export default function ProjectStudioPage() {
               </div>
             ) : (
               /* Empty Search State */
-              <div className="bg-white rounded-2xl border border-[#E5E7EB] p-10 text-center space-y-4 shadow-xs">
-                <div className="w-12 h-12 rounded-xl bg-gray-100 border border-gray-200 text-gray-600 flex items-center justify-center mx-auto">
+              <div className="tactile-chassis bg-[#0C101A] border border-white/10 rounded-2xl p-10 text-center space-y-4">
+                <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 text-slate-400 flex items-center justify-center mx-auto">
                   <Search className="w-5 h-5" />
                 </div>
-                <h3 className="text-base font-bold text-[#111827]">
+                <h3 className="text-base font-bold text-white font-display">
                   No problem statements matched your search
                 </h3>
-                <p className="text-xs text-[#6B7280] max-w-md mx-auto leading-relaxed">
-                  We could not find any problem statements matching "{searchQuery}" with the selected domain and difficulty filters.
+                <p className="text-xs text-slate-300 max-w-md mx-auto leading-relaxed">
+                  We could not find any problem statements matching &quot;{searchQuery}&quot; with the selected domain and difficulty filters.
                 </p>
                 <button
                   onClick={handleResetFilters}
-                  className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#111827] hover:bg-black text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                  className="mt-2 liquid-btn-primary inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold cursor-pointer"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Clear All Filters</span>
@@ -477,14 +477,14 @@ export default function ProjectStudioPage() {
           </section>
 
           {/* 4. FOOTER GUIDANCE BANNER */}
-          <section className="p-5 sm:p-6 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs text-xs text-[#111827] flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="flex items-center gap-2 text-[#4B5563]">
-              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+          <section className="p-5 sm:p-6 tactile-chassis bg-[#0C101A] border border-white/10 rounded-2xl text-xs text-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-slate-300">
+              <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
               <span>All problem statements are calibrated to real-world production engineering architectures.</span>
             </div>
             <Link
               href="/dashboard"
-              className="text-[#111827] font-semibold hover:underline inline-flex items-center gap-1 shrink-0"
+              className="text-cyan-400 hover:text-cyan-300 font-semibold inline-flex items-center gap-1 shrink-0 transition-colors"
             >
               <span>Back to Dashboard</span>
               <ChevronRight className="w-4 h-4" />

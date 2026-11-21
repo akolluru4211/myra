@@ -62,11 +62,9 @@ export default function FloatingNav() {
     pathname === "/pricing" ||
     pathname === "/privacy" ||
     pathname === "/terms" ||
-    pathname === "/for-college" ||
-    pathname === "/for-professionals" ||
-    pathname === "/for-career" ||
+    pathname?.startsWith("/for") ||
     pathname === "/consent/verify" ||
-    pathname?.startsWith("/sector-landing");
+    pathname?.startsWith("/sector");
 
   // Close drawer on route change
   useEffect(() => {
@@ -332,7 +330,7 @@ export default function FloatingNav() {
       {!isPublicLanding && (
         <nav
           aria-label="Mobile Quick Navigation Dock"
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex md:hidden items-center gap-0.5 px-1.5 py-1 rounded-full bg-white/95 backdrop-blur-xl border border-neutral-200/90 shadow-[0_12px_32px_rgba(0,0,0,0.16)] max-w-[calc(100vw-9.25rem)] overflow-x-auto no-scrollbar print:hidden safe-bottom"
+          className="fixed bottom-6 left-6 z-40 flex md:hidden items-center gap-0.5 px-1.5 py-1 rounded-full bg-white/95 backdrop-blur-xl border border-neutral-200/90 shadow-[0_12px_32px_rgba(0,0,0,0.16)] max-w-[calc(100vw-9.25rem)] overflow-x-auto no-scrollbar print:hidden safe-bottom"
         >
           {mobileDockLinks.map((item) => {
             const Icon = item.icon;

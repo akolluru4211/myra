@@ -147,13 +147,6 @@ export default function AppSidebar() {
           icon: FolderKanban
         },
         {
-          href: "/edfix",
-          label: "EdFix",
-          shortLabel: "EdFix",
-          icon: Sparkles,
-          badge: "Live"
-        },
-        {
           href: "/jobs",
           label: "EdJobs",
           shortLabel: "EdJobs",
@@ -439,7 +432,7 @@ export default function AppSidebar() {
                       <span>Settings</span>
                     </Link>
                     <Link
-                      href="/billing"
+                      href="/settings/billing"
                       className="text-[11px] font-medium text-[#5E6573] hover:text-[#13141B] flex items-center gap-1 transition-colors"
                     >
                       <span>Billing</span>
@@ -618,7 +611,7 @@ export default function AppSidebar() {
                         <span>Settings</span>
                       </Link>
                       <Link
-                        href="/billing"
+                        href="/settings/billing"
                         onClick={() => setIsMobileOpen(false)}
                         className="text-xs font-medium text-[#5E6573] hover:text-[#13141B]"
                       >

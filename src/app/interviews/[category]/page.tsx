@@ -12,6 +12,7 @@ import { supabase } from "@/lib/supabase";
 import MediaRecorderStudio from "@/components/interview/MediaRecorderStudio";
 import PreFlightAudioCheckModal from "@/components/interview/PreFlightAudioCheckModal";
 import { VoiceChoice } from "@/lib/interview/voice-profiles";
+import { getAvailableSectors } from "@/lib/interview/interview-bank";
 import { 
   ArrowLeft, 
   Sparkles, 
@@ -33,7 +34,9 @@ import {
   ChevronRight, 
   AlertTriangle,
   Maximize2,
-  ExternalLink
+  ExternalLink,
+  Search,
+  BookOpen
 } from "lucide-react";
 import { useExamProctoring } from "@/hooks/useExamProctoring";
 
@@ -68,6 +71,9 @@ export default function ActiveInterviewStudioPage() {
   // State
   const [targetRole, setTargetRole] = useState(categoryName);
   const [selectedSector, setSelectedSector] = useState<string>("Software & Full-Stack");
+  const [interviewMode, setInterviewMode] = useState<"ai_resume" | "question_bank">("ai_resume");
+  const [sectorSearch, setSectorSearch] = useState("");
+  const allAvailableSectors = getAvailableSectors();
   const [jobDescriptionInput, setJobDescriptionInput] = useState("");
   const [savedResumes, setSavedResumes] = useState<SavedResume[]>([]);
   const [selectedResumeId, setSelectedResumeId] = useState<string>("");
@@ -86,8 +92,9 @@ export default function ActiveInterviewStudioPage() {
   // Voice & Pre-Flight Hardware Check State
   const [isPreFlightOpen, setIsPreFlightOpen] = useState(false);
   const [audioOptIn, setAudioOptIn] = useState(false);
-  const [voiceChoice, setVoiceChoice] = useState<VoiceChoice>("myra-neutral");
+  const [voiceChoice, setVoiceChoice] = useState<VoiceChoice>("elena-tech-lead");
   const [speakingSpeed, setSpeakingSpeed] = useState(1.0);
+  const [companyTrack, setCompanyTrack] = useState<string>("Big Tech (FAANG)");
   const [useKeyboardFallback, setUseKeyboardFallback] = useState(false);
 
   // Myra Auto-Setup & Progress States
@@ -133,10 +140,14 @@ export default function ActiveInterviewStudioPage() {
     const jobTitleParam = searchParams.get("jobTitle");
     const jdParam = searchParams.get("jd");
     const resumeIdParam = searchParams.get("resumeId");
+    const sectorParam = searchParams.get("sector");
+    const modeParam = searchParams.get("mode");
 
     if (jobTitleParam) setTargetRole(jobTitleParam);
     if (jdParam) setJobDescriptionInput(jdParam);
     if (resumeIdParam) setSelectedResumeId(resumeIdParam);
+    if (sectorParam) setSelectedSector(sectorParam);
+    if (modeParam === "question_bank") setInterviewMode("question_bank");
   }, [searchParams]);
 
   // Progress timer for generating questions
@@ -234,11 +245,13 @@ export default function ActiveInterviewStudioPage() {
   };
 
   const handleStartSession = async () => {
-    // Validate resume input
-    const hasResume = (selectedResumeId && selectedResumeId !== "custom" && selectedResumeId !== "none") || (selectedResumeId === "custom" && rawResumeInput.trim().length > 10);
-    if (!hasResume && savedResumes.length === 0) {
-      alert("Please build or paste your resume details first so questions can be calibrated to your projects!");
-      return;
+    // Validate resume input if in AI Resume mode
+    if (interviewMode === "ai_resume") {
+      const hasResume = (selectedResumeId && selectedResumeId !== "custom" && selectedResumeId !== "none") || (selectedResumeId === "custom" && rawResumeInput.trim().length > 10);
+      if (!hasResume && savedResumes.length === 0) {
+        alert("Please build or paste your resume details first so questions can be calibrated to your projects!");
+        return;
+      }
     }
 
     setGenerating(true);
@@ -254,6 +267,7 @@ export default function ActiveInterviewStudioPage() {
         candidateName,
         userId: user?.uid,
         jobDescription: jobDescriptionInput,
+        mode: interviewMode,
       };
 
       if (selectedResumeId && selectedResumeId !== "custom" && selectedResumeId !== "none") {
@@ -321,12 +335,14 @@ export default function ActiveInterviewStudioPage() {
     audioOptIn: boolean;
     voiceChoice: VoiceChoice;
     speakingSpeed: number;
+    companyTrack?: string;
     isAudioOnly: boolean;
     useKeyboardFallback: boolean;
   }) => {
     setAudioOptIn(config.audioOptIn);
     setVoiceChoice(config.voiceChoice);
     setSpeakingSpeed(config.speakingSpeed);
+    if (config.companyTrack) setCompanyTrack(config.companyTrack);
     setUseKeyboardFallback(config.useKeyboardFallback);
     setIsPreFlightOpen(false);
 
@@ -720,36 +736,99 @@ export default function ActiveInterviewStudioPage() {
                 />
               </div>
 
-              {/* Sector Selection */}
+              {/* Interview Mode Selector */}
               <div className="space-y-2">
-                <label className="block text-xs font-bold text-black uppercase tracking-wider flex items-center gap-1.5">
-                  <Cpu className="w-3.5 h-3.5 text-black" />
-                  <span>Industry Sector</span>
+                <label className="block text-xs font-bold text-black uppercase tracking-wider flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-black" />
+                    <span>Interview Format Mode</span>
+                  </span>
+                  <span className="text-[10px] font-mono text-neutral-500">Dual-Engine Supported</span>
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {[
-                    "Software & Full-Stack",
-                    "Backend & Systems",
-                    "AI, ML & Data Science",
-                    "Cloud & DevOps",
-                    "Fintech & Banking",
-                    "Healthcare Tech",
-                    "CyberSecurity",
-                    "Product Management",
-                  ].map((sec) => (
-                    <button
-                      key={sec}
-                      type="button"
-                      onClick={() => setSelectedSector(sec)}
-                      className={`p-2.5 rounded-xl text-xs font-bold border transition-all text-left truncate cursor-pointer ${
-                        selectedSector === sec
-                          ? "bg-black text-white border-black shadow-2xs"
-                          : "bg-white text-neutral-700 border-neutral-200 hover:bg-neutral-50"
-                      }`}
-                    >
-                      {sec}
-                    </button>
-                  ))}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setInterviewMode("ai_resume")}
+                    className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                      interviewMode === "ai_resume"
+                        ? "bg-black text-white border-black shadow-sm"
+                        : "bg-white text-neutral-800 border-neutral-200 hover:bg-neutral-50"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-extrabold">AI Resume-Calibrated</span>
+                      {interviewMode === "ai_resume" && <Check className="w-3.5 h-3.5 text-white" />}
+                    </div>
+                    <p className={`text-[11px] mt-1 leading-snug ${
+                      interviewMode === "ai_resume" ? "text-neutral-300" : "text-neutral-500"
+                    }`}>
+                      Synthesized deep questions tailored to your specific projects and target JD.
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setInterviewMode("question_bank")}
+                    className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                      interviewMode === "question_bank"
+                        ? "bg-black text-white border-black shadow-sm"
+                        : "bg-white text-neutral-800 border-neutral-200 hover:bg-neutral-50"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-extrabold">1,000 Questions Bank Drill</span>
+                      {interviewMode === "question_bank" && <Check className="w-3.5 h-3.5 text-white" />}
+                    </div>
+                    <p className={`text-[11px] mt-1 leading-snug ${
+                      interviewMode === "question_bank" ? "text-neutral-300" : "text-neutral-500"
+                    }`}>
+                      Authentic industry interview questions across 46 sectors with STAR benchmarks.
+                    </p>
+                  </button>
+                </div>
+              </div>
+
+              {/* Sector Selection (46 Sectors Search & Filter) */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <label className="block text-xs font-bold text-black uppercase tracking-wider flex items-center gap-1.5">
+                    <Cpu className="w-3.5 h-3.5 text-black" />
+                    <span>Industry Sector ({allAvailableSectors.length} Sectors Available)</span>
+                  </label>
+                  <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    Active: {selectedSector}
+                  </span>
+                </div>
+
+                {/* Quick Sector Search Input */}
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-400" />
+                  <input
+                    type="text"
+                    placeholder="Search 46 sectors (e.g. Software, Cloud, DevOps, Cyber, Fintech, AI...)"
+                    value={sectorSearch}
+                    onChange={(e) => setSectorSearch(e.target.value)}
+                    className="w-full pl-8 pr-3 py-2 text-xs bg-neutral-50 border border-neutral-200 rounded-xl text-black placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-black"
+                  />
+                </div>
+
+                <div className="max-h-36 overflow-y-auto p-1 border border-neutral-200 rounded-xl bg-neutral-50/50 flex flex-wrap gap-1.5">
+                  {allAvailableSectors
+                    .filter((sec) => !sectorSearch || sec.toLowerCase().includes(sectorSearch.toLowerCase()))
+                    .map((sec) => (
+                      <button
+                        key={sec}
+                        type="button"
+                        onClick={() => setSelectedSector(sec)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all truncate cursor-pointer ${
+                          selectedSector.toLowerCase() === sec.toLowerCase()
+                            ? "bg-black text-white border-black shadow-2xs"
+                            : "bg-white text-neutral-700 border-neutral-200 hover:bg-neutral-100"
+                        }`}
+                      >
+                        {sec}
+                      </button>
+                    ))}
                 </div>
               </div>
 
@@ -823,6 +902,7 @@ export default function ActiveInterviewStudioPage() {
               adaptiveFocus={currentQ.adaptiveFocus}
               userId={user?.uid}
               targetRole={targetRole || categoryName}
+              companyTrack={companyTrack}
               resumeContext={selectedResumeObj?.title ? `Resume: ${selectedResumeObj.title}` : ""}
               voiceChoice={voiceChoice}
               speakingSpeed={speakingSpeed}
@@ -836,6 +916,7 @@ export default function ActiveInterviewStudioPage() {
         {/* Hardware Pre-Flight & Voice Privacy Consent Modal */}
         <PreFlightAudioCheckModal
           isOpen={isPreFlightOpen}
+          initialCompanyTrack={companyTrack}
           onProceed={handlePreFlightProceed}
           onCancel={() => setIsPreFlightOpen(false)}
         />

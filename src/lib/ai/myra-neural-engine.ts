@@ -163,17 +163,31 @@ export class MyraNeuralEngine {
       };
     }
 
-    // 1. Simple Greetings & First Message (Teddy Mascot & Study Buddy Persona)
-    if (/^(hi|hello|hey|good morning|good afternoon|good evening|hii+|yo|hola)\b[!.?\s]*$/i.test(q)) {
+    // 1. Simple Greetings & Conversational Check-ins (Human Mentor Persona)
+    const isGreeting = /^(hi|hello|hey|good morning|good afternoon|good evening|hii+|yo|hola)(\s+(myra|there|bot))?\b[!.?\s]*$/i.test(q);
+    const isHowAreYou = /\b(how are you|how're you|how is it going|how's it going|what's up|whats up|how are you doing)\b/i.test(lower);
+
+    if (isGreeting || isHowAreYou) {
       const studentName = profile?.name?.trim();
       const isKnownName =
         !!studentName &&
         studentName.toLowerCase() !== "student" &&
         studentName.toLowerCase() !== "learner";
 
-      const text = isKnownName
-        ? `Hi ${studentName}! I'm Myra from EdWorld Co. Tell me your goal (for example JEE, NEET, CUET, boards, semester exams, GATE, CAT, placements), how many months you have, and how many hours a day you can study. I'll build your timetable and roadmap.`
-        : "Hi, I'm Myra from EdWorld Co. Tell me your goal (for example JEE, NEET, CUET, boards, semester exams, GATE, CAT, placements), how many months you have, and how many hours a day you can study. I'll build your timetable and roadmap.";
+      const firstName = isKnownName ? studentName.split(" ")[0] : null;
+      if (isHowAreYou) {
+        return {
+          topicDetected: "Conversational Check-in",
+          confidence: 0.99,
+          text: firstName
+            ? `I'm doing great, ${firstName}, thanks for asking! 😊 I'm right here and excited to help you learn. What are we diving into today—a tricky coding concept, interview practice, or planning your next steps?`
+            : "I'm doing great, thanks for asking! 😊 I'm right here and ready to help you learn. What are you working on today—debugging code, understanding a new concept, practicing mock interviews, or planning your roadmap?",
+        };
+      }
+
+      const text = firstName
+        ? `Hey ${firstName}! 👋 Great to see you. I'm Myra, your personal AI mentor here at EdWorld Co. What are you working on today? We can break down a concept, practice interview questions, write code, or structure your roadmap.`
+        : "Hey there! 👋 I'm Myra, your personal AI mentor here at EdWorld Co. How can I help you today? Whether you want to debug code, understand a tricky concept, prep for interviews, or plan your study goals—what's on your mind?";
       return {
         topicDetected: "Official First Message",
         confidence: 0.99,
@@ -789,11 +803,65 @@ Draft a 1-page architecture document or wireframe for Project 1 detailing the da
       };
     }
 
-    // 17. Concise, Direct General Answer (4-part Study Buddy Doubt Solution)
+    // 16B. Recursion
+    if (lower.includes("recursion") || lower.includes("recursive")) {
+      return {
+        topicDetected: "Recursion",
+        confidence: 0.96,
+        text: `Recursion is when a function solves a problem by calling a smaller version of itself, repeating until it reaches a stopping point called the base case.
+
+An intuitive mental model:
+Think of Russian nesting dolls. To find the tiny doll at the center, you open a doll, see a smaller one, open that one, and repeat the exact same action until you hit the solid center doll (Base Case). Then you close them all back up!
+
+Every recursive function needs two essentials:
+1. Base Case: The condition that stops the recursion so it doesn't run forever (avoiding a stack overflow).
+2. Recursive Step: The function breaking the problem into a smaller piece and calling itself.
+
+Quick Example (Factorial of 3):
+\`\`\`typescript
+function factorial(n: number): number {
+  if (n <= 1) return 1; // 1. Base Case
+  return n * factorial(n - 1); // 2. Recursive Step
+}
+// factorial(3) -> 3 * factorial(2) -> 3 * (2 * 1) = 6
+\`\`\`
+
+• Time Complexity: O(N)
+• Space Complexity: O(N) on the call stack
+
+Does this mental model make sense? Want to try tracing an example or seeing how to convert it to an iterative loop?`,
+      };
+    }
+
+    // 16C. SQL & Database Indexing
+    if (lower.includes("sql") || lower.includes("index") || lower.includes("indexing") || lower.includes("database query") || lower.includes("postgres")) {
+      return {
+        topicDetected: "SQL & Databases",
+        confidence: 0.96,
+        text: `In SQL databases, an **Index** is a specialized lookup data structure (most commonly a B-Tree) that accelerates data retrieval, just like the index at the back of a textbook!
+
+Without an index, the database engine has to perform a **Full Table Scan**—inspecting every row in the table from top to bottom (O(N) time). With an index, it navigates a balanced B-Tree to find the row in O(log N) time.
+
+Core takeaways:
+1. **Creation**: \`CREATE INDEX idx_users_email ON users(email);\` creates an index on the email column.
+2. **Speed**: Searching by email turns an expensive disk scan into an instant pointer lookup.
+3. **The Trade-Off**: Indexes speed up \`SELECT\` queries significantly, but slightly increase write latency (\`INSERT\` and \`UPDATE\`) because the index tree must also be updated.
+
+Would you like to see an example using \`EXPLAIN ANALYZE\` to measure the performance gain?`,
+      };
+    }
+
+    // 17. Concise, Direct General Answer (Warm, Human Mentor Style)
     return {
       topicDetected: "Direct Study Response",
       confidence: 0.9,
-      text: `Here is the step-by-step breakdown for ${q.slice(0, 100)}:\n\n1. Core Concept: Focus on the fundamental definition and the simplest rule that applies.\n2. Method: Break the problem into small, manageable parts and solve each step sequentially.\n3. Verification: Check boundary conditions and test with a simple example.\n\nDoes this make sense? Want a practice question?`,
+      text: `Here is a clear breakdown for "${q.slice(0, 100)}":
+
+• Core Idea: Understand the primary objective or definition before tackling complex edge cases.
+• Step-by-Step Approach: Break the problem into small, manageable parts and solve each piece sequentially.
+• Key Takeaway: Always test boundary conditions and verify your assumptions with a concrete example.
+
+What specific part of this would you like to explore further together?`,
     };
   }
 }

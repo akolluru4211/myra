@@ -23,7 +23,7 @@ export default function UpgradePromptModal({
 
   const handleGoToBilling = () => {
     onClose();
-    router.push("/billing?plan=pro");
+    router.push("/settings/billing?plan=pro");
   };
 
   return (
@@ -83,7 +83,7 @@ export default function UpgradePromptModal({
             <span>Upgrade to Pro (₹49/mo)</span>
           </button>
           <Link
-            href="/billing"
+            href="/settings/billing"
             onClick={onClose}
             className="w-full sm:w-auto px-4 py-3 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs text-center"
           >

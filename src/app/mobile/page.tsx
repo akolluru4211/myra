@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { notFound } from "next/navigation";
 import { SplashScreen } from "@/components/mobile/screens/SplashScreen";
 import { AuthScreen } from "@/components/mobile/screens/AuthScreen";
 import { OnboardingScreen } from "@/components/mobile/screens/OnboardingScreen";
@@ -18,6 +19,7 @@ import { MobileBottomNav, MobileTab } from "@/components/mobile/ui/MobileBottomN
 import { OfflineBanner } from "@/components/mobile/ui/OfflineBanner";
 import { OpportunityCardSkeleton, NotificationSkeleton } from "@/components/mobile/ui/SkeletonLoader";
 import { ErrorStateView } from "@/components/mobile/ui/ErrorStateView";
+import SpatialTiltCard from "@/components/landing/3d/SpatialTiltCard";
 import {
   EdworldFeatureItem,
   OpportunityItem,
@@ -54,6 +56,9 @@ type ActiveScreen =
   | "components";
 
 export default function MobilePrototypePage() {
+  if (process.env.NODE_ENV === "production") {
+    notFound();
+  }
   const [activeScreen, setActiveScreen] = useState<ActiveScreen>("app");
   const [authMode, setAuthMode] = useState<"login" | "signup">("signup");
   const [activeTab, setActiveTab] = useState<MobileTab>("home");
@@ -95,37 +100,42 @@ export default function MobilePrototypePage() {
   return (
     <div
       className={cn(
-        "min-h-screen w-full flex flex-col items-center justify-center transition-colors duration-300 py-6 px-3 select-none",
-        isDarkMode ? "bg-[#08090D] text-slate-100" : "bg-slate-100/90 text-slate-800"
+        "min-h-screen w-full flex flex-col items-center justify-center transition-colors duration-300 py-6 sm:py-10 px-3 sm:px-6 select-none",
+        isDarkMode ? "bg-[#080B11] text-slate-100" : "bg-[#0A0E17] text-slate-100"
       )}
     >
       {/* Top Prototype Control Bar (Quick Jump + Simulator Tools) */}
-      <div className="w-full max-w-[500px] mb-3 flex flex-col items-center gap-2">
-        <div className="flex items-center justify-between w-full px-2">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#3D3BF3] to-[#FF6B00] text-white flex items-center justify-center font-black text-xs shadow-sm">
+      <div className="w-full max-w-2xl mb-5 flex flex-col items-center gap-3">
+        <div className="flex items-center justify-between w-full px-1">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl metallic-icon-badge metallic-indigo text-white flex items-center justify-center font-black text-sm">
               E
             </div>
             <div>
-              <span className="text-xs font-extrabold text-slate-900 dark:text-slate-100">
-                EdWorld Mobile Prototype
-              </span>
-              <span className="ml-1 text-[10px] font-semibold text-[#FF6B00]">
-                390 × 844
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-extrabold text-white font-display tracking-tight">
+                  EdWorld Mobile
+                </span>
+                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-display">
+                  Spatial Deck
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400">
+                Native Multi-Module Experience
+              </p>
             </div>
           </div>
 
           {/* Quick theme & reset tools */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 shadow-sm hover:scale-105 transition-all text-xs flex items-center gap-1 cursor-pointer"
+              className="px-3 py-1.5 rounded-xl bg-[#0F1422] border border-white/10 text-slate-300 hover:text-white hover:border-white/20 shadow-sm transition-all text-xs flex items-center gap-1.5 cursor-pointer"
               aria-label="Toggle dark mode"
             >
-              {isDarkMode ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-indigo-500" />}
-              <span className="hidden sm:inline text-[11px] font-bold">
+              {isDarkMode ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-indigo-400" />}
+              <span className="text-[11px] font-bold">
                 {isDarkMode ? "Light" : "Dark"}
               </span>
             </button>
@@ -139,18 +149,18 @@ export default function MobilePrototypePage() {
                 setIsSimulatingSkeleton(false);
                 setIsSimulatingError(false);
               }}
-              className="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 shadow-sm hover:scale-105 transition-all text-xs flex items-center gap-1 cursor-pointer"
+              className="px-3 py-1.5 rounded-xl bg-[#0F1422] border border-white/10 text-slate-300 hover:text-white hover:border-white/20 shadow-sm transition-all text-xs flex items-center gap-1.5 cursor-pointer"
               aria-label="Reset prototype"
               title="Reset to Splash Screen"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline text-[11px] font-bold">Reset</span>
+              <span className="text-[11px] font-bold">Reset</span>
             </button>
           </div>
         </div>
 
         {/* Screen Quick Jump Switcher Bar */}
-        <div className="w-full flex items-center gap-1 p-1 bg-white dark:bg-[#161922] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-x-auto no-scrollbar">
+        <div className="w-full flex items-center gap-1.5 p-1.5 bg-[#0C101A] rounded-2xl border border-white/10 shadow-lg overflow-x-auto no-scrollbar">
           {[
             { id: "splash", label: "1. Splash" },
             { id: "auth", label: "2. Sign Up / OTP" },
@@ -208,10 +218,10 @@ export default function MobilePrototypePage() {
                   } else if (screen.id === "components") setActiveScreen("components");
                 }}
                 className={cn(
-                  "px-2.5 py-1.5 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all duration-150 cursor-pointer min-h-[30px]",
+                  "px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer min-h-[30px]",
                   isCurrent
-                    ? "bg-[#3D3BF3] text-white shadow-xs"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+                    ? "bg-[#3D3BF3] text-white shadow-md shadow-[#3D3BF3]/20"
+                    : "text-slate-400 hover:text-white hover:bg-white/5"
                 )}
               >
                 {screen.label}
@@ -221,19 +231,19 @@ export default function MobilePrototypePage() {
         </div>
 
         {/* Edge State Simulator Bar */}
-        <div className="w-full flex items-center justify-between gap-1 px-3 py-1 bg-white/70 dark:bg-[#161922]/70 rounded-xl border border-slate-200/80 dark:border-slate-800 text-[10px] text-slate-500">
-          <span className="font-bold uppercase tracking-wider text-slate-400">
+        <div className="w-full flex items-center justify-between gap-2 px-3.5 py-2 bg-[#0C101A] rounded-xl border border-white/10 text-xs text-slate-400 shadow-md">
+          <span className="font-bold uppercase tracking-wider text-[10px] text-slate-500">
             Simulate Edge States:
           </span>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setIsSimulatingOffline(!isSimulatingOffline)}
               className={cn(
-                "px-2 py-0.5 rounded-md font-bold transition-all cursor-pointer",
+                "px-2.5 py-1 rounded-lg font-bold transition-all text-xs cursor-pointer",
                 isSimulatingOffline
                   ? "bg-rose-500 text-white"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+                  : "bg-white/5 text-slate-400 hover:text-white"
               )}
             >
               Offline {isSimulatingOffline ? "ON" : "OFF"}
@@ -243,10 +253,10 @@ export default function MobilePrototypePage() {
               type="button"
               onClick={() => setIsSimulatingSkeleton(!isSimulatingSkeleton)}
               className={cn(
-                "px-2 py-0.5 rounded-md font-bold transition-all cursor-pointer",
+                "px-2.5 py-1 rounded-lg font-bold transition-all text-xs cursor-pointer",
                 isSimulatingSkeleton
                   ? "bg-indigo-600 text-white"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+                  : "bg-white/5 text-slate-400 hover:text-white"
               )}
             >
               Skeleton {isSimulatingSkeleton ? "ON" : "OFF"}
@@ -256,10 +266,10 @@ export default function MobilePrototypePage() {
               type="button"
               onClick={() => setIsSimulatingError(!isSimulatingError)}
               className={cn(
-                "px-2 py-0.5 rounded-md font-bold transition-all cursor-pointer",
+                "px-2.5 py-1 rounded-lg font-bold transition-all text-xs cursor-pointer",
                 isSimulatingError
                   ? "bg-amber-500 text-white"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+                  : "bg-white/5 text-slate-400 hover:text-white"
               )}
             >
               Error {isSimulatingError ? "ON" : "OFF"}
@@ -268,56 +278,58 @@ export default function MobilePrototypePage() {
         </div>
       </div>
 
-      {/* 390 × 844 iPhone Chassis Container */}
-      <div
-        className={cn(
-          "relative flex flex-col shadow-[0_25px_70px_rgba(0,0,0,0.18)] dark:shadow-[0_25px_70px_rgba(0,0,0,0.7)] transition-all",
-          "w-full max-w-[390px] h-[844px] rounded-[48px] overflow-hidden border-[8px]",
-          isDarkMode
-            ? "border-[#1F2430] bg-[#0E1017] dark"
-            : "border-[#E2E8F0] bg-[#F8F9FD]"
-        )}
-      >
-        {/* Dynamic Island / Speaker Notch Bar */}
-        <div className="absolute top-0 left-0 right-0 z-40 h-11 px-7 flex items-center justify-between pointer-events-none select-none">
-          {/* Time */}
-          <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-            {currentTime}
-          </span>
-
-          {/* Dynamic Island Pill */}
-          <div className="w-28 h-6 bg-black rounded-full mx-auto flex items-center justify-center px-2 pointer-events-auto shadow-sm">
-            <div className="w-2.5 h-2.5 rounded-full bg-slate-900 border border-slate-800 mr-2" />
-            <div className="w-2 h-2 rounded-full bg-indigo-900/60" />
-          </div>
-
-          {/* Status Icons: 5G, Wifi, Battery */}
-          <div className="flex items-center gap-1.5 text-slate-800 dark:text-slate-200">
-            <span className="text-[10px] font-black">5G</span>
-            {isSimulatingOffline ? (
-              <WifiOff className="w-3.5 h-3.5 text-rose-500" />
-            ) : (
-              <Wifi className="w-3.5 h-3.5" />
+      {/* 3D Spatial Native Card Deck (Replacing Fake iOS Screen Chassis) */}
+      <div className="w-full max-w-[390px] relative">
+        <SpatialTiltCard maxTilt={4} glowColor="rgba(61, 59, 243, 0.25)" className="w-full">
+          <div
+            className={cn(
+              "tactile-chassis relative flex flex-col transition-all",
+              "w-full h-[844px] rounded-3xl overflow-hidden border border-white/15",
+              isDarkMode
+                ? "bg-[#0C101A] text-white"
+                : "bg-white text-slate-900 border-slate-200"
             )}
-            <Battery className="w-4 h-4" />
-          </div>
-        </div>
-
-        {/* Offline Banner when active */}
-        {isSimulatingOffline && (
-          <div className="pt-11 z-30">
-            <OfflineBanner onRetry={() => setIsSimulatingOffline(false)} />
-          </div>
-        )}
-
-        {/* Device Viewport Body */}
-        <div className={cn("relative flex-1 flex flex-col overflow-hidden", !isSimulatingOffline && "pt-11")}>
-          {/* Edge State: Error Simulator */}
-          {isSimulatingError ? (
-            <div className="flex-1 flex items-center justify-center p-6">
-              <ErrorStateView onRetry={() => setIsSimulatingError(false)} />
+          >
+            {/* Native Card Console Header (Clean & Spatial) */}
+            <div className={cn(
+              "h-12 px-4 flex items-center justify-between border-b z-40 select-none",
+              isDarkMode 
+                ? "bg-[#0A0E17]/90 border-white/10 text-slate-200" 
+                : "bg-slate-50 border-slate-200 text-slate-700"
+            )}>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  EdWorld Deck
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                {isSimulatingOffline && (
+                  <span className="text-[10px] font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full flex items-center gap-1 border border-rose-500/20">
+                    <WifiOff className="w-3 h-3" /> Offline
+                  </span>
+                )}
+                <span className="text-xs font-mono font-bold text-slate-400">
+                  {currentTime}
+                </span>
+              </div>
             </div>
-          ) : isSimulatingSkeleton ? (
+
+            {/* Offline Banner when active */}
+            {isSimulatingOffline && (
+              <div className="z-30">
+                <OfflineBanner onRetry={() => setIsSimulatingOffline(false)} />
+              </div>
+            )}
+
+            {/* Device Viewport Body */}
+            <div className="relative flex-1 flex flex-col overflow-hidden">
+              {/* Edge State: Error Simulator */}
+              {isSimulatingError ? (
+                <div className="flex-1 flex items-center justify-center p-6">
+                  <ErrorStateView onRetry={() => setIsSimulatingError(false)} />
+                </div>
+              ) : isSimulatingSkeleton ? (
             /* Edge State: Skeleton Loaders */
             <div className="p-4 space-y-4 overflow-y-auto">
               <div className="space-y-1">
@@ -457,7 +469,7 @@ export default function MobilePrototypePage() {
 
         {/* EdWorld Feature Launch Modal */}
         {activeFeatureModal && (
-          <div className="absolute inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-xs p-3 animate-in fade-in duration-200">
+          <div className="absolute inset-0 z-50 flex items-end justify-center bg-black/60 p-3 animate-in fade-in duration-200">
             <div className="w-full bg-white dark:bg-[#161922] rounded-3xl p-5 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
               <div className="flex items-start justify-between">
                 <div>
@@ -512,15 +524,21 @@ export default function MobilePrototypePage() {
             </div>
           </div>
         )}
+          </div>
+        </SpatialTiltCard>
       </div>
 
       {/* Helper Footer Note */}
-      <div className="mt-4 text-center">
-        <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center justify-center gap-2">
-          <span>Mobile Prototype Standard: 390×844 (iPhone 14 / 15)</span>
-          <span>•</span>
+      <div className="mt-6 text-center">
+        <p className="text-xs text-slate-400 flex items-center justify-center gap-2">
+          <span>EdWorld Mobile Suite</span>
+          <span className="text-white/20">•</span>
           <span className="text-[#3D3BF3] dark:text-[#5856FF] font-semibold">
-            EdWorld Co.
+            Spatial Deck Engine
+          </span>
+          <span className="text-white/20">•</span>
+          <span className="text-slate-500">
+            High Density Adaptive UI
           </span>
         </p>
       </div>

@@ -348,44 +348,74 @@ export default function AdminBulkMailSenderPage() {
               <span className="text-[10px] font-mono text-neutral-400">Resend Engine</span>
             </div>
 
-            {/* Mock Email Preview Screen */}
-            <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4 sm:p-5 space-y-4 text-xs font-sans">
-              <div className="space-y-1 border-b border-neutral-200 pb-3 text-[11px]">
-                <div className="text-neutral-500">
-                  <span className="font-bold text-black">From:</span> EdWorld Co. &lt;notifications@edworld.co.in&gt;
+            {/* Mock Email Preview Screen - Maximalist Figma Human Studio */}
+            <div className="rounded-2xl border-2 border-slate-900 bg-slate-950 p-3 sm:p-4 space-y-3 text-xs font-sans shadow-xl">
+              <div className="space-y-1 border-b border-slate-800 pb-2.5 text-[11px]">
+                <div className="text-slate-400">
+                  <span className="font-bold text-white">From:</span> EdWorld Co. &lt;notifications@edworld.co.in&gt;
                 </div>
-                <div className="text-neutral-500 truncate">
-                  <span className="font-bold text-black">Subject:</span> {subject || "Subject line will appear here..."}
+                <div className="text-slate-400 truncate">
+                  <span className="font-bold text-white">Subject:</span> {subject || "Subject line will appear here..."}
                 </div>
               </div>
 
-              {/* Email Content Canvas */}
-              <div className="bg-white rounded-xl border border-neutral-200 p-5 space-y-4 shadow-2xs">
-                <div className="border-b-2 border-black pb-3">
-                  <span className="text-[9px] font-mono font-extrabold uppercase bg-black text-white px-2 py-0.5 rounded">
-                    ANNOUNCEMENT
-                  </span>
-                  <h3 className="text-base font-black text-black mt-2 leading-tight">
-                    {headline || subject || "Your Announcement Headline"}
-                  </h3>
+              {/* Email Content Canvas - Maximalist Container */}
+              <div className="bg-white rounded-xl border-2 border-slate-900 overflow-hidden shadow-md">
+                
+                {/* Telemetry Micro-Bar */}
+                <div className="bg-slate-900 text-slate-400 font-mono text-[9px] font-bold uppercase tracking-wider py-1.5 px-3 text-center border-b border-slate-800">
+                  ✦ OFFICIAL EDWORLD CO. DISPATCH • DPDP 2023 COMPLIANT
                 </div>
 
-                <div className="text-neutral-800 leading-relaxed text-xs whitespace-pre-wrap min-h-[80px]">
-                  {message || "Message content preview will render here in real-time as you compose your announcement..."}
-                </div>
-
-                {ctaLabel && (
-                  <div className="text-center pt-2">
-                    <span className="inline-block px-5 py-2.5 rounded-lg bg-black text-white font-bold text-xs shadow-xs">
-                      {ctaLabel} &rarr;
-                    </span>
+                {/* Header with Official Geometric Monogram */}
+                <div className="p-4 text-center bg-gradient-to-b from-white to-slate-50 border-b border-slate-200">
+                  <div className="w-12 h-12 mx-auto rounded-xl bg-black border border-slate-800 p-2 shadow-md flex items-center justify-center mb-2 text-white font-black text-xl tracking-tight">
+                    E<span className="text-emerald-500">.</span>
                   </div>
-                )}
-
-                <div className="pt-4 border-t border-neutral-100 text-[10px] text-neutral-400 text-center space-y-0.5 font-mono">
-                  <div>EdWorld Co. • Hyderabad, Telangana, India</div>
-                  <div>Automated Student Dispatch</div>
+                  <div className="text-lg font-black text-slate-900 tracking-tight">
+                    EdWorld <span className="text-emerald-600">Co.</span>
+                  </div>
+                  <div className="text-[9.5px] font-black uppercase tracking-widest text-slate-600 mt-0.5">
+                    <span className="text-slate-900">Learn</span>
+                    <span className="text-emerald-500 mx-1 font-black">•</span>
+                    <span className="text-slate-900">Grow</span>
+                    <span className="text-blue-500 mx-1 font-black">•</span>
+                    <span className="text-slate-900">Build</span>
+                  </div>
                 </div>
+
+                {/* Body Content */}
+                <div className="p-5 space-y-4">
+                  <div className="border-b border-slate-200 pb-3">
+                    <span className="text-[9px] font-mono font-black uppercase bg-slate-900 text-white px-2 py-0.5 rounded">
+                      ANNOUNCEMENT
+                    </span>
+                    <h3 className="text-base font-black text-slate-900 mt-2 leading-tight">
+                      {headline || subject || "Your Announcement Headline"}
+                    </h3>
+                  </div>
+
+                  <div className="text-slate-700 leading-relaxed text-xs whitespace-pre-wrap min-h-[80px]">
+                    {message || "Message content preview will render here in real-time as you compose your announcement..."}
+                  </div>
+
+                  {ctaLabel && (
+                    <div className="text-center pt-2">
+                      <span className="inline-block px-5 py-2.5 rounded-xl bg-slate-900 text-white font-black text-xs shadow-md border-2 border-black">
+                        {ctaLabel} &rarr;
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Maximalist Footer */}
+                <div className="bg-slate-900 text-slate-400 p-4 text-[10px] text-center space-y-1 font-mono border-t border-slate-800">
+                  <div className="text-slate-200 font-bold">EdWorld Co. • Operating HQ: Hyderabad, India</div>
+                  <div className="text-slate-500 text-[9px]">
+                    DPDP ACT 2023 COMPLIANT • STUDENT DATA PROTECTED
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>

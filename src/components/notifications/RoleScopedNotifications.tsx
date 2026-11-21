@@ -86,7 +86,7 @@ export default function RoleScopedNotifications() {
       timestamp: "45m ago",
       read: false,
       type: "action",
-      href: "/jobs/employer",
+      href: "/employer/jobs",
       allowedRoles: ["EMPLOYEE", "HR", "FOUNDER", "ADMIN", "SUPER_ADMIN"]
     },
     {

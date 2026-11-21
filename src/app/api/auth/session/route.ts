@@ -3,10 +3,14 @@ import { validateSession } from "@/lib/otp-service";
 import { supabase } from "@/lib/supabase";
 import { rateLimit, getClientIp } from "@/lib/rate-limiter";
 
+// Fast in-memory profile cache to avoid redundant database calls and eliminate lag
+const profileCache = new Map<string, { profile: any; expiresAt: number }>();
+const CACHE_TTL_MS = 30 * 1000; // 30 seconds
+
 export async function GET(req: NextRequest) {
   try {
     const ip = getClientIp(req);
-    const limiter = rateLimit(`session_${ip}`, { limit: 60, windowMs: 60 * 1000 });
+    const limiter = rateLimit(`session_${ip}`, { limit: 120, windowMs: 60 * 1000 });
     if (!limiter.allowed) {
       return NextResponse.json({ authenticated: false, error: "RATE_LIMIT_EXCEEDED" }, { status: 429 });
     }
@@ -25,12 +29,35 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ authenticated: false }, { status: 401 });
     }
 
-    // Fetch fresh profile
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("id, email, name, role, age_band, career_stage, grade_level, phone, is_suspended, onboarding_completed")
-      .eq("id", userId)
-      .maybeSingle();
+    // Check fast cache first
+    const now = Date.now();
+    const cached = profileCache.get(userId);
+    let profile = cached && cached.expiresAt > now ? cached.profile : null;
+
+    if (!profile) {
+      // Fetch fresh profile with a 1.2s timeout so slow networks never freeze navigation
+      try {
+        const queryPromise = supabase
+          .from("profiles")
+          .select("id, email, name, role, age_band, career_stage, grade_level, phone, is_suspended, onboarding_completed")
+          .eq("id", userId)
+          .maybeSingle();
+
+        const timeoutPromise = new Promise<{ data: any }>((resolve) =>
+          setTimeout(() => resolve({ data: null }), 1200)
+        );
+
+        const result = await Promise.race([queryPromise, timeoutPromise]);
+        profile = result?.data || null;
+
+        if (profile) {
+          profileCache.set(userId, { profile, expiresAt: now + CACHE_TTL_MS });
+        }
+      } catch (e) {
+        // Fallback gracefully on query error
+        profile = null;
+      }
+    }
 
     if (profile?.is_suspended) {
       return NextResponse.json({ authenticated: false, error: "ACCOUNT_SUSPENDED" }, { status: 403 });

@@ -224,7 +224,7 @@ export default function MentorshipBookingModal({
 
             <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-[11px] text-slate-500 flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Mentorship sessions are conducted over secure Edworld encrypted video rooms.</span>
+              <span>Mentorship sessions are conducted over private Edworld meeting rooms.</span>
             </div>
 
             <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">

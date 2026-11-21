@@ -9,7 +9,11 @@ import {
   Mic, 
   Radio, 
   Brain, 
-  CheckCircle2
+  CheckCircle2,
+  Activity,
+  Layers,
+  ShieldCheck,
+  Award
 } from "lucide-react";
 import { VOICE_PROFILES, VoiceChoice } from "@/lib/interview/voice-profiles";
 
@@ -22,6 +26,7 @@ interface MyraInterviewerAvatarProps {
   isAudioMuted?: boolean;
   voiceChoice?: VoiceChoice;
   speakingSpeed?: number;
+  companyTrack?: string;
   onToggleMute?: () => void;
   onSpeechEnd?: () => void;
 }
@@ -30,14 +35,39 @@ export default function MyraInterviewerAvatar({
   state,
   questionText = "",
   isAudioMuted = false,
-  voiceChoice = "myra-neutral",
+  voiceChoice = "elena-tech-lead",
   speakingSpeed = 1.0,
+  companyTrack = "Big Tech (FAANG)",
   onToggleMute,
   onSpeechEnd,
 }: MyraInterviewerAvatarProps) {
   const [speechActive, setSpeechActive] = useState(false);
   const synthRef = useRef<SpeechSynthesis | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const [activeFrequencyLevels, setActiveFrequencyLevels] = useState<number[]>([15, 30, 45, 25, 55, 35, 20]);
+
+  const persona = VOICE_PROFILES[voiceChoice] || VOICE_PROFILES["elena-tech-lead"];
+
+  // Real-time animated frequency visualizer for voice
+  useEffect(() => {
+    let animId: NodeJS.Timeout;
+    if (state === "speaking") {
+      animId = setInterval(() => {
+        setActiveFrequencyLevels([
+          Math.floor(20 + Math.random() * 60),
+          Math.floor(35 + Math.random() * 65),
+          Math.floor(15 + Math.random() * 75),
+          Math.floor(40 + Math.random() * 55),
+          Math.floor(25 + Math.random() * 70),
+          Math.floor(30 + Math.random() * 60),
+          Math.floor(15 + Math.random() * 50),
+        ]);
+      }, 100);
+    } else {
+      setActiveFrequencyLevels([10, 10, 10, 10, 10, 10, 10]);
+    }
+    return () => clearInterval(animId);
+  }, [state]);
 
   useEffect(() => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -45,20 +75,20 @@ export default function MyraInterviewerAvatar({
     }
   }, []);
 
-  // Text-To-Speech triggered when Myra speaks
+  // Natural Neural Text-To-Speech triggered when interviewer speaks
   useEffect(() => {
     if (!synthRef.current) return;
 
     if (state === "speaking" && questionText && !isAudioMuted) {
-      synthRef.current.cancel(); // Stop any pending speech
+      synthRef.current.cancel(); // Stop pending speech
 
       const utterance = new SpeechSynthesisUtterance(questionText);
-      const profile = VOICE_PROFILES[voiceChoice] || VOICE_PROFILES["myra-neutral"];
+      const profile = VOICE_PROFILES[voiceChoice] || VOICE_PROFILES["elena-tech-lead"];
       
       utterance.rate = Math.round((profile.defaultRate * speakingSpeed) * 100) / 100;
       utterance.pitch = profile.defaultPitch;
 
-      // Select matching voice
+      // Select highest quality matching natural voice
       const voices = synthRef.current.getVoices();
       const matchedVoice = voices.find(
         (v) =>
@@ -89,44 +119,43 @@ export default function MyraInterviewerAvatar({
     };
   }, [state, questionText, isAudioMuted, voiceChoice, speakingSpeed, onSpeechEnd]);
 
-  // Status Badge Configuration adhering to Feature 27 Black/White system
   const getStatusBadge = () => {
     switch (state) {
       case "speaking":
         return {
           label: "Speaking Question",
-          color: "bg-black text-white border-black",
+          color: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
           icon: Radio,
-          dotColor: "bg-white animate-ping",
+          dotColor: "bg-emerald-400 animate-ping",
         };
       case "listening":
         return {
-          label: "Listening to You...",
-          color: "bg-neutral-100 text-black border-neutral-300",
+          label: "Listening to Candidate...",
+          color: "bg-indigo-500/15 text-indigo-300 border-indigo-500/30",
           icon: Mic,
-          dotColor: "bg-black animate-pulse",
+          dotColor: "bg-indigo-400 animate-pulse",
         };
       case "thinking":
         return {
-          label: "Analyzing Response...",
-          color: "bg-neutral-100 text-black border-neutral-300",
+          label: "Evaluating Architecture & Trade-offs...",
+          color: "bg-amber-500/15 text-amber-300 border-amber-500/30",
           icon: Brain,
-          dotColor: "bg-neutral-500 animate-pulse",
+          dotColor: "bg-amber-400 animate-pulse",
         };
       case "feedback":
         return {
-          label: "Processing Feedback",
-          color: "bg-neutral-100 text-black border-neutral-300",
+          label: "Formulating Question Probe",
+          color: "bg-purple-500/15 text-purple-300 border-purple-500/30",
           icon: Sparkles,
-          dotColor: "bg-black",
+          dotColor: "bg-purple-400",
         };
       case "idle":
       default:
         return {
-          label: "Ready",
-          color: "bg-white text-neutral-800 border-neutral-200",
+          label: "Live Video Feed Ready",
+          color: "bg-white/10 text-slate-300 border-white/10",
           icon: Sparkles,
-          dotColor: "bg-neutral-400",
+          dotColor: "bg-emerald-400",
         };
     }
   };
@@ -135,89 +164,102 @@ export default function MyraInterviewerAvatar({
   const IconComponent = badge.icon;
 
   return (
-    <div className="relative w-full h-full flex flex-col items-center justify-between p-5 sm:p-6 bg-white border border-neutral-200 rounded-3xl shadow-sm text-black select-none">
+    <div className="relative w-full h-full flex flex-col justify-between p-5 sm:p-6 bg-[#0E131F] border border-white/10 rounded-3xl shadow-xl text-white overflow-hidden select-none">
       
-      {/* Top Header: Badge + Audio Mute Controls */}
-      <div className="w-full flex items-center justify-between z-10">
-        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-bold transition-all ${badge.color}`}>
-          <span className={`w-2 h-2 rounded-full ${badge.dotColor}`} />
-          <IconComponent className="w-3.5 h-3.5" />
-          <span>{badge.label}</span>
+      {/* Background Ambience Glow */}
+      <div className={`absolute -top-24 -left-24 w-72 h-72 rounded-full blur-3xl opacity-20 pointer-events-none transition-all duration-700 ${
+        state === "speaking" ? "bg-emerald-500" : state === "listening" ? "bg-indigo-500" : "bg-blue-500"
+      }`} />
+
+      {/* Top Header: Participant Tag & Audio Controls */}
+      <div className="w-full flex items-center justify-between z-10 gap-2">
+        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold backdrop-blur-md transition-all ${badge.color}`}>
+          <span className={`w-2 h-2 rounded-full shrink-0 ${badge.dotColor}`} />
+          <IconComponent className="w-3.5 h-3.5 shrink-0" />
+          <span className="truncate">{badge.label}</span>
         </div>
 
-        {onToggleMute && (
-          <button
-            type="button"
-            onClick={onToggleMute}
-            className={`p-2 rounded-xl border transition-all cursor-pointer ${
-              isAudioMuted
-                ? "bg-neutral-100 border-neutral-300 text-neutral-600 hover:bg-neutral-200"
-                : "bg-white border-neutral-200 text-neutral-800 hover:bg-neutral-50"
-            }`}
-            title={isAudioMuted ? "Unmute Myra Voice" : "Mute Myra Voice"}
-            aria-label={isAudioMuted ? "Unmute Myra Voice" : "Mute Myra Voice"}
-          >
-            {isAudioMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-          </button>
-        )}
+        <div className="flex items-center gap-1.5">
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-slate-400 hidden sm:inline-block">
+            {companyTrack}
+          </span>
+          {onToggleMute && (
+            <button
+              type="button"
+              onClick={onToggleMute}
+              className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                isAudioMuted
+                  ? "bg-rose-500/20 border-rose-500/30 text-rose-300 hover:bg-rose-500/30"
+                  : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white"
+              }`}
+              title={isAudioMuted ? "Unmute Interviewer" : "Mute Interviewer"}
+              aria-label={isAudioMuted ? "Unmute Interviewer" : "Mute Interviewer"}
+            >
+              {isAudioMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Center Avatar View with Monochrome Pulse Waveform */}
-      <div className="relative flex flex-col items-center justify-center my-auto z-10">
+      {/* Center Video Frame with Interviewer Avatar & Live Frequency Waveform */}
+      <div className="relative flex flex-col items-center justify-center my-auto z-10 py-4">
         
-        {/* Subtle breathing ring during speech */}
+        {/* Pulsing Speaker Radiance */}
         {state === "speaking" && (
-          <div className="absolute w-44 h-44 sm:w-52 sm:h-52 rounded-3xl border-2 border-black/20 animate-ping pointer-events-none" />
+          <div className="absolute w-44 h-44 sm:w-56 sm:h-56 rounded-full border border-emerald-400/30 animate-ping pointer-events-none" />
         )}
 
-        {/* Avatar Image Frame */}
+        {/* Video Tile Box */}
         <div
-          className={`relative w-36 h-36 sm:w-44 sm:h-44 rounded-3xl overflow-hidden border-2 transition-all duration-300 shadow-md bg-neutral-100 ${
+          className={`relative w-36 h-36 sm:w-48 sm:h-48 rounded-3xl overflow-hidden border-2 transition-all duration-300 shadow-2xl bg-[#141B2D] ${
             state === "speaking"
-              ? "border-black scale-105"
+              ? "border-emerald-400 shadow-emerald-500/20 scale-105"
               : state === "listening"
-              ? "border-neutral-400 scale-100"
-              : "border-neutral-200"
+              ? "border-indigo-400 shadow-indigo-500/10 scale-100"
+              : "border-white/15"
           }`}
         >
           <Image
             src="/images/myra-avatar.png"
-            alt="Myra, AI interviewer"
+            alt={persona.interviewerName}
             fill
             priority
             className="object-cover object-top"
           />
 
-          {/* Monochrome Waveform when speaking */}
-          {state === "speaking" && (
-            <div className="absolute bottom-0 inset-x-0 h-9 bg-gradient-to-t from-black/80 to-transparent flex items-end justify-center pb-2 gap-1 px-4">
-              <span className="w-1 bg-white rounded-full h-3 animate-[bounce_0.6s_infinite_100ms]" />
-              <span className="w-1 bg-white rounded-full h-5 animate-[bounce_0.6s_infinite_200ms]" />
-              <span className="w-1 bg-white rounded-full h-3.5 animate-[bounce_0.6s_infinite_300ms]" />
-              <span className="w-1 bg-white rounded-full h-6 animate-[bounce_0.6s_infinite_150ms]" />
-              <span className="w-1 bg-white rounded-full h-4 animate-[bounce_0.6s_infinite_250ms]" />
-            </div>
-          )}
+          {/* Real-Time Live Frequency Waveform Overlay */}
+          <div className="absolute bottom-0 inset-x-0 h-14 bg-gradient-to-t from-[#0E131F]/90 via-[#0E131F]/60 to-transparent flex items-end justify-center pb-2.5 gap-1.5 px-4">
+            {activeFrequencyLevels.map((lvl, fIdx) => (
+              <span
+                key={fIdx}
+                className={`w-1 rounded-full transition-all duration-100 ${
+                  state === "speaking" ? "bg-emerald-400" : "bg-slate-500"
+                }`}
+                style={{ height: `${state === "speaking" ? Math.max(6, lvl / 3) : 4}px` }}
+              />
+            ))}
+          </div>
         </div>
 
-        {/* Permanent Required Transparent AI Identity Label */}
-        <div className="mt-3.5 flex items-center gap-1.5 bg-neutral-100 border border-neutral-200 px-3 py-1 rounded-full text-xs font-bold text-neutral-800 shadow-2xs">
-          <span className="w-2 h-2 rounded-full bg-black" />
-          <span>Myra, AI interviewer</span>
+        {/* Participant Name Badge */}
+        <div className="mt-4 text-center space-y-0.5">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-bold text-white shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+            <span>{persona.interviewerName}</span>
+          </div>
+          <p className="text-[11px] text-slate-400 font-medium">
+            {persona.roleTitle}
+          </p>
         </div>
       </div>
 
-      {/* Bottom Context Hint */}
-      <div className="w-full text-center z-10 pt-2 border-t border-neutral-100">
-        <p className="text-[11px] text-neutral-500 font-medium tracking-wide">
-          {state === "speaking"
-            ? "Listen carefully to Myra's spoken question."
-            : state === "listening"
-            ? "Microphone open — speak aloud. Live transcript will appear."
-            : state === "thinking"
-            ? "Evaluating your answer and preparing next turn..."
-            : "Live voice interview session active."}
-        </p>
+      {/* Bottom Telemetry Strip */}
+      <div className="w-full text-center z-10 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400">
+        <span className="flex items-center gap-1 text-slate-400">
+          <Activity className="w-3.5 h-3.5 text-emerald-400" />
+          <span>Real-time voice telemetry active</span>
+        </span>
+        <span className="font-mono text-slate-500">HD 1080p • 60fps</span>
       </div>
 
     </div>

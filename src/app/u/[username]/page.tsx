@@ -305,6 +305,10 @@ export default function PublicProfileViewPage() {
             </div>
 
             <div className="flex items-center gap-2 self-start shrink-0">
+              <Link href={`/u/${profile.username}/portfolio`} className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 transition-colors shadow-xs">
+                <FolderGit2 className="w-3.5 h-3.5" />
+                <span>View Portfolio</span>
+              </Link>
               <button
                 type="button"
                 onClick={handleCopyLink}

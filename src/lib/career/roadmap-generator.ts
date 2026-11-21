@@ -105,7 +105,7 @@ const CURATED_DEFAULT_ROADMAPS: Record<string, { summary: string; milestones: Om
         title: "Production Internship & High-Concurrency Systems",
         description: "Manage real-world traffic, optimize slow SQL queries, and implement Redis caching layers.",
         skillTags: ["Kafka/RabbitMQ", "Distributed Caching", "Postgres Indexing"],
-        recommendedResource: { title: "EdFix Incident Labs", href: "/edfix" }
+        recommendedResource: { title: "Project Studio", href: "/projects" }
       },
       {
         horizon: "3_year",
@@ -114,7 +114,7 @@ const CURATED_DEFAULT_ROADMAPS: Record<string, { summary: string; milestones: Om
         title: "Distributed Microservices & Cloud Infrastructure",
         description: "Deploy containerized services on AWS/GCP with Kubernetes and observe services via Prometheus & Grafana.",
         skillTags: ["Kubernetes", "Terraform", "Observability", "Cloud SRE"],
-        recommendedResource: { title: "Incident Labs", href: "/edfix" }
+        recommendedResource: { title: "System Architecture Projects", href: "/projects" }
       },
       {
         horizon: "3_year",

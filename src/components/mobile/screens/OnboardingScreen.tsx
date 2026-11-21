@@ -105,7 +105,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
     <div className="flex flex-col h-full justify-between bg-[#F8F9FD] dark:bg-[#0E1017] p-6 select-none relative overflow-y-auto">
       {/* Confetti overlay animation */}
       {showConfetti && (
-        <div className="absolute inset-0 z-50 bg-[#3D3BF3]/90 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-white text-center animate-in fade-in zoom-in duration-300">
+        <div className="absolute inset-0 z-50 bg-[#3D3BF3] flex flex-col items-center justify-center p-6 text-white text-center animate-in fade-in zoom-in duration-300">
           <div className="w-20 h-20 rounded-full bg-white text-[#3D3BF3] flex items-center justify-center text-4xl mb-4 shadow-xl animate-bounce">
             🎉
           </div>

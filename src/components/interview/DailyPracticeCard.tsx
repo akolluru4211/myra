@@ -80,18 +80,18 @@ export default function DailyPracticeCard({
 
       {/* CTA Trigger */}
       <div className="flex items-center justify-between flex-wrap gap-4 pt-2 border-t border-slate-800/80 relative z-10">
-        <div className="flex items-center gap-2 text-xs text-slate-400">
+        <div className="flex items-center gap-2 text-xs text-slate-300">
           <Mic className="w-4 h-4 text-indigo-400" />
-          <span>Real-time speech recognition with instant "What You Said" vs "Better Way to Say It"</span>
+          <span>Speech pacing &amp; STAR structure evaluation</span>
         </div>
 
         <Link
           href={`/interviews/language-training?focus=${encodeURIComponent(focusArea)}`}
-          className="btn-shine px-6 py-3 rounded-2xl bg-[#D7FC51] hover:bg-[#E9FFA4] text-slate-950 text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-lg transition-all hover:scale-105 active:scale-95"
+          className="px-5 py-2.5 rounded-xl bg-white hover:bg-slate-200 text-slate-950 text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-lg transition-all hover:scale-105 active:scale-95"
         >
-          <Sparkles className="w-4 h-4" />
-          <span>Start 60s Practice Drill</span>
-          <ArrowRight className="w-4 h-4" />
+          <Sparkles className="w-4 h-4 text-slate-950" />
+          <span>Start Practice Drill</span>
+          <ArrowRight className="w-4 h-4 text-slate-950" />
         </Link>
       </div>
 

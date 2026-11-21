@@ -18,18 +18,19 @@ import {
   Info,
   X
 } from "lucide-react";
-import Button from "@/components/ui/Button";
 
 interface SyncedAccountsCardProps {
   syncedAccounts?: SyncedAccounts;
   onUpdateAccounts?: (updated: SyncedAccounts) => Promise<void>;
   userId?: string;
+  className?: string;
 }
 
 export default function SyncedAccountsCard({
   syncedAccounts = {},
   onUpdateAccounts,
-  userId
+  userId,
+  className = ""
 }: SyncedAccountsCardProps) {
   // Modal states
   const [showGitHubModal, setShowGitHubModal] = useState(false);
@@ -223,39 +224,44 @@ export default function SyncedAccountsCard({
   };
 
   return (
-    <div className="bg-white rounded-3xl border border-stone-200/80 shadow-xs p-6 sm:p-8 space-y-6">
-      <div className="border-b border-stone-100 pb-4">
-        <h2 className="text-lg font-serif font-bold text-stone-900 flex items-center gap-2">
-          <GitBranch className="w-5 h-5 text-emerald-700" />
+    <div className={`bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 sm:p-8 space-y-6 ${className}`}>
+      {/* Header */}
+      <div className="border-b border-slate-100 pb-4">
+        <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+          <div className="w-8 h-8 rounded-xl bg-[#EEF0FD] text-[#5C59E8] flex items-center justify-center font-bold">
+            <GitBranch className="w-4 h-4" />
+          </div>
           <span>Connected Accounts</span>
         </h2>
-        <p className="text-xs text-stone-500 mt-1">
-          Connect your GitHub, LinkedIn, and LeetCode accounts to automatically sync projects, problem solving, and verified achievements.
+        <p className="text-xs text-slate-500 mt-1">
+          Connect your GitHub, LeetCode, and LinkedIn accounts to automatically sync projects, problem solving, and verified achievements.
         </p>
       </div>
 
-
+      {/* 3 Account Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* GitHub Card */}
-        <div className="rounded-2xl border border-slate-200/80 bg-slate-50/50 p-5 flex flex-col justify-between space-y-4">
+        <div className="rounded-2xl border border-slate-100 bg-[#F8F9FD] p-5 flex flex-col justify-between space-y-4 hover:border-indigo-100 transition-all">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-xs">
                   <GitBranch className="w-4 h-4" />
                 </div>
                 <div>
                   <span className="font-bold text-xs text-slate-900 block">GitHub</span>
-                  <span className="text-[10px] text-slate-400">Repositories & Code</span>
+                  <span className="text-[10px] text-slate-400">Repositories &amp; Code</span>
                 </div>
               </div>
               {syncedAccounts.github?.connected ? (
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                  <CheckCircle2 className="w-3 h-3" />
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/60 shadow-2xs">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                   Connected
                 </span>
               ) : (
-                <span className="text-[10px] font-semibold text-slate-400">Not linked</span>
+                <span className="text-[10px] font-semibold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">
+                  Not linked
+                </span>
               )}
             </div>
 
@@ -279,51 +285,56 @@ export default function SyncedAccountsCard({
             {syncedAccounts.github?.connected ? (
               <>
                 <button
+                  type="button"
                   onClick={() => handleSyncGitHub()}
                   disabled={ghLoading}
-                  className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-700 transition-colors"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#5C59E8] hover:text-[#4F46E5] transition-colors cursor-pointer"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${ghLoading ? "animate-spin" : ""}`} />
                   <span>Sync Now</span>
                 </button>
                 <button
+                  type="button"
                   onClick={() => handleDisconnect("github")}
-                  className="text-xs font-semibold text-rose-600 hover:text-rose-700 transition-colors"
+                  className="text-xs font-semibold text-rose-500 hover:text-rose-700 transition-colors cursor-pointer"
                 >
                   Disconnect
                 </button>
               </>
             ) : (
               <button
+                type="button"
                 onClick={() => setShowGitHubModal(true)}
-                className="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-xs"
+                className="w-full py-2.5 px-3 rounded-2xl bg-[#5C59E8] hover:bg-[#4F46E5] text-white text-xs font-bold transition-all shadow-md shadow-indigo-500/20 flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                Connect GitHub
+                <span>Connect GitHub</span>
               </button>
             )}
           </div>
         </div>
 
         {/* LeetCode Card */}
-        <div className="rounded-2xl border border-slate-200/80 bg-slate-50/50 p-5 flex flex-col justify-between space-y-4">
+        <div className="rounded-2xl border border-slate-100 bg-[#F8F9FD] p-5 flex flex-col justify-between space-y-4 hover:border-indigo-100 transition-all">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-xs">
                   <Code2 className="w-4 h-4" />
                 </div>
                 <div>
                   <span className="font-bold text-xs text-slate-900 block">LeetCode</span>
-                  <span className="text-[10px] text-slate-400">DSA & Algorithms</span>
+                  <span className="text-[10px] text-slate-400">DSA &amp; Algorithms</span>
                 </div>
               </div>
               {syncedAccounts.leetcode?.connected ? (
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                  <CheckCircle2 className="w-3 h-3" />
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/60 shadow-2xs">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                   Verified
                 </span>
               ) : (
-                <span className="text-[10px] font-semibold text-slate-400">Not linked</span>
+                <span className="text-[10px] font-semibold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">
+                  Not linked
+                </span>
               )}
             </div>
 
@@ -349,37 +360,40 @@ export default function SyncedAccountsCard({
             {syncedAccounts.leetcode?.connected ? (
               <>
                 <button
+                  type="button"
                   onClick={() => handleSyncLeetCode()}
                   disabled={lcLoading}
-                  className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-700 transition-colors"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#5C59E8] hover:text-[#4F46E5] transition-colors cursor-pointer"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${lcLoading ? "animate-spin" : ""}`} />
                   <span>Sync Now</span>
                 </button>
                 <button
+                  type="button"
                   onClick={() => handleDisconnect("leetcode")}
-                  className="text-xs font-semibold text-rose-600 hover:text-rose-700 transition-colors"
+                  className="text-xs font-semibold text-rose-500 hover:text-rose-700 transition-colors cursor-pointer"
                 >
                   Disconnect
                 </button>
               </>
             ) : (
               <button
+                type="button"
                 onClick={() => setShowLeetCodeModal(true)}
-                className="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-xs"
+                className="w-full py-2.5 px-3 rounded-2xl bg-[#5C59E8] hover:bg-[#4F46E5] text-white text-xs font-bold transition-all shadow-md shadow-indigo-500/20 flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                Connect LeetCode
+                <span>Connect LeetCode</span>
               </button>
             )}
           </div>
         </div>
 
         {/* LinkedIn Card */}
-        <div className="rounded-2xl border border-slate-200/80 bg-slate-50/50 p-5 flex flex-col justify-between space-y-4">
+        <div className="rounded-2xl border border-slate-100 bg-[#F8F9FD] p-5 flex flex-col justify-between space-y-4 hover:border-indigo-100 transition-all">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs">
                   <Linkedin className="w-4 h-4" />
                 </div>
                 <div>
@@ -388,12 +402,14 @@ export default function SyncedAccountsCard({
                 </div>
               </div>
               {syncedAccounts.linkedin?.connected ? (
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                  <CheckCircle2 className="w-3 h-3" />
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/60 shadow-2xs">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                   Verified
                 </span>
               ) : (
-                <span className="text-[10px] font-semibold text-slate-400">Not linked</span>
+                <span className="text-[10px] font-semibold text-slate-400 bg-slate-100 px-2.5 py-0.5 rounded-full">
+                  Not linked
+                </span>
               )}
             </div>
 
@@ -403,7 +419,7 @@ export default function SyncedAccountsCard({
                   href={syncedAccounts.linkedin.profileUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-bold text-blue-600 hover:underline flex items-center gap-1 truncate"
+                  className="font-bold text-[#5C59E8] hover:underline flex items-center gap-1 truncate"
                 >
                   <span>{syncedAccounts.linkedin.profileUrl.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//i, "")}</span>
                   <ExternalLink className="w-3 h-3 shrink-0" />
@@ -421,36 +437,39 @@ export default function SyncedAccountsCard({
             {syncedAccounts.linkedin?.connected ? (
               <>
                 <button
+                  type="button"
                   onClick={() => handleSyncLinkedIn()}
                   disabled={liLoading}
-                  className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-700 transition-colors"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#5C59E8] hover:text-[#4F46E5] transition-colors cursor-pointer"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${liLoading ? "animate-spin" : ""}`} />
                   <span>Re-verify</span>
                 </button>
                 <button
+                  type="button"
                   onClick={() => handleDisconnect("linkedin")}
-                  className="text-xs font-semibold text-rose-600 hover:text-rose-700 transition-colors"
+                  className="text-xs font-semibold text-rose-500 hover:text-rose-700 transition-colors cursor-pointer"
                 >
                   Disconnect
                 </button>
               </>
             ) : (
               <button
+                type="button"
                 onClick={() => setShowLinkedInModal(true)}
-                className="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-xs"
+                className="w-full py-2.5 px-3 rounded-2xl bg-[#5C59E8] hover:bg-[#4F46E5] text-white text-xs font-bold transition-all shadow-md shadow-indigo-500/20 flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                Connect LinkedIn
+                <span>Connect LinkedIn</span>
               </button>
             )}
           </div>
         </div>
       </div>
 
-      {/* GitHub Connect Modal with Explicit Consent Disclosure */}
+      {/* GitHub Connect Modal */}
       {showGitHubModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-100 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center">
@@ -458,17 +477,21 @@ export default function SyncedAccountsCard({
                 </div>
                 <h3 className="text-base font-bold text-slate-900">Connect GitHub Profile</h3>
               </div>
-              <button onClick={() => setShowGitHubModal(false)} className="p-1 text-slate-400 hover:text-slate-600">
+              <button 
+                type="button" 
+                onClick={() => setShowGitHubModal(false)} 
+                className="p-1 text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-indigo-50/60 border border-indigo-100 text-xs text-indigo-900 space-y-1">
+            <div className="p-3.5 rounded-2xl bg-[#EEF0FD]/70 border border-indigo-100 text-xs text-[#3730A3] space-y-1">
               <p className="font-bold flex items-center gap-1">
-                <ShieldCheck className="w-4 h-4 text-indigo-600" />
-                Consent & Data Policy
+                <ShieldCheck className="w-4 h-4 text-[#5C59E8]" />
+                Consent &amp; Data Policy
               </p>
-              <p className="text-indigo-700 text-[11px] leading-relaxed">
+              <p className="text-slate-600 text-[11px] leading-relaxed">
                 EdWorld accesses only your public repositories, languages, and stars to verify portfolio projects. We never request or store private passwords or tokens.
               </p>
             </div>
@@ -480,18 +503,28 @@ export default function SyncedAccountsCard({
                 value={ghUsername}
                 onChange={(e) => setGhUsername(e.target.value)}
                 placeholder="e.g. torvalds or https://github.com/torvalds"
-                className="w-full text-sm rounded-xl border border-slate-300 px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                className="w-full text-sm rounded-2xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
               />
               {ghError && <p className="text-xs text-rose-600 font-medium">{ghError}</p>}
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <Button variant="ghost" size="sm" onClick={() => setShowGitHubModal(false)}>
+            <div className="flex items-center justify-end gap-2.5 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowGitHubModal(false)}
+                className="px-4 py-2 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all cursor-pointer"
+              >
                 Cancel
-              </Button>
-              <Button size="sm" onClick={() => handleSyncGitHub()} isLoading={ghLoading}>
-                Connect & Sync
-              </Button>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSyncGitHub()}
+                disabled={ghLoading}
+                className="px-4 py-2 rounded-2xl bg-[#5C59E8] hover:bg-[#4F46E5] text-white text-xs font-bold transition-all shadow-md shadow-indigo-500/20 disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
+              >
+                {ghLoading && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
+                <span>{ghLoading ? "Syncing..." : "Connect & Sync"}</span>
+              </button>
             </div>
           </div>
         </div>
@@ -499,8 +532,8 @@ export default function SyncedAccountsCard({
 
       {/* LeetCode Connect Modal */}
       {showLeetCodeModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-100 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center">
@@ -508,17 +541,21 @@ export default function SyncedAccountsCard({
                 </div>
                 <h3 className="text-base font-bold text-slate-900">Connect LeetCode Profile</h3>
               </div>
-              <button onClick={() => setShowLeetCodeModal(false)} className="p-1 text-slate-400 hover:text-slate-600">
+              <button 
+                type="button" 
+                onClick={() => setShowLeetCodeModal(false)} 
+                className="p-1 text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-amber-50/60 border border-amber-100 text-xs text-amber-900 space-y-1">
+            <div className="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-100 text-xs text-amber-900 space-y-1">
               <p className="font-bold flex items-center gap-1">
                 <ShieldCheck className="w-4 h-4 text-amber-600" />
-                Consent & Verification
+                Consent &amp; Verification
               </p>
-              <p className="text-amber-700 text-[11px] leading-relaxed">
+              <p className="text-slate-600 text-[11px] leading-relaxed">
                 EdWorld retrieves public problem solving breakdowns (Easy, Medium, Hard) and rankings directly from public profiles. No credentials required.
               </p>
             </div>
@@ -530,18 +567,28 @@ export default function SyncedAccountsCard({
                 value={lcUsername}
                 onChange={(e) => setLcUsername(e.target.value)}
                 placeholder="e.g. username or https://leetcode.com/u/username"
-                className="w-full text-sm rounded-xl border border-slate-300 px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                className="w-full text-sm rounded-2xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
               />
               {lcError && <p className="text-xs text-rose-600 font-medium">{lcError}</p>}
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <Button variant="ghost" size="sm" onClick={() => setShowLeetCodeModal(false)}>
+            <div className="flex items-center justify-end gap-2.5 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowLeetCodeModal(false)}
+                className="px-4 py-2 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all cursor-pointer"
+              >
                 Cancel
-              </Button>
-              <Button size="sm" onClick={() => handleSyncLeetCode()} isLoading={lcLoading}>
-                Connect & Sync
-              </Button>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSyncLeetCode()}
+                disabled={lcLoading}
+                className="px-4 py-2 rounded-2xl bg-[#5C59E8] hover:bg-[#4F46E5] text-white text-xs font-bold transition-all shadow-md shadow-indigo-500/20 disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
+              >
+                {lcLoading && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
+                <span>{lcLoading ? "Syncing..." : "Connect & Sync"}</span>
+              </button>
             </div>
           </div>
         </div>
@@ -549,8 +596,8 @@ export default function SyncedAccountsCard({
 
       {/* LinkedIn Connect Modal */}
       {showLinkedInModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-100 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center">
@@ -558,17 +605,21 @@ export default function SyncedAccountsCard({
                 </div>
                 <h3 className="text-base font-bold text-slate-900">Connect LinkedIn Profile</h3>
               </div>
-              <button onClick={() => setShowLinkedInModal(false)} className="p-1 text-slate-400 hover:text-slate-600">
+              <button 
+                type="button" 
+                onClick={() => setShowLinkedInModal(false)} 
+                className="p-1 text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-blue-50/60 border border-blue-100 text-xs text-blue-900 space-y-1">
+            <div className="p-3.5 rounded-2xl bg-blue-50/70 border border-blue-100 text-xs text-blue-900 space-y-1">
               <p className="font-bold flex items-center gap-1">
                 <ShieldCheck className="w-4 h-4 text-blue-600" />
                 Public URL Verification
               </p>
-              <p className="text-blue-700 text-[11px] leading-relaxed">
+              <p className="text-slate-600 text-[11px] leading-relaxed">
                 EdWorld validates your public vanity URL format to associate your professional profile with your verified credentials. We never ask for LinkedIn passwords.
               </p>
             </div>
@@ -580,18 +631,28 @@ export default function SyncedAccountsCard({
                 value={liUrl}
                 onChange={(e) => setLiUrl(e.target.value)}
                 placeholder="https://linkedin.com/in/username"
-                className="w-full text-sm rounded-xl border border-slate-300 px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                className="w-full text-sm rounded-2xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
               />
               {liError && <p className="text-xs text-rose-600 font-medium">{liError}</p>}
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <Button variant="ghost" size="sm" onClick={() => setShowLinkedInModal(false)}>
+            <div className="flex items-center justify-end gap-2.5 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowLinkedInModal(false)}
+                className="px-4 py-2 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all cursor-pointer"
+              >
                 Cancel
-              </Button>
-              <Button size="sm" onClick={() => handleSyncLinkedIn()} isLoading={liLoading}>
-                Verify & Save
-              </Button>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSyncLinkedIn()}
+                disabled={liLoading}
+                className="px-4 py-2 rounded-2xl bg-[#5C59E8] hover:bg-[#4F46E5] text-white text-xs font-bold transition-all shadow-md shadow-indigo-500/20 disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
+              >
+                {liLoading && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
+                <span>{liLoading ? "Verifying..." : "Verify & Save"}</span>
+              </button>
             </div>
           </div>
         </div>

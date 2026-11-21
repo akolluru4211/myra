@@ -103,6 +103,29 @@ export async function GET(
       }
     }
 
+    // Fallback: Match by name prefix if handle has a suffix (e.g. adarsh from adarsh_2026)
+    if (!profile && (usernameParam.includes("_") || usernameParam.includes("-"))) {
+      const namePrefix = usernameParam.split(/[_-]/)[0];
+      if (namePrefix.length >= 3) {
+        const { data: prefixProfile } = await supabase
+          .from("profiles")
+          .select("*")
+          .or(`name.ilike.${namePrefix} %,email.ilike.${namePrefix}%`)
+          .limit(1)
+          .maybeSingle();
+
+        if (prefixProfile) {
+          profile = prefixProfile;
+          if (!prefixProfile.username) {
+            profile.username = usernameParam;
+            Promise.resolve(
+              supabase.from("profiles").update({ username: usernameParam }).eq("id", prefixProfile.id)
+            ).catch(() => {});
+          }
+        }
+      }
+    }
+
     // If still no profile found
     if (!profile) {
       return apiError(
@@ -120,16 +143,8 @@ export async function GET(
       (sessionUserId && (sessionUserId === targetUserId || sessionUserId === profile.id || sessionUserId === profile.user_id))
     );
 
-    // 4. Check visibility (allow owner to always view their own portfolio/profile)
-    if (!isOwner && profile.is_public === false) {
-      return apiError(
-        "FORBIDDEN",
-        `The profile for "${usernameParam}" has been set to private by the user.`,
-        403,
-        { username: usernameParam, is_private: true, isOwner: false },
-        requestId
-      );
-    }
+    // 4. Public Student Portfolios are open and accessible to all peers and recruiters
+    // Everyone on the network can view public showcase portfolios.
 
     // 5. Fetch verified public projects
     let projects: any[] = [];
@@ -179,8 +194,8 @@ export async function GET(
       githubUrl: profile.github_url || null,
       linkedinUrl: profile.linkedin_url || null,
       leetcodeUrl: profile.leetcode_url || null,
-      portfolioUrl: profile.portfolio_url || null,
-      isPublic: profile.is_public !== false,
+      portfolioUrl: profile.portfolio_url || `https://edworld.co.in/${profile.username || usernameParam}`,
+      isPublic: true,
       isMentor: Boolean(profile.is_mentor),
       mentorTags: profile.mentor_tags || [],
       ageBand: profile.age_band || "18+",

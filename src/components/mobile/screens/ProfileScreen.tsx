@@ -76,7 +76,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
     <div className="flex flex-col h-full bg-[#F8F9FD] dark:bg-[#0E1017] select-none overflow-y-auto pb-8">
       {/* Settings Modal */}
       {isSettingsModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 animate-in fade-in duration-200">
           <div className="w-full max-w-[340px] bg-white dark:bg-[#161922] rounded-3xl p-5 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
             <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
               <h3 className="text-base font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-2">
@@ -197,7 +197,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
         >
           {/* Top Bar Floating Controls */}
           <div className="absolute top-3 left-4 right-4 flex items-center justify-between z-10">
-            <span className="text-[11px] font-bold text-white/90 bg-black/25 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1">
+            <span className="text-[11px] font-bold text-white bg-black/60 border border-white/20 px-2.5 py-1 rounded-full flex items-center gap-1 shadow-2xs">
               {profile.privacy === "public" ? (
                 <>
                   <Globe className="w-3 h-3" /> Public Profile
@@ -212,7 +212,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             <button
               type="button"
               onClick={() => setIsSettingsModalOpen(true)}
-              className="w-9 h-9 rounded-full bg-black/30 backdrop-blur-md text-white hover:bg-black/45 flex items-center justify-center transition-colors shadow-sm cursor-pointer"
+              className="w-9 h-9 rounded-full bg-black/60 border border-white/20 text-white hover:bg-black/80 flex items-center justify-center transition-colors shadow-2xs cursor-pointer"
               aria-label="Settings"
             >
               <Settings className="w-4 h-4" />

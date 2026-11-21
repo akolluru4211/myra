@@ -2,14 +2,15 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Layers, ArrowRight, Sparkles, CheckCircle2 } from "lucide-react";
+import { Layers, ArrowRight, Sparkles, CheckCircle2, Code2 } from "lucide-react";
 import { DsaTopic, getAllDsaTopics } from "@/lib/dsa/dsa-bank";
 
 interface ContinueDsaWidgetProps {
   userId?: string;
+  className?: string;
 }
 
-export default function ContinueDsaWidget({ userId }: ContinueDsaWidgetProps) {
+export default function ContinueDsaWidget({ userId, className = "" }: ContinueDsaWidgetProps) {
   const [nextTopic, setNextTopic] = useState<DsaTopic | null>(null);
   const [completedCount, setCompletedCount] = useState(0);
   const [totalCount, setTotalCount] = useState(20);
@@ -44,48 +45,63 @@ export default function ContinueDsaWidget({ userId }: ContinueDsaWidgetProps) {
 
   if (!nextTopic) return null;
 
-  const percent = Math.round((completedCount / totalCount) * 100);
+  const percent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   return (
-    <div className="bg-white rounded-2xl p-5 sm:p-6 border border-neutral-200 shadow-xs space-y-4 font-sans">
-      <div className="flex items-center justify-between border-b border-neutral-200 pb-3">
+    <div className={`bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 space-y-4 font-sans ${className}`}>
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
         <div className="flex items-center gap-2">
-          <Layers className="w-4 h-4 text-black" />
-          <h3 className="text-xs font-extrabold uppercase tracking-wider text-black">
-            Continue DSA Practice
-          </h3>
+          <div className="w-8 h-8 rounded-xl bg-[#EEF0FD] flex items-center justify-center text-[#5C59E8]">
+            <Layers className="w-4 h-4 stroke-[2]" />
+          </div>
+          <div>
+            <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 font-display">
+              Continue DSA Practice
+            </h3>
+            <span className="text-[10px] text-slate-400 font-medium">Algorithmic Mastery</span>
+          </div>
         </div>
-        <span className="text-[10px] font-mono font-bold text-neutral-500">
-          {completedCount} of {totalCount} Mastered ({percent}%)
+        <span className="text-[11px] font-mono font-bold text-[#5C59E8] bg-[#EEF0FD] px-2.5 py-1 rounded-full">
+          {completedCount}/{totalCount} Mastered ({percent}%)
         </span>
       </div>
 
-      <div className="p-4 rounded-xl bg-neutral-50 border border-neutral-200 space-y-3">
+      {/* Next Topic Box */}
+      <div className="p-4 rounded-2xl bg-[#F8F9FD] border border-slate-100/90 space-y-3">
         <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
+          <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase bg-neutral-200 text-black">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#EEF0FD] text-[#4338CA]">
                 {nextTopic.tier}
               </span>
               {nextTopic.interview_frequency === "High" && (
-                <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase bg-black text-white">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#FFE4E6] text-[#F43F5E]">
                   High Freq
                 </span>
               )}
             </div>
-            <h4 className="text-sm font-bold text-black mt-1">
+            <h4 className="text-sm font-bold text-slate-900 mt-1 font-display">
               {nextTopic.name}
             </h4>
           </div>
         </div>
 
-        <p className="text-xs text-neutral-600 line-clamp-2 leading-relaxed">
+        <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
           {nextTopic.explainer_concept}
         </p>
 
+        {/* Progress Bar */}
+        <div className="w-full bg-slate-200/80 h-1.5 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-[#5C59E8] to-[#4338CA] rounded-full transition-all duration-300"
+            style={{ width: `${percent}%` }}
+          />
+        </div>
+
         <Link
           href={`/dsa/${nextTopic.slug}`}
-          className="w-full py-2 px-3 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-2xs"
+          className="w-full py-2.5 px-4 rounded-xl bg-[#5C59E8] hover:bg-[#4E4BC6] text-white text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-indigo-500/20 active:scale-95 cursor-pointer"
         >
           <span>Resume Topic Drills</span>
           <ArrowRight className="w-3.5 h-3.5 text-white" />

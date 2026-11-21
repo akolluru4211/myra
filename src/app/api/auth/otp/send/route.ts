@@ -5,7 +5,8 @@ import { rateLimit, getClientIp } from "@/lib/rate-limiter";
 export async function POST(req: NextRequest) {
   try {
     const ip = getClientIp(req);
-    const limiter = rateLimit(`otp_send_${ip}`, { limit: 5, windowMs: 60 * 1000 });
+    const limit = (ip === "127.0.0.1" || ip === "::1" || process.env.NODE_ENV !== "production") ? 50 : 5;
+    const limiter = rateLimit(`otp_send_${ip}`, { limit, windowMs: 60 * 1000 });
     
     if (!limiter.allowed) {
       return NextResponse.json(
@@ -15,16 +16,18 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { identifier, purpose } = body;
+    const rawIdentifier = body.identifier || body.email;
+    const identifier = (typeof rawIdentifier === "string" ? rawIdentifier : "").trim();
+    const purpose = body.purpose || "login";
 
-    if (!identifier || typeof identifier !== "string") {
+    if (!identifier) {
       return NextResponse.json(
         { error: "INVALID_IDENTIFIER", message: "Please provide a valid email address or mobile number." },
         { status: 400 }
       );
     }
 
-    const result = await generateAndSendOtp(identifier, purpose || "login", ip);
+    const result = await generateAndSendOtp(identifier, purpose, ip);
 
     return NextResponse.json(result, { status: 200 });
   } catch (err: any) {

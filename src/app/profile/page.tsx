@@ -18,8 +18,6 @@ import {
   Check, 
   AlertCircle, 
   KeyRound, 
-  Eye, 
-  EyeOff,
   Bell,
   Building2,
   Mail,
@@ -31,14 +29,16 @@ import {
   Layers,
   Globe,
   Camera,
-  Upload
+  Upload,
+  Calendar
 } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { recordAuditLog } from "@/lib/audit-logger";
 import AuthGuard from "@/components/auth/AuthGuard";
 import SyncedAccountsCard from "@/components/dashboard/SyncedAccountsCard";
-import EdworldDigitalIdCard from "@/components/ui/EdworldDigitalIdCard";
+import EdworldDigitalIdCard from "@/components/profile/EdworldDigitalIdCard";
+import ActivityHeatmap from "@/components/profile/ActivityHeatmap";
 import { SyncedAccounts, UserDomainItem, UserDomainPriority, SkillLevel } from "@/lib/types";
 import { DOMAIN_CATALOG } from "@/lib/services/career-learning-os";
 import CareerPathPicker from "@/components/career/CareerPathPicker";
@@ -48,6 +48,9 @@ export default function ProfilePage() {
 
   // Basic Profile State
   const [name, setName] = useState(profile?.name || user?.name || "");
+  const [username, setUsername] = useState((profile as any)?.username || "");
+  const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "available" | "unavailable">("idle");
+  const [usernameError, setUsernameError] = useState<string | null>(null);
   const [headline, setHeadline] = useState(profile?.headline || "");
   const [bio, setBio] = useState(profile?.bio || "");
   const [phone, setPhone] = useState(profile?.phone || "");
@@ -65,6 +68,7 @@ export default function ProfilePage() {
   useEffect(() => {
     if (profile) {
       if (profile.name) setName(profile.name);
+      if ((profile as any).username) setUsername((profile as any).username);
       if (profile.headline) setHeadline(profile.headline);
       if (profile.bio) setBio(profile.bio);
       if (profile.phone) setPhone(profile.phone);
@@ -80,6 +84,42 @@ export default function ProfilePage() {
       if (user.name) setName(user.name);
     }
   }, [profile, user]);
+
+  // Debounced Username Availability Check
+  useEffect(() => {
+    const currentHandle = (profile as any)?.username || "";
+    if (!username || username.trim().toLowerCase() === currentHandle.toLowerCase()) {
+      setUsernameStatus("idle");
+      setUsernameError(null);
+      return;
+    }
+
+    const clean = username.trim().toLowerCase();
+    if (clean.length < 3) {
+      setUsernameStatus("unavailable");
+      setUsernameError("Username must be at least 3 characters.");
+      return;
+    }
+
+    setUsernameStatus("checking");
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/profile/check-username?username=${encodeURIComponent(clean)}&userId=${user?.uid || ""}`);
+        const data = await res.json();
+        if (data.available) {
+          setUsernameStatus("available");
+          setUsernameError(null);
+        } else {
+          setUsernameStatus("unavailable");
+          setUsernameError(data.reason || "Username is not available.");
+        }
+      } catch {
+        setUsernameStatus("idle");
+      }
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [username, profile, user?.uid]);
 
   // Career Goals State
   const [careerDomains, setCareerDomains] = useState<UserDomainItem[]>([]);
@@ -99,14 +139,6 @@ export default function ProfilePage() {
 
   // Synced Accounts State
   const [syncedAccounts, setSyncedAccounts] = useState<SyncedAccounts>({});
-
-  // Password Update State
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showNewPass, setShowNewPass] = useState(false);
-  const [isChangingPass, setIsChangingPass] = useState(false);
-  const [passwordStatus, setPasswordStatus] = useState<string | null>(null);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   // Notifications State
   const [notifyTasks, setNotifyTasks] = useState(true);
@@ -259,12 +291,14 @@ export default function ProfilePage() {
     setSaveErrorMessage(null);
 
     try {
+      const cleanUsername = username.trim().toLowerCase();
       await updateUserProfile({
         name,
         phone,
         headline,
         bio,
         avatar_url: avatarUrl,
+        username: cleanUsername || undefined,
       });
 
       // Also persist additional fields via authoritative API
@@ -276,6 +310,7 @@ export default function ProfilePage() {
           phone,
           headline,
           bio,
+          username: cleanUsername || undefined,
           avatar_url: avatarUrl,
           isPublic,
           showBirthdayToConnections
@@ -297,66 +332,6 @@ export default function ProfilePage() {
       setSaveState("error");
       setSaveErrorMessage(err.message || "Failed to update profile. Please try again.");
     }
-  };
-
-  // Handle Update Career OS
-  const handleUpdateCareerOS = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user?.uid) return;
-    setLoadingCareerOS(true);
-    setCareerOSStatus(null);
-    try {
-      const res = await fetch("/api/career-os", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: user.uid,
-          targetRole: careerTargetRole,
-          timeframeMonths: careerTimeframe,
-          availableHoursPerDay: careerDailyHours,
-          domains: careerDomains,
-          regenerateRoadmap: true
-        })
-      });
-      const data = await res.json();
-      if (data.success) {
-        setCareerOSStatus("Career goals and study plan updated successfully.");
-        setTimeout(() => setCareerOSStatus(null), 4000);
-      }
-    } catch (err: any) {
-      setCareerOSStatus("Failed to update career goals: " + err.message);
-    } finally {
-      setLoadingCareerOS(false);
-    }
-  };
-
-  const handleToggleProfileDomain = (domainId: string, domainName: string) => {
-    setCareerDomains(prev => {
-      const exists = prev.find(d => d.domain_id === domainId);
-      if (exists) {
-        if (prev.length <= 1) return prev;
-        return prev.filter(d => d.domain_id !== domainId);
-      } else {
-        const count = prev.length;
-        const priority: UserDomainPriority = count === 0 ? "primary" : count === 1 ? "secondary" : "supporting";
-        const newDomain: UserDomainItem = {
-          id: `dom-${Date.now()}`,
-          user_id: user?.uid || "",
-          domain_id: domainId,
-          domain_name: domainName,
-          priority,
-          self_level: 1,
-          effective_level: 1
-        };
-        return [...prev, newDomain];
-      }
-    });
-  };
-
-  const handleChangeDomainPriority = (domainId: string, priority: UserDomainPriority) => {
-    setCareerDomains(prev =>
-      prev.map(d => (d.domain_id === domainId ? { ...d, priority } : d))
-    );
   };
 
   // Add Certification Handler
@@ -408,624 +383,639 @@ export default function ProfilePage() {
     }
   };
 
-  // Handle Password Change
-  const handleChangePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setPasswordError(null);
-    setPasswordStatus(null);
-
-    if (!newPassword || newPassword.length < 8) {
-      setPasswordError("New password must be at least 8 characters long.");
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      setPasswordError("New passwords do not match. Please re-check.");
-      return;
-    }
-
-    setIsChangingPass(true);
-    try {
-      const { error: updateErr } = await supabase.auth.updateUser({
-        password: newPassword,
-      });
-
-      if (updateErr) {
-        throw updateErr;
-      }
-
-      await recordAuditLog({
-        actorId: user?.uid || "usr_profile",
-        actorName: name || "Member",
-        actorRole: role || "MEMBER",
-        action: "auth.password_changed",
-        resource: "user_credential",
-        result: "SUCCESS",
-      });
-
-      setPasswordStatus("Your password was updated successfully.");
-      setNewPassword("");
-      setConfirmPassword("");
-      setTimeout(() => setPasswordStatus(null), 5000);
-    } catch (err: any) {
-      setPasswordError(err?.message || "Failed to update password.");
-    } finally {
-      setIsChangingPass(false);
-    }
-  };
-
   const displayName = name.trim() || profile?.name || user?.name || "Edworld Member";
   const userInitial = displayName.charAt(0).toUpperCase();
 
+  // SVG Gauge Calculations
+  const radius = 24;
+  const circumference = 2 * Math.PI * radius;
+  const strokeOffset = circumference - (profileStrength / 100) * circumference;
+
   return (
     <AuthGuard>
-      <div className="bg-white text-[#111827] font-sans pb-4 selection:bg-[#2563EB] selection:text-white">
-        <div className="max-w-5xl mx-auto space-y-6 pt-2">
-          {/* ========================================================================= */}
-          {/* 1. PAGE HEADER: Human Profile Overview */}
-          {/* ========================================================================= */}
-          <div className="p-6 sm:p-8 rounded-xl bg-white border border-[#E5E7EB] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="flex items-start gap-4 sm:gap-5">
-              <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-[#111827] text-white font-bold text-xl flex items-center justify-center shrink-0 shadow-xs overflow-hidden border border-[#E5E7EB]">
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" />
-                ) : (
-                  <span>{userInitial}</span>
-                )}
-              </div>
-
-              <div className="space-y-1 min-w-0">
-                <div className="flex items-center gap-2.5 flex-wrap">
-                  <h1 className="text-2xl font-bold text-[#111827] tracking-tight">
-                    {displayName}
-                  </h1>
-                  <span className="px-2.5 py-0.5 rounded-md bg-[#F7F8FA] text-[#6B7280] text-[10px] font-medium border border-[#E5E7EB] flex items-center gap-1">
-                    <ShieldCheck className="w-3.5 h-3.5 text-[#2563EB]" /> Verified Member
-                  </span>
-                </div>
-
-                <p className="text-xs sm:text-sm text-[#6B7280]">
-                  {headline || "Software Engineer & Platform Builder"}
-                </p>
-
-                <div className="flex items-center gap-3 text-xs text-[#6B7280] pt-0.5 flex-wrap">
-                  <span>{user?.email}</span>
-                  <span>&bull;</span>
-                  <span className="text-[#111827] font-medium">{profile?.careerStage || "Career Track"}</span>
-                </div>
-              </div>
+      <div className="w-full text-slate-900 font-sans space-y-6 animate-in fade-in duration-200">
+        {/* ========================================================================= */}
+        {/* 1. PAGE HEADER: Pure White Elevated Overview Card                         */}
+        {/* ========================================================================= */}
+        <div className="p-6 sm:p-8 bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-start gap-4 sm:gap-5">
+            <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-[#EEF0FD] to-[#E0E3FA] text-[#5C59E8] font-bold text-2xl flex items-center justify-center shrink-0 shadow-xs overflow-hidden border-2 border-indigo-100">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" />
+              ) : (
+                <span>{userInitial}</span>
+              )}
             </div>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 self-start md:self-auto shrink-0">
-              {/* Profile Strength Indicator */}
-              <div className="px-3.5 py-2 rounded-lg bg-[#F7F8FA] border border-[#E5E7EB] text-left">
-                <span className="text-[10px] font-medium text-[#6B7280] uppercase tracking-wider block">
-                  Profile Strength
+            <div className="space-y-1.5 min-w-0">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                  {displayName}
+                </h1>
+                <span className="px-3 py-1 rounded-full bg-[#EEF0FD] text-[#5C59E8] font-bold text-xs border border-indigo-100/80 flex items-center gap-1.5 shadow-2xs">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#5C59E8]" />
+                  <span>Verified Member</span>
                 </span>
-                <div className="flex items-center gap-2 mt-0.5">
-                  <div className="w-20 bg-[#E5E7EB] h-1.5 rounded-full overflow-hidden">
-                    <div
-                      className="bg-[#2563EB] h-full rounded-full transition-all duration-300"
-                      style={{ width: `${profileStrength}%` }}
-                    />
-                  </div>
-                  <span className="text-xs font-semibold text-[#111827]">{profileStrength}%</span>
-                </div>
               </div>
 
-              <Link
-                href={`/u/${profile?.username || user?.uid}`}
-                target="_blank"
-                className="px-4 py-2 rounded-lg bg-[#F7F8FA] hover:bg-gray-100 border border-[#E5E7EB] text-[#111827] text-xs font-medium flex items-center justify-center gap-1.5 transition-colors"
-              >
-                <ExternalLink className="w-3.5 h-3.5 text-[#6B7280]" />
-                <span>Public View</span>
-              </Link>
+              <p className="text-xs sm:text-sm text-slate-600 font-medium">
+                {headline || "Software Engineer & Platform Builder"}
+              </p>
+
+              <div className="flex items-center gap-2.5 text-xs text-slate-500 pt-0.5 flex-wrap">
+                <span>{user?.email}</span>
+                <span>&bull;</span>
+                <span className="text-[#5C59E8] font-bold">{profile?.careerStage || "Career Track"}</span>
+              </div>
             </div>
           </div>
 
-          {/* ========================================================================= */}
-          {/* 2. EDWORLD DIGITAL IDENTITY CARD */}
-          {/* ========================================================================= */}
-          <section className="space-y-2">
-            <div className="flex items-center justify-between px-1">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 self-start md:self-auto shrink-0">
+            {/* Circular Profile Strength Gauge */}
+            <div className="px-4 py-2.5 rounded-2xl bg-[#F8F9FD] border border-indigo-50/80 flex items-center gap-3">
+              <div className="relative w-14 h-14 shrink-0 flex items-center justify-center">
+                <svg className="w-14 h-14 -rotate-90 transform" viewBox="0 0 60 60">
+                  <circle
+                    cx="30"
+                    cy="30"
+                    r={radius}
+                    stroke="#EEF0FD"
+                    strokeWidth="5"
+                    fill="transparent"
+                  />
+                  <circle
+                    cx="30"
+                    cy="30"
+                    r={radius}
+                    stroke="#5C59E8"
+                    strokeWidth="5"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={strokeOffset}
+                    strokeLinecap="round"
+                    fill="transparent"
+                    className="transition-all duration-700 ease-out"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center text-xs font-black text-slate-900">
+                  {profileStrength}%
+                </div>
+              </div>
+
               <div>
-                <h2 className="text-base font-bold text-[#111827]">
-                  EdWorld Digital Student ID
-                </h2>
-                <p className="text-xs text-[#6B7280]">
-                  Your verified academic &amp; engineering identity on the EdWorld network.
-                </p>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                  Profile Strength
+                </span>
+                <span className="text-xs font-bold text-slate-800">
+                  {profileStrength >= 80 ? "All-Star Profile" : profileStrength >= 50 ? "Solid Progress" : "Getting Started"}
+                </span>
               </div>
             </div>
 
-            <EdworldDigitalIdCard
-              userId={user?.uid}
-              name={displayName}
-              headline={headline || "Software Engineer & Builder"}
-              email={user?.email}
-              username={profile?.username || user?.uid}
-              college={college}
-              organization={company}
-              location={location}
-              role={role}
-              careerStage={profile?.careerStage}
-              isPublic={isPublic}
-            />
-          </section>
+            <Link
+              href={`/${profile?.username || user?.uid}`}
+              target="_blank"
+              className="px-4 py-2.5 rounded-2xl bg-[#EEF0FD] hover:bg-[#E0E3FA] text-[#3730A3] border border-indigo-100/60 text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-[#5C59E8]" />
+              <span>Public Portfolio</span>
+            </Link>
+          </div>
+        </div>
 
-          {/* Main Grid: Form & Integrations */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left 2 Columns: Identity & Goals */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* 3. PROFESSIONAL IDENTITY FORM */}
-              <div className="p-6 rounded-xl bg-white border border-[#E5E7EB] shadow-xs space-y-5">
-                <div className="border-b border-[#E5E7EB] pb-3">
-                  <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
-                    <User className="w-4 h-4 text-[#2563EB]" />
-                    <span>Personal &amp; Professional Identity</span>
-                  </h2>
-                  <p className="text-xs text-[#6B7280] mt-0.5">
-                    Manage your display name, headline, contact, and public biography.
-                  </p>
+        {/* ========================================================================= */}
+        {/* 2. EDWORLD DIGITAL IDENTITY CARD                                          */}
+        {/* ========================================================================= */}
+        <section className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <h2 className="text-base font-bold text-slate-900">
+              EdWorld Digital Student ID
+            </h2>
+          </div>
+
+          <EdworldDigitalIdCard
+            userId={user?.uid}
+            name={displayName}
+            headline={headline || "Software Engineer & Builder"}
+            email={user?.email}
+            username={profile?.username || user?.uid}
+            college={college || (profile as any)?.institution}
+            degree={(profile as any)?.degree}
+            branch={(profile as any)?.field_of_study || (profile as any)?.branch}
+            graduationYear={(profile as any)?.graduation_year}
+            organization={company}
+            location={location}
+            role={role}
+            careerStage={profile?.careerStage}
+            isPublic={isPublic}
+          />
+        </section>
+
+        {/* ========================================================================= */}
+        {/* 3. ACTIVITY & CONSISTENCY HEATMAP                                         */}
+        {/* ========================================================================= */}
+        <section className="space-y-3">
+          <ActivityHeatmap
+            syncedAccounts={syncedAccounts}
+            userStats={(profile as any)?.user_stats}
+          />
+        </section>
+
+        {/* ========================================================================= */}
+        {/* 4. MAIN FORM & INTEGRATIONS GRID                                          */}
+        {/* ========================================================================= */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left 2 Columns: Identity, Career Goals, Certs & Accounts */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* 4A. PERSONAL & PROFESSIONAL IDENTITY FORM */}
+            <div className="p-6 sm:p-8 bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] space-y-6">
+              <div className="border-b border-slate-100 pb-4">
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-[#EEF0FD] text-[#5C59E8] flex items-center justify-center font-bold">
+                    <User className="w-4 h-4" />
+                  </div>
+                  <span>Personal &amp; Professional Identity</span>
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Manage your personal details, portfolio vanity handle, and public visibility.
+                </p>
+              </div>
+
+              {saveState === "success" && (
+                <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2 animate-in fade-in">
+                  <Check className="w-4 h-4 text-emerald-600" />
+                  <span>Profile information saved successfully.</span>
+                </div>
+              )}
+
+              {saveState === "error" && (
+                <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold flex items-center gap-2 animate-in fade-in">
+                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span>{saveErrorMessage || "Failed to update profile. Please try again."}</span>
+                </div>
+              )}
+
+              <form onSubmit={handleSave} className="space-y-5">
+                {/* Profile Photo Uploader */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#F8F9FD] border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-2xl bg-white text-[#5C59E8] font-bold text-xl flex items-center justify-center shrink-0 overflow-hidden border border-slate-200/80 shadow-xs">
+                      {avatarUrl ? (
+                        <img src={avatarUrl} alt="Profile Photo" className="w-full h-full object-cover" />
+                      ) : (
+                        <span>{userInitial}</span>
+                      )}
+                    </div>
+                    <div>
+                      <span className="text-sm font-bold text-slate-900 block">Profile Photo</span>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        Upload an avatar or professional headshot for your portfolio.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 self-start sm:self-auto">
+                    <label className="px-4 py-2 rounded-2xl bg-[#EEF0FD] hover:bg-[#E0E3FA] text-[#3730A3] border border-indigo-100/60 text-xs font-bold cursor-pointer flex items-center gap-1.5 transition-all shadow-xs">
+                      <Upload className="w-3.5 h-3.5 text-[#5C59E8]" />
+                      <span>{isUploadingPhoto ? "Processing..." : avatarUrl ? "Change Photo" : "Upload Photo"}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePhotoFileChange}
+                        className="hidden"
+                        disabled={isUploadingPhoto}
+                      />
+                    </label>
+                    {avatarUrl && (
+                      <button
+                        type="button"
+                        onClick={() => setAvatarUrl("")}
+                        className="p-2 rounded-2xl border border-slate-200 bg-white hover:bg-rose-50 hover:border-rose-200 text-slate-500 hover:text-rose-600 transition-colors cursor-pointer shadow-2xs"
+                        title="Remove Photo"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                 </div>
 
-                {saveState === "success" && (
-                  <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium flex items-center gap-2 animate-in fade-in">
-                    <Check className="w-4 h-4 text-emerald-600" />
-                    <span>Profile information saved successfully.</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-700">Full name</label>
+                    <input
+                      type="text"
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="e.g. Adarsh Kolluru"
+                      className="w-full px-3.5 py-2.5 rounded-2xl border border-slate-200 bg-slate-50 text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                    />
                   </div>
-                )}
 
-                {saveState === "error" && (
-                  <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium flex items-center gap-2 animate-in fade-in">
-                    <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
-                    <span>{saveErrorMessage || "Failed to update profile. Please try again."}</span>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-700">Phone number</label>
+                    <input
+                      type="text"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="e.g. +91 98765 43210"
+                      className="w-full px-3.5 py-2.5 rounded-2xl border border-slate-200 bg-slate-50 text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                    />
                   </div>
-                )}
+                </div>
 
-                <form onSubmit={handleSave} className="space-y-4">
-                  {/* Profile Photo Uploader / Changer */}
-                  <div className="p-4 rounded-xl bg-[#F7F8FA] border border-[#E5E7EB] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-xl bg-[#111827] text-white font-bold text-lg flex items-center justify-center shrink-0 overflow-hidden border border-[#E5E7EB] shadow-xs">
-                        {avatarUrl ? (
-                          <img src={avatarUrl} alt="Profile Photo" className="w-full h-full object-cover" />
-                        ) : (
-                          <span>{userInitial}</span>
-                        )}
-                      </div>
-                      <div>
-                        <span className="text-sm font-semibold text-[#111827] block">Profile Photo</span>
-                        <p className="text-xs text-[#6B7280]">
-                          Upload a photo or avatar. Visible in EdBuild collaborative groups and your public portfolio.
-                        </p>
-                      </div>
-                    </div>
+                {/* Portfolio Username & Custom Link */}
+                <div className="space-y-2 p-4 rounded-2xl bg-[#F8F9FD] border border-slate-100">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-[#5C59E8]" />
+                      <span>Portfolio Username</span>
+                    </label>
+                    <span className="text-[11px] font-mono text-slate-500">
+                      edworld.co.in/{username || "username"}
+                    </span>
+                  </div>
 
-                    <div className="flex items-center gap-2 self-start sm:self-auto">
-                      <label className="btn-secondary text-xs cursor-pointer flex items-center gap-1.5 py-2 px-3">
-                        <Upload className="w-3.5 h-3.5 text-[#2563EB]" />
-                        <span>{isUploadingPhoto ? "Processing..." : avatarUrl ? "Change Photo" : "Upload Photo"}</span>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handlePhotoFileChange}
-                          className="hidden"
-                          disabled={isUploadingPhoto}
-                        />
-                      </label>
-                      {avatarUrl && (
-                        <button
-                          type="button"
-                          onClick={() => setAvatarUrl("")}
-                          className="p-2 rounded-lg border border-[#E5E7EB] hover:bg-rose-50 hover:border-rose-200 text-[#6B7280] hover:text-rose-600 transition-colors cursor-pointer"
-                          title="Remove Photo"
+                  <div className="relative flex items-center">
+                    <span className="absolute left-3.5 text-xs text-slate-400 font-mono select-none pointer-events-none">
+                      edworld.co.in/
+                    </span>
+                    <input
+                      type="text"
+                      value={username}
+                      onChange={(e) => {
+                        const val = e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, "");
+                        setUsername(val);
+                      }}
+                      placeholder="yourname"
+                      maxLength={24}
+                      className="w-full pl-[98px] pr-24 py-2.5 rounded-2xl border border-slate-200 bg-white text-sm text-slate-900 font-mono placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                    />
+                    <div className="absolute right-3 flex items-center gap-1.5">
+                      {usernameStatus === "checking" && (
+                        <span className="text-[10px] text-slate-400 font-mono">checking...</span>
+                      )}
+                      {usernameStatus === "available" && (
+                        <span className="text-[10px] text-emerald-600 font-bold flex items-center gap-0.5">
+                          <Check className="w-3 h-3" /> available
+                        </span>
+                      )}
+                      {usernameStatus === "unavailable" && (
+                        <span className="text-[10px] text-rose-500 font-bold">taken</span>
+                      )}
+                      {username && (
+                        <Link
+                          href={`/${username}`}
+                          target="_blank"
+                          className="p-1 rounded-lg text-slate-400 hover:text-slate-800 transition-colors"
+                          title="Preview portfolio"
                         >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </Link>
                       )}
                     </div>
                   </div>
+                  {usernameError && (
+                    <p className="text-[11px] text-rose-500 mt-1 font-medium">{usernameError}</p>
+                  )}
+                </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-sm font-medium text-[#111827]">Full name</label>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-700">Professional headline</label>
+                  <input
+                    type="text"
+                    value={headline}
+                    onChange={(e) => setHeadline(e.target.value)}
+                    placeholder="e.g. Full Stack Software Engineer & Distributed Systems Builder"
+                    className="w-full px-3.5 py-2.5 rounded-2xl border border-slate-200 bg-slate-50 text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-700">Professional bio</label>
+                  <textarea
+                    rows={3}
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                    placeholder="Briefly describe your career focus, engineering background, and key accomplishments..."
+                    className="w-full px-3.5 py-2.5 rounded-2xl border border-slate-200 bg-slate-50 text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all leading-relaxed"
+                  />
+                </div>
+
+                {/* Public Portfolio Visibility Toggle */}
+                <div className="p-4 rounded-2xl bg-[#F8F9FD] border border-slate-100 flex items-center justify-between">
+                  <div>
+                    <span className="text-xs font-bold text-slate-900 block">Public portfolio visibility</span>
+                    <span className="text-[11px] text-slate-500">Allow your portfolio to be viewed publicly at edworld.co.in/{username || profile?.username || "username"}</span>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isPublic}
+                      onChange={(e) => setIsPublic(e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-10 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#5C59E8]" />
+                  </label>
+                </div>
+
+                {/* Connection Birthday Visibility Toggle */}
+                <div className="p-4 rounded-2xl bg-[#F8F9FD] border border-slate-100 flex items-center justify-between">
+                  <div>
+                    <span className="text-xs font-bold text-slate-900 block">Show birthday to connections</span>
+                    <span className="text-[11px] text-slate-500">
+                      Upcoming celebration date only; birth year and age are never shared.
+                    </span>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={showBirthdayToConnections}
+                      onChange={(e) => setShowBirthdayToConnections(e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-10 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#5C59E8]" />
+                  </label>
+                </div>
+
+                <div className="pt-2 flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={saveState === "saving"}
+                    className="px-6 py-2.5 rounded-2xl bg-[#5C59E8] hover:bg-[#4F46E5] text-white text-xs font-bold transition-all shadow-md shadow-indigo-500/20 disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>{saveState === "saving" ? "Saving..." : "Save Changes"}</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {/* 4B. CAREER DIRECTION & GOALS */}
+            <div className="p-6 sm:p-8 bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] space-y-6">
+              <div className="border-b border-slate-100 pb-4">
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-[#EEF0FD] text-[#5C59E8] flex items-center justify-center font-bold">
+                    <Target className="w-4 h-4" />
+                  </div>
+                  <span>Career Direction &amp; Goals</span>
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Calibrate your target role, mastery focus, and daily study cadence.
+                </p>
+              </div>
+
+              {careerOSStatus && (
+                <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2 animate-in fade-in">
+                  <Check className="w-4 h-4 text-emerald-600" />
+                  <span>{careerOSStatus}</span>
+                </div>
+              )}
+
+              <CareerPathPicker
+                mode="settings"
+                userId={user?.uid}
+                showSubmitButton={true}
+                submitButtonText="Save Career Focus"
+                onSaveSuccess={(ids, primary) => {
+                  setCareerOSStatus("Your career focus preferences have been saved successfully.");
+                  setTimeout(() => setCareerOSStatus(null), 4000);
+                }}
+              />
+
+              <div className="pt-5 border-t border-slate-100">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+                  Learning Cadence &amp; Timeline
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-700">Target Timeframe</label>
+                    <select
+                      value={careerTimeframe}
+                      onChange={(e) => setCareerTimeframe(Number(e.target.value))}
+                      className="w-full px-3.5 py-2.5 rounded-2xl border border-slate-200 bg-slate-50 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-500 transition-all font-medium"
+                    >
+                      <option value={3}>3 Months (Fast-Track Placement)</option>
+                      <option value={6}>6 Months (Standard Comprehensive)</option>
+                      <option value={12}>12 Months (Deep Mastery)</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-700">Daily Practice Allocation</label>
+                    <select
+                      value={careerDailyHours}
+                      onChange={(e) => setCareerDailyHours(Number(e.target.value))}
+                      className="w-full px-3.5 py-2.5 rounded-2xl border border-slate-200 bg-slate-50 text-xs text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-500 transition-all font-medium"
+                    >
+                      <option value={1}>1 Hour / day (Light Pace)</option>
+                      <option value={2}>2 Hours / day (Recommended)</option>
+                      <option value={3}>3 Hours / day (Accelerated)</option>
+                      <option value={4}>4+ Hours / day (Intensive)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 4C. CERTIFICATIONS & LICENSES */}
+            <div className="p-6 sm:p-8 bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] space-y-5">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div>
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-xl bg-[#EEF0FD] text-[#5C59E8] flex items-center justify-center font-bold">
+                      <Award className="w-4 h-4" />
+                    </div>
+                    <span>Certifications &amp; Credentials</span>
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1">Verified certificates and industry engineering achievements.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowAddCert(!showAddCert)}
+                  className="px-4 py-2 rounded-2xl bg-[#5C59E8] hover:bg-[#4F46E5] text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-md shadow-indigo-500/20 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Certificate</span>
+                </button>
+              </div>
+
+              {showAddCert && (
+                <form onSubmit={handleAddCert} className="p-5 rounded-2xl bg-[#F8F9FD] border border-slate-100 space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">Certificate Title *</label>
                       <input
                         type="text"
                         required
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="e.g. Adarsh Kolluru"
-                        className="w-full px-3 py-2 rounded-lg border border-[#E5E7EB] bg-white text-sm text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:ring-1 focus:ring-[#2563EB] focus:border-[#2563EB]"
+                        placeholder="e.g. AWS Solutions Architect"
+                        value={newCertName}
+                        onChange={(e) => setNewCertName(e.target.value)}
+                        className="w-full px-3.5 py-2 rounded-2xl border border-slate-200 bg-white text-xs text-slate-900 focus:outline-none focus:border-indigo-500"
                       />
                     </div>
-
-                    <div className="space-y-1">
-                      <label className="text-sm font-medium text-[#111827]">Phone number</label>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">Issuing Organization *</label>
                       <input
                         type="text"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="e.g. +91 98765 43210"
-                        className="w-full px-3 py-2 rounded-lg border border-[#E5E7EB] bg-white text-sm text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:ring-1 focus:ring-[#2563EB] focus:border-[#2563EB]"
+                        required
+                        placeholder="e.g. Amazon Web Services"
+                        value={newCertIssuer}
+                        onChange={(e) => setNewCertIssuer(e.target.value)}
+                        className="w-full px-3.5 py-2 rounded-2xl border border-slate-200 bg-white text-xs text-slate-900 focus:outline-none focus:border-indigo-500"
                       />
                     </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-[#111827]">Professional headline</label>
-                    <input
-                      type="text"
-                      value={headline}
-                      onChange={(e) => setHeadline(e.target.value)}
-                      placeholder="e.g. Full Stack Software Engineer & Distributed Systems Builder"
-                      className="w-full px-3 py-2 rounded-lg border border-[#E5E7EB] bg-white text-sm text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:ring-1 focus:ring-[#2563EB] focus:border-[#2563EB]"
-                    />
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-[#111827]">Professional bio</label>
-                    <textarea
-                      rows={3}
-                      value={bio}
-                      onChange={(e) => setBio(e.target.value)}
-                      placeholder="Briefly describe your career focus, engineering background, and key accomplishments..."
-                      className="w-full px-3 py-2 rounded-lg border border-[#E5E7EB] bg-white text-sm text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:ring-1 focus:ring-[#2563EB] focus:border-[#2563EB] leading-relaxed"
-                    />
-                  </div>
-
-                  {/* Public Portfolio Visibility Toggle */}
-                  <div className="p-3.5 rounded-lg bg-[#F7F8FA] border border-[#E5E7EB] flex items-center justify-between">
                     <div>
-                      <span className="text-sm font-medium text-[#111827] block">Public portfolio visibility</span>
-                      <span className="text-xs text-[#6B7280]">Allow peers and recruiters to view your public profile at /u/{profile?.username || "username"}</span>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">Issue Date</label>
                       <input
-                        type="checkbox"
-                        checked={isPublic}
-                        onChange={(e) => setIsPublic(e.target.checked)}
-                        className="sr-only peer"
+                        type="text"
+                        placeholder="e.g. May 2026"
+                        value={newCertDate}
+                        onChange={(e) => setNewCertDate(e.target.value)}
+                        className="w-full px-3.5 py-2 rounded-2xl border border-slate-200 bg-white text-xs text-slate-900 focus:outline-none focus:border-indigo-500"
                       />
-                      <div className="w-9 h-5 bg-[#E5E7EB] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#2563EB]" />
-                    </label>
-                  </div>
-
-                  {/* Connection Birthday Visibility Toggle */}
-                  <div className="p-3.5 rounded-lg bg-[#F7F8FA] border border-[#E5E7EB] flex items-center justify-between">
+                    </div>
                     <div>
-                      <span className="text-sm font-medium text-[#111827] block">Show birthday to accepted connections</span>
-                      <span className="text-xs text-[#6B7280]">
-                        Displays an upcoming reminder to your accepted connections. Birth year and age are never shared.
-                      </span>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">Verification URL</label>
                       <input
-                        type="checkbox"
-                        checked={showBirthdayToConnections}
-                        onChange={(e) => setShowBirthdayToConnections(e.target.checked)}
-                        className="sr-only peer"
+                        type="url"
+                        placeholder="https://credly.com/..."
+                        value={newCertUrl}
+                        onChange={(e) => setNewCertUrl(e.target.value)}
+                        className="w-full px-3.5 py-2 rounded-2xl border border-slate-200 bg-white text-xs text-slate-900 focus:outline-none focus:border-indigo-500"
                       />
-                      <div className="w-9 h-5 bg-[#E5E7EB] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#2563EB]" />
-                    </label>
+                    </div>
                   </div>
-
-                  <div className="pt-2 flex justify-end">
+                  <div className="flex justify-end gap-2.5 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowAddCert(false)}
+                      className="px-4 py-2 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all cursor-pointer"
+                    >
+                      Cancel
+                    </button>
                     <button
                       type="submit"
-                      disabled={saveState === "saving"}
-                      className="btn-primary text-xs font-medium cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+                      className="px-5 py-2 rounded-2xl bg-[#5C59E8] hover:bg-[#4F46E5] text-white text-xs font-bold shadow-md shadow-indigo-500/20 cursor-pointer"
                     >
-                      <Save className="w-3.5 h-3.5" />
-                      <span>{saveState === "saving" ? "Saving..." : "Save Changes"}</span>
+                      Save Credential
                     </button>
                   </div>
                 </form>
-              </div>
+              )}
 
-              {/* 4. CAREER FOCUS & PATHWAY SELECTION */}
-              <div className="p-6 rounded-xl bg-white border border-[#E5E7EB] shadow-xs space-y-5">
-                <div className="border-b border-[#E5E7EB] pb-3">
-                  <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
-                    <Target className="w-4 h-4 text-[#2563EB]" />
-                    <span>Career Focus &amp; Target Paths</span>
-                  </h2>
-                  <p className="text-xs text-[#6B7280] mt-0.5">
-                    Select your primary trajectory. EdWorld adapts your dashboard coursework and practice drills.
-                  </p>
+              {certs.length === 0 ? (
+                <div className="p-6 text-center rounded-2xl bg-[#F8F9FD] border border-dashed border-slate-200">
+                  <p className="text-xs text-slate-400 italic">No certifications added yet. Click &apos;Add Certificate&apos; to showcase credentials.</p>
                 </div>
-
-                {careerOSStatus && (
-                  <div className="p-3 rounded-lg bg-[#F7F8FA] border border-[#E5E7EB] text-[#111827] text-xs font-medium flex items-center gap-2 animate-in fade-in">
-                    <Check className="w-4 h-4 text-[#2563EB]" />
-                    <span>{careerOSStatus}</span>
-                  </div>
-                )}
-
-                <CareerPathPicker
-                  mode="settings"
-                  userId={user?.uid}
-                  showSubmitButton={true}
-                  submitButtonText="Save Career Focus"
-                  onSaveSuccess={(ids, primary) => {
-                    setCareerOSStatus("Your career focus preferences have been saved successfully.");
-                    setTimeout(() => setCareerOSStatus(null), 4000);
-                  }}
-                />
-
-                <div className="pt-5 border-t border-[#E5E7EB]">
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-[#6B7280] mb-3">
-                    Learning Cadence &amp; Timeline
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold text-[#111827]">Target Timeframe</label>
-                      <select
-                        value={careerTimeframe}
-                        onChange={(e) => setCareerTimeframe(Number(e.target.value))}
-                        className="w-full px-3 py-2 rounded-lg border border-[#E5E7EB] text-xs text-[#111827] bg-white focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
-                      >
-                        <option value={3}>3 Months (Fast-Track Placement)</option>
-                        <option value={6}>6 Months (Standard Comprehensive)</option>
-                        <option value={12}>12 Months (Deep Mastery)</option>
-                      </select>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  {certs.map((c) => (
+                    <div key={c.id} className="p-4 rounded-2xl border border-slate-100 bg-[#F8F9FD] flex items-center justify-between gap-3 hover:border-indigo-100 transition-all">
+                      <div>
+                        <h4 className="font-bold text-xs text-slate-900">{c.name}</h4>
+                        <p className="text-[11px] text-slate-500 mt-0.5">{c.issuer} {c.issue_date ? `• ${c.issue_date}` : ""}</p>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        {c.url && (
+                          <a href={c.url} target="_blank" rel="noreferrer" className="p-1.5 rounded-lg text-slate-400 hover:text-[#5C59E8] transition-colors" title="View credential">
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
+                        )}
+                        <button type="button" onClick={() => handleDeleteCert(c.id)} className="p-1.5 rounded-lg text-rose-400 hover:text-rose-600 transition-colors" title="Delete">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
-
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold text-[#111827]">Daily Practice Allocation</label>
-                      <select
-                        value={careerDailyHours}
-                        onChange={(e) => setCareerDailyHours(Number(e.target.value))}
-                        className="w-full px-3 py-2 rounded-lg border border-[#E5E7EB] text-xs text-[#111827] bg-white focus:outline-none focus:ring-1 focus:ring-[#2563EB]"
-                      >
-                        <option value={1}>1 Hour / day (Light Pace)</option>
-                        <option value={2}>2 Hours / day (Recommended)</option>
-                        <option value={3}>3 Hours / day (Accelerated)</option>
-                        <option value={4}>4+ Hours / day (Intensive)</option>
-                      </select>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              </div>
-
-              {/* 5. CERTIFICATIONS & LICENSES */}
-              <div className="p-6 rounded-xl bg-white border border-[#E5E7EB] shadow-xs space-y-4">
-                <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
-                  <div>
-                    <h2 className="text-base font-bold text-[#111827] flex items-center gap-2">
-                      <Award className="w-4 h-4 text-[#2563EB]" />
-                      <span>Certifications &amp; Credentials</span>
-                    </h2>
-                    <p className="text-xs text-[#6B7280] mt-0.5">Verified certificates and engineering achievements.</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setShowAddCert(!showAddCert)}
-                    className="px-3 py-1.5 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-medium flex items-center gap-1.5 transition-colors shadow-xs"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Add Certificate</span>
-                  </button>
-                </div>
-
-                {showAddCert && (
-                  <form onSubmit={handleAddCert} className="p-4 rounded-lg bg-[#F7F8FA] border border-[#E5E7EB] space-y-3">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-xs font-semibold text-[#111827] mb-1">Certificate Title *</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="e.g. AWS Solutions Architect"
-                          value={newCertName}
-                          onChange={(e) => setNewCertName(e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-[#E5E7EB] bg-white text-xs text-[#111827] focus:ring-1 focus:ring-[#2563EB]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-[#111827] mb-1">Issuing Organization *</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="e.g. Amazon Web Services"
-                          value={newCertIssuer}
-                          onChange={(e) => setNewCertIssuer(e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-[#E5E7EB] bg-white text-xs text-[#111827] focus:ring-1 focus:ring-[#2563EB]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-[#111827] mb-1">Issue Date</label>
-                        <input
-                          type="text"
-                          placeholder="e.g. May 2026"
-                          value={newCertDate}
-                          onChange={(e) => setNewCertDate(e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-[#E5E7EB] bg-white text-xs text-[#111827] focus:ring-1 focus:ring-[#2563EB]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-[#111827] mb-1">Verification URL</label>
-                        <input
-                          type="url"
-                          placeholder="https://credly.com/..."
-                          value={newCertUrl}
-                          onChange={(e) => setNewCertUrl(e.target.value)}
-                          className="w-full px-3 py-2 rounded-lg border border-[#E5E7EB] bg-white text-xs text-[#111827] focus:ring-1 focus:ring-[#2563EB]"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex justify-end gap-2 pt-1">
-                      <button
-                        type="button"
-                        onClick={() => setShowAddCert(false)}
-                        className="px-3 py-1.5 rounded-lg bg-white border border-[#E5E7EB] text-[#6B7280] text-xs font-medium"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="submit"
-                        className="px-4 py-1.5 rounded-lg bg-[#2563EB] text-white text-xs font-medium"
-                      >
-                        Save Credential
-                      </button>
-                    </div>
-                  </form>
-                )}
-
-                {certs.length === 0 ? (
-                  <p className="text-xs text-[#6B7280] italic">No certifications added yet.</p>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {certs.map((c) => (
-                      <div key={c.id} className="p-3.5 rounded-lg border border-[#E5E7EB] bg-[#F7F8FA] flex items-center justify-between gap-3">
-                        <div>
-                          <h4 className="font-semibold text-xs text-[#111827]">{c.name}</h4>
-                          <p className="text-[11px] text-[#6B7280]">{c.issuer} {c.issue_date ? `• ${c.issue_date}` : ""}</p>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          {c.url && (
-                            <a href={c.url} target="_blank" rel="noreferrer" className="p-1 text-[#6B7280] hover:text-[#111827]">
-                              <ExternalLink className="w-3.5 h-3.5" />
-                            </a>
-                          )}
-                          <button type="button" onClick={() => handleDeleteCert(c.id)} className="p-1 text-rose-500 hover:text-rose-700">
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* 6. CONNECTED ACCOUNTS */}
-              <SyncedAccountsCard
-                syncedAccounts={syncedAccounts}
-                onUpdateAccounts={handleUpdateAccounts}
-                userId={user?.uid}
-              />
+              )}
             </div>
 
-            {/* Right 1 Column: Security & Preferences */}
-            <div className="space-y-6">
-              {/* 7. ACCOUNT & SECURITY SETTINGS */}
-              <div className="p-6 rounded-xl bg-white border border-[#E5E7EB] shadow-xs space-y-5">
-                <div className="border-b border-[#E5E7EB] pb-3">
-                  <h3 className="text-base font-bold text-[#111827] flex items-center gap-2">
-                    <KeyRound className="w-4 h-4 text-[#2563EB]" />
-                    <span>Account &amp; Security</span>
-                  </h3>
-                  <p className="text-xs text-[#6B7280] mt-0.5">Manage your credentials and security settings.</p>
-                </div>
+            {/* 4D. CONNECTED ACCOUNTS */}
+            <SyncedAccountsCard
+              syncedAccounts={syncedAccounts}
+              onUpdateAccounts={handleUpdateAccounts}
+              userId={user?.uid}
+            />
+          </div>
 
-                {/* Email Verification Status */}
-                <div className="p-3 rounded-lg bg-[#F7F8FA] border border-[#E5E7EB] flex items-center justify-between gap-3">
-                  <div className="min-w-0">
-                    <span className="text-[10px] font-semibold uppercase text-[#6B7280] block">Primary Email</span>
-                    <span className="text-xs font-mono text-[#111827] truncate block">{user?.email}</span>
+          {/* Right 1 Column: Security & Preferences */}
+          <div className="space-y-6">
+            {/* 4E. ACCOUNT & SECURITY SETTINGS */}
+            <div className="p-6 sm:p-8 bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] space-y-5">
+              <div className="border-b border-slate-100 pb-4">
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-[#EEF0FD] text-[#5C59E8] flex items-center justify-center font-bold">
+                    <KeyRound className="w-4 h-4" />
                   </div>
-                  <span className="px-2 py-0.5 rounded-md bg-[#F7F8FA] text-emerald-700 text-[10px] font-medium border border-emerald-200 flex items-center gap-1 shrink-0">
-                    <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                    <span>Verified</span>
-                  </span>
-                </div>
-
-                {/* Password Update Form */}
-                <div className="space-y-3 pt-2">
-                  <span className="text-xs font-semibold text-[#111827] block">Update Password</span>
-                  
-                  {passwordStatus && (
-                    <div className="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium flex items-center gap-1.5 animate-in fade-in">
-                      <Check className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>{passwordStatus}</span>
-                    </div>
-                  )}
-
-                  {passwordError && (
-                    <div className="p-2.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium flex items-center gap-1.5 animate-in fade-in">
-                      <AlertCircle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
-                      <span>{passwordError}</span>
-                    </div>
-                  )}
-
-                  <form onSubmit={handleChangePassword} className="space-y-2.5">
-                    <div className="relative">
-                      <input
-                        type={showNewPass ? "text" : "password"}
-                        required
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        placeholder="New Password (min 8 chars)"
-                        className="w-full px-3 py-2 pr-9 rounded-lg border border-[#E5E7EB] text-xs text-[#111827] focus:ring-1 focus:ring-[#2563EB]"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowNewPass(!showNewPass)}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#6B7280] hover:text-[#111827]"
-                      >
-                        {showNewPass ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                      </button>
-                    </div>
-
-                    <input
-                      type="password"
-                      required
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Confirm New Password"
-                      className="w-full px-3 py-2 rounded-lg border border-[#E5E7EB] text-xs text-[#111827] focus:ring-1 focus:ring-[#2563EB]"
-                    />
-
-                    <button
-                      type="submit"
-                      disabled={isChangingPass}
-                      className="w-full py-2 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-medium text-xs transition-colors shadow-xs cursor-pointer disabled:opacity-50"
-                    >
-                      {isChangingPass ? "Updating..." : "Update Password"}
-                    </button>
-                  </form>
-                </div>
+                  <span>Account &amp; Security</span>
+                </h3>
               </div>
 
-              {/* 8. WORKSPACE NOTIFICATIONS */}
-              <div className="p-6 rounded-xl bg-white border border-[#E5E7EB] shadow-xs space-y-4">
-                <h3 className="text-base font-bold text-[#111827] flex items-center gap-2">
-                  <Bell className="w-4 h-4 text-[#2563EB]" />
-                  <span>Notification Preferences</span>
-                </h3>
-
-                <div className="space-y-2">
-                  <label className="flex items-center justify-between p-2.5 rounded-lg bg-[#F7F8FA] border border-[#E5E7EB] cursor-pointer text-xs">
-                    <span className="font-medium text-[#111827]">Interview &amp; Feedback Alerts</span>
-                    <input
-                      type="checkbox"
-                      checked={notifyTasks}
-                      onChange={(e) => setNotifyTasks(e.target.checked)}
-                      className="accent-[#2563EB] rounded"
-                    />
-                  </label>
-
-                  <label className="flex items-center justify-between p-2.5 rounded-lg bg-[#F7F8FA] border border-[#E5E7EB] cursor-pointer text-xs">
-                    <span className="font-medium text-[#111827]">Mentor &amp; Peer Messages</span>
-                    <input
-                      type="checkbox"
-                      checked={notifyLeaves}
-                      onChange={(e) => setNotifyLeaves(e.target.checked)}
-                      className="accent-[#2563EB] rounded"
-                    />
-                  </label>
-
-                  <label className="flex items-center justify-between p-2.5 rounded-lg bg-[#F7F8FA] border border-[#E5E7EB] cursor-pointer text-xs">
-                    <span className="font-medium text-[#111827]">Job Match &amp; Application Updates</span>
-                    <input
-                      type="checkbox"
-                      checked={notifyPayroll}
-                      onChange={(e) => setNotifyPayroll(e.target.checked)}
-                      className="accent-[#2563EB] rounded"
-                    />
-                  </label>
+              {/* Email Verification Status */}
+              <div className="p-4 rounded-2xl bg-[#F8F9FD] border border-slate-100 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <span className="text-[10px] font-bold uppercase text-slate-400 block tracking-wider">Primary Email</span>
+                  <span className="text-xs font-mono font-bold text-slate-800 truncate block mt-0.5">{user?.email}</span>
                 </div>
+                <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200/60 flex items-center gap-1.5 shrink-0 shadow-2xs">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Verified</span>
+                </span>
+              </div>
+
+              {/* Session Security Status */}
+              <div className="p-4 rounded-2xl bg-[#F8F9FD] border border-slate-100 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <span className="text-[10px] font-bold uppercase text-slate-400 block tracking-wider">Authentication</span>
+                  <span className="text-xs font-medium text-slate-700 block mt-0.5">Secure Cloud Session</span>
+                </div>
+                <span className="px-3 py-1 rounded-full bg-[#EEF0FD] text-[#5C59E8] text-[10px] font-bold border border-indigo-100 flex items-center gap-1.5 shrink-0 shadow-2xs">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#5C59E8]" />
+                  <span>Active</span>
+                </span>
+              </div>
+            </div>
+
+            {/* 4F. WORKSPACE NOTIFICATIONS */}
+            <div className="p-6 sm:p-8 bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] space-y-4">
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-4">
+                <div className="w-8 h-8 rounded-xl bg-[#EEF0FD] text-[#5C59E8] flex items-center justify-center font-bold">
+                  <Bell className="w-4 h-4" />
+                </div>
+                <span>Notification Preferences</span>
+              </h3>
+
+              <div className="space-y-2.5">
+                <label className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8F9FD] border border-slate-100 cursor-pointer text-xs transition-all hover:border-indigo-100">
+                  <span className="font-semibold text-slate-800">Interview &amp; Feedback Alerts</span>
+                  <input
+                    type="checkbox"
+                    checked={notifyTasks}
+                    onChange={(e) => setNotifyTasks(e.target.checked)}
+                    className="accent-[#5C59E8] w-4 h-4 rounded-md cursor-pointer"
+                  />
+                </label>
+
+                <label className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8F9FD] border border-slate-100 cursor-pointer text-xs transition-all hover:border-indigo-100">
+                  <span className="font-semibold text-slate-800">Mentor &amp; Peer Messages</span>
+                  <input
+                    type="checkbox"
+                    checked={notifyLeaves}
+                    onChange={(e) => setNotifyLeaves(e.target.checked)}
+                    className="accent-[#5C59E8] w-4 h-4 rounded-md cursor-pointer"
+                  />
+                </label>
+
+                <label className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8F9FD] border border-slate-100 cursor-pointer text-xs transition-all hover:border-indigo-100">
+                  <span className="font-semibold text-slate-800">Job Match &amp; Application Updates</span>
+                  <input
+                    type="checkbox"
+                    checked={notifyPayroll}
+                    onChange={(e) => setNotifyPayroll(e.target.checked)}
+                    className="accent-[#5C59E8] w-4 h-4 rounded-md cursor-pointer"
+                  />
+                </label>
               </div>
             </div>
           </div>

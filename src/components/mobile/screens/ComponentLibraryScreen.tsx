@@ -20,7 +20,7 @@ export const ComponentLibraryScreen: React.FC = () => {
   return (
     <div className="flex flex-col h-full bg-[#F8F9FD] dark:bg-[#0E1017] select-none overflow-y-auto pb-10">
       {/* Top Header */}
-      <div className="sticky top-0 z-20 bg-white/95 dark:bg-[#161922]/95 backdrop-blur-md px-4 pt-3 pb-3 border-b border-slate-200/70 dark:border-slate-800">
+      <div className="sticky top-0 z-20 bg-white dark:bg-[#161922] px-4 pt-3 pb-3 border-b border-slate-200 dark:border-slate-800 shadow-2xs">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#3D3BF3] to-[#FF6B00] text-white flex items-center justify-center font-bold text-xs">
             UI

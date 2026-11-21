@@ -596,7 +596,7 @@ export default function AdminSecuritySOCPage() {
             </span>
             <h2 className="text-lg font-extrabold text-black flex items-center gap-2">
               <Bot className="w-5 h-5 text-black" />
-              <span>Ask Sentinel AI SOC Analyst</span>
+              <span>Ask Aegis Sentinel AI Security Analyst</span>
             </h2>
             <p className="text-xs text-neutral-500">
               Query current defense telemetry, ask about active scraping attacks, or request recommended hardening actions in natural language.

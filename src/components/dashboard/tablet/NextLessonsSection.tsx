@@ -50,7 +50,7 @@ export default function NextLessonsSection() {
       courseTitle: "High-Concurrency Backend Engineering",
       instructor: "Distributed Systems Faculty",
       duration: "35 min",
-      href: "/edfix",
+      href: "/problems",
     },
   ];
 

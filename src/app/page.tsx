@@ -1,15 +1,21 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import ComingSoonLanding from "@/components/landing/ComingSoonLanding";
 import ModernEdworldLanding from "@/components/landing/ModernEdworldLanding";
 
-export default function HomePage() {
+function HomeContent() {
+  const searchParams = useSearchParams();
+  const previewParam = searchParams ? searchParams.get("preview") === "true" : false;
+  const comingSoonParam = searchParams ? searchParams.get("coming_soon") === "true" : false;
+
   const { user, profile } = useAuth();
   const [isSiteLaunched, setIsSiteLaunched] = useState<boolean | null>(null);
-  const [previewMode, setPreviewMode] = useState<boolean>(false);
+  const [previewMode, setPreviewMode] = useState<boolean>(previewParam);
+  const [forceComingSoon, setForceComingSoon] = useState<boolean>(comingSoonParam);
 
   const isAdmin = Boolean(
     (profile as any)?.is_admin ||
@@ -20,15 +26,17 @@ export default function HomePage() {
   );
 
   useEffect(() => {
-    // 1. Check if preview mode is requested in URL query
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("preview") === "true") {
-        setPreviewMode(true);
-      }
+    if (previewParam) {
+      setPreviewMode(true);
+      setForceComingSoon(false);
+    } else if (comingSoonParam) {
+      setForceComingSoon(true);
+      setPreviewMode(false);
     }
+  }, [previewParam, comingSoonParam]);
 
-    // 2. Query platform launch feature flag
+  useEffect(() => {
+    // Query platform launch feature flag
     async function checkLaunchStatus() {
       try {
         const res = await fetch("/api/feature-flags");
@@ -46,46 +54,68 @@ export default function HomePage() {
     checkLaunchStatus();
   }, []);
 
-  // COMING SOON GATE:
-  // Public visitors see Coming Soon unless site is launched or Admin preview is active.
-  if ((isSiteLaunched === false || isSiteLaunched === null) && !previewMode) {
+  // Coming Soon is only displayed if explicitly requested with ?coming_soon=true
+  if (forceComingSoon) {
     return (
       <ComingSoonLanding
-        onBypassComingSoon={isAdmin ? () => setPreviewMode(true) : undefined}
+        onBypassComingSoon={() => {
+          document.cookie = "edw_preview=true; path=/; max-age=86400; SameSite=Lax";
+          setPreviewMode(true);
+          setForceComingSoon(false);
+        }}
+        targetLaunchDate="2026-12-25T00:00:00+05:30"
       />
     );
   }
 
   return (
     <div className="w-full">
-      {/* Admin Preview Mode Bar */}
+      {/* Platform Launch Bar / Admin Banner */}
       {previewMode && (
-        <div className="bg-amber-400 border-b border-neutral-900 text-neutral-950 px-4 py-2 text-xs font-bold flex flex-col sm:flex-row items-center justify-between gap-2 sticky top-0 z-50 shadow-xs">
+        <div className="bg-slate-900 border-b border-slate-800 text-white px-4 py-2.5 text-xs font-semibold flex flex-col sm:flex-row items-center justify-between gap-2 sticky top-0 z-50 shadow-md">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-red-600 animate-ping shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping shrink-0" />
             <span>
-              <strong>Admin Preview Active:</strong> Regular visitors see the Coming Soon page. Click &quot;Accept &amp; Launch&quot; in Admin to make features live.
+              <strong>Platform Launch: December 25, 2026</strong> — You are viewing the live landing page and features preview.
             </span>
           </div>
           <div className="flex items-center gap-3 shrink-0">
-            <Link
-              href="/admin"
-              className="px-3 py-1 bg-neutral-900 text-white rounded-lg text-xs font-semibold hover:bg-neutral-800 transition"
-            >
-              Open Admin Console &rarr;
-            </Link>
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className="px-3 py-1 bg-white text-slate-900 rounded-lg text-xs font-bold hover:bg-slate-100 transition"
+              >
+                Admin Console &rarr;
+              </Link>
+            )}
             <button
-              onClick={() => setPreviewMode(false)}
-              className="px-2.5 py-1 bg-amber-200 hover:bg-amber-300 text-neutral-900 rounded-lg text-xs font-semibold transition cursor-pointer"
+              onClick={() => {
+                setForceComingSoon(true);
+                setPreviewMode(false);
+              }}
+              className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1.5"
             >
-              Exit Preview
+              <span>Back to Launch Timer</span>
             </button>
           </div>
         </div>
       )}
 
-      {/* Modern, High-Performance EdWorld Landing Page */}
-      <ModernEdworldLanding />
+      {/* Modern, High-Performance EdWorld Landing Page with Launch Countdown Loop */}
+      <ModernEdworldLanding 
+        onViewComingSoon={() => {
+          setForceComingSoon(true);
+          setPreviewMode(false);
+        }}
+      />
     </div>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={null}>
+      <HomeContent />
+    </Suspense>
   );
 }

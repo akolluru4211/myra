@@ -252,9 +252,9 @@ export default function ResumeStudioPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-slate-100 flex flex-col">
+    <div className="w-full flex flex-col space-y-6">
       {/* Top Action Bar */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-20 px-4 sm:px-6 py-3">
+      <header className="liquid-glass-card rounded-2xl sticky top-18 sm:top-20 z-20 px-4 sm:px-6 py-3 shadow-xs">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Link

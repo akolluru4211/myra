@@ -34,36 +34,36 @@ export default function BlockedSiteRedirectCard({
   };
 
   return (
-    <div className="p-6 sm:p-10 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs text-center max-w-xl mx-auto space-y-6">
+    <div className="liquid-glass-card p-6 sm:p-10 text-center max-w-xl mx-auto space-y-6">
       
       {/* Icon Capsule */}
-      <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto">
+      <div className="w-14 h-14 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-600 flex items-center justify-center mx-auto shadow-xs">
         <Lock className="w-7 h-7" />
       </div>
 
       <div className="space-y-2">
         <div className="flex justify-center">
-          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-rose-100 border border-rose-200 text-rose-800">
+          <span className="liquid-pill px-3 py-1 text-xs font-semibold bg-rose-500/15 border-rose-500/30 text-rose-800">
             Access Restricted
           </span>
         </div>
 
-        <h2 className="text-2xl sm:text-3xl font-bold text-[#111827] tracking-tight">
+        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
           {blockedDomain} is Locked!
         </h2>
 
-        <p className="text-xs sm:text-sm text-[#6B7280] leading-relaxed max-w-md mx-auto">
+        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-md mx-auto">
           You set an active study timer on EdWorld. Social media and entertainment apps are blocked until your learning session is complete.
         </p>
       </div>
 
       {/* Countdown Card */}
-      <div className="p-4 rounded-xl bg-[#F8F9FA] border border-[#E5E7EB] inline-flex items-center gap-4 text-xs font-mono text-[#111827]">
+      <div className="p-4 rounded-xl liquid-glass-card bg-white/70 border-white/80 inline-flex items-center gap-4 text-xs font-mono text-slate-900">
         <div className="flex items-center gap-2">
           <Clock className="w-4 h-4 text-rose-600 animate-pulse" />
-          <span className="text-[#6B7280]">Timer Remaining:</span>
+          <span className="text-slate-500">Timer Remaining:</span>
         </div>
-        <span className="text-base font-bold px-3 py-1 rounded-lg bg-white border border-[#E5E7EB]">
+        <span className="liquid-pill text-base font-bold px-3 py-1 bg-white/80 border-slate-200/60 shadow-xs">
           {remainingSeconds > 0 ? formatTime(remainingSeconds) : "Session Finishing..."}
         </span>
       </div>
@@ -73,16 +73,16 @@ export default function BlockedSiteRedirectCard({
         <Link
           href={subjectHref}
           onClick={onClearQuery}
-          className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#111827] hover:bg-black text-white font-bold text-xs sm:text-sm shadow-xs transition-colors inline-flex items-center justify-center gap-2 cursor-pointer"
+          className="liquid-btn-primary w-full sm:w-auto px-6 py-3 text-xs sm:text-sm font-bold inline-flex items-center justify-center gap-2 cursor-pointer shadow-md"
         >
-          <BookOpen className="w-4 h-4 text-amber-400" />
+          <BookOpen className="w-4 h-4 text-amber-300" />
           <span>Resume Study Target ({subjectName})</span>
           <ArrowRight className="w-4 h-4 text-white" />
         </Link>
 
         <button
           onClick={onClearQuery}
-          className="px-4 py-2 text-xs text-[#6B7280] hover:text-[#111827] transition-colors cursor-pointer"
+          className="liquid-btn-secondary px-4 py-2 text-xs font-semibold cursor-pointer"
         >
           Dismiss Alert
         </button>

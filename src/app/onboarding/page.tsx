@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
-import { SkillLevel, UserInterest, CareerStage, UserDomainPriority } from "@/lib/types";
+import { SkillLevel, UserInterest, CareerStage, UserDomainPriority, Resume, ResumeContent } from "@/lib/types";
 import { DOMAIN_CATALOG } from "@/lib/services/career-learning-os";
 import { 
   Check, 
@@ -27,11 +27,13 @@ import {
   CheckCircle2,
   Clock,
   Layers,
-  Star
+  Star,
+  FileText
 } from "lucide-react";
 import EdworldLogo from "@/components/ui/EdworldLogo";
 import { supabase } from "@/lib/supabase";
 import CareerPathPicker from "@/components/career/CareerPathPicker";
+import MyraOnboardingAssistantCard from "@/components/onboarding/MyraOnboardingAssistantCard";
 
 interface DomainSelectionState {
   domainId: string;
@@ -50,6 +52,8 @@ export default function OnboardingPage() {
   // Step 1: Basic Profile
   const [displayName, setDisplayName] = useState(profile?.name || user?.name || "");
   const [username, setUsername] = useState(profile?.username || "");
+  const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "available" | "unavailable">("idle");
+  const [usernameMessage, setUsernameMessage] = useState<string>("");
   const [headline, setHeadline] = useState(profile?.headline || "");
   const [bio, setBio] = useState(profile?.bio || "");
   const [phone, setPhone] = useState(profile?.phone || user?.phone || "");
@@ -87,6 +91,33 @@ export default function OnboardingPage() {
   const [saving, setSaving] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [showMyraCopilot, setShowMyraCopilot] = useState(false);
+
+  // Instant escape hatch to dashboard (marks onboarding done so AuthGuard won't intercept)
+  const handleSkipToDashboard = async () => {
+    try {
+      if (typeof window !== "undefined") {
+        const stored = JSON.parse(localStorage.getItem("edworld_user_profile") || "{}");
+        localStorage.setItem(
+          "edworld_user_profile",
+          JSON.stringify({ 
+            ...stored, 
+            onboarding_completed: true,
+            name: displayName || stored.name || "Student",
+            targetRole: targetRole.trim() || stored.targetRole || "Software Engineer",
+            degree: degree || stored.degree || "B.Tech / B.E."
+          })
+        );
+        localStorage.setItem("edworld_study_hours", dailyHours.toString());
+        localStorage.setItem("edworld_target_role", targetRole.trim() || "Software Engineer");
+      }
+      await updateUserProfile({ onboarding_completed: true });
+    } catch (e) {
+      console.warn("[Onboarding skip note]:", e);
+    }
+    router.push("/dashboard");
+  };
 
   // Sync initial values from profile/user once loaded
   useEffect(() => {
@@ -94,12 +125,53 @@ export default function OnboardingPage() {
       setDisplayName(user.name);
     }
     if (user?.name && !username) {
-      setUsername(user.name.toLowerCase().replace(/\s+/g, "_") + "_" + Math.floor(100 + Math.random() * 900));
+      const suggested = user.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "_")
+        .slice(0, 18);
+      setUsername(suggested || "student");
     }
     if (user?.phone && !phone) {
       setPhone(user.phone);
     }
   }, [user, profile]);
+
+  // Debounced check for username availability
+  useEffect(() => {
+    const clean = username.trim().toLowerCase();
+    if (!clean) {
+      setUsernameStatus("idle");
+      setUsernameMessage("");
+      return;
+    }
+
+    if (clean.length < 3) {
+      setUsernameStatus("unavailable");
+      setUsernameMessage("Username must be at least 3 characters.");
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setUsernameStatus("checking");
+      try {
+        const res = await fetch(
+          `/api/profile/check-username?username=${encodeURIComponent(clean)}&userId=${user?.uid || ""}`
+        );
+        const data = await res.json();
+        if (data.available) {
+          setUsernameStatus("available");
+          setUsernameMessage("✓ Username is available!");
+        } else {
+          setUsernameStatus("unavailable");
+          setUsernameMessage(data.reason || "Username is not available.");
+        }
+      } catch (e) {
+        setUsernameStatus("idle");
+      }
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [username, user?.uid]);
 
   const toggleDomain = (domainId: string, domainName: string) => {
     setSelectedDomains((prev) => {
@@ -145,23 +217,43 @@ export default function OnboardingPage() {
 
   const handleNext = () => {
     setError(null);
+    const newErrors: Record<string, string> = {};
+
     if (currentStep === 1) {
       if (!displayName.trim()) {
-        setError("Please enter your full name to proceed.");
+        newErrors.displayName = "Please enter your full name to proceed.";
+      }
+      const cleanUsername = username.trim().toLowerCase();
+      if (!cleanUsername) {
+        newErrors.username = "Please choose a username for your public portfolio.";
+      } else if (cleanUsername.length < 3 || cleanUsername.length > 24) {
+        newErrors.username = "Username must be between 3 and 24 characters.";
+      } else if (!/^[a-z0-9][a-z0-9_-]*[a-z0-9]$/.test(cleanUsername) && cleanUsername.length > 1) {
+        newErrors.username = "Only lowercase letters, numbers, hyphens, and underscores are allowed.";
+      } else if (usernameStatus === "unavailable") {
+        newErrors.username = usernameMessage || "This username is not available. Please choose another.";
+      }
+
+      if (Object.keys(newErrors).length > 0) {
+        setFieldErrors(newErrors);
+        setError("Please correct the errors in Step 1 before continuing.");
         return;
       }
     } else if (currentStep === 2) {
       if (!institution.trim()) {
-        setError("Please enter your school, college, or university name.");
-        return;
+        newErrors.institution = "Please enter your school, college, or university name.";
       }
       if (!fieldOfStudy.trim()) {
-        setError("Please enter your branch or stream of study.");
+        newErrors.fieldOfStudy = "Please enter your branch or stream of study.";
+      }
+      if (Object.keys(newErrors).length > 0) {
+        setFieldErrors(newErrors);
+        setError("Please complete the required education fields highlighted below.");
         return;
       }
     } else if (currentStep === 3) {
       if (careerPathIds.length === 0) {
-        setError("Please select at least 1 career path or choose 'Other / Not Sure Yet'.");
+        setError("Please select at least 1 career path or click 'Exploring / Not Sure Yet'.");
         return;
       }
       if (!primaryCareerPathId || !careerPathIds.includes(primaryCareerPathId)) {
@@ -170,6 +262,7 @@ export default function OnboardingPage() {
       }
     }
     
+    setFieldErrors({});
     if (currentStep < totalSteps) {
       setCurrentStep((prev) => prev + 1);
     } else {
@@ -218,7 +311,25 @@ export default function OnboardingPage() {
         linkedin_url: linkedinUrl.trim() || undefined,
       };
 
-      await updateUserProfile(profilePayload);
+      try {
+        await updateUserProfile(profilePayload);
+      } catch (profileErr: any) {
+        console.warn("[Onboarding profile update note]:", profileErr);
+      }
+
+      // Always save to localStorage immediately to unblock client-side AuthGuard and hydrate dashboard
+      if (typeof window !== "undefined") {
+        const stored = JSON.parse(localStorage.getItem("edworld_user_profile") || "{}");
+        localStorage.setItem(
+          "edworld_user_profile",
+          JSON.stringify({ ...stored, ...profilePayload, onboarding_completed: true })
+        );
+        localStorage.setItem("edworld_study_hours", dailyHours.toString());
+        localStorage.setItem("edworld_target_role", targetRole.trim() || "Software Engineer");
+        if (primaryCareerPathId) {
+          localStorage.setItem("edworld_primary_career_path", primaryCareerPathId);
+        }
+      }
 
       // Save to Career Learning OS API & Career Paths API
       if (user?.uid) {
@@ -233,7 +344,7 @@ export default function OnboardingPage() {
             }),
           });
         } catch (cpErr) {
-          console.error("Failed to save career paths:", cpErr);
+          console.warn("Failed to save career paths:", cpErr);
         }
 
         const domainItems = Object.values(selectedDomains).map(d => ({
@@ -263,40 +374,109 @@ export default function OnboardingPage() {
           console.warn("Failed to generate career OS roadmap:", cosErr);
         }
 
-        // Also update profiles table explicitly for immediate client cache sync
+        // Auto-generate student's Harvard ATS master resume directly from onboarding
+        const skillsList = Object.values(selectedDomains).map((d) => d.domainName);
+        const technicalSkills = Array.from(
+          new Set([
+            ...skillsList,
+            fieldOfStudy.includes("Computer") ? "Data Structures & Algorithms" : fieldOfStudy,
+            "Git & GitHub",
+            "System Architecture"
+          ])
+        );
+
+        const initialResumeContent: ResumeContent = {
+          contact: {
+            fullName: displayName.trim(),
+            email: user?.email || "",
+            phone: phone.trim() || "+91 98765 43210",
+            location: "India",
+            linkedin: linkedinUrl.trim() || undefined,
+            github: githubUrl.trim() || undefined,
+            portfolio: portfolioUrl.trim() || undefined,
+          },
+          summary: `Motivated and analytical ${targetRole.trim()} with strong competencies in ${technicalSkills.slice(0, 3).join(", ")}. Pursuing ${degree} in ${fieldOfStudy.trim()} at ${institution.trim()} (CGPA: ${cgpa || "8.5"}, Class of ${graduationYear}). Focused on building robust, high-performance software systems and mastering technical interviews.`,
+          experience: [],
+          education: [
+            {
+              id: "edu-1",
+              school: institution.trim() || "University Institute of Technology",
+              degree: degree || "B.Tech / B.E.",
+              fieldOfStudy: fieldOfStudy.trim() || "Computer Science",
+              graduationDate: graduationYear || "2026",
+              gpa: cgpa.trim() || "8.5",
+              coursework: [
+                "Data Structures & Algorithms",
+                "Database Management Systems",
+                "Operating Systems",
+                "Computer Networks"
+              ]
+            }
+          ],
+          skills: {
+            technical: technicalSkills,
+            soft: ["STAR Communication", "Structured Problem Solving", "Peer Collaboration", "Analytical Thinking"],
+            tools: ["VS Code", "Git", "GitHub", "Postman", "Linux"]
+          },
+          projects: [
+            {
+              id: "proj-1",
+              title: `${targetRole.trim()} Verified Capstone`,
+              description: `Engineered an end-to-end full-stack application implementing modular API routing, database schema modeling, and responsive interface workflows.`,
+              technologies: technicalSkills.slice(0, 4),
+              bullets: [
+                `Architected clean, decoupled application services using ${technicalSkills[0] || "TypeScript"} and industry-standard design principles.`,
+                `Optimized client-side rendering latency and state persistence across active session modules.`,
+                `Implemented robust error boundary handling and automated integration verification.`
+              ]
+            }
+          ],
+          certifications: []
+        };
+
+        const initialResume: Resume = {
+          id: `resume-${user.uid}-master`,
+          userId: user.uid,
+          title: "ATS Master Resume",
+          templateId: "classic",
+          content: initialResumeContent,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem(`edworld_${user.uid}_resumes`, JSON.stringify([initialResume]));
+            localStorage.setItem("edworld_resumes", JSON.stringify([initialResume]));
+          } catch (storageErr) {
+            console.warn("[Local storage resume cache note]:", storageErr);
+          }
+        }
+
         try {
-          await supabase.from("profiles").update({
-            name: displayName.trim(),
-            display_name: displayName.trim(),
-            username: username.trim() || null,
-            headline: profilePayload.headline,
-            bio: bio.trim() || null,
-            phone: phone.trim() || null,
-            career_stage: careerStage,
-            institution: profilePayload.institution || null,
-            degree: profilePayload.degree || null,
-            field_of_study: profilePayload.field_of_study || null,
-            graduation_year: profilePayload.graduation_year || null,
-            cgpa: profilePayload.cgpa || null,
-            target_role: profilePayload.targetRole || null,
-            primary_goal: profilePayload.primaryGoal,
-            interests: interestsArray,
-            onboarding_completed: true,
-            github_url: githubUrl.trim() || null,
-            linkedin_url: linkedinUrl.trim() || null,
+          await supabase.from("resumes").upsert({
+            id: initialResume.id,
+            user_id: user.uid,
+            title: initialResume.title,
+            template_id: initialResume.templateId,
+            content: initialResume.content,
             updated_at: new Date().toISOString(),
-          }).eq("id", user.uid);
-        } catch (directProfileErr) {
-          console.warn("[Onboarding client sync note]:", directProfileErr);
+          });
+        } catch (supabaseResumeErr) {
+          console.warn("[Supabase resume upsert note]:", supabaseResumeErr);
         }
       }
 
       setIsCompleted(true);
       setTimeout(() => {
         router.push("/dashboard");
-      }, 1500);
+      }, 1200);
     } catch (err: any) {
-      setError(err?.message || "Failed to complete setup. Please try again.");
+      console.error("[Onboarding submission error]:", err);
+      setError(
+        err?.message || 
+        "A connection issue occurred while syncing with the server. Your information has been cached locally so you won't lose progress. You can retry or skip to your dashboard."
+      );
     } finally {
       setSaving(false);
     }
@@ -305,7 +485,7 @@ export default function OnboardingPage() {
   const progressPercentage = Math.round((currentStep / totalSteps) * 100);
 
   return (
-    <div className="min-h-screen bg-[#F4F6FB] flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8 font-sans selection:bg-[#D7FC51] selection:text-black">
+    <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8 font-sans selection:bg-white selection:text-slate-950 flex flex-col justify-center bg-[#080B11] text-white">
       <div className={`${currentStep === 3 ? "max-w-4xl" : "max-w-2xl"} mx-auto w-full space-y-6 transition-all duration-200`}>
         
         {/* Top Branding & Progress Tracker */}
@@ -313,57 +493,118 @@ export default function OnboardingPage() {
           <div className="inline-block transition-transform hover:scale-105 active:scale-95">
             <EdworldLogo />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black font-display text-[#13141B] tracking-tight">
-            Welcome to EdWorld Setup
-          </h1>
-          <p className="text-xs sm:text-sm text-[#5E6573]">
-            Configure your personalized Career Learning OS in 4 quick steps.
+
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex-1" />
+            <h1 className="text-2xl sm:text-3xl font-black text-white font-display tracking-tight text-center">
+              Welcome to EdWorld Student Setup
+            </h1>
+            <div className="flex-1 text-right">
+              <button
+                type="button"
+                onClick={handleSkipToDashboard}
+                className="text-xs font-semibold text-slate-400 hover:text-white underline transition-colors cursor-pointer"
+                title="Skip onboarding and go directly to your student dashboard"
+              >
+                Skip to Dashboard →
+              </button>
+            </div>
+          </div>
+
+          <p className="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto">
+            Configure your personalized Career Learning OS &amp; auto-generate your Harvard ATS resume in 4 quick steps.
           </p>
+
+          <div className="pt-1 flex items-center justify-center">
+            <button
+              type="button"
+              onClick={() => setShowMyraCopilot(!showMyraCopilot)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#0F1422] border border-white/10 text-white text-xs font-bold hover:bg-white/10 transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-white animate-pulse" />
+              <span>{showMyraCopilot ? "Hide Myra Onboarding Copilot" : "Need guidance? Ask Myra Copilot 🐻"}</span>
+            </button>
+          </div>
         </div>
 
-        {/* Progress Bar Card */}
-        <div className="card-quixel rounded-3xl p-4 sm:p-5 bg-white border border-[#E8ECF2] shadow-md space-y-2">
-          <div className="flex items-center justify-between text-xs font-mono font-bold text-[#8E95A5]">
-            <span className="text-[#13141B] font-sans font-bold">
-              {currentStep === 1 && "Step 1: Basic Profile"}
-              {currentStep === 2 && "Step 2: Education & Experience"}
-              {currentStep === 3 && "Step 3: Multi-Domain Career Track"}
-              {currentStep === 4 && "Step 4: Goals & Verified Evidence"}
-            </span>
-            <span>{currentStep} of {totalSteps} ({progressPercentage}%)</span>
+        {/* Myra Onboarding Assistant Card */}
+        {showMyraCopilot && (
+          <div className="animate-in fade-in slide-in-from-top-3 duration-200">
+            <MyraOnboardingAssistantCard studentName={displayName} />
           </div>
-          <div className="w-full bg-[#F0F2F6] h-2.5 rounded-full overflow-hidden">
+        )}
+
+        {/* Progress Bar Card */}
+        <div className="tactile-chassis bg-[#0C101A] border border-white/10 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3 text-white">
+          <div className="flex items-center justify-between text-xs font-bold">
+            <span className="text-white font-display">
+              {currentStep === 1 && "Step 1: Personal Identity & Contact"}
+              {currentStep === 2 && "Step 2: Academic Specialization & College"}
+              {currentStep === 3 && "Step 3: Target Role & Skill Calibration"}
+              {currentStep === 4 && "Step 4: Profiles, Links & Resume Seeding"}
+            </span>
+            <span className="text-slate-400 font-mono">Step {currentStep} of {totalSteps} ({progressPercentage}%)</span>
+          </div>
+          <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden p-0.5 border border-white/10">
             <div 
-              className="h-full bg-gradient-to-r from-[#D7FC51] via-[#7B57FF] to-[#00D2B4] rounded-full transition-all duration-500 ease-out" 
+              className="h-full bg-white rounded-full transition-all duration-500 ease-out" 
               style={{ width: `${progressPercentage}%` }}
             />
+          </div>
+
+          {/* Segmented Step Pills */}
+          <div className="grid grid-cols-4 gap-2 pt-1 text-[11px] font-semibold text-center">
+            {[
+              { num: 1, label: "Profile" },
+              { num: 2, label: "Academics" },
+              { num: 3, label: "Skills & Role" },
+              { num: 4, label: "Resume Seed" },
+            ].map((s) => (
+              <div
+                key={s.num}
+                className={`py-1.5 rounded-lg transition-all ${
+                  currentStep === s.num
+                    ? "bg-white text-slate-950 font-bold shadow-xs"
+                    : currentStep > s.num
+                    ? "bg-white/10 text-white border border-white/20"
+                    : "bg-white/5 text-slate-400 border border-white/5"
+                }`}
+              >
+                <span>{s.num}. {s.label}</span>
+              </div>
+            ))}
           </div>
         </div>
 
         {/* Completed Splash Card */}
         {isCompleted ? (
-          <div className="card-quixel rounded-3xl p-8 bg-white border border-[#E8ECF2] shadow-xl text-center space-y-5 animate-in fade-in zoom-in-95">
-            <div className="w-16 h-16 rounded-full bg-[#E0FAF6] text-[#00D2B4] mx-auto flex items-center justify-center shadow-lg animate-bounce">
-              <CheckCircle2 className="w-8 h-8" />
+          <div className="tactile-chassis bg-[#0C101A] border border-white/10 rounded-3xl p-8 shadow-2xl text-center space-y-5 animate-in fade-in zoom-in-95 text-white">
+            <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 text-white mx-auto flex items-center justify-center shadow-md animate-bounce">
+              <CheckCircle2 className="w-8 h-8 text-white" />
             </div>
             <div className="space-y-2">
-              <h2 className="text-2xl font-black text-[#13141B]">Career Learning OS Ready!</h2>
-              <p className="text-xs text-[#5E6573] max-w-md mx-auto">
-                We've synthesized your multi-domain learning track, generated your personalized roadmap, and scheduled today's timetable.
+              <h2 className="text-2xl font-black text-white font-display">Career Learning OS &amp; ATS Resume Ready!</h2>
+              <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
+                We&apos;ve synthesized your personalized multi-domain track, generated your timetable, and <strong>pre-seeded your single-column Harvard ATS Resume</strong>.
               </p>
             </div>
-            <div className="flex items-center justify-center gap-2 text-xs font-bold text-[#7B57FF] pt-2">
-              <Loader2 className="w-4 h-4 animate-spin" />
+            <div className="p-3.5 rounded-xl bg-[#0F1422] border border-white/10 max-w-sm mx-auto text-xs text-white font-semibold flex items-center justify-center gap-2">
+              <Check className="w-4 h-4 text-white shrink-0" />
+              <span>Harvard ATS Resume auto-created and saved</span>
+            </div>
+            <div className="flex items-center justify-center gap-2 text-xs font-bold text-white pt-2">
+              <Loader2 className="w-4 h-4 animate-spin text-white" />
               <span>Redirecting to your dashboard...</span>
             </div>
           </div>
         ) : (
           /* Form Step Container */
-          <div className="card-quixel rounded-3xl p-6 sm:p-8 bg-white border border-[#E8ECF2] shadow-lg space-y-6">
+          <div className="tactile-chassis bg-[#0C101A] border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-white">
             
+            {/* Top Global Alert Banner if errors exist */}
             {error && (
-              <div className="p-4 rounded-2xl bg-red-50 border border-red-200 flex items-start gap-3 text-xs font-bold text-red-700 animate-in fade-in">
-                <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+              <div className="p-4 rounded-xl bg-rose-950/60 border border-rose-500/40 flex items-start gap-3 text-xs text-rose-200 font-medium animate-in fade-in">
+                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
                 <span>{error}</span>
               </div>
             )}
@@ -372,57 +613,162 @@ export default function OnboardingPage() {
             {currentStep === 1 && (
               <div className="space-y-4 animate-in fade-in">
                 <div className="space-y-1">
-                  <h2 className="text-lg font-black text-[#13141B] flex items-center gap-2">
-                    <User className="w-5 h-5 text-[#7B57FF]" />
+                  <h2 className="text-lg font-bold text-white font-display flex items-center gap-2">
+                    <User className="w-5 h-5 text-white" />
                     <span>Personal Profile Details</span>
                   </h2>
-                  <p className="text-xs text-[#5E6573]">
-                    Your display identity on the EdWorld student networking feed and career leaderboards.
+                  <p className="text-xs text-slate-300">
+                    Your display identity on the EdWorld student networking feed, resume header, and career leaderboards.
                   </p>
                 </div>
 
-                <div className="space-y-3 pt-2">
+                <div className="space-y-4 pt-2">
                   <div>
-                    <label className="block text-xs font-bold text-[#13141B] uppercase tracking-wider mb-1.5">
+                    <label className="block text-xs font-medium text-slate-200 uppercase tracking-wider mb-1.5">
                       Full Name *
                     </label>
                     <input
                       type="text"
                       value={displayName}
-                      onChange={(e) => setDisplayName(e.target.value)}
+                      onChange={(e) => {
+                        setDisplayName(e.target.value);
+                        if (fieldErrors.displayName) {
+                          setFieldErrors((prev) => {
+                            const next = { ...prev };
+                            delete next.displayName;
+                            return next;
+                          });
+                        }
+                      }}
                       placeholder="e.g. Adarsh Sharma"
-                      className="w-full px-4 py-3 rounded-2xl bg-[#F4F6FB] border border-[#E8ECF2] text-xs text-[#13141B] focus:outline-none focus:border-[#13141B]"
+                      className={`w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none transition-all ${
+                        fieldErrors.displayName
+                          ? "border-rose-500 ring-1 ring-rose-500/30"
+                          : "border-white/10 focus:border-white/40 focus:ring-1 focus:ring-white/20"
+                      }`}
                     />
+                    {fieldErrors.displayName && (
+                      <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1.5 font-medium">
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                        <span>{fieldErrors.displayName}</span>
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Portfolio Username Input */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="block text-xs font-medium text-slate-200 uppercase tracking-wider">
+                        Choose Your Portfolio Username *
+                      </label>
+                      <span className="text-[10px] text-slate-400 font-mono">
+                        lowercase &bull; letters &amp; numbers
+                      </span>
+                    </div>
+
+                    <div className="relative flex items-center">
+                      <span className="absolute left-3.5 text-xs text-slate-400 font-mono select-none pointer-events-none">
+                        edworld.co.in/
+                      </span>
+                      <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => {
+                          const val = e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, "");
+                          setUsername(val);
+                          if (fieldErrors.username) {
+                            setFieldErrors((prev) => {
+                              const next = { ...prev };
+                              delete next.username;
+                              return next;
+                            });
+                          }
+                        }}
+                        placeholder="yourname"
+                        maxLength={24}
+                        className={`w-full pl-[106px] pr-10 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border text-xs sm:text-sm text-white font-mono placeholder:text-slate-600 focus:outline-none transition-all ${
+                          fieldErrors.username || usernameStatus === "unavailable"
+                            ? "border-rose-500 ring-1 ring-rose-500/30"
+                            : usernameStatus === "available"
+                            ? "border-emerald-500/50 ring-1 ring-emerald-500/20"
+                            : "border-white/10 focus:border-white/40 focus:ring-1 focus:ring-white/20"
+                        }`}
+                      />
+                      <div className="absolute right-3 flex items-center">
+                        {usernameStatus === "checking" && (
+                          <Loader2 className="w-4 h-4 text-slate-400 animate-spin" />
+                        )}
+                        {usernameStatus === "available" && (
+                          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                        )}
+                        {(fieldErrors.username || usernameStatus === "unavailable") && (
+                          <AlertCircle className="w-4 h-4 text-rose-400" />
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Status Feedback / Helper */}
+                    {fieldErrors.username ? (
+                      <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1.5 font-medium">
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                        <span>{fieldErrors.username}</span>
+                      </p>
+                    ) : usernameMessage ? (
+                      <p
+                        className={`text-[11px] mt-1.5 flex items-center gap-1.5 font-medium ${
+                          usernameStatus === "available"
+                            ? "text-emerald-400"
+                            : usernameStatus === "unavailable"
+                            ? "text-rose-400"
+                            : "text-slate-400"
+                        }`}
+                      >
+                        {usernameMessage}
+                      </p>
+                    ) : null}
+
+                    {/* Live Portfolio Link Preview Card */}
+                    {username && usernameStatus !== "unavailable" && (
+                      <div className="mt-2.5 p-2.5 rounded-xl bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-cyan-500/10 border border-indigo-500/20 flex items-center justify-between text-xs">
+                        <span className="text-[11px] text-slate-300 flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                          <span>Public Portfolio URL:</span>
+                        </span>
+                        <span className="font-mono text-[11px] font-bold text-cyan-300">
+                          edworld.co.in/{username}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-[#13141B] uppercase tracking-wider mb-1.5">
-                      Phone Number (Optional)
+                    <label className="block text-xs font-medium text-slate-200 uppercase tracking-wider mb-1.5">
+                      Phone Number (For Recruiter Verification &amp; Resume)
                     </label>
                     <input
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="+91 9876543210"
-                      className="w-full px-4 py-3 rounded-2xl bg-[#F4F6FB] border border-[#E8ECF2] text-xs text-[#13141B] focus:outline-none focus:border-[#13141B]"
+                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-[#13141B] uppercase tracking-wider mb-1.5">
-                      Headline
+                    <label className="block text-xs font-medium text-slate-200 uppercase tracking-wider mb-1.5">
+                      Professional Headline
                     </label>
                     <input
                       type="text"
                       value={headline}
                       onChange={(e) => setHeadline(e.target.value)}
                       placeholder="e.g. Aspiring Full Stack Developer | Class of 2026"
-                      className="w-full px-4 py-3 rounded-2xl bg-[#F4F6FB] border border-[#E8ECF2] text-xs text-[#13141B] focus:outline-none focus:border-[#13141B]"
+                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-[#13141B] uppercase tracking-wider mb-1.5">
+                    <label className="block text-xs font-medium text-slate-200 uppercase tracking-wider mb-1.5">
                       Brief Bio
                     </label>
                     <textarea
@@ -430,7 +776,7 @@ export default function OnboardingPage() {
                       value={bio}
                       onChange={(e) => setBio(e.target.value)}
                       placeholder="Share a short summary of your background, passions, and career interests..."
-                      className="w-full px-4 py-3 rounded-2xl bg-[#F4F6FB] border border-[#E8ECF2] text-xs text-[#13141B] focus:outline-none focus:border-[#13141B]"
+                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
                     />
                   </div>
                 </div>
@@ -441,116 +787,154 @@ export default function OnboardingPage() {
             {currentStep === 2 && (
               <div className="space-y-4 animate-in fade-in">
                 <div className="space-y-1">
-                  <h2 className="text-lg font-black text-[#13141B] flex items-center gap-2">
-                    <GraduationCap className="w-5 h-5 text-[#5B47B8]" />
+                  <h2 className="text-lg font-bold text-white font-display flex items-center gap-2">
+                    <GraduationCap className="w-5 h-5 text-white" />
                     <span>Education &amp; Academic Specialization</span>
                   </h2>
-                  <p className="text-xs text-[#5E6573]">
-                    Tailored for Class 12th &amp; Higher Education students building verified tech skills, projects, and campus placement readiness.
+                  <p className="text-xs text-slate-300">
+                    Your college, branch, and CGPA will be automatically formatted into the Education section of your Harvard ATS Resume.
                   </p>
                 </div>
 
-                <div className="space-y-3 pt-2">
+                <div className="space-y-4 pt-2">
                   <div>
-                    <label className="block text-xs font-bold text-[#13141B] uppercase tracking-wider mb-1.5">
+                    <label className="block text-xs font-medium text-slate-200 uppercase tracking-wider mb-1.5">
                       School / College / University Name *
                     </label>
                     <input
                       type="text"
                       value={institution}
-                      onChange={(e) => setInstitution(e.target.value)}
-                      placeholder="e.g. National Institute of Technology / Delhi Public School (Class 12)"
-                      className="w-full px-4 py-3 rounded-2xl bg-[#F4F6FB] border border-[#E8ECF2] text-xs text-[#13141B] focus:outline-none focus:border-[#5B47B8]"
+                      onChange={(e) => {
+                        setInstitution(e.target.value);
+                        if (fieldErrors.institution) {
+                          setFieldErrors((prev) => {
+                            const next = { ...prev };
+                            delete next.institution;
+                            return next;
+                          });
+                        }
+                      }}
+                      placeholder="e.g. National Institute of Technology / Delhi Technological University"
+                      className={`w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none transition-all ${
+                        fieldErrors.institution
+                          ? "border-rose-500 ring-1 ring-rose-500/30"
+                          : "border-white/10 focus:border-white/40 focus:ring-1 focus:ring-white/20"
+                      }`}
                     />
+                    {fieldErrors.institution && (
+                      <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1.5 font-medium">
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                        <span>{fieldErrors.institution}</span>
+                      </p>
+                    )}
                   </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-xs font-bold text-[#13141B] uppercase tracking-wider mb-1.5">
-                          Degree Program
-                        </label>
-                        <select
-                          value={degree}
-                          onChange={(e) => setDegree(e.target.value)}
-                          className="w-full px-4 py-3 rounded-2xl bg-[#F4F6FB] border border-[#E8ECF2] text-xs text-[#13141B] focus:outline-none focus:border-[#13141B]"
-                        >
-                          <option value="B.Tech / B.E.">B.Tech / B.E.</option>
-                          <option value="B.Sc / BCA">B.Sc / BCA</option>
-                          <option value="M.Tech / M.E.">M.Tech / M.E.</option>
-                          <option value="MCA / M.Sc">MCA / M.Sc</option>
-                          <option value="MBA / Business">MBA / Business</option>
-                          <option value="High School (11th/12th)">High School (11th/12th)</option>
-                          <option value="Other">Other Degree</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold text-[#13141B] uppercase tracking-wider mb-1.5">
-                          Graduation Year
-                        </label>
-                        <select
-                          value={graduationYear}
-                          onChange={(e) => setGraduationYear(e.target.value)}
-                          className="w-full px-4 py-3 rounded-2xl bg-[#F4F6FB] border border-[#E8ECF2] text-xs text-[#13141B] focus:outline-none focus:border-[#13141B]"
-                        >
-                          <option value="2025">2025 (Final Year / Graduating)</option>
-                          <option value="2026">2026</option>
-                          <option value="2027">2027</option>
-                          <option value="2028">2028</option>
-                          <option value="Graduated">Graduated (Alumni)</option>
-                        </select>
-                      </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                      <label className="block text-xs font-medium text-slate-200 uppercase tracking-wider mb-1.5">
+                        Degree Program
+                      </label>
+                      <select
+                        value={degree}
+                        onChange={(e) => setDegree(e.target.value)}
+                        className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm text-white focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all [&>option]:bg-[#0C101A] [&>option]:text-white cursor-pointer"
+                      >
+                        <option value="B.Tech / B.E.">B.Tech / B.E.</option>
+                        <option value="B.Sc / BCA">B.Sc / BCA</option>
+                        <option value="M.Tech / M.E.">M.Tech / M.E.</option>
+                        <option value="MCA / M.Sc">MCA / M.Sc</option>
+                        <option value="MBA / Business">MBA / Business</option>
+                        <option value="High School (11th/12th)">High School (11th/12th)</option>
+                        <option value="Other">Other Degree</option>
+                      </select>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-xs font-bold text-[#13141B] uppercase tracking-wider mb-1.5">
-                          Field of Study / Stream *
-                        </label>
-                        <input
-                          type="text"
-                          value={fieldOfStudy}
-                          onChange={(e) => setFieldOfStudy(e.target.value)}
-                          placeholder="e.g. Computer Science, AI & ML, Science (PCM), IT"
-                          className="w-full px-4 py-3 rounded-2xl bg-[#F4F6FB] border border-[#E8ECF2] text-xs text-[#13141B] focus:outline-none focus:border-[#5B47B8]"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold text-[#13141B] uppercase tracking-wider mb-1.5">
-                          Target Tech Role / Career Goal
-                        </label>
-                        <input
-                          type="text"
-                          value={targetRole}
-                          onChange={(e) => setTargetRole(e.target.value)}
-                          placeholder="e.g. Full Stack Developer, SDE, AI Engineer"
-                          className="w-full px-4 py-3 rounded-2xl bg-[#F4F6FB] border border-[#E8ECF2] text-xs text-[#13141B] focus:outline-none focus:border-[#5B47B8]"
-                        />
-                      </div>
+                    <div>
+                      <label className="block text-xs font-medium text-slate-200 uppercase tracking-wider mb-1.5">
+                        Graduation Year
+                      </label>
+                      <select
+                        value={graduationYear}
+                        onChange={(e) => setGraduationYear(e.target.value)}
+                        className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm text-white focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all [&>option]:bg-[#0C101A] [&>option]:text-white cursor-pointer"
+                      >
+                        <option value="2025">2025 (Final Year / Graduating)</option>
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                        <option value="2028">2028</option>
+                        <option value="Graduated">Graduated (Alumni / Working)</option>
+                      </select>
                     </div>
+                  </div>
 
-                    <div className="p-4 rounded-2xl bg-gradient-to-r from-[#F4F6FB] to-[#EEF2FC] border border-[#E8ECF2] space-y-2">
-                      <div className="flex items-center justify-between">
-                        <label className="block text-xs font-bold text-[#13141B] uppercase tracking-wider">
-                          Current CGPA / Percentage / Grade Score
-                        </label>
-                        <span className="text-[10px] font-bold text-[#5B47B8] bg-white px-2.5 py-0.5 rounded-full border border-[#DCD6FA]">
-                          Individualized Myra AI Mentor Grounding
-                        </span>
-                      </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                      <label className="block text-xs font-medium text-slate-200 uppercase tracking-wider mb-1.5">
+                        Field of Study / Branch *
+                      </label>
                       <input
                         type="text"
-                        value={cgpa}
-                        onChange={(e) => setCgpa(e.target.value)}
-                        placeholder="e.g. 8.4 CGPA or 88% (or 9.2)"
-                        className="w-full px-4 py-3 rounded-2xl bg-white border border-[#E8ECF2] text-xs font-bold text-[#13141B] focus:outline-none focus:border-[#5B47B8]"
+                        value={fieldOfStudy}
+                        onChange={(e) => {
+                          setFieldOfStudy(e.target.value);
+                          if (fieldErrors.fieldOfStudy) {
+                            setFieldErrors((prev) => {
+                              const next = { ...prev };
+                              delete next.fieldOfStudy;
+                              return next;
+                            });
+                          }
+                        }}
+                        placeholder="e.g. Computer Science, AI & ML, Electronics, IT"
+                        className={`w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none transition-all ${
+                          fieldErrors.fieldOfStudy
+                            ? "border-rose-500 ring-1 ring-rose-500/30"
+                            : "border-white/10 focus:border-white/40 focus:ring-1 focus:ring-white/20"
+                        }`}
                       />
-                      <p className="text-[11px] text-[#5E6573] leading-relaxed">
-                        Myra AI uses your academic standing to benchmark campus placement eligibility (Tier-1 product cutoffs vs service companies), design exam-balancing timetables, and recommend custom semester study plans.
-                      </p>
+                      {fieldErrors.fieldOfStudy && (
+                        <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1.5 font-medium">
+                          <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                          <span>{fieldErrors.fieldOfStudy}</span>
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-slate-200 uppercase tracking-wider mb-1.5">
+                        Target Tech Role / Dream Job
+                      </label>
+                      <input
+                        type="text"
+                        value={targetRole}
+                        onChange={(e) => setTargetRole(e.target.value)}
+                        placeholder="e.g. Full Stack Developer, SDE-1, AI Engineer"
+                        className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
+                      />
                     </div>
                   </div>
+
+                  <div className="p-4 rounded-2xl bg-[#0F1422] border border-white/10 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-xs font-medium text-slate-200 uppercase tracking-wider">
+                        Current CGPA / Percentage
+                      </label>
+                      <span className="text-[10.5px] font-bold text-white bg-white/10 px-2.5 py-0.5 rounded-full border border-white/10">
+                        Placement Benchmark Grounding
+                      </span>
+                    </div>
+                    <input
+                      type="text"
+                      value={cgpa}
+                      onChange={(e) => setCgpa(e.target.value)}
+                      placeholder="e.g. 8.4 CGPA or 85%"
+                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0C101A] border border-white/10 text-xs sm:text-sm font-bold text-white focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
+                    />
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                      Myra AI benchmarks your academic metrics against placement cutoffs (Tier-1 product companies vs high-growth startups) and structures your resume education bullets.
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -569,16 +953,16 @@ export default function OnboardingPage() {
                 />
 
                 {/* Target Timeframe & Daily Hours */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-5 border-t border-neutral-200">
-                  <div>
-                    <label className="block text-xs font-bold text-neutral-800 uppercase tracking-wider mb-1.5 flex items-center gap-1.5 font-mono">
-                      <Target className="w-3.5 h-3.5 text-black" />
-                      Target Timeframe
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-5 border-t border-white/10">
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                      <Target className="w-3.5 h-3.5 text-white" />
+                      <span>Target Timeframe</span>
                     </label>
                     <select
                       value={targetTimeframe}
                       onChange={(e) => setTargetTimeframe(Number(e.target.value))}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white border border-neutral-300 text-xs text-black focus:outline-none focus:border-black font-sans"
+                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm font-bold text-white focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all [&>option]:bg-[#0C101A] [&>option]:text-white cursor-pointer"
                     >
                       <option value={3}>3 Months (Fast-Track Placement)</option>
                       <option value={6}>6 Months (Standard Comprehensive)</option>
@@ -586,15 +970,15 @@ export default function OnboardingPage() {
                     </select>
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-neutral-800 uppercase tracking-wider mb-1.5 flex items-center gap-1.5 font-mono">
-                      <Clock className="w-3.5 h-3.5 text-black" />
-                      Daily Available Hours
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-white" />
+                      <span>Daily Available Hours</span>
                     </label>
                     <select
                       value={dailyHours}
                       onChange={(e) => setDailyHours(Number(e.target.value))}
-                      className="w-full px-4 py-2.5 rounded-xl bg-white border border-neutral-300 text-xs text-black focus:outline-none focus:border-black font-sans"
+                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm font-bold text-white focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all [&>option]:bg-[#0C101A] [&>option]:text-white cursor-pointer"
                     >
                       <option value={1}>1 Hour / day (Light Pace)</option>
                       <option value={2}>2 Hours / day (Recommended)</option>
@@ -606,130 +990,182 @@ export default function OnboardingPage() {
               </div>
             )}
 
-            {/* ================= STEP 4: GOALS & LINKS ================= */}
+            {/* ================= STEP 4: GOALS, LINKS & RESUME PREVIEW ================= */}
             {currentStep === 4 && (
-              <div className="space-y-4 animate-in fade-in">
+              <div className="space-y-6 animate-in fade-in">
                 <div className="space-y-1">
-                  <h2 className="text-lg font-black text-[#13141B] flex items-center gap-2">
-                    <Target className="w-5 h-5 text-[#FF7A50]" />
-                    <span>Goals &amp; Professional Links</span>
-                  </h2>
-                  <p className="text-xs text-[#5E6573]">
-                    Set your target outcome and link your developer profiles for automatic evidence calibration.
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-white/10 text-white flex items-center justify-center font-bold text-xs">
+                      <FileText className="w-4 h-4" />
+                    </div>
+                    <h2 className="text-base sm:text-lg font-bold text-white font-display tracking-tight">
+                      Zero-Waste Resume &amp; Social Links
+                    </h2>
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-300">
+                    Your details will instantly generate a ready-to-use ATS Harvard Resume in your Studio.
                   </p>
                 </div>
 
-                <div className="space-y-3 pt-2">
-                  <div>
-                    <label className="block text-xs font-bold text-[#13141B] uppercase tracking-wider mb-1.5">
-                      Primary Goal on EdWorld
+                {/* ATS Resume Instant Seeding Feature Highlight */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#0F1422] border border-white/10 space-y-2 text-white">
+                  <div className="flex items-center gap-2 text-white font-bold text-xs uppercase tracking-wider">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <span>Instant ATS Resume Seeding Active</span>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-relaxed font-normal">
+                    EdWorld values your time. Instead of making you fill in forms twice, completing this step automatically generates your single-column Harvard ATS resume seeded with:
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[11px] font-medium text-slate-200">
+                    <div className="p-2 rounded-xl bg-[#0C101A] border border-white/10 text-center">✓ {displayName || "Name"}</div>
+                    <div className="p-2 rounded-xl bg-[#0C101A] border border-white/10 text-center truncate">✓ {degree || "Degree"}</div>
+                    <div className="p-2 rounded-xl bg-[#0C101A] border border-white/10 text-center truncate">✓ {targetRole || "Role Focus"}</div>
+                    <div className="p-2 rounded-xl bg-[#0C101A] border border-white/10 text-center">✓ Verified Links</div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider">
+                      Primary Placement Goal
                     </label>
                     <textarea
                       rows={2}
                       value={primaryGoal}
                       onChange={(e) => setPrimaryGoal(e.target.value)}
-                      placeholder="e.g. Ace upcoming technical interviews and optimize ATS resume keyword score."
-                      className="w-full px-4 py-2.5 rounded-2xl bg-[#F4F6FB] border border-[#E8ECF2] text-xs text-[#13141B] focus:outline-none focus:border-[#13141B]"
+                      placeholder="e.g. Crack a Product Software Engineering or Data Science role with 90%+ ATS resume score."
+                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm font-medium text-white placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-[#13141B] uppercase tracking-wider mb-1.5">
-                      GitHub Profile URL (Optional)
-                    </label>
-                    <div className="relative">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <Github className="w-3.5 h-3.5 text-white" />
+                        <span>GitHub Profile URL (Optional)</span>
+                      </label>
                       <input
                         type="url"
                         value={githubUrl}
                         onChange={(e) => setGithubUrl(e.target.value)}
                         placeholder="https://github.com/username"
-                        className="w-full pl-10 pr-4 py-3 rounded-2xl bg-[#F4F6FB] border border-[#E8ECF2] text-xs text-[#13141B] focus:outline-none focus:border-[#13141B]"
+                        className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
                       />
-                      <Github className="w-4 h-4 text-[#8E95A5] absolute left-3.5 top-1/2 -translate-y-1/2" />
                     </div>
-                  </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-[#13141B] uppercase tracking-wider mb-1.5">
-                      LinkedIn Profile URL (Optional)
-                    </label>
-                    <div className="relative">
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <Linkedin className="w-3.5 h-3.5 text-white" />
+                        <span>LinkedIn Profile URL (Optional)</span>
+                      </label>
                       <input
                         type="url"
                         value={linkedinUrl}
                         onChange={(e) => setLinkedinUrl(e.target.value)}
                         placeholder="https://linkedin.com/in/username"
-                        className="w-full pl-10 pr-4 py-3 rounded-2xl bg-[#F4F6FB] border border-[#E8ECF2] text-xs text-[#13141B] focus:outline-none focus:border-[#13141B]"
+                        className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
                       />
-                      <Linkedin className="w-4 h-4 text-[#8E95A5] absolute left-3.5 top-1/2 -translate-y-1/2" />
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-[#13141B] uppercase tracking-wider mb-1.5">
-                      Portfolio / LeetCode URL (Optional)
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                      <Globe className="w-3.5 h-3.5 text-white" />
+                      <span>Portfolio or LeetCode URL (Optional)</span>
                     </label>
-                    <div className="relative">
-                      <input
-                        type="url"
-                        value={portfolioUrl}
-                        onChange={(e) => setPortfolioUrl(e.target.value)}
-                        placeholder="https://myportfolio.dev or https://leetcode.com/username"
-                        className="w-full pl-10 pr-4 py-3 rounded-2xl bg-[#F4F6FB] border border-[#E8ECF2] text-xs text-[#13141B] focus:outline-none focus:border-[#13141B]"
-                      />
-                      <Globe className="w-4 h-4 text-[#8E95A5] absolute left-3.5 top-1/2 -translate-y-1/2" />
-                    </div>
+                    <input
+                      type="url"
+                      value={portfolioUrl}
+                      onChange={(e) => setPortfolioUrl(e.target.value)}
+                      placeholder="https://myportfolio.dev or https://leetcode.com/u/username"
+                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
+                    />
                   </div>
                 </div>
               </div>
             )}
 
+            {/* Bottom Error Notification & Escape Hatch */}
+            {error && (
+              <div className="p-4 rounded-xl bg-rose-950/60 border border-rose-500/40 flex items-start justify-between gap-3 text-xs text-rose-200 font-medium">
+                <div className="flex items-start gap-2.5">
+                  <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                  <span>{error}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleSkipToDashboard}
+                  className="text-xs font-bold text-white underline hover:text-slate-200 shrink-0 cursor-pointer"
+                >
+                  Skip to Dashboard
+                </button>
+              </div>
+            )}
+
             {/* Navigation Action Buttons */}
-            <div className="pt-4 border-t border-[#E8ECF2] flex items-center justify-between gap-3">
+            <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-3">
               {currentStep > 1 ? (
                 <button
                   type="button"
                   onClick={handleBack}
                   disabled={saving}
-                  className="px-5 py-3 rounded-2xl bg-[#F4F6FB] hover:bg-[#E8ECF2] text-xs font-bold text-[#13141B] transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] hover:bg-white/10 text-xs font-bold text-slate-200 border border-white/10 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>Back</span>
                 </button>
               ) : (
-                <div />
+                <button
+                  type="button"
+                  onClick={handleSkipToDashboard}
+                  className="text-xs text-slate-400 hover:text-white underline cursor-pointer font-medium"
+                >
+                  Skip setup for now
+                </button>
               )}
 
-              <button
-                type="button"
-                onClick={handleNext}
-                disabled={saving}
-                className="px-6 py-3.5 rounded-2xl bg-[#13141B] hover:bg-[#2A2C38] text-white font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 shadow-md hover:scale-[1.01] active:scale-98 cursor-pointer disabled:opacity-50 ml-auto"
-              >
-                {saving ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Building Career Plan...</span>
-                  </>
-                ) : currentStep === totalSteps ? (
-                  <>
-                    <span>Generate Career OS &amp; Enter</span>
-                    <Check className="w-4 h-4" />
-                  </>
-                ) : (
-                  <>
-                    <span>Continue</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </>
+              <div className="flex items-center gap-3 ml-auto">
+                {currentStep > 1 && (
+                  <button
+                    type="button"
+                    onClick={handleSkipToDashboard}
+                    className="text-xs text-slate-400 hover:text-white underline cursor-pointer hidden sm:inline-block font-medium"
+                  >
+                    Skip to dashboard
+                  </button>
                 )}
-              </button>
+
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  disabled={saving}
+                  className="px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-white hover:bg-slate-200 text-slate-950 font-bold text-xs sm:text-sm transition-all flex items-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
+                >
+                  {saving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-slate-950" />
+                      <span>Auto-Seeding Resume &amp; Profile...</span>
+                    </>
+                  ) : currentStep === totalSteps ? (
+                    <>
+                      <span>Complete &amp; Open Dashboard</span>
+                      <Check className="w-4 h-4 text-slate-950" />
+                    </>
+                  ) : (
+                    <>
+                      <span>Continue</span>
+                      <ArrowRight className="w-4 h-4 text-slate-950" />
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
           </div>
         )}
 
-        <div className="text-center text-xs text-[#8E95A5] flex items-center justify-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-emerald-500" />
+        <div className="text-center text-xs text-slate-400 flex items-center justify-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-emerald-400" />
           <span>Your roadmap &amp; daily timetable adapt automatically based on your real performance</span>
         </div>
 

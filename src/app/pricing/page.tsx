@@ -63,11 +63,11 @@ export default function PricingPage() {
         "Unlimited AI Voice & Video Mock Interviews",
         "Real-Time Waveform & Speech Cadence",
         "Direct Applications to Verified Jobs",
-        "Production Incident Labs (EdFix)",
+        "Focus Lock Distraction Blocker",
         "Priority Recruiter Visibility Badge",
       ],
       ctaLabel: billingCycle === "monthly" ? "Upgrade to Pro (₹49)" : "Upgrade to Pro (₹39/mo)",
-      ctaHref: "/billing?plan=pro",
+      ctaHref: "/settings/billing?plan=pro",
       isPopular: true,
     },
     {
@@ -86,7 +86,7 @@ export default function PricingPage() {
         "Custom College Domain Whitelisting",
       ],
       ctaLabel: "Contact Campus Team",
-      ctaHref: "/for-college",
+      ctaHref: "/for/colleges",
       isPopular: false,
     },
   ];
@@ -97,7 +97,7 @@ export default function PricingPage() {
     { feature: "AI Mock Interviews (Voice + Video)", free: "2 / month", pro: "Unlimited", campus: "Unlimited" },
     { feature: "Speech Cadence & Filler-Word Counter", free: "✗", pro: "✓ (130-160 WPM Target)", campus: "✓ (130-160 WPM Target)" },
     { feature: "Direct Verified Job Applications", free: "View Only", pro: "✓ Direct Apply", campus: "✓ Priority Cohort Pools" },
-    { feature: "Production Incident Labs (EdFix)", free: "✗", pro: "✓ Full Access", campus: "✓ Custom Curriculum" },
+    { feature: "Focus Lock Distraction Blocker", free: "Standard", pro: "✓ Full Access", campus: "✓ Institutional Control" },
     { feature: "TPO Placement Analytics Portal", free: "✗", pro: "✗", campus: "✓ Real-Time Telemetry" },
     { feature: "Support SLA", free: "Community", pro: "Priority Email", campus: "Dedicated Account Manager" },
   ];
@@ -109,7 +109,7 @@ export default function PricingPage() {
     },
     {
       q: "How does Career Pro billing work?",
-      a: "Career Pro is ₹49 per month (or ₹39 per month billed annually). You get unlimited AI mock interviews in 3D lockdown mode, unlimited resume tailoring, and full access to EdFix production engineering drills.",
+      a: "Career Pro is ₹49 per month (or ₹39 per month billed annually). You get unlimited AI mock interviews in 3D lockdown mode, unlimited resume tailoring, and full access to Focus Lock deep study features.",
     },
     {
       q: "Are there any hidden platform charges or lock-ins?",
@@ -122,53 +122,55 @@ export default function PricingPage() {
   ];
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-16 sm:space-y-24 font-sans text-[#111827]">
+    <div className="w-full space-y-12 sm:space-y-16 font-sans text-slate-100 animate-in fade-in duration-200">
       
       {/* 1. HERO HEADER */}
-      <section className="text-center max-w-3xl mx-auto space-y-4">
+      <section className="text-center max-w-3xl mx-auto space-y-4 pt-4">
         <div className="flex flex-wrap items-center justify-center gap-2">
-          <span className="text-xs font-semibold px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+          <span className="text-xs font-semibold px-3 py-1 bg-blue-500/10 text-cyan-300 border border-blue-500/20 rounded-full font-display">
             Honest Student Pricing
           </span>
-          <span className="text-xs font-medium px-3 py-1 rounded-full bg-gray-100 text-[#4B5563] border border-gray-200">
+          <span className="text-xs font-medium px-3 py-1 bg-white/5 text-slate-300 border border-white/10 rounded-full font-mono">
             No Hidden Fees &bull; GST Included
           </span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-bold text-[#111827] tracking-tight">
+        <h1 className="text-3xl sm:text-5xl font-black font-display text-white tracking-tight">
           Fair, predictable plans for every student.
         </h1>
 
-        <p className="text-sm sm:text-base text-[#4B5563] leading-relaxed max-w-2xl mx-auto">
+        <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl mx-auto font-normal">
           Start completely free with foundational resume optimization and AI mock interviews. Upgrade to Career Pro for unlimited interview reps and production labs.
         </p>
 
         {/* Monthly / Annual Billing Toggle */}
         <div className="pt-4 flex items-center justify-center gap-2">
-          <button
-            onClick={() => setBillingCycle("monthly")}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
-              billingCycle === "monthly"
-                ? "bg-[#111827] text-white border-[#111827] shadow-xs"
-                : "bg-white text-[#4B5563] hover:bg-gray-50 border-[#E5E7EB]"
-            }`}
-          >
-            Monthly Billing
-          </button>
-          
-          <button
-            onClick={() => setBillingCycle("annual")}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer flex items-center gap-2 ${
-              billingCycle === "annual"
-                ? "bg-[#111827] text-white border-[#111827] shadow-xs"
-                : "bg-white text-[#4B5563] hover:bg-gray-50 border-[#E5E7EB]"
-            }`}
-          >
-            <span>Annual Billing</span>
-            <span className="px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-semibold">
-              Save 20%
-            </span>
-          </button>
+          <div className="inline-flex items-center gap-1.5 p-1.5 bg-[#0F1422] border border-white/10 rounded-2xl shadow-inner">
+            <button
+              onClick={() => setBillingCycle("monthly")}
+              className={`px-4 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${
+                billingCycle === "monthly"
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-md shadow-indigo-500/25"
+                  : "bg-transparent text-slate-400 hover:text-white"
+              }`}
+            >
+              Monthly Billing
+            </button>
+            
+            <button
+              onClick={() => setBillingCycle("annual")}
+              className={`px-4 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer flex items-center gap-2 ${
+                billingCycle === "annual"
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-md shadow-indigo-500/25"
+                  : "bg-transparent text-slate-400 hover:text-white"
+              }`}
+            >
+              <span>Annual Billing</span>
+              <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 text-[10px] font-bold rounded-md border border-emerald-500/30">
+                Save 20%
+              </span>
+            </button>
+          </div>
         </div>
       </section>
 
@@ -177,15 +179,15 @@ export default function PricingPage() {
         {plans.map((p) => (
           <div
             key={p.id}
-            className={`rounded-2xl p-6 sm:p-8 flex flex-col justify-between space-y-6 transition-all relative ${
+            className={`tactile-chassis bg-[#0C101A] rounded-3xl p-6 sm:p-8 flex flex-col justify-between space-y-6 transition-all relative shadow-2xl text-white ${
               p.isPopular
-                ? "bg-white border-2 border-[#2563EB] shadow-lg ring-1 ring-[#2563EB]/20"
-                : "bg-white border border-[#E5E7EB] shadow-xs hover:border-gray-300"
+                ? "border-2 border-white/40 shadow-2xl"
+                : "border border-white/10 hover:border-white/20"
             }`}
           >
             {p.isPopular && (
               <div className="absolute -top-3 right-6">
-                <span className="px-2.5 py-0.5 rounded-full bg-[#2563EB] text-white text-[11px] font-semibold shadow-xs">
+                <span className="px-3 py-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[11px] font-bold rounded-full shadow-md border border-indigo-400/40 font-display">
                   {p.badge}
                 </span>
               </div>
@@ -194,41 +196,41 @@ export default function PricingPage() {
             <div className="space-y-6">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400 font-display">
                     {p.name}
                   </span>
                   {!p.isPopular && (
-                    <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-gray-100 text-[#4B5563] border border-gray-200">
+                    <span className="text-[11px] font-semibold px-2 py-0.5 bg-white/5 text-slate-300 border border-white/10 rounded-full">
                       {p.badge}
                     </span>
                   )}
                 </div>
 
                 <div className="flex items-baseline gap-1.5 pt-1">
-                  <span className="text-4xl sm:text-5xl font-bold text-[#111827] tracking-tight">
+                  <span className="text-4xl sm:text-5xl font-black font-display text-white tracking-tight">
                     {p.priceInr === null ? "Custom" : `₹${p.priceInr}`}
                   </span>
-                  <span className="text-xs text-[#6B7280]">
+                  <span className="text-xs text-slate-400 font-medium">
                     / {p.period}
                   </span>
                 </div>
 
-                <p className="text-xs sm:text-sm text-[#4B5563] leading-relaxed pt-1">
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed pt-1">
                   {p.description}
                 </p>
               </div>
 
               {/* Included Features List */}
-              <div className="space-y-3 pt-4 border-t border-[#F3F4F6]">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-[#6B7280] block">
+              <div className="space-y-3 pt-4 border-t border-white/10">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block font-display">
                   Included Capabilities:
                 </span>
                 <div className="space-y-2.5">
                   {p.features.map((feat, idx) => (
-                    <div key={idx} className="flex items-start gap-2.5 text-xs text-[#374151]">
+                    <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-200">
                       <CheckCircle2
                         className={`w-4 h-4 shrink-0 mt-0.5 ${
-                          p.isPopular ? "text-[#2563EB]" : "text-emerald-600"
+                          p.isPopular ? "text-cyan-400" : "text-emerald-400"
                         }`}
                       />
                       <span className="leading-tight">{feat}</span>
@@ -238,14 +240,14 @@ export default function PricingPage() {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-[#F3F4F6]">
+            <div className="pt-4 border-t border-white/10">
               <Link
                 href={p.ctaHref}
                 onClick={p.isPopular ? triggerConfetti : undefined}
-                className={`w-full py-3 rounded-xl text-xs font-semibold text-center flex items-center justify-center gap-2 transition-colors shadow-xs ${
+                className={`w-full py-3 text-xs font-bold text-center flex items-center justify-center gap-2 cursor-pointer rounded-xl transition-all shadow-md ${
                   p.isPopular
-                    ? "bg-[#2563EB] hover:bg-blue-700 text-white"
-                    : "bg-[#111827] hover:bg-black text-white"
+                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-indigo-500/25"
+                    : "bg-white/5 hover:bg-white/10 border border-white/10 text-white"
                 }`}
               >
                 <span>{p.ctaLabel}</span>
@@ -257,41 +259,41 @@ export default function PricingPage() {
       </section>
 
       {/* 3. FEATURE COMPARISON MATRIX TABLE */}
-      <section className="rounded-2xl bg-white border border-[#E5E7EB] p-6 sm:p-8 shadow-xs max-w-5xl mx-auto space-y-6">
+      <section className="tactile-chassis bg-[#0C101A] border border-white/10 p-6 sm:p-8 max-w-5xl mx-auto space-y-6 rounded-3xl shadow-xl text-white">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-blue-500/10 text-cyan-300 border border-blue-500/20 text-xs font-semibold rounded-full font-display">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Side-by-Side Entitlements</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#111827]">
+          <h2 className="text-xl sm:text-2xl font-black text-white font-display">
             Plan Feature Matrix
           </h2>
-          <p className="text-xs sm:text-sm text-[#6B7280]">
+          <p className="text-xs sm:text-sm text-slate-400">
             Detailed breakdown of limits and capabilities across tiers.
           </p>
         </div>
 
-        <div className="overflow-x-auto border border-[#E5E7EB] rounded-xl">
+        <div className="overflow-x-auto border border-white/10 rounded-2xl bg-[#0F1422] shadow-inner">
           <table className="w-full text-xs text-left">
             <thead>
-              <tr className="bg-[#F9FAFB] border-b border-[#E5E7EB] text-[#111827] font-semibold uppercase">
-                <th className="py-3 px-4">Feature</th>
-                <th className="py-3 px-4">Free Starter</th>
-                <th className="py-3 px-4 bg-blue-50/60 text-[#2563EB] font-bold">
+              <tr className="bg-slate-900 border-b border-white/10 text-white font-bold uppercase tracking-wider font-display">
+                <th className="py-3.5 px-4">Feature</th>
+                <th className="py-3.5 px-4">Free Starter</th>
+                <th className="py-3.5 px-4 bg-indigo-500/10 text-cyan-300 font-bold">
                   Career Pro (₹49)
                 </th>
-                <th className="py-3 px-4">Campus Plan</th>
+                <th className="py-3.5 px-4">Campus Plan</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#F3F4F6]">
+            <tbody className="divide-y divide-white/10">
               {comparisonRows.map((row, i) => (
-                <tr key={i} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="py-3.5 px-4 font-semibold text-[#111827]">{row.feature}</td>
-                  <td className="py-3.5 px-4 text-[#4B5563]">{row.free}</td>
-                  <td className="py-3.5 px-4 font-semibold text-[#2563EB] bg-blue-50/30">
+                <tr key={i} className="hover:bg-white/5 transition-colors">
+                  <td className="py-3.5 px-4 font-semibold text-white">{row.feature}</td>
+                  <td className="py-3.5 px-4 text-slate-300">{row.free}</td>
+                  <td className="py-3.5 px-4 font-semibold text-cyan-300 bg-indigo-500/5">
                     {row.pro}
                   </td>
-                  <td className="py-3.5 px-4 text-[#4B5563]">{row.campus}</td>
+                  <td className="py-3.5 px-4 text-slate-300">{row.campus}</td>
                 </tr>
               ))}
             </tbody>
@@ -300,17 +302,17 @@ export default function PricingPage() {
       </section>
 
       {/* 4. 100% TRANSPARENT BILLING GUARANTEE */}
-      <section className="p-6 sm:p-8 rounded-2xl bg-white border border-[#E5E7EB] text-center space-y-3 max-w-4xl mx-auto shadow-xs">
-        <div className="flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm font-semibold text-[#111827]">
+      <section className="tactile-chassis bg-[#0C101A] border border-white/10 p-6 sm:p-8 text-center space-y-3 max-w-4xl mx-auto shadow-xl rounded-3xl text-white">
+        <div className="flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm font-bold text-white font-display">
           <span>✦ All prices inclusive of applicable GST (18%)</span>
-          <span className="text-gray-300">&bull;</span>
+          <span className="text-slate-600">&bull;</span>
           <span>Zero hidden platform surcharges</span>
-          <span className="text-gray-300">&bull;</span>
+          <span className="text-slate-600">&bull;</span>
           <span>1-Click self-service cancellation</span>
         </div>
-        <p className="text-xs text-[#6B7280] max-w-xl mx-auto leading-relaxed">
+        <p className="text-xs text-slate-300 max-w-xl mx-auto leading-relaxed">
           All paid tiers are backed by our transparent 7-Day Money-Back Guarantee. Subscriptions may be cancelled anytime with zero penalty. View our full{" "}
-          <Link href="/terms" className="font-semibold underline text-[#111827]">
+          <Link href="/terms" className="font-semibold underline text-cyan-400 hover:text-cyan-300">
             Terms of Learning
           </Link>.
         </p>
@@ -319,10 +321,10 @@ export default function PricingPage() {
       {/* 5. PRICING FAQS ACCORDION */}
       <section className="max-w-4xl mx-auto space-y-6">
         <div className="text-center space-y-1">
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#111827]">
+          <h2 className="text-2xl sm:text-3xl font-black text-white font-display">
             Pricing Questions &amp; Answers
           </h2>
-          <p className="text-xs sm:text-sm text-[#6B7280]">
+          <p className="text-xs sm:text-sm text-slate-400">
             Everything you need to know about plans, billing, and cancellations.
           </p>
         </div>
@@ -333,21 +335,21 @@ export default function PricingPage() {
             return (
               <div
                 key={idx}
-                className="p-5 rounded-xl bg-white border border-[#E5E7EB] transition-colors shadow-xs"
+                className="tactile-chassis bg-[#0C101A] border border-white/10 rounded-2xl p-5 transition-all shadow-md text-white"
               >
                 <button
                   onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
-                  className="w-full flex items-center justify-between text-left gap-4 font-semibold text-sm sm:text-base text-[#111827] cursor-pointer"
+                  className="w-full flex items-center justify-between text-left gap-4 font-bold text-sm sm:text-base text-white cursor-pointer font-display"
                 >
                   <span>{faq.q}</span>
                   <ChevronDown
-                    className={`w-4 h-4 text-[#6B7280] transition-transform duration-200 shrink-0 ${
-                      isOpen ? "rotate-180 text-[#2563EB]" : ""
+                    className={`w-4 h-4 text-cyan-400 transition-transform duration-200 shrink-0 ${
+                      isOpen ? "rotate-180" : ""
                     }`}
                   />
                 </button>
                 {isOpen && (
-                  <p className="text-xs sm:text-sm text-[#4B5563] leading-relaxed mt-3 pt-3 border-t border-[#F3F4F6] animate-in fade-in">
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mt-3 pt-3 border-t border-white/10 animate-in fade-in">
                     {faq.a}
                   </p>
                 )}

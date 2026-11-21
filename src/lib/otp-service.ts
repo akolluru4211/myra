@@ -1,6 +1,7 @@
 import crypto from "crypto";
-import { supabase } from "./supabase";
-import { UserRole, AppUser, CareerStage } from "./types";
+import { supabase } from "./supabase.ts";
+import type { UserRole, AppUser, CareerStage } from "./types.ts";
+import { sendOtpVerificationEmail } from "./email-service.ts";
 
 export type AccountStatus = "ACTIVE" | "SUSPENDED" | "DISABLED" | "PENDING" | "INVITED";
 
@@ -130,6 +131,8 @@ export function getRedirectForRole(role: UserRole | string, careerStage?: string
       return "/dashboard";
     case "EMPLOYEE":
       return "/employee";
+    case "TEACHER":
+      return "/school/teacher";
     case "HR":
       return "/hr";
     case "FOUNDER":
@@ -216,7 +219,32 @@ export async function generateAndSendOtp(
   recentRequests.push(now);
   requestHistory.set(identifier, recentRequests);
 
-  // 4. Log Security Event (Never log plaintext OTP)
+  // 4. Dispatch Email OTP via Resend if real email identifier
+  const isTestAccount =
+    identifier.includes("burst_parallel") ||
+    identifier.includes("lockout_target") ||
+    identifier.includes("auth_strong_tester") ||
+    identifier.includes("test_user") ||
+    identifier.endsWith("@test.com") ||
+    identifier.endsWith("@example.com") ||
+    identifier.endsWith("@edworld.test");
+
+  if (identifier.includes("@") && !isTestAccount) {
+    try {
+      await sendOtpVerificationEmail({
+        email: identifier,
+        otp: rawCode,
+        purpose,
+        expiresMinutes: 5,
+      });
+    } catch (emailErr: any) {
+      console.error("[generateAndSendOtp] Failed to dispatch Resend email:", emailErr?.message || emailErr);
+    }
+  } else if (isTestAccount) {
+    console.info(`[OTP Test Mode] Suppressed outbound Resend email for test account: ${identifier}`);
+  }
+
+  // 5. Log Security Event (Never log plaintext OTP)
   logSecurityEvent({
     type: "OTP_SENT",
     identifier,
@@ -301,11 +329,25 @@ export async function verifyOtp(
     throw new Error("This verification code has already been used. Please request a fresh code.");
   }
 
-  // Check OTP Hash Match (or test code 123456 in dev mode)
+  // Check OTP Hash Match (Timing-Safe Equality)
   const isDev = process.env.NODE_ENV !== "production";
   const expectedHash = record.hashedOtp;
   const enteredHash = hashOtp(identifier, (enteredOtp || "").trim());
-  const isMatch = enteredHash === expectedHash || (isDev && enteredOtp === "123456");
+
+  let isMatch = false;
+  if (isDev && enteredOtp === "123456") {
+    isMatch = true;
+  } else {
+    try {
+      const bufEntered = Buffer.from(enteredHash, "hex");
+      const bufExpected = Buffer.from(expectedHash, "hex");
+      if (bufEntered.length === bufExpected.length) {
+        isMatch = crypto.timingSafeEqual(bufEntered, bufExpected);
+      }
+    } catch {
+      isMatch = false;
+    }
+  }
 
   if (!isMatch) {
     record.attempts += 1;
@@ -342,7 +384,9 @@ export async function verifyOtp(
       identifier,
       timestamp: new Date().toISOString(),
     });
-    throw new Error("Your account has been suspended by organization administration. Please contact edworld.eden@gmail.com.");
+    const err: any = new Error("Your account has been suspended by organization administration. Please contact edworld.eden@gmail.com.");
+    err.code = "ACCOUNT_SUSPENDED";
+    throw err;
   }
 
   if (status === "DISABLED") {
@@ -472,6 +516,9 @@ async function resolveUserAndRole(
       phone: appUser.phone || null,
       dob: appUser.dob || null,
       role: defaultRole,
+      career_stage: appUser.careerStage,
+      age_band: appUser.ageBand,
+      grade_level: appUser.gradeLevel,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     });

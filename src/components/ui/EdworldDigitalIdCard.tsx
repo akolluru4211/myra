@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { 
@@ -13,9 +13,11 @@ import {
   Sparkles,
   MapPin,
   Building2,
-  GraduationCap
+  GraduationCap,
+  Cpu
 } from "lucide-react";
 import { formatEdworldId } from "@/lib/utils";
+import { QrCodeView } from "@/components/ui/QrCodeView";
 
 export interface EdworldDigitalIdCardProps {
   userId?: string;
@@ -26,42 +28,63 @@ export interface EdworldDigitalIdCardProps {
   avatarUrl?: string | null;
   organization?: string;
   college?: string;
+  degree?: string;
+  branch?: string;
+  graduationYear?: string;
+  targetRole?: string;
   location?: string;
   role?: string;
   careerStage?: string;
   isPublic?: boolean;
+  className?: string;
+  showActions?: boolean;
 }
 
 export default function EdworldDigitalIdCard({
   userId,
-  name = "Edworld Member",
+  name = "EdWorld Student",
   headline = "Software Engineer & Builder",
   email,
   username,
   avatarUrl,
   organization,
   college,
+  degree,
+  branch,
+  graduationYear,
+  targetRole,
   location,
   role,
-  careerStage = "PROFESSIONAL",
-  isPublic = true
+  careerStage = "STUDENT",
+  isPublic = true,
+  className = "",
+  showActions = true,
 }: EdworldDigitalIdCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null);
   const [copiedId, setCopiedId] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
 
-  const edworldId = formatEdworldId(userId);
-  const publicSlug = username || userId || "member";
+  // Generate standardized student ID format: EDW-STU-XXXXX
+  const rawId = userId ? userId.replace(/-/g, "").toUpperCase() : "88294";
+  const studentIdCode = `EDW-STU-${rawId.slice(0, 5)}`;
+  // edworldId alias for full test & format compatibility
+  const edworldId = studentIdCode;
+  const publicSlug = username || (userId ? userId.slice(0, 8) : "student");
+  
   const publicProfileUrl = typeof window !== "undefined" 
-    ? `${window.location.origin}/u/${publicSlug}` 
-    : `https://www.edworld.co.in/u/${publicSlug}`;
+    ? `${window.location.origin}/${publicSlug}` 
+    : `https://edworld.co.in/${publicSlug}`;
 
-  const displayName = name.trim() || "Edworld Member";
+  const displayName = name.trim() || "EdWorld Student";
   const userInitial = displayName.charAt(0).toUpperCase();
+  const academicInstitute = college || organization || "Engineering Institute";
+  const academicProgram = degree && branch ? `${degree} in ${branch}` : degree || branch || "Computer Science & Engineering";
+  const batchYear = graduationYear ? `Class of ${graduationYear}` : "Class of 2026";
 
   const handleCopyId = () => {
     if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(edworldId);
+      navigator.clipboard.writeText(studentIdCode);
       setCopiedId(true);
       setTimeout(() => setCopiedId(false), 2500);
     }
@@ -77,160 +100,216 @@ export default function EdworldDigitalIdCard({
 
   const handleDownloadCard = () => {
     setIsDownloading(true);
-    // Simple, reliable clean print or image capture action
     try {
-      const cardElement = document.getElementById("edworld-digital-id-card");
-      if (cardElement && typeof window !== "undefined") {
+      if (typeof window !== "undefined") {
         window.print();
       }
     } catch (e) {
       console.error("Card print error:", e);
     } finally {
-      setTimeout(() => setIsDownloading(false), 1000);
+      setTimeout(() => setIsDownloading(false), 1200);
     }
   };
 
   return (
-    <div className="space-y-4">
-      {/* Digital ID Card Surface */}
+    <div className={`space-y-4 ${className}`}>
+      {/* ========================================================================= */}
+      {/* PURE WHITE ELEVATED EDWORLD DIGITAL STUDENT ID CARD                       */}
+      {/* ========================================================================= */}
       <div
         id="edworld-digital-id-card"
-        className="relative overflow-hidden rounded-3xl bg-black text-white p-6 sm:p-8 border border-neutral-800 shadow-xl"
+        ref={cardRef}
+        className="relative overflow-hidden rounded-3xl bg-white text-slate-900 p-6 sm:p-8 border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] transition-all hover:border-indigo-100/80"
       >
-        {/* Subtle Decorative Geometric Accents (Monochrome) */}
-        <div className="absolute top-0 right-0 w-80 h-80 bg-neutral-800/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-60 h-60 bg-neutral-900/30 rounded-full blur-2xl pointer-events-none" />
+        {/* Subtle Ambient Mesh Tint Gradients */}
+        <div className="absolute -top-24 -right-24 w-72 h-72 bg-gradient-to-br from-indigo-50/70 via-purple-50/40 to-transparent rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-gradient-to-tr from-blue-50/50 via-slate-50/30 to-transparent rounded-full blur-3xl pointer-events-none" />
 
-        {/* Card Header: Brand Logo + ID Badge */}
-        <div className="relative z-10 flex items-center justify-between gap-4 border-b border-neutral-800 pb-5">
+        {/* 1. CARD HEADER: Official EdWorld Logo & Verified Member Badge */}
+        <div className="relative z-10 flex items-center justify-between gap-3 border-b border-slate-100 pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-neutral-900 border border-neutral-800 p-1 flex items-center justify-center shrink-0 shadow-xs">
+            {/* EdWorld Official Logo Mark */}
+            <div className="w-11 h-11 rounded-2xl bg-white border border-slate-200/80 p-1.5 flex items-center justify-center shrink-0 shadow-xs">
               <Image
                 src="/images/edworld-logo.png"
-                alt="Edworld Logo"
-                width={26}
-                height={26}
+                alt="EdWorld Logo"
+                width={30}
+                height={30}
                 className="object-contain"
                 priority
               />
             </div>
             <div>
-              <span className="text-sm font-black tracking-tight text-white flex items-center gap-1 font-sans leading-none">
-                Edworld <span className="text-white font-extrabold">Co.</span>
-              </span>
-              <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest mt-1 block">
-                Digital Career Identity
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm font-black tracking-tight text-slate-900 font-display">
+                  EdWorld <span className="text-[#5C59E8] font-extrabold">Co.</span>
+                </span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#EEF0FD] text-[#5C59E8] border border-indigo-100 font-bold">
+                  STUDENT ID
+                </span>
+              </div>
+              <span className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest block mt-0.5">
+                Official Digital Identity &bull; {batchYear}
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full bg-neutral-900 text-white text-[10px] font-bold border border-neutral-700 flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-white" />
+          {/* Mint Emerald Verified Member Badge */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200/60 flex items-center gap-1 shadow-xs">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
               <span>Verified Member</span>
             </span>
           </div>
         </div>
 
-        {/* Card Body: User Avatar + Name + Headline + Metadata */}
-        <div className="relative z-10 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-          <div className="flex items-center gap-4 sm:gap-5">
-            <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-neutral-900 text-white font-serif font-bold text-2xl flex items-center justify-center shadow-md shrink-0 border border-neutral-700">
-              {userInitial}
+        {/* 2. CARD BODY: Student Avatar, Identity, Academic Details & NFC Tag */}
+        <div className="relative z-10 py-5 flex flex-col md:flex-row md:items-center justify-between gap-5">
+          {/* Left Column: Avatar & Core Names */}
+          <div className="flex items-center gap-4 sm:gap-5 min-w-0">
+            {/* Avatar with Crisp Border */}
+            <div className="relative shrink-0">
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt={displayName}
+                  className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-indigo-100 shadow-sm"
+                />
+              ) : (
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-[#EEF0FD] to-[#E0E3FA] text-[#5C59E8] font-display font-extrabold text-2xl sm:text-3xl flex items-center justify-center shadow-xs border-2 border-indigo-100">
+                  {userInitial}
+                </div>
+              )}
+              {/* Active Verified Beacon */}
+              <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center shadow-xs" title="Active Verified Member">
+                <span className="w-1.5 h-1.5 rounded-full bg-white" />
+              </span>
             </div>
 
             <div className="space-y-1 min-w-0">
-              <h2 className="text-xl sm:text-2xl font-serif font-bold text-white tracking-tight leading-snug truncate">
+              <h2 className="text-lg sm:text-2xl font-black font-display text-slate-900 tracking-tight leading-snug truncate">
                 {displayName}
               </h2>
-              <p className="text-xs sm:text-sm text-stone-300 font-medium line-clamp-1">
+              <p className="text-xs sm:text-sm font-semibold text-[#5C59E8] font-mono flex items-center gap-1">
+                <span>@{publicSlug}</span>
+              </p>
+              <p className="text-[11px] sm:text-xs text-slate-600 font-normal line-clamp-1 max-w-sm">
                 {headline}
               </p>
-              {email && (
-                <p className="text-[11px] text-stone-400 font-mono pt-0.5 truncate">
-                  {email}
-                </p>
-              )}
             </div>
           </div>
 
-          {/* Right Column: Organization / College / Location */}
-          <div className="flex flex-col sm:items-end text-xs text-stone-400 space-y-1 font-medium">
-            {organization && (
-              <span className="flex items-center gap-1.5 text-stone-300">
-                <Building2 className="w-3.5 h-3.5 text-stone-500" />
-                <span>{organization}</span>
-              </span>
-            )}
-            {college && (
-              <span className="flex items-center gap-1.5 text-stone-300">
-                <GraduationCap className="w-3.5 h-3.5 text-stone-500" />
-                <span>{college}</span>
-              </span>
-            )}
+          {/* Right Column: Academic Details & Smart Chip */}
+          <div className="flex flex-col md:items-end text-xs space-y-1.5 font-medium shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
+            {/* Microchip / Smart NFC Tag */}
+            <div className="hidden sm:flex items-center gap-2 mb-1 px-2.5 py-1 rounded-xl bg-[#EEF0FD] border border-indigo-100/80 text-[#5C59E8] text-[10px] font-mono font-bold">
+              <Cpu className="w-3.5 h-3.5 text-[#5C59E8]" />
+              <span>NFC / QR VERIFIED</span>
+            </div>
+
+            <div className="flex items-center gap-1.5 text-slate-700">
+              <GraduationCap className="w-3.5 h-3.5 text-[#5C59E8] shrink-0" />
+              <span className="truncate max-w-[240px] font-semibold">{academicInstitute}</span>
+            </div>
+
+            <div className="flex items-center gap-1.5 text-slate-600 text-[11px]">
+              <span className="text-slate-400">Program:</span>
+              <span className="truncate max-w-[220px] text-slate-800 font-medium">{academicProgram}</span>
+            </div>
+
             {location && (
-              <span className="flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-stone-500" />
+              <div className="flex items-center gap-1.5 text-slate-500 text-[11px]">
+                <MapPin className="w-3 h-3 text-slate-400" />
                 <span>{location}</span>
-              </span>
+              </div>
             )}
           </div>
         </div>
 
-        {/* Card Footer: Edworld ID + Format */}
-        <div className="relative z-10 pt-5 border-t border-stone-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
-            <span className="text-[10px] uppercase font-bold text-stone-500 tracking-wider">
-              Edworld ID:
+        {/* 3. CARD FOOTER: Unique ID Code + Interactive QR Matrix Pattern */}
+        <div className="relative z-10 pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          {/* Student ID Display & Copy Button */}
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+              Student ID:
             </span>
-            <span className="font-mono text-xs sm:text-sm font-bold text-emerald-400 tracking-wider bg-stone-800/80 px-2.5 py-1 rounded-lg border border-stone-700/60">
-              {edworldId}
-            </span>
-            <button
-              type="button"
-              onClick={handleCopyId}
-              title="Copy Edworld ID"
-              className="p-1.5 rounded-lg text-stone-400 hover:text-white hover:bg-stone-800 transition-colors cursor-pointer"
-            >
-              {copiedId ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-            </button>
+            <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200/80">
+              <span className="font-mono text-xs sm:text-sm font-extrabold text-[#5C59E8] tracking-wider">
+                {studentIdCode}
+              </span>
+              <button
+                type="button"
+                onClick={handleCopyId}
+                title="Copy ID"
+                aria-label="Copy ID"
+                className="p-1 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+              >
+                {copiedId ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+              </button>
+            </div>
+            {copiedId && (
+              <span className="text-[10px] text-emerald-600 font-semibold animate-in fade-in">
+                Copied to clipboard!
+              </span>
+            )}
           </div>
 
-          <div className="text-[10px] text-stone-500 font-mono">
-            Auth Level: Career Verified
+          {/* Scannable Portfolio Deep-Link & Real Scannable QR Badge */}
+          <div className="flex items-center gap-3">
+            <Link
+              href={`/${publicSlug}`}
+              className="text-[11px] font-mono text-[#5C59E8] hover:text-[#4F46E5] transition-colors flex items-center gap-1 underline underline-offset-2 font-medium"
+            >
+              <span>edworld.co.in/{publicSlug}</span>
+              <ExternalLink className="w-3 h-3" />
+            </Link>
+
+            {/* Real Scannable QR Matrix Badge */}
+            <div className="p-1 rounded-xl bg-slate-50 border border-slate-200/80 shrink-0 shadow-2xs flex items-center justify-center overflow-hidden" title="Scan with phone camera to open portfolio">
+              <QrCodeView value={publicProfileUrl} size={32} fgColor="#1E293B" bgColor="#F8FAFC" includeMargin={false} />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Card Action Controls */}
-      <div className="flex flex-wrap items-center gap-2 pt-1">
-        <button
-          type="button"
-          onClick={handleCopyId}
-          className="px-3.5 py-2 rounded-xl bg-white hover:bg-stone-50 border border-stone-200 text-stone-800 text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
-        >
-          {copiedId ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-stone-500" />}
-          <span>{copiedId ? "ID Copied" : "Copy ID"}</span>
-        </button>
+      {/* ========================================================================= */}
+      {/* CARD ACTION CONTROLS                                                      */}
+      {/* ========================================================================= */}
+      {showActions && (
+        <div className="flex flex-wrap items-center gap-2.5 pt-1">
+          {/* Download Student ID Button */}
+          <button
+            type="button"
+            onClick={handleDownloadCard}
+            disabled={isDownloading}
+            className="px-4 py-2 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200/80 text-slate-800 text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer disabled:opacity-60"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            <span>{isDownloading ? "Preparing ID..." : "Download Student ID"}</span>
+          </button>
 
-        <button
-          type="button"
-          onClick={handleCopyProfileLink}
-          className="px-3.5 py-2 rounded-xl bg-white hover:bg-stone-50 border border-stone-200 text-stone-800 text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
-        >
-          {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5 text-stone-500" />}
-          <span>{copiedLink ? "Link Copied" : "Share Profile"}</span>
-        </button>
+          {/* Share Profile Button */}
+          <button
+            type="button"
+            onClick={handleCopyProfileLink}
+            aria-label="Share Profile"
+            className="px-4 py-2 rounded-2xl bg-[#EEF0FD] hover:bg-[#E0E3FA] text-[#3730A3] border border-indigo-100/60 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+          >
+            {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5 text-[#5C59E8]" />}
+            <span>{copiedLink ? "Link Copied" : "Share Profile"}</span>
+          </button>
 
-        <Link
-          href={`/u/${publicSlug}`}
-          target="_blank"
-          className="px-3.5 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
-        >
-          <span>View Public Profile</span>
-          <ExternalLink className="w-3.5 h-3.5 text-stone-400" />
-        </Link>
-      </div>
+          {/* View Public Profile Button */}
+          <Link
+            href={`/${publicSlug}`}
+            aria-label="View Public Profile"
+            className="px-4 py-2 rounded-2xl bg-[#5C59E8] hover:bg-[#4F46E5] text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-md shadow-indigo-500/20"
+          >
+            <span>View Public Profile</span>
+            <ExternalLink className="w-3.5 h-3.5 text-white" />
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

@@ -164,13 +164,19 @@ export default function CampusAmbassadorApplicationPage() {
                 </div>
               </div>
 
-              <Link
-                href="/ambassador/hub"
-                className="btn-primary self-start sm:self-auto flex items-center gap-2"
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    navigator.clipboard.writeText(`https://edworld.co.in/signup?ref=${ambassador.referral_code}`);
+                    alert("Referral link copied to clipboard!");
+                  }
+                }}
+                className="btn-primary self-start sm:self-auto flex items-center gap-2 cursor-pointer"
               >
-                <span>Open Ambassador Hub</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
+                <span>Copy Referral Link</span>
+                <CheckCircle2 className="w-3.5 h-3.5" />
+              </button>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

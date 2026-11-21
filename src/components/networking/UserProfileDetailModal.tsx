@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { PublicUserProfile } from "@/lib/types";
 import EdIdBadge from "@/components/ui/EdIdBadge";
+import { QrCodeView } from "@/components/ui/QrCodeView";
 import {
   X,
   MapPin,
@@ -20,7 +22,10 @@ import {
   Check,
   ShieldCheck,
   ExternalLink,
-  FolderGit2
+  FolderGit2,
+  Copy,
+  QrCode,
+  Sparkles
 } from "lucide-react";
 
 interface UserProfileDetailModalProps {
@@ -40,7 +45,8 @@ export default function UserProfileDetailModal({
   onOpenMessage,
   isConnecting = false,
 }: UserProfileDetailModalProps) {
-  const [activeTab, setActiveTab] = useState<"overview" | "projects" | "certifications" | "schedule" | "education">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "projects" | "certifications" | "education">("overview");
+  const [copiedLink, setCopiedLink] = useState(false);
 
   if (!isOpen || !user) return null;
 
@@ -53,22 +59,37 @@ export default function UserProfileDetailModal({
 
   const isConnected = user.connectionStatus === "accepted";
   const isPending = user.connectionStatus === "pending_sent";
+  const username = user.username || user.userId;
+  const portfolioDisplayUrl = `edworld.co.in/${username}`;
+  const portfolioFullUrl = typeof window !== "undefined"
+    ? `${window.location.origin}/${username}`
+    : `https://edworld.co.in/${username}`;
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(portfolioFullUrl);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    } catch {
+      // Fallback
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto font-sans">
       {/* Dimmed Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity animate-in fade-in"
+        className="fixed inset-0 bg-black/75 backdrop-blur-sm transition-opacity animate-in fade-in"
         onClick={onClose}
       />
 
       <div className="flex min-h-full items-center justify-center p-3 sm:p-4 text-center">
-        <div className="w-full max-w-2xl transform overflow-hidden rounded-xl bg-white text-left align-middle shadow-2xl border border-[#E5E5E5] transition-all flex flex-col max-h-[90vh]">
+        <div className="w-full max-w-2xl transform overflow-hidden rounded-3xl bg-[#0C101A] text-left align-middle shadow-2xl border border-white/10 transition-all flex flex-col max-h-[90vh] text-white">
           {/* Top Banner & Header */}
-          <div className="relative bg-black p-6 sm:p-7 text-white border-b border-neutral-800">
+          <div className="relative bg-[#080B11] p-6 sm:p-7 text-white border-b border-white/10">
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900 transition-colors"
+              className="absolute top-4 right-4 p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
               aria-label="Close profile modal"
             >
               <X className="w-5 h-5" />
@@ -81,10 +102,10 @@ export default function UserProfileDetailModal({
                     <img
                       src={user.avatarUrl}
                       alt={user.name}
-                      className="w-16 h-16 sm:w-18 sm:h-18 rounded-lg object-cover border border-neutral-700"
+                      className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl object-cover border border-white/15"
                     />
                   ) : (
-                    <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-lg bg-neutral-900 text-white border border-neutral-700 flex items-center justify-center font-bold text-xl">
+                    <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-[#0F1422] text-white border border-white/15 flex items-center justify-center font-bold text-xl font-display">
                       {initials}
                     </div>
                   )}
@@ -92,33 +113,33 @@ export default function UserProfileDetailModal({
 
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-lg sm:text-xl font-bold text-white truncate">
+                    <h2 className="text-lg sm:text-xl font-bold text-white truncate font-display">
                       {user.name}
                     </h2>
                     {user.edId && (
                       <EdIdBadge userId={user.userId} customId={user.edId} size="sm" variant="pill" />
                     )}
                   </div>
-                  <p className="text-xs text-neutral-300 font-medium mt-1 leading-snug">
+                  <p className="text-xs text-slate-300 font-medium mt-1 leading-snug">
                     {user.headline || (user.userType === "STUDENT" ? "Student" : "Technology Professional")}
                   </p>
 
-                  <div className="flex flex-wrap items-center gap-3 mt-2 text-[11px] text-neutral-400 font-medium">
+                  <div className="flex flex-wrap items-center gap-3 mt-2 text-[11px] text-slate-400 font-medium">
                     {user.college && (
                       <span className="flex items-center gap-1">
-                        <GraduationCap className="w-3.5 h-3.5 text-neutral-400" />
+                        <GraduationCap className="w-3.5 h-3.5 text-slate-400" />
                         {user.college}
                       </span>
                     )}
                     {user.company && (
                       <span className="flex items-center gap-1">
-                        <Building2 className="w-3.5 h-3.5 text-neutral-400" />
+                        <Building2 className="w-3.5 h-3.5 text-slate-400" />
                         {user.company}
                       </span>
                     )}
                     {user.location && (
                       <span className="flex items-center gap-1">
-                        <MapPin className="w-3.5 h-3.5 text-neutral-400" />
+                        <MapPin className="w-3.5 h-3.5 text-slate-400" />
                         {user.location}
                       </span>
                     )}
@@ -134,7 +155,7 @@ export default function UserProfileDetailModal({
                       onClose();
                       onOpenMessage(user);
                     }}
-                    className="flex-1 sm:flex-initial px-3.5 py-2 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors border border-neutral-700"
+                    className="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-[#0F1422] hover:bg-white/10 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors border border-white/10 cursor-pointer"
                   >
                     <Send className="w-3.5 h-3.5 text-white" />
                     <span>Message</span>
@@ -145,12 +166,12 @@ export default function UserProfileDetailModal({
                   <button
                     onClick={() => onConnect(user.userId)}
                     disabled={isConnected || isPending || isConnecting}
-                    className={`flex-1 sm:flex-initial px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                    className={`flex-1 sm:flex-initial px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                       isConnected
-                        ? "bg-neutral-800 text-neutral-300 cursor-default"
+                        ? "bg-white/5 text-slate-400 border border-white/10 cursor-default"
                         : isPending
-                        ? "bg-neutral-800 text-neutral-400 cursor-default"
-                        : "bg-white hover:bg-neutral-200 text-black"
+                        ? "bg-white/5 text-slate-400 border border-white/10 cursor-default"
+                        : "bg-white hover:bg-slate-200 text-slate-950 shadow-md font-bold"
                     }`}
                   >
                     {isConnected ? (
@@ -174,14 +195,64 @@ export default function UserProfileDetailModal({
               </div>
             </div>
 
-            {/* Links Bar */}
-            <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-neutral-800 text-xs">
+            {/* Public Portfolio & QR Code Showcase Card */}
+            <div className="mt-4 pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-r from-indigo-950/40 via-purple-950/30 to-transparent p-4 rounded-2xl border border-indigo-500/20">
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div className="p-1.5 rounded-xl bg-white shadow-md shrink-0">
+                  <QrCodeView value={portfolioFullUrl} size={64} fgColor="#0C101A" bgColor="#FFFFFF" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5 text-indigo-300 text-[10px] uppercase font-bold tracking-wider">
+                    <Sparkles className="w-3 h-3 text-indigo-400" />
+                    <span>Public Student Portfolio</span>
+                  </div>
+                  <div className="font-mono text-xs font-bold text-white truncate mt-0.5">
+                    {portfolioDisplayUrl}
+                  </div>
+                  <div className="text-[11px] text-slate-400">
+                    Scan with any phone camera or open directly
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+                <button
+                  onClick={handleCopyLink}
+                  className="flex-1 sm:flex-initial px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors border border-white/15 cursor-pointer"
+                  title="Copy portfolio link"
+                >
+                  {copiedLink ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      <span className="text-emerald-400 font-bold">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5 text-slate-300" />
+                      <span>Copy</span>
+                    </>
+                  )}
+                </button>
+
+                <Link
+                  href={`/${username}`}
+                  target="_blank"
+                  className="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-colors shadow-md"
+                >
+                  <span>Open</span>
+                  <ExternalLink className="w-3.5 h-3.5 text-white" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Social / External Links Bar */}
+            <div className="flex flex-wrap items-center gap-2 mt-3 pt-3 border-t border-white/10 text-xs">
               {user.githubUrl && (
                 <a
                   href={user.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-2.5 py-1 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-200 flex items-center gap-1.5 transition-colors border border-neutral-700"
+                  className="px-2.5 py-1 rounded-lg bg-[#0F1422] hover:bg-white/10 text-slate-200 flex items-center gap-1.5 transition-colors border border-white/10"
                 >
                   <Github className="w-3 h-3 text-white" />
                   <span>GitHub</span>
@@ -192,7 +263,7 @@ export default function UserProfileDetailModal({
                   href={user.linkedinUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-2.5 py-1 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-200 flex items-center gap-1.5 transition-colors border border-neutral-700"
+                  className="px-2.5 py-1 rounded-lg bg-[#0F1422] hover:bg-white/10 text-slate-200 flex items-center gap-1.5 transition-colors border border-white/10"
                 >
                   <Linkedin className="w-3 h-3 text-white" />
                   <span>LinkedIn</span>
@@ -203,7 +274,7 @@ export default function UserProfileDetailModal({
                   href={user.leetcodeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-2.5 py-1 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-200 flex items-center gap-1.5 transition-colors border border-neutral-700"
+                  className="px-2.5 py-1 rounded-lg bg-[#0F1422] hover:bg-white/10 text-slate-200 flex items-center gap-1.5 transition-colors border border-white/10"
                 >
                   <Code2 className="w-3 h-3 text-white" />
                   <span>LeetCode</span>
@@ -214,22 +285,21 @@ export default function UserProfileDetailModal({
                   href={user.portfolioUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-2.5 py-1 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-200 flex items-center gap-1.5 transition-colors border border-neutral-700"
+                  className="px-2.5 py-1 rounded-lg bg-[#0F1422] hover:bg-white/10 text-slate-200 flex items-center gap-1.5 transition-colors border border-white/10"
                 >
                   <Globe className="w-3 h-3 text-white" />
-                  <span>Portfolio</span>
+                  <span>Website</span>
                 </a>
               )}
             </div>
           </div>
 
           {/* Navigation Tab Bar */}
-          <div className="flex items-center gap-1 px-6 border-b border-[#E5E5E5] bg-white overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-1 px-6 border-b border-white/10 bg-[#0C101A] overflow-x-auto no-scrollbar">
             {[
               { id: "overview", label: "Overview", icon: Briefcase },
               { id: "projects", label: `Projects (${user.projects?.length || 0})`, icon: FolderGit2 },
               { id: "certifications", label: `Certifications (${user.certifications?.length || 0})`, icon: Award },
-              { id: "schedule", label: "Schedule", icon: Clock },
               { id: "education", label: "Education", icon: GraduationCap },
             ].map((tab) => {
               const Icon = tab.icon;
@@ -238,13 +308,13 @@ export default function UserProfileDetailModal({
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`py-3.5 px-3 text-xs font-semibold border-b-2 flex items-center gap-1.5 whitespace-nowrap transition-colors ${
+                  className={`py-3.5 px-3 text-xs font-semibold border-b-2 flex items-center gap-1.5 whitespace-nowrap transition-colors cursor-pointer ${
                     isActive
-                      ? "border-black text-black"
-                      : "border-transparent text-neutral-500 hover:text-black"
+                      ? "border-white text-white"
+                      : "border-transparent text-slate-400 hover:text-white"
                   }`}
                 >
-                  <Icon className={`w-3.5 h-3.5 ${isActive ? "text-black" : "text-neutral-400"}`} />
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? "text-white" : "text-slate-400"}`} />
                   <span>{tab.label}</span>
                 </button>
               );
@@ -257,22 +327,22 @@ export default function UserProfileDetailModal({
             {activeTab === "overview" && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">Bio</h3>
-                  <p className="text-xs text-black leading-relaxed mt-2 bg-white p-4 rounded-lg border border-[#E5E5E5]">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Bio</h3>
+                  <p className="text-xs text-white leading-relaxed mt-2 bg-[#0F1422] p-4 rounded-2xl border border-white/10">
                     {user.bio || "No bio added yet."}
                   </p>
                 </div>
 
                 {user.skills && user.skills.length > 0 && (
                   <div>
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-2.5">
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2.5">
                       Skills
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {user.skills.map((skill, idx) => (
                         <span
                           key={idx}
-                          className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white border border-[#E5E5E5] text-black"
+                          className="px-3 py-1.5 rounded-xl text-xs font-medium bg-[#0F1422] border border-white/10 text-white"
                         >
                           {skill}
                         </span>
@@ -282,19 +352,19 @@ export default function UserProfileDetailModal({
                 )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-lg bg-white border border-[#E5E5E5]">
-                    <span className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Career Stage</span>
-                    <p className="text-xs font-semibold text-black mt-1 flex items-center gap-1.5">
-                      <Briefcase className="w-3.5 h-3.5 text-black" />
+                  <div className="p-4 rounded-2xl bg-[#0F1422] border border-white/10">
+                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Career Stage</span>
+                    <p className="text-xs font-semibold text-white mt-1 flex items-center gap-1.5">
+                      <Briefcase className="w-3.5 h-3.5 text-white" />
                       {user.userType === "STUDENT" ? "Student" : "Technology Professional"}
                     </p>
                   </div>
 
                   {user.cgpa && (
-                    <div className="p-4 rounded-lg bg-white border border-[#E5E5E5]">
-                      <span className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">Academic Metric</span>
-                      <p className="text-xs font-semibold text-black mt-1 flex items-center gap-1.5">
-                        <GraduationCap className="w-3.5 h-3.5 text-black" />
+                    <div className="p-4 rounded-2xl bg-[#0F1422] border border-white/10">
+                      <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Academic Metric</span>
+                      <p className="text-xs font-semibold text-white mt-1 flex items-center gap-1.5">
+                        <GraduationCap className="w-3.5 h-3.5 text-white" />
                         CGPA: {user.cgpa} / 10
                       </p>
                     </div>
@@ -308,16 +378,16 @@ export default function UserProfileDetailModal({
               <div className="space-y-4">
                 {user.projects && user.projects.length > 0 ? (
                   user.projects.map((proj, idx) => (
-                    <div key={idx} className="p-4 rounded-lg bg-white border border-[#E5E5E5] space-y-2.5">
+                    <div key={idx} className="p-4 rounded-2xl bg-[#0F1422] border border-white/10 space-y-2.5">
                       <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-semibold text-black">{proj.title}</h4>
+                        <h4 className="text-sm font-semibold text-white">{proj.title}</h4>
                         <div className="flex items-center gap-2">
                           {proj.githubRepo && (
                             <a
                               href={proj.githubRepo}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-xs font-semibold text-neutral-600 hover:text-black flex items-center gap-1"
+                              className="text-xs font-semibold text-slate-300 hover:text-white flex items-center gap-1"
                             >
                               <Github className="w-3.5 h-3.5" />
                               <span>Code</span>
@@ -328,7 +398,7 @@ export default function UserProfileDetailModal({
                               href={proj.demoUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-xs font-semibold text-black hover:underline flex items-center gap-1"
+                              className="text-xs font-semibold text-indigo-400 hover:underline flex items-center gap-1"
                             >
                               <ExternalLink className="w-3.5 h-3.5" />
                               <span>Demo</span>
@@ -336,11 +406,11 @@ export default function UserProfileDetailModal({
                           )}
                         </div>
                       </div>
-                      <p className="text-xs text-neutral-600 leading-relaxed">{proj.description}</p>
+                      <p className="text-xs text-slate-300 leading-relaxed">{proj.description}</p>
                       {proj.technologies && (
                         <div className="flex flex-wrap gap-1.5 pt-1">
                           {proj.technologies.map((t, tIdx) => (
-                            <span key={tIdx} className="text-[10px] px-2 py-0.5 rounded bg-neutral-100 text-neutral-700 font-medium">
+                            <span key={tIdx} className="text-[10px] px-2 py-0.5 rounded-md bg-white/5 text-slate-300 border border-white/10 font-medium">
                               {t}
                             </span>
                           ))}
@@ -349,8 +419,8 @@ export default function UserProfileDetailModal({
                     </div>
                   ))
                 ) : (
-                  <div className="text-center py-8 bg-white rounded-lg border border-[#E5E5E5] text-neutral-500 text-xs">
-                    <FolderGit2 className="w-8 h-8 mx-auto text-neutral-300 mb-2" />
+                  <div className="text-center py-8 bg-[#0F1422] rounded-2xl border border-white/10 text-slate-400 text-xs">
+                    <FolderGit2 className="w-8 h-8 mx-auto text-slate-500 mb-2" />
                     <p>No public portfolio projects listed yet.</p>
                   </div>
                 )}
@@ -362,14 +432,14 @@ export default function UserProfileDetailModal({
               <div className="space-y-3">
                 {user.certifications && user.certifications.length > 0 ? (
                   user.certifications.map((cert, idx) => (
-                    <div key={idx} className="p-4 rounded-lg bg-white border border-[#E5E5E5] flex items-center justify-between gap-3">
+                    <div key={idx} className="p-4 rounded-2xl bg-[#0F1422] border border-white/10 flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-lg bg-neutral-100 text-black border border-[#E5E5E5] flex items-center justify-center shrink-0">
-                          <Award className="w-5 h-5" />
+                        <div className="w-9 h-9 rounded-xl bg-white/10 text-white border border-white/10 flex items-center justify-center shrink-0">
+                          <Award className="w-5 h-5 text-indigo-400" />
                         </div>
                         <div>
-                          <h4 className="text-xs font-semibold text-black">{cert.name}</h4>
-                          <p className="text-[11px] text-neutral-500 mt-0.5">{cert.issuer} • Issued {cert.issueDate}</p>
+                          <h4 className="text-xs font-semibold text-white">{cert.name}</h4>
+                          <p className="text-[11px] text-slate-400 mt-0.5">{cert.issuer} • Issued {cert.issueDate}</p>
                         </div>
                       </div>
                       {cert.url && (
@@ -377,7 +447,7 @@ export default function UserProfileDetailModal({
                           href={cert.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-3 py-1 rounded bg-white hover:bg-neutral-50 border border-[#E5E5E5] text-xs font-semibold text-black transition-colors flex items-center gap-1"
+                          className="px-3 py-1 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-semibold text-white transition-colors flex items-center gap-1"
                         >
                           <span>Verify</span>
                           <ExternalLink className="w-3 h-3" />
@@ -386,54 +456,25 @@ export default function UserProfileDetailModal({
                     </div>
                   ))
                 ) : (
-                  <div className="text-center py-8 bg-white rounded-lg border border-[#E5E5E5] text-neutral-500 text-xs">
-                    <Award className="w-8 h-8 mx-auto text-neutral-300 mb-2" />
+                  <div className="text-center py-8 bg-[#0F1422] rounded-2xl border border-white/10 text-slate-400 text-xs">
+                    <Award className="w-8 h-8 mx-auto text-slate-500 mb-2" />
                     <p>No verified certifications listed yet.</p>
                   </div>
                 )}
               </div>
             )}
 
-            {/* 4. SCHEDULE */}
-            {activeTab === "schedule" && (
-              <div className="space-y-3">
-                {user.timetable && user.timetable.length > 0 ? (
-                  user.timetable.map((slot, idx) => (
-                    <div key={idx} className="p-4 rounded-lg bg-white border border-[#E5E5E5] flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-neutral-100 text-black flex items-center justify-center shrink-0 font-mono text-xs font-semibold">
-                          {idx + 1}
-                        </div>
-                        <div>
-                          <div className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">{slot.timeOfDay}</div>
-                          <h4 className="text-xs font-semibold text-black mt-0.5">{slot.focus}</h4>
-                        </div>
-                      </div>
-                      <span className="text-[11px] font-medium px-2.5 py-1 rounded bg-neutral-100 text-neutral-700 border border-[#E5E5E5]">
-                        {slot.duration}
-                      </span>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8 bg-white rounded-lg border border-[#E5E5E5] text-neutral-500 text-xs">
-                    <Clock className="w-8 h-8 mx-auto text-neutral-300 mb-2" />
-                    <p>No timetable set.</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* 5. EDUCATION */}
+            {/* 4. EDUCATION */}
             {activeTab === "education" && (
               <div className="space-y-4">
-                <div className="p-4 rounded-lg bg-white border border-[#E5E5E5] space-y-2">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-black">
-                    <GraduationCap className="w-4 h-4 text-black" />
+                <div className="p-4 rounded-2xl bg-[#0F1422] border border-white/10 space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-white">
+                    <GraduationCap className="w-4 h-4 text-indigo-400" />
                     <span>Education</span>
                   </div>
-                  <div className="pl-6 text-xs text-neutral-700 space-y-1">
-                    <p className="font-semibold text-black">{user.college || "University"}</p>
-                    {user.degree && <p className="text-neutral-500">{user.degree}</p>}
+                  <div className="pl-6 text-xs text-slate-300 space-y-1">
+                    <p className="font-semibold text-white">{user.college || "University"}</p>
+                    {user.degree && <p className="text-slate-400">{user.degree}</p>}
                   </div>
                 </div>
               </div>
@@ -441,14 +482,14 @@ export default function UserProfileDetailModal({
           </div>
 
           {/* Modal Footer */}
-          <div className="p-4 bg-white border-t border-[#E5E5E5] flex items-center justify-between text-xs text-neutral-500">
+          <div className="p-4 bg-[#080B11] border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
             <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-black" />
-              <span>Verified Profile</span>
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span>Public Verified Student Portfolio</span>
             </span>
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-lg bg-black text-white font-semibold hover:bg-neutral-800 transition-colors"
+              className="px-4 py-2 rounded-xl bg-white text-slate-950 font-bold hover:bg-slate-200 transition-colors cursor-pointer"
             >
               Close
             </button>

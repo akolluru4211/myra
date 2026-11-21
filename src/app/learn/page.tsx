@@ -354,48 +354,42 @@ export default function LearnAcademyPage() {
   const currentLevelProgress = Math.round(((userXp % 500) / 500) * 100);
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA] text-[#111827] font-sans antialiased relative">
+    <div className="min-h-screen bg-transparent text-slate-100 font-sans antialiased relative">
       {/* Floating XP Notification Animation */}
       {floatingXp && (
-        <div className="fixed top-20 right-8 z-50 px-4 py-2 rounded-xl bg-[#111827] text-white font-medium text-xs shadow-lg animate-bounce flex items-center gap-1.5 border border-[#374151]">
-          <Zap className="w-4 h-4 text-[#2563EB] fill-current" />
+        <div className="fixed top-20 right-8 z-50 px-4 py-2 rounded-xl bg-slate-900 text-white font-medium text-xs shadow-lg animate-bounce flex items-center gap-1.5 border border-indigo-500/30">
+          <Zap className="w-4 h-4 text-cyan-400 fill-current" />
           <span>{floatingXp.text}</span>
         </div>
       )}
 
       {/* Header Section */}
-      <header className="px-4 sm:px-8 pt-8 pb-6 max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#E5E7EB]">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-white border border-[#E5E7EB] text-[#2563EB] text-xs font-medium">
-              <Trophy className="w-3.5 h-3.5" />
-              <span>Academic &amp; industry tracks</span>
-            </div>
-
-            <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-[#111827]">
-              Courses &amp; learning roadmaps
+      <header className="w-full pb-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-white/10">
+          <div className="space-y-1.5 max-w-2xl">
+            <h1 className="text-2xl sm:text-4xl font-extrabold font-display tracking-tight text-white">
+              EdWorld Learn &amp; Courses
             </h1>
-
-            <p className="text-sm text-[#6B7280] leading-relaxed">
-              Explore multi-disciplinary engineering, data science, and career paths. Track milestones, access curated resources, and earn verifiable credentials.
+            <p className="text-xs sm:text-sm text-slate-400 font-normal">
+              Explore multi-disciplinary engineering and technology learning paths on EdWorld Learn.
             </p>
           </div>
 
           {/* Right Status Capsule: Scholar Level & Streak */}
           <div className="flex items-center gap-2.5 self-start md:self-auto shrink-0 flex-wrap">
             {/* Level & XP Capsule */}
-            <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-white border border-[#E5E7EB] shadow-xs">
-              <div className="w-6 h-6 rounded-md bg-[#2563EB] text-white font-bold text-[11px] flex items-center justify-center">
+            <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-[#0F1422] border border-white/10 shadow-sm">
+              <div className="w-6 h-6 rounded-md bg-indigo-600 text-white font-bold text-[11px] flex items-center justify-center font-display">
                 L{playerLevel}
               </div>
               <div className="flex flex-col">
-                <div className="flex items-center justify-between text-[11px] gap-3 leading-none">
-                  <span className="font-semibold text-[#111827]">Level {playerLevel} Scholar</span>
-                  <span className="text-[#2563EB] font-bold">{userXp} XP</span>
+                <div className="flex items-center justify-between text-[11px] gap-3 leading-none font-display">
+                  <span className="font-semibold text-white">Level {playerLevel} Scholar</span>
+                  <span className="text-cyan-400 font-bold">{userXp} XP</span>
                 </div>
-                <div className="w-24 h-1.5 rounded-full bg-[#F7F8FA] mt-1 overflow-hidden border border-[#E5E7EB]">
+                <div className="w-24 h-1.5 rounded-full bg-white/10 mt-1 overflow-hidden border border-white/5">
                   <div
-                    className="h-full bg-[#2563EB] rounded-full transition-all duration-500"
+                    className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-500"
                     style={{ width: `${currentLevelProgress}%` }}
                   />
                 </div>
@@ -403,19 +397,19 @@ export default function LearnAcademyPage() {
             </div>
 
             {/* Streak Counter */}
-            <div className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-[#E5E7EB] text-[#111827] text-xs font-semibold shadow-xs" title="Daily Streak Active">
-              <Flame className="w-4 h-4 text-amber-500 fill-amber-500" />
+            <div className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-300 text-xs font-semibold shadow-sm font-display" title="Daily Streak Active">
+              <Flame className="w-4 h-4 text-amber-400 fill-amber-400" />
               <span>{streakDays}d streak</span>
             </div>
 
             {/* Sound FX Toggle */}
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className="p-2 rounded-xl bg-white border border-[#E5E7EB] text-[#6B7280] hover:text-[#111827] hover:border-[#D1D5DB] transition-colors cursor-pointer shadow-xs"
+              className="p-2 rounded-xl bg-[#0F1422] border border-white/10 text-slate-300 hover:text-white hover:border-white/20 transition-colors cursor-pointer shadow-sm"
               title={soundEnabled ? "Mute Sound Effects" : "Unmute Sound Effects"}
               aria-label="Toggle sound effects"
             >
-              {soundEnabled ? <Volume2 className="w-4 h-4 text-[#111827]" /> : <VolumeX className="w-4 h-4 text-[#9CA3AF]" />}
+              {soundEnabled ? <Volume2 className="w-4 h-4 text-cyan-400" /> : <VolumeX className="w-4 h-4 text-slate-500" />}
             </button>
           </div>
         </div>
@@ -423,25 +417,25 @@ export default function LearnAcademyPage() {
         {/* Search, Filter & View Controls */}
         <div className="mt-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="relative w-full max-w-md">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B7280]" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by topic, skill, or course name..."
-              className="w-full bg-white border border-[#E5E7EB] rounded-xl pl-10 pr-4 py-2.5 text-xs text-[#111827] placeholder-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/20 focus:border-[#2563EB] transition-colors"
+              className="w-full bg-[#0F1422] border border-white/15 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
             />
           </div>
 
           {/* View Mode Switcher */}
-          <div className="flex items-center gap-1 p-1 rounded-xl bg-white border border-[#E5E7EB] self-start md:self-auto shrink-0 shadow-xs">
+          <div className="flex items-center gap-1 p-1 rounded-xl bg-[#0F1422] border border-white/10 self-start md:self-auto shrink-0 shadow-inner">
             <button
               type="button"
               onClick={() => setViewMode("grid")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
                 viewMode === "grid"
-                  ? "bg-[#2563EB] text-white"
-                  : "text-[#6B7280] hover:text-[#111827]"
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-sm"
+                  : "text-slate-400 hover:text-white"
               }`}
             >
               <Grid className="w-3.5 h-3.5" />
@@ -450,10 +444,10 @@ export default function LearnAcademyPage() {
             <button
               type="button"
               onClick={() => setViewMode("map")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
                 viewMode === "map"
-                  ? "bg-[#2563EB] text-white"
-                  : "text-[#6B7280] hover:text-[#111827]"
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-sm"
+                  : "text-slate-400 hover:text-white"
               }`}
             >
               <Map className="w-3.5 h-3.5" />
@@ -472,13 +466,13 @@ export default function LearnAcademyPage() {
                 key={cat.label}
                 type="button"
                 onClick={() => setSelectedCategory(cat.label)}
-                className={`whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 border ${
+                className={`whitespace-nowrap px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 border ${
                   isSelected
-                    ? "bg-[#111827] text-white border-[#111827]"
-                    : "bg-white text-[#6B7280] hover:text-[#111827] hover:border-[#D1D5DB] border-[#E5E7EB]"
+                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-transparent shadow-md shadow-indigo-500/25"
+                    : "bg-[#0F1422] text-slate-300 hover:text-white hover:border-white/20 border-white/10"
                 }`}
               >
-                <Icon className={`w-3.5 h-3.5 ${isSelected ? "text-white" : "text-[#6B7280]"}`} />
+                <Icon className={`w-3.5 h-3.5 ${isSelected ? "text-cyan-300" : "text-slate-400"}`} />
                 <span>{cat.label}</span>
               </button>
             );
@@ -490,8 +484,8 @@ export default function LearnAcademyPage() {
       <main className="px-4 sm:px-8 pb-20 max-w-7xl mx-auto">
         {isLoading ? (
           <div className="py-20 text-center">
-            <div className="w-7 h-7 rounded-full border-2 border-[#E5E7EB] border-t-[#2563EB] animate-spin mx-auto mb-3" />
-            <span className="text-xs text-[#6B7280]">Loading courses...</span>
+            <div className="w-7 h-7 rounded-full border-2 border-white/20 border-t-cyan-400 animate-spin mx-auto mb-3" />
+            <span className="text-xs text-slate-400">Loading courses...</span>
           </div>
         ) : viewMode === "map" ? (
           <QuestMapView
@@ -500,10 +494,10 @@ export default function LearnAcademyPage() {
             onSelectCourse={handleOpenCourse}
           />
         ) : filteredCourses.length === 0 ? (
-          <div className="p-12 rounded-2xl bg-white border border-[#E5E7EB] text-center space-y-3">
-            <Layers className="w-8 h-8 text-[#6B7280] mx-auto" />
-            <h3 className="text-sm font-semibold text-[#111827]">No courses found</h3>
-            <p className="text-xs text-[#6B7280]">Try selecting a different domain or clearing your search.</p>
+          <div className="p-12 rounded-2xl bg-[#0C101A] border border-white/10 text-center space-y-3">
+            <Layers className="w-8 h-8 text-slate-400 mx-auto" />
+            <h3 className="text-sm font-semibold text-white font-display">No courses found</h3>
+            <p className="text-xs text-slate-400">Try selecting a different domain or clearing your search.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -514,45 +508,42 @@ export default function LearnAcademyPage() {
               return (
                 <div
                   key={course.id}
-                  className={`group p-5 rounded-2xl border transition-all flex flex-col justify-between shadow-xs hover:shadow-sm bg-white hover:border-[#2563EB]/40 ${
+                  className={`group p-5 rounded-3xl border transition-all flex flex-col justify-between shadow-xl bg-[#0C101A] hover:border-white/25 tactile-chassis ${
                     isMastered
-                      ? "border-emerald-200 bg-emerald-50/20"
-                      : "border-[#E5E7EB]"
+                      ? "border-emerald-500/30"
+                      : "border-white/10"
                   }`}
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="px-2 py-0.5 rounded-md bg-[#F7F8FA] border border-[#E5E7EB] text-[#6B7280] text-[10px] font-semibold uppercase tracking-wider">
+                      <span className="px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-slate-300 text-[10px] font-semibold uppercase tracking-wider font-mono">
                         {course.category}
                       </span>
 
                       {isMastered ? (
-                        <span className="flex items-center gap-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
+                        <span className="flex items-center gap-1 text-[11px] font-medium text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-md">
                           <CheckCircle2 className="w-3.5 h-3.5" />
                           Completed
                         </span>
                       ) : (
-                        <span className="flex items-center gap-1 text-[11px] font-medium text-[#2563EB] bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-md">
-                          <Zap className="w-3 h-3 text-[#2563EB]" />
+                        <span className="flex items-center gap-1 text-[11px] font-medium text-cyan-300 bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 rounded-md">
+                          <Zap className="w-3 h-3 text-cyan-400" />
                           +{xpBounty} XP
                         </span>
                       )}
                     </div>
 
                     <div>
-                      <h3 className="text-base font-bold text-[#111827] group-hover:text-[#2563EB] transition-colors leading-snug">
+                      <h3 className="text-base font-bold text-white group-hover:text-cyan-400 transition-colors leading-snug font-display">
                         {course.title}
                       </h3>
-                      <p className="text-xs text-[#6B7280] mt-1.5 leading-relaxed line-clamp-2">
-                        {course.tagline}
-                      </p>
                     </div>
 
                     <div className="flex flex-wrap gap-1.5 pt-1">
                       {course.skills.slice(0, 3).map((s, sIdx) => (
                         <span
                           key={sIdx}
-                          className="px-2 py-0.5 rounded-md bg-[#F7F8FA] text-[#6B7280] text-[11px] border border-[#E5E7EB]"
+                          className="px-2 py-0.5 rounded-md bg-[#0F1422] text-slate-300 text-[11px] border border-white/10"
                         >
                           {s}
                         </span>
@@ -560,9 +551,9 @@ export default function LearnAcademyPage() {
                     </div>
                   </div>
 
-                  <div className="pt-4 mt-4 border-t border-[#E5E7EB] flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-[#6B7280] text-[11px]">
-                      <Clock className="w-3.5 h-3.5 text-[#6B7280]" />
+                  <div className="pt-4 mt-4 border-t border-white/10 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-slate-400 text-[11px]">
+                      <Clock className="w-3.5 h-3.5 text-slate-400" />
                       <span>{course.duration_weeks}w</span>
                       <span>&bull;</span>
                       <span>{course.level}</span>

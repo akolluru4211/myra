@@ -4,15 +4,18 @@
 
 @layer base {
   :root {
-    --background: #ffffff;
-    --foreground: #111827;
-    --border: #e5e7eb;
+    --background: #F4F5FA;
+    --foreground: #0F172A;
+    --border: rgba(15, 23, 42, 0.08);
+    --font-inter: var(--font-sans);
+    --font-plus-jakarta: var(--font-display);
+    --font-jetbrains-mono: var(--font-mono);
   }
 
   .dark {
-    --background: #111827;
-    --foreground: #ffffff;
-    --border: #374151;
+    --background: #080B11;
+    --foreground: #FFFFFF;
+    --border: rgba(255, 255, 255, 0.1);
   }
 
   html {
@@ -50,8 +53,13 @@
     overflow-x: clip;
   }
 
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-display), var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    letter-spacing: -0.025em;
+  }
+
   ::selection {
-    background-color: #2563EB;
+    background-color: #5C59E8;
     color: #ffffff;
   }
 
@@ -84,6 +92,62 @@
   opacity: 0.4;
   cursor: not-allowed;
   pointer-events: none;
+}
+
+/* Reference UI Design System Pill Buttons */
+.btn-pill-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #5C59E8;
+  color: #FFFFFF;
+  font-weight: 700;
+  border-radius: 9999px;
+  padding: 0.55rem 1.25rem;
+  font-size: 0.875rem;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(92, 89, 232, 0.25);
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid transparent;
+}
+
+.btn-pill-primary:hover {
+  background-color: #4E4AC8;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(92, 89, 232, 0.35);
+}
+
+.btn-pill-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-pill-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #EEF0FD;
+  color: #3730A3;
+  font-weight: 700;
+  border-radius: 9999px;
+  border: 1px solid rgba(92, 89, 232, 0.15);
+  padding: 0.55rem 1.25rem;
+  font-size: 0.875rem;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  user-select: none;
+}
+
+.btn-pill-secondary:hover {
+  background-color: #E0E3FA;
+  border-color: rgba(92, 89, 232, 0.25);
+  transform: translateY(-1px);
+}
+
+.btn-pill-secondary:active {
+  transform: translateY(0) scale(0.98);
 }
 
 .btn-primary,
@@ -359,7 +423,12 @@ textarea {
 /* ========================================================================= */
 
 .edworld-bg-canvas {
-  background-color: #F7F8FA;
+  background: radial-gradient(at 0% 0%, rgba(224, 242, 254, 0.7) 0px, transparent 50%),
+              radial-gradient(at 100% 0%, rgba(237, 233, 254, 0.6) 0px, transparent 50%),
+              radial-gradient(at 100% 100%, rgba(254, 242, 242, 0.5) 0px, transparent 50%),
+              radial-gradient(at 0% 100%, rgba(236, 253, 245, 0.6) 0px, transparent 50%),
+              #F8FAFC;
+  background-attachment: fixed;
 }
 
 .tablet-viewport-bg {
@@ -524,6 +593,475 @@ textarea {
 .readable-measure {
   max-width: 65ch;
 }
+
+/* ========================================================================= */
+/* CRISP SOLID MODERN DESIGN SYSTEM (Zero Frosted Glass)                     */
+/* ========================================================================= */
+
+/* Clean Solid Atmosphere Canvas */
+.liquid-mesh-canvas {
+  background-color: #F8FAFC;
+  background-image: none;
+}
+
+/* Ambient Floating Liquid Glow Orbs (Disabled for clean solid UI) */
+.liquid-orb {
+  display: none !important;
+}
+
+/* Core 3D Spatial Tactile Card */
+.liquid-glass-card,
+.glass-panel,
+.figma-human-card {
+  background: #0C101A !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05) inset !important;
+  color: #F8FAFC !important;
+  border-radius: 1.25rem;
+  transform: none;
+}
+
+/* Hover-Interactive Solid Card */
+.liquid-glass-card-hover {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.liquid-glass-card-hover:hover,
+.figma-human-card:hover {
+  background: #0F1422 !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.8), 0 0 20px rgba(99, 102, 241, 0.15) !important;
+  transform: translateY(-2px);
+}
+
+/* Crisp Solid Navigation Header */
+.liquid-nav-glass {
+  background: #080B11 !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Solid Primary Pill Button */
+.liquid-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #2563EB 0%, #4F46E5 100%) !important;
+  color: #FFFFFF !important;
+  font-weight: 700;
+  border-radius: 9999px;
+  padding: 0.55rem 1.25rem;
+  font-size: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.35) !important;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  user-select: none;
+}
+
+.liquid-btn-primary:hover {
+  background: linear-gradient(135deg, #3B82F6 0%, #6366F1 100%) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5) !important;
+}
+
+.liquid-btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Solid Secondary Pill Button */
+.liquid-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #FFFFFF !important;
+  font-weight: 700;
+  border-radius: 9999px;
+  padding: 0.55rem 1.25rem;
+  font-size: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  user-select: none;
+}
+
+.liquid-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  transform: translateY(-1px);
+}
+
+.liquid-btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* Crisp Solid Pills & Badges */
+.liquid-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+  border-radius: 9999px;
+  color: #E2E8F0 !important;
+}
+
+/* ========================================================================= */
+/* GLOBAL TEXT VISIBILITY & CONTRAST PROTECTION GUARANTEE                    */
+/* ========================================================================= */
+.liquid-glass-card .text-slate-900,
+.liquid-glass-card .text-[#111827],
+.liquid-glass-card .text-black,
+.tactile-chassis .text-slate-900,
+.tactile-chassis .text-[#111827],
+.tactile-chassis .text-black {
+  color: #FFFFFF !important;
+}
+
+.liquid-glass-card .text-slate-600,
+.liquid-glass-card .text-[#6B7280],
+.tactile-chassis .text-slate-600,
+.tactile-chassis .text-[#6B7280] {
+  color: #CBD5E1 !important;
+}
+
+.liquid-glass-card .text-slate-500,
+.tactile-chassis .text-slate-500 {
+  color: #94A3B8 !important;
+}
+
+/* Crisp Solid Form Inputs */
+.liquid-input {
+  background: #FFFFFF !important;
+  backdrop-filter: none !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.03) !important;
+  transition: all 0.15s ease;
+}
+
+.figma-pill-jewel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid #E2E8F0 !important;
+  background: #F8FAFC !important;
+  backdrop-filter: none !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+  transition: all 0.15s ease-out;
+}
+
+.figma-badge-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.5rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid #E2E8F0 !important;
+  background: #F8FAFC !important;
+}
+
+.figma-metric-tile {
+  background: #FFFFFF !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 1.25rem;
+  padding: 1.15rem;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04) !important;
+  transition: all 0.2s ease;
+}
+
+.figma-metric-tile:hover {
+  border-color: #CBD5E1 !important;
+  transform: translateY(-1px);
+}
+
+.figma-grid-mesh {
+  background-image: radial-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ========================================================================= */
+/* FIGMA & DEVELOPER TOOLS UI TOKENS (Linear, Figma, Raycast, Vercel standard) */
+/* ========================================================================= */
+
+.figma-tool-canvas {
+  background-color: #FAFAFA;
+  color: #0F172A;
+  min-height: 100vh;
+}
+
+.figma-tool-card {
+  background-color: #FFFFFF !important;
+  border: 1px solid #E5E7EB !important;
+  border-radius: 0.875rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.figma-tool-card:hover {
+  border-color: #CBD5E1 !important;
+  box-shadow: 0 4px 12px 0 rgba(15, 23, 42, 0.06);
+}
+
+.figma-tool-header {
+  height: 54px;
+  background-color: #FFFFFF !important;
+  border-bottom: 1px solid #E5E7EB !important;
+  display: flex;
+  align-items: center;
+}
+
+.figma-segmented-group {
+  display: inline-flex;
+  align-items: center;
+  background-color: #F1F5F9;
+  border: 1px solid #E2E8F0;
+  border-radius: 9999px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.figma-segmented-item {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  color: #64748B;
+  transition: all 0.12s ease;
+  user-select: none;
+  cursor: pointer;
+}
+
+.figma-segmented-item:hover {
+  color: #0F172A;
+}
+
+.figma-segmented-item.active {
+  background-color: #FFFFFF;
+  color: #0F172A;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.figma-tool-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 0.375rem;
+  border: 1px solid #E5E7EB;
+  background-color: #F8FAFC;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #334155;
+  letter-spacing: -0.01em;
+}
+
+.figma-code-snippet {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8125rem;
+  background-color: #0F172A;
+  color: #F8FAFC;
+  border-radius: 0.5rem;
+  border: 1px solid #1E293B;
+  padding: 0.75rem 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.figma-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+}
+
+.tabular-numbers {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ========================================================================= */
+/* MARVELOUS 3D SPATIAL & TACTILE HARDWARE ENGINE                           */
+/* ========================================================================= */
+
+.spatial-perspective-1000 {
+  perspective: 1000px;
+  perspective-origin: center center;
+}
+
+.spatial-perspective-1200 {
+  perspective: 1200px;
+  perspective-origin: center center;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+.translate-z-10 { transform: translateZ(10px); }
+.translate-z-20 { transform: translateZ(20px); }
+.translate-z-30 { transform: translateZ(30px); }
+.translate-z-40 { transform: translateZ(40px); }
+.translate-z-50 { transform: translateZ(50px); }
+
+/* Tactile 3D Hardware Chassis */
+.tactile-chassis {
+  background: radial-gradient(120% 120% at 50% 0%, #1A2234 0%, #0B0F19 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    0 1px 0 0 rgba(255, 255, 255, 0.15) inset,
+    0 25px 50px -12px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(0, 0, 0, 0.9);
+  border-radius: 1.5rem;
+}
+
+.tactile-chassis-light {
+  background: radial-gradient(120% 120% at 50% 0%, #FFFFFF 0%, #F1F5F9 100%);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 
+    0 1px 0 0 rgba(255, 255, 255, 1) inset,
+    0 20px 40px -15px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(226, 232, 240, 0.6);
+  border-radius: 1.5rem;
+}
+
+/* Sweeping Holographic Laser */
+@keyframes holographicLaserSweep {
+  0% { transform: translateY(-100%); opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateY(420%); opacity: 0; }
+}
+
+.holographic-laser-beam {
+  display: none;
+}
+
+/* 3D Pulse Visualizer Wave */
+@keyframes spatialWavePulse {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1); }
+}
+
+.spatial-wave-bar {
+  transform-origin: bottom;
+  animation: spatialWavePulse 1.4s ease-in-out infinite;
+}
+
+/* Subtle Dark Vignette / Ambient Optical Depth (Non-neon) */
+.ambient-glow-cyan,
+.ambient-glow-indigo,
+.ambient-glow-emerald {
+  display: none;
+}
+
+/* ========================================================================= */
+/* 3D METALLIC ICON BADGE SYSTEM                                             */
+/* ========================================================================= */
+
+.metallic-icon-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1rem;
+  padding: 0.625rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.03) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.5),
+    0 4px 12px 0 rgba(0, 0, 0, 0.4);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.metallic-icon-badge:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.5),
+    0 8px 24px -4px rgba(0, 0, 0, 0.6);
+}
+
+.metallic-indigo {
+  background: linear-gradient(145deg, rgba(99, 102, 241, 0.15) 0%, rgba(30, 27, 75, 0.35) 100%);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.6),
+    0 4px 12px 0 rgba(0, 0, 0, 0.4);
+}
+
+.metallic-cyan {
+  background: linear-gradient(145deg, rgba(6, 182, 212, 0.15) 0%, rgba(22, 78, 99, 0.35) 100%);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.6),
+    0 4px 12px 0 rgba(0, 0, 0, 0.4);
+}
+
+.metallic-emerald {
+  background: linear-gradient(145deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 78, 59, 0.35) 100%);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.6),
+    0 4px 12px 0 rgba(0, 0, 0, 0.4);
+}
+
+.metallic-amber {
+  background: linear-gradient(145deg, rgba(245, 158, 11, 0.15) 0%, rgba(120, 53, 15, 0.35) 100%);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.6),
+    0 4px 12px 0 rgba(0, 0, 0, 0.4);
+}
+
+.metallic-rose {
+  background: linear-gradient(145deg, rgba(244, 63, 94, 0.15) 0%, rgba(136, 19, 55, 0.35) 100%);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.6),
+    0 4px 12px 0 rgba(0, 0, 0, 0.4);
+}
+
+.metallic-titanium {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.12) 0%, rgba(30, 41, 59, 0.4) 100%);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.6),
+    0 4px 12px 0 rgba(0, 0, 0, 0.4);
+}
+
+
 
 
 

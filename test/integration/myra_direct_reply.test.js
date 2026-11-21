@@ -12,6 +12,7 @@
 const fs = require("fs");
 const path = require("path");
 const assert = require("assert");
+const { describe, it } = require("node:test");
 
 describe("Myra Direct Question-Only Reply Engine", () => {
   const rootDir = path.resolve(__dirname, "../..");
@@ -47,7 +48,10 @@ describe("Myra Direct Question-Only Reply Engine", () => {
 
     const routePath = path.join(rootDir, "src/app/api/ai/myra/route.ts");
     const routeContent = fs.readFileSync(routePath, "utf8");
-    assert(routeContent.includes("rawQuery: message.trim()"), "/api/ai/myra must pass rawQuery: message.trim()");
+    assert(
+      routeContent.includes("rawQuery: message.trim()") || routeContent.includes("rawQuery: finalStudentQuery"),
+      "/api/ai/myra must pass rawQuery: message.trim() or finalStudentQuery"
+    );
   });
 
   it("4. Verifies Career Copilot route answers specific user questions directly via MyraOrchestrator", () => {

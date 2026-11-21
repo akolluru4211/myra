@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { UniversalAI, InterviewQuestionItem } from "@/lib/ai/universal-ai";
 import { MyraOrchestrator } from "@/lib/ai/myra-orchestration";
+import { pickInterviewQuestions } from "@/lib/interview/interview-bank";
 
 export const dynamic = "force-dynamic";
 
@@ -19,8 +20,9 @@ export interface GeneratedQuestion {
 }
 
 export async function POST(req: NextRequest) {
+  let body: any = {};
   try {
-    const body = await req.json().catch(() => ({}));
+    body = await req.json().catch(() => ({}));
     const {
       jobDescription = "",
       sector = "",
@@ -32,11 +34,59 @@ export async function POST(req: NextRequest) {
       resumeContent = null,
       rawResumeText = "",
       targetRole = "",
+      companyTrack = "faang",
+      mode = "ai_resume",
     } = body;
 
     const firstName = candidateName ? candidateName.trim().split(" ")[0] : "";
     const effectiveRole = targetRole || (sector ? `${sector} Specialist` : category) || "Software Engineer";
     const levelLabel = effectiveLevel === 2 ? "Senior" : effectiveLevel === 1 ? "Mid-Level" : "Junior/Entry";
+
+    const companyTrackNames: Record<string, string> = {
+      faang: "Big Tech (Google / Meta / Amazon)",
+      startups: "High-Growth Unicorn (Stripe / Uber)",
+      fintech: "FinTech & Quantitative Systems (Goldman / Citadel)",
+      general: "General Tech Industry",
+    };
+    const trackLabel = companyTrackNames[companyTrack] || companyTrackNames.faang;
+
+    // Fast-path: Direct 1,000 Questions Bank drill mode
+    if (mode === "question_bank") {
+      const bankQuestions = pickInterviewQuestions({
+        sector: sector || targetRole || category,
+        level: levelLabel,
+        limit: 5,
+        seed: Date.now(),
+      });
+
+      const formattedBankQuestions: GeneratedQuestion[] = bankQuestions.map((q, idx) => ({
+        id: q.id || `bank_q_${idx + 1}`,
+        text: idx === 0 && firstName
+          ? `Hi ${firstName}, welcome to your sector interview drill for ${q.sector}. ${q.question}`
+          : q.question,
+        category: q.sector || category,
+        difficultyLevel: (q.level.toLowerCase().includes("senior") ? 2 : q.level.toLowerCase().includes("mid") ? 1 : 0) as 0 | 1 | 2,
+        keyPoints: ["STAR structured delivery", "Concrete trade-off metrics", "Industry standard methodology"],
+        suggestedDurationSeconds: idx === 0 ? 90 : 120,
+        isWarmup: idx === 0,
+        type: idx === 0 ? "warmup" : idx === 1 ? "project_deep_dive" : idx === 2 ? "technical" : idx === 3 ? "behavioral" : "system_design",
+        contextSource: `1,000 Questions Bank • ${q.sector} (${q.round})`,
+        adaptiveFocus: `${q.sector} Sector Competency`,
+      }));
+
+      return NextResponse.json({
+        success: true,
+        source: "EdWorld 1,000 Questions Bank",
+        modelUsed: "1,000 Questions Bank & 46 Sectors Engine",
+        resumeConnected: false,
+        resumeTitle: null,
+        questions: formattedBankQuestions,
+        extractedSkillsCount: 0,
+        extractedProjectsCount: 0,
+        adaptiveProfileApplied: false,
+        sector: sector || targetRole,
+      });
+    }
 
     let resumeTitle = "";
     let resumeSummary = "";
@@ -137,7 +187,8 @@ export async function POST(req: NextRequest) {
     }
 
     const sectorContext = sector ? `Target Sector/Industry: ${sector}\n` : "";
-    const combinedContext = `${sectorContext}${rawResumeText || ""}\nJob Description (JD):\n${jobDescription || "Standard Role"}${learnedMemoryContext}`.trim();
+    const trackContext = `Interview Style & Company Track: ${trackLabel}\n`;
+    const combinedContext = `${trackContext}${sectorContext}${rawResumeText || ""}\nJob Description (JD):\n${jobDescription || "Standard Role"}${learnedMemoryContext}`.trim();
 
     // 3. Call Universal AI Engine (Claude 3.5/3.7 Sonnet -> Gemini 2.5 Flash -> OpenAI -> Deterministic)
     const aiResult = await UniversalAI.generateResumeInterviewQuestions({
@@ -201,24 +252,31 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: any) {
     console.error("[Generate Questions Error]:", error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || "Failed to generate questions",
-        questions: [
-          {
-            id: "warmup-opening-1",
-            text: "Tell me about yourself, your background, and what drives your passion for this domain.",
-            category: "General",
-            difficultyLevel: 0,
-            keyPoints: ["Clear professional overview", "Key achievements", "Alignment with career goals"],
-            suggestedDurationSeconds: 120,
-            isWarmup: true,
-            type: "warmup",
-          },
-        ],
-      },
-      { status: 500 }
-    );
+    // Graceful fallback to 1,000 Questions Bank
+    const fallbackBankQuestions = pickInterviewQuestions({
+      sector: body?.sector || body?.targetRole || "Software development",
+      limit: 5,
+      seed: 42,
+    });
+
+    const fallbackFormatted: GeneratedQuestion[] = fallbackBankQuestions.map((q, idx) => ({
+      id: q.id || `bank_err_fallback_${idx + 1}`,
+      text: q.question,
+      category: q.sector || "General",
+      difficultyLevel: (q.level.toLowerCase().includes("senior") ? 2 : q.level.toLowerCase().includes("mid") ? 1 : 0) as 0 | 1 | 2,
+      keyPoints: ["STAR structured delivery", "Clear communication", "Practical trade-offs"],
+      suggestedDurationSeconds: idx === 0 ? 90 : 120,
+      isWarmup: idx === 0,
+      type: idx === 0 ? "warmup" : idx === 1 ? "project_deep_dive" : idx === 2 ? "technical" : idx === 3 ? "behavioral" : "system_design",
+      contextSource: `1,000 Questions Bank • ${q.sector} (${q.round})`,
+    }));
+
+    return NextResponse.json({
+      success: true,
+      source: "EdWorld 1,000 Questions Bank (Resilient Fallback)",
+      modelUsed: "1,000 Questions Bank Engine",
+      resumeConnected: false,
+      questions: fallbackFormatted,
+    });
   }
 }

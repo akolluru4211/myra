@@ -750,7 +750,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const res = await fetch("/api/auth/otp/verify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ identifier, otp, purpose, ...metaData }),
+      body: JSON.stringify({ identifier, code: otp, otp, purpose, metaData, ...metaData }),
     });
     const data = await res.json();
     if (!res.ok) {

@@ -23,7 +23,6 @@ import {
   Info
 } from "lucide-react";
 import { ScamCheckResult, SAMPLE_SCAM_PRESETS } from "@/lib/scam-checker/scam-detector";
-import StudioSticker from "@/components/studio/StudioSticker";
 
 export const dynamic = "force-dynamic";
 
@@ -94,46 +93,44 @@ export default function ScamOfferCheckerPage() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-[#FFF8EE] text-[#1B1B2F] font-sans pb-24 selection:bg-[#4D96FF] selection:text-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8 animate-in fade-in">
+      <div className="min-h-screen text-slate-900 font-sans pb-24">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-6 animate-in fade-in">
           
           {/* Top Breadcrumb */}
           <div className="flex items-center justify-between">
             <Link
               href="/career"
-              className="text-xs font-bold text-[#1B1B2F]/70 hover:text-[#1B1B2F] flex items-center gap-1.5 transition-colors"
+              className="text-xs font-semibold text-slate-500 hover:text-slate-900 flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back to Career OS</span>
             </Link>
 
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 rounded-lg text-[10px] font-mono font-extrabold uppercase bg-white text-[#1B1B2F] border-2 border-[#1B1B2F] shadow-[2px_2px_0px_#1B1B2F]">
+              <span className="liquid-pill px-2.5 py-0.5 text-[10px] font-semibold bg-white/70 text-slate-600 border-white/80">
                 Student Protection Sentinel
               </span>
-              <span className="px-3 py-1 rounded-lg text-[10px] font-mono font-extrabold uppercase bg-[#4D96FF]/20 text-[#1B1B2F] border-2 border-[#1B1B2F]">
+              <span className="liquid-pill px-2.5 py-0.5 text-[10px] font-semibold bg-blue-500/10 text-blue-700 border-blue-500/20">
                 AI + Heuristics
               </span>
             </div>
           </div>
 
           {/* Hero Header */}
-          <div className="p-6 sm:p-8 rounded-2xl bg-white border-2 border-[#1B1B2F] space-y-3 shadow-[6px_6px_0px_#1B1B2F]">
+          <div className="p-6 sm:p-8 liquid-glass-card space-y-3">
             <div className="flex items-center gap-2 flex-wrap">
-              <StudioSticker bgColor="#4D96FF" textColor="#FFFFFF" rotate="slight-left" size="sm">
-                <span className="flex items-center gap-1.5">
-                  <ShieldAlert className="w-3.5 h-3.5 text-white" />
-                  Scam Sentinel AI
-                </span>
-              </StudioSticker>
-              <span className="text-xs font-bold text-[#1B1B2F] bg-[#FFF8EE] px-3 py-1 rounded-lg border-2 border-[#1B1B2F] shadow-[2px_2px_0px_#1B1B2F]">
+              <span className="liquid-pill text-xs font-semibold px-2.5 py-0.5 bg-blue-500/10 text-blue-700 border-blue-500/20 flex items-center gap-1.5">
+                <ShieldAlert className="w-3.5 h-3.5 text-blue-600" />
+                Scam Sentinel AI
+              </span>
+              <span className="text-xs text-slate-500 font-medium">
                 Offer Letter &amp; Recruiter Audit
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1B1B2F] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
               Scam Offer Checker
             </h1>
-            <p className="text-xs sm:text-sm text-[#1B1B2F]/75 max-w-2xl leading-relaxed font-medium">
+            <p className="text-xs sm:text-sm text-slate-600 max-w-2xl leading-relaxed">
               Verify campus placement offers, internships, and remote opportunities. Our engine scans for upfront fee extortion, free webmail impersonation, fake direct selection, and unregistered shadow recruiters.
             </p>
           </div>
@@ -141,10 +138,10 @@ export default function ScamOfferCheckerPage() {
           {/* Quick Presets for Instant Testing */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-extrabold uppercase tracking-wider text-[#1B1B2F]">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
                 Test with Real-World Campus Presets
               </span>
-              <span className="text-[11px] font-bold text-[#1B1B2F]/60">1-Click Simulation</span>
+              <span className="text-[11px] font-medium text-slate-500">1-Click Simulation</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {SAMPLE_SCAM_PRESETS.map((preset) => (
@@ -152,15 +149,15 @@ export default function ScamOfferCheckerPage() {
                   key={preset.id}
                   type="button"
                   onClick={() => handleLoadPreset(preset)}
-                  className="p-4 rounded-xl border-2 border-[#1B1B2F] bg-white hover:bg-[#FFF8EE] text-left transition-all space-y-1.5 group cursor-pointer shadow-[3px_3px_0px_#1B1B2F] hover:shadow-[5px_5px_0px_#1B1B2F] hover:-translate-y-0.5"
+                  className="p-4 liquid-glass-card hover:bg-white/90 text-left transition-all space-y-1.5 group cursor-pointer shadow-xs"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-black text-[#1B1B2F] group-hover:text-[#4D96FF] transition-colors">
+                    <span className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
                       {preset.title}
                     </span>
-                    <Sparkles className="w-3.5 h-3.5 text-[#1B1B2F]/60 group-hover:text-[#4D96FF]" />
+                    <Sparkles className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600" />
                   </div>
-                  <p className="text-[11px] text-[#1B1B2F]/70 line-clamp-2 font-medium">
+                  <p className="text-[11px] text-slate-600 line-clamp-2">
                     {preset.text}
                   </p>
                 </button>
@@ -173,20 +170,20 @@ export default function ScamOfferCheckerPage() {
             
             {/* Input Form Column */}
             <div className="lg:col-span-6 space-y-5">
-              <div className="p-6 sm:p-7 rounded-2xl bg-white border-2 border-[#1B1B2F] shadow-[6px_6px_0px_#1B1B2F] space-y-4">
+              <div className="p-6 sm:p-7 liquid-glass-card shadow-xs space-y-4">
                 <div className="space-y-1">
-                  <h3 className="text-sm font-black text-[#1B1B2F]">
+                  <h3 className="text-sm font-bold text-slate-900">
                     Paste Offer Details or Recruiter Message
                   </h3>
-                  <p className="text-xs text-[#1B1B2F]/70 font-medium">
+                  <p className="text-xs text-slate-500">
                     Include full email text, WhatsApp transcript, or compensation breakdown.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-[#1B1B2F] flex items-center gap-1">
-                      <Building className="w-3 h-3 text-[#1B1B2F]" />
+                    <label className="text-[11px] font-semibold text-slate-900 flex items-center gap-1">
+                      <Building className="w-3 h-3 text-slate-500" />
                       Company Name
                     </label>
                     <input
@@ -194,13 +191,13 @@ export default function ScamOfferCheckerPage() {
                       placeholder="e.g. Infosys, Tech Mahindra"
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
-                      className="w-full px-3.5 py-2 text-xs rounded-xl border-2 border-[#1B1B2F] bg-[#FFF8EE] font-medium text-[#1B1B2F] focus:outline-none shadow-[2px_2px_0px_#1B1B2F]"
+                      className="liquid-input w-full px-3.5 py-2 text-xs"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[11px] font-bold text-[#1B1B2F] flex items-center gap-1">
-                      <Mail className="w-3 h-3 text-[#1B1B2F]" />
+                    <label className="text-[11px] font-semibold text-slate-900 flex items-center gap-1">
+                      <Mail className="w-3 h-3 text-slate-500" />
                       Recruiter Email / Contact
                     </label>
                     <input
@@ -208,13 +205,13 @@ export default function ScamOfferCheckerPage() {
                       placeholder="e.g. hr@tcs.com or gmail ID"
                       value={contactEmail}
                       onChange={(e) => setContactEmail(e.target.value)}
-                      className="w-full px-3.5 py-2 text-xs rounded-xl border-2 border-[#1B1B2F] bg-[#FFF8EE] font-medium text-[#1B1B2F] focus:outline-none shadow-[2px_2px_0px_#1B1B2F]"
+                      className="liquid-input w-full px-3.5 py-2 text-xs"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-[#1B1B2F]">
+                  <label className="text-[11px] font-semibold text-slate-900">
                     Offer Letter / Email Transcript / JD Content *
                   </label>
                   <textarea
@@ -222,13 +219,13 @@ export default function ScamOfferCheckerPage() {
                     placeholder="Paste the offer letter body, stipend terms, deposit requirements, or WhatsApp message here..."
                     value={offerText}
                     onChange={(e) => setOfferText(e.target.value)}
-                    className="w-full p-3.5 text-xs rounded-xl border-2 border-[#1B1B2F] bg-[#FFF8EE] focus:bg-white focus:outline-none font-mono leading-relaxed shadow-[2px_2px_0px_#1B1B2F] text-[#1B1B2F]"
+                    className="liquid-input w-full p-3.5 text-xs font-mono leading-relaxed"
                   />
                 </div>
 
                 {errorMsg && (
-                  <div className="p-3.5 rounded-xl bg-[#FF6B6B]/20 border-2 border-[#1B1B2F] text-[#1B1B2F] text-xs font-bold flex items-center gap-2 shadow-[2px_2px_0px_#1B1B2F]">
-                    <AlertTriangle className="w-4 h-4 shrink-0 text-[#FF6B6B]" />
+                  <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-800 text-xs font-medium flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600" />
                     <span>{errorMsg}</span>
                   </div>
                 )}
@@ -238,7 +235,7 @@ export default function ScamOfferCheckerPage() {
                     type="button"
                     onClick={() => handleRunAnalysis()}
                     disabled={isLoading || !offerText.trim()}
-                    className="btn-squishy flex-1 py-3 px-5 rounded-xl bg-[#4D96FF] hover:bg-[#3d85ee] text-white text-xs font-black transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 border-2 border-[#1B1B2F] shadow-[3px_3px_0px_#1B1B2F]"
+                    className="flex-1 py-2.5 px-4 liquid-btn-primary text-xs font-semibold disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 shadow-sm"
                   >
                     {isLoading ? (
                       <>
@@ -257,7 +254,7 @@ export default function ScamOfferCheckerPage() {
                     <button
                       type="button"
                       onClick={handleReset}
-                      className="btn-squishy px-4 py-3 rounded-xl border-2 border-[#1B1B2F] bg-[#FFF8EE] hover:bg-white text-xs font-bold text-[#1B1B2F] transition-all cursor-pointer shadow-[2px_2px_0px_#1B1B2F]"
+                      className="liquid-btn-secondary px-4 py-2.5 text-xs font-semibold cursor-pointer"
                     >
                       Clear
                     </button>
@@ -266,12 +263,12 @@ export default function ScamOfferCheckerPage() {
               </div>
 
               {/* Verified Safeguards Banner */}
-              <div className="p-4 rounded-xl bg-blue-50/50 border border-blue-200/60 text-xs text-[#111827] space-y-2">
-                <div className="flex items-center gap-1.5 font-bold text-[#2563EB]">
+              <div className="p-4 rounded-xl liquid-glass-card bg-blue-500/10 border-blue-500/20 text-xs text-slate-900 space-y-2">
+                <div className="flex items-center gap-1.5 font-bold text-blue-700">
                   <Info className="w-4 h-4" />
                   <span>Golden Rule for Campus Placement Safety</span>
                 </div>
-                <p className="text-[11px] text-[#4B5563] leading-relaxed">
+                <p className="text-[11px] text-slate-600 leading-relaxed">
                   Legitimate Indian &amp; Global IT companies <strong>NEVER</strong> demand security deposits for laptops, testing software, ID cards, or training. Any demand for UPI transfers is an immediate sign of fraud.
                 </p>
               </div>
@@ -280,25 +277,25 @@ export default function ScamOfferCheckerPage() {
             {/* Results Output Column */}
             <div className="lg:col-span-6 space-y-5">
               {!result && !isLoading && (
-                <div className="p-10 rounded-2xl border-2 border-dashed border-[#1B1B2F] text-center space-y-3 bg-white shadow-[4px_4px_0px_#1B1B2F]">
-                  <div className="w-12 h-12 rounded-xl bg-[#FFF8EE] border-2 border-[#1B1B2F] flex items-center justify-center mx-auto text-[#1B1B2F] shadow-[2px_2px_0px_#1B1B2F]">
+                <div className="p-10 liquid-glass-card text-center space-y-3">
+                  <div className="w-12 h-12 rounded-xl bg-slate-500/10 flex items-center justify-center mx-auto text-slate-500 border border-slate-200">
                     <ShieldCheck className="w-6 h-6" />
                   </div>
-                  <h4 className="text-sm font-black text-[#1B1B2F]">
+                  <h4 className="text-sm font-bold text-slate-900">
                     No Active Inspection
                   </h4>
-                  <p className="text-xs text-[#1B1B2F]/70 max-w-sm mx-auto font-medium">
+                  <p className="text-xs text-slate-600 max-w-sm mx-auto">
                     Paste offer text on the left or click one of the pre-loaded campus scenario cards above to run an instant safety audit.
                   </p>
                 </div>
               )}
 
               {isLoading && (
-                <div className="p-12 rounded-2xl border-2 border-[#1B1B2F] bg-white text-center space-y-4 shadow-[6px_6px_0px_#1B1B2F]">
-                  <div className="w-10 h-10 border-4 border-[#1B1B2F] border-t-[#4D96FF] rounded-full animate-spin mx-auto" />
+                <div className="p-12 liquid-glass-card text-center space-y-4 shadow-sm">
+                  <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
                   <div className="space-y-1">
-                    <h4 className="text-sm font-black text-[#1B1B2F]">Evaluating Against Threat Vectors...</h4>
-                    <p className="text-xs text-[#1B1B2F]/70 font-medium">
+                    <h4 className="text-sm font-bold text-slate-900">Evaluating Against Threat Vectors...</h4>
+                    <p className="text-xs text-slate-600">
                       Scanning free domains, payment demands, MCA registration, and high-pressure phrasing.
                     </p>
                   </div>
@@ -309,19 +306,19 @@ export default function ScamOfferCheckerPage() {
                 <div className="space-y-5 animate-in fade-in">
                   
                   {/* Score Card Header */}
-                  <div className={`p-6 sm:p-7 rounded-2xl border-2 border-[#1B1B2F] shadow-[6px_6px_0px_#1B1B2F] ${
+                  <div className={`p-6 sm:p-7 rounded-2xl border ${
                     result.verdict === "HIGH_RISK_SCAM" 
-                      ? "bg-[#FF6B6B]/15" 
+                      ? "bg-rose-500/15 border-rose-500/30" 
                       : result.verdict === "MODERATE_RISK"
-                      ? "bg-[#FFC93C]/20"
-                      : "bg-[#6BCB77]/20"
-                  } space-y-4`}>
+                      ? "bg-amber-500/15 border-amber-500/30"
+                      : "bg-emerald-500/15 border-emerald-500/30"
+                  } space-y-4 liquid-glass-card`}>
                     
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono font-extrabold uppercase tracking-wider text-[#1B1B2F]/70">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
                         Security Audit Verdict
                       </span>
-                      <span className="text-[10px] font-mono font-bold text-[#1B1B2F]/70">
+                      <span className="text-[10px] text-slate-500 font-mono">
                         {new Date(result.checkedAt).toLocaleTimeString()}
                       </span>
                     </div>
@@ -330,13 +327,13 @@ export default function ScamOfferCheckerPage() {
                       <div>
                         <div className="flex items-center gap-2">
                           {result.verdict === "HIGH_RISK_SCAM" ? (
-                            <XCircle className="w-6 h-6 text-[#FF6B6B]" />
+                            <XCircle className="w-6 h-6 text-rose-600" />
                           ) : result.verdict === "MODERATE_RISK" ? (
-                            <AlertTriangle className="w-6 h-6 text-[#FFC93C]" />
+                            <AlertTriangle className="w-6 h-6 text-amber-600" />
                           ) : (
-                            <CheckCircle2 className="w-6 h-6 text-[#6BCB77]" />
+                            <CheckCircle2 className="w-6 h-6 text-emerald-600" />
                           )}
-                          <h2 className="text-lg sm:text-xl font-black text-[#1B1B2F]">
+                          <h2 className="text-lg sm:text-xl font-bold text-slate-900">
                             {result.verdict === "HIGH_RISK_SCAM" 
                               ? "Critical Threat: Probable Scam" 
                               : result.verdict === "MODERATE_RISK" 
@@ -344,59 +341,59 @@ export default function ScamOfferCheckerPage() {
                               : "Verified: Low Risk Profile"}
                           </h2>
                         </div>
-                        <p className="text-xs text-[#1B1B2F]/80 mt-1 font-medium">
+                        <p className="text-xs text-slate-600 mt-1">
                           Audited Entity: <strong>{result.companyName}</strong>
                         </p>
                       </div>
 
                       {/* Visual Circular/Gauge Meter */}
                       <div className="text-center shrink-0">
-                        <div className={`w-16 h-16 rounded-2xl flex flex-col items-center justify-center border-2 border-[#1B1B2F] shadow-[3px_3px_0px_#1B1B2F] font-mono ${
+                        <div className={`w-14 h-14 rounded-2xl flex flex-col items-center justify-center font-mono shadow-sm ${
                           result.verdict === "HIGH_RISK_SCAM"
-                            ? "bg-[#FF6B6B] text-white"
+                            ? "bg-rose-600 text-white"
                             : result.verdict === "MODERATE_RISK"
-                            ? "bg-[#FFC93C] text-[#1B1B2F]"
-                            : "bg-[#6BCB77] text-[#1B1B2F]"
+                            ? "bg-amber-500 text-white"
+                            : "bg-emerald-600 text-white"
                         }`}>
-                          <span className="text-xl font-black leading-none">{result.riskScore}</span>
-                          <span className="text-[9px] font-extrabold uppercase mt-0.5">/ 100 Risk</span>
+                          <span className="text-lg font-bold leading-none">{result.riskScore}</span>
+                          <span className="text-[9px] font-semibold uppercase mt-0.5">/ 100 Risk</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Summary text */}
-                    <div className="p-4 rounded-xl bg-white border-2 border-[#1B1B2F] text-xs text-[#1B1B2F] font-medium leading-relaxed shadow-[2px_2px_0px_#1B1B2F]">
+                    <div className="p-4 rounded-xl liquid-glass-card bg-white/70 border-white/80 text-xs text-slate-700 leading-relaxed shadow-xs">
                       {result.summary}
                     </div>
                   </div>
 
                   {/* Red Flags Pill List */}
                   {result.redFlags.length > 0 && (
-                    <div className="p-6 rounded-2xl bg-white border-2 border-[#1B1B2F] space-y-4 shadow-[5px_5px_0px_#1B1B2F]">
-                      <h4 className="text-xs font-black uppercase tracking-wider text-[#1B1B2F] flex items-center justify-between">
+                    <div className="p-6 rounded-2xl liquid-glass-card space-y-4 shadow-xs">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 flex items-center justify-between">
                         <span>Detected Red Flags ({result.redFlags.length})</span>
-                        <span className="text-[10px] text-[#FF6B6B] font-mono font-extrabold">Immediate Inspection</span>
+                        <span className="text-[10px] text-rose-600 font-semibold">Immediate Inspection</span>
                       </h4>
 
                       <div className="space-y-3">
                         {result.redFlags.map((flag, idx) => (
                           <div 
                             key={idx}
-                            className="p-3.5 rounded-xl border-2 border-[#1B1B2F] bg-[#FFF8EE] space-y-1 shadow-[2px_2px_0px_#1B1B2F]"
+                            className="p-3.5 rounded-xl border border-rose-500/20 bg-rose-500/10 space-y-1"
                           >
                             <div className="flex items-center justify-between">
-                              <span className="text-xs font-black text-[#1B1B2F]">
+                              <span className="text-xs font-bold text-slate-900">
                                 {flag.title}
                               </span>
-                              <span className="px-2 py-0.5 rounded text-[9px] font-mono font-extrabold uppercase bg-[#FF6B6B]/20 text-[#1B1B2F] border border-[#1B1B2F]">
+                              <span className="liquid-pill px-2 py-0.5 text-[9px] font-semibold uppercase bg-rose-500/20 text-rose-800 border-rose-500/30">
                                 {flag.severity}
                               </span>
                             </div>
-                            <p className="text-[11px] text-[#1B1B2F]/75 leading-relaxed font-medium">
+                            <p className="text-[11px] text-slate-600 leading-relaxed">
                               {flag.description}
                             </p>
                             {flag.matchedSnippet && (
-                              <div className="text-[10px] font-mono text-[#1B1B2F] bg-white px-2 py-0.5 rounded border border-[#1B1B2F] w-fit font-bold">
+                              <div className="text-[10px] font-mono text-slate-900 bg-white/80 px-2 py-0.5 rounded border border-rose-200 w-fit">
                                 Matched: &ldquo;{flag.matchedSnippet}&rdquo;
                               </div>
                             )}
@@ -407,39 +404,39 @@ export default function ScamOfferCheckerPage() {
                   )}
 
                   {/* Action Checklist & External Verifications */}
-                  <div className="p-6 rounded-2xl bg-white border-2 border-[#1B1B2F] space-y-4 shadow-[5px_5px_0px_#1B1B2F]">
-                    <h4 className="text-xs font-black uppercase tracking-wider text-[#1B1B2F]">
+                  <div className="p-6 rounded-2xl liquid-glass-card space-y-4 shadow-xs">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900">
                       Student Due Diligence Checklist
                     </h4>
                     
                     <ul className="space-y-2.5">
                       {result.safetyChecklist.map((step, idx) => (
-                        <li key={idx} className="flex items-start gap-2.5 text-xs text-[#1B1B2F] font-medium">
-                          <CheckCircle2 className="w-4 h-4 text-[#6BCB77] shrink-0 mt-0.5" />
+                        <li key={idx} className="flex items-start gap-2.5 text-xs text-slate-700">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                           <span>{step}</span>
                         </li>
                       ))}
                     </ul>
 
-                    <div className="pt-3 flex flex-wrap items-center gap-2.5 border-t-2 border-[#1B1B2F]/10">
+                    <div className="pt-3 flex flex-wrap items-center gap-2.5 border-t border-slate-200/60">
                       <a
                         href={result.mcaVerificationUrl || "https://www.mca.gov.in"}
                         target="_blank"
                         rel="noreferrer"
-                        className="btn-squishy px-3.5 py-2 rounded-xl border-2 border-[#1B1B2F] bg-[#FFF8EE] hover:bg-white text-xs font-bold text-[#1B1B2F] flex items-center gap-1.5 transition-all cursor-pointer shadow-[2px_2px_0px_#1B1B2F]"
+                        className="liquid-btn-secondary px-3.5 py-2 text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
                       >
                         <span>Check MCA Company Database</span>
-                        <ExternalLink className="w-3.5 h-3.5 text-[#1B1B2F]" />
+                        <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
                       </a>
 
                       <a
                         href="https://cybercrime.gov.in"
                         target="_blank"
                         rel="noreferrer"
-                        className="btn-squishy px-3.5 py-2 rounded-xl border-2 border-[#1B1B2F] bg-[#FF6B6B]/20 hover:bg-[#FF6B6B]/30 text-xs font-bold text-[#1B1B2F] flex items-center gap-1.5 transition-all cursor-pointer shadow-[2px_2px_0px_#1B1B2F]"
+                        className="liquid-pill px-3.5 py-2 bg-rose-500/10 border-rose-500/20 hover:bg-rose-500/20 text-xs font-semibold text-rose-800 flex items-center gap-1.5 transition-colors cursor-pointer"
                       >
                         <span>Report to National Cyber Crime Portal</span>
-                        <ExternalLink className="w-3.5 h-3.5 text-[#1B1B2F]" />
+                        <ExternalLink className="w-3.5 h-3.5 text-rose-600" />
                       </a>
                     </div>
                   </div>

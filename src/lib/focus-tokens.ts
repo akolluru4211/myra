@@ -112,7 +112,7 @@ export const FOCUS_PRESETS: FocusPreset[] = [
     id: "standard-45",
     label: "45 Mins",
     minutes: 45,
-    description: "Full mock interview simulation or completing an EdFix debugging task.",
+    description: "Full mock interview simulation or deep problem-solving session.",
     tag: "Recommended",
     xpReward: 60,
   },
@@ -163,9 +163,9 @@ export const STUDY_SUBJECTS: StudySubject[] = [
     color: "#FF6B6B",
   },
   {
-    id: "edfix",
-    name: "EdFix Production Engineering Labs",
-    recommendedHref: "/edfix",
+    id: "projects",
+    name: "Engineering Project Studio",
+    recommendedHref: "/projects",
     color: "#8E6CEF",
   },
   {

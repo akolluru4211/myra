@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
+import { resolveMyraUser } from "@/lib/ai/myra-session";
 import { buildMyraUserContext } from "@/lib/ai/myra-context-builder";
-import { MyraOrchestrator } from "@/lib/ai/myra-orchestration";
 
 export const dynamic = "force-dynamic";
 
@@ -12,23 +12,25 @@ export const dynamic = "force-dynamic";
  */
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const userId = searchParams.get("userId");
-
-    if (!userId || userId === "guest" || userId === "learner-user") {
-      return NextResponse.json({ suggestion: null });
+    const userId = await resolveMyraUser(req);
+    if (!userId) return NextResponse.json({ error: "Sign in to view suggestions." }, { status: 401 });
+    const requestedUserId = req.nextUrl.searchParams.get("userId");
+    if (requestedUserId && requestedUserId !== userId) {
+      return NextResponse.json({ error: "Student identity does not match the session." }, { status: 403 });
     }
+    const supabase = createClient();
 
     const todayDateStr = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
     // 1. Check if suggestion already exists for today
-    const { data: existing } = await supabase
+    const { data: existing, error: readError } = await supabase
       .from("myra_proactive_suggestions")
       .select("*")
       .eq("user_id", userId)
       .eq("date_bucket", todayDateStr)
       .maybeSingle();
 
+    if (readError) throw readError;
     if (existing) {
       if (existing.dismissed) {
         return NextResponse.json({ suggestion: null, dismissedToday: true });
@@ -41,7 +43,7 @@ export async function GET(req: NextRequest) {
     const p = context.profileSnapshot;
     const signals = context.longitudinalSignals;
     const candidateName = p?.name ? p.name.split(" ")[0] : "Learner";
-    const targetRole = p?.targetRole || "Software Engineer";
+    const targetRole = p?.targetRole || "your target role";
 
     // Rule-based high-confidence suggestions based on actual facts
     let suggestionText = "";
@@ -65,13 +67,13 @@ export async function GET(req: NextRequest) {
       actionUrl = "/interviews";
       contextReason = "interview_cadence";
     } else if (signals?.daysSinceLastResumeUpdate && signals.daysSinceLastResumeUpdate > 14) {
-      suggestionText = `Top hiring teams are posting new openings in your sector. Check your ATS match score against live job descriptions today!`;
+      suggestionText = `Review your resume and compare it with job descriptions you are targeting.`;
       actionLabel = "Check Job Matches";
       actionUrl = "/resumes";
       contextReason = "resume_freshness";
     } else {
-      suggestionText = `You're on track for ${targetRole}! Review high-frequency system design and distributed caching patterns to elevate your technical bar.`;
-      actionLabel = "Review System Design";
+      suggestionText = `Would you like to practice interview questions for ${targetRole}?`;
+      actionLabel = "Practice Interviews";
       actionUrl = "/interviews";
       contextReason = "general_acceleration";
     }
@@ -90,27 +92,28 @@ export async function GET(req: NextRequest) {
           acted_on: false,
           date_bucket: todayDateStr,
         },
-        { onConflict: "user_id,date_bucket" }
+        { onConflict: "user_id,date_bucket", ignoreDuplicates: true }
       )
       .select()
       .maybeSingle();
 
-    if (insertErr) {
-      console.warn("[Myra Proactive Suggestion Upsert Note]:", insertErr);
-    }
+    if (insertErr) throw insertErr;
+    if (newSuggestion) return NextResponse.json({ suggestion: newSuggestion });
 
+    const { data: concurrentSuggestion, error: retryError } = await supabase
+      .from("myra_proactive_suggestions")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("date_bucket", todayDateStr)
+      .single();
+    if (retryError) throw retryError;
     return NextResponse.json({
-      suggestion: newSuggestion || {
-        id: "temp_today",
-        suggestion_text: suggestionText,
-        action_label: actionLabel,
-        action_url: actionUrl,
-        dismissed: false,
-      },
+      suggestion: concurrentSuggestion.dismissed ? null : concurrentSuggestion,
+      dismissedToday: concurrentSuggestion.dismissed,
     });
   } catch (err: any) {
     console.error("[Proactive Suggestion GET Error]:", err);
-    return NextResponse.json({ error: err.message || "Failed to load proactive suggestion" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to load proactive suggestion" }, { status: 500 });
   }
 }
 
@@ -120,47 +123,33 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { suggestionId, userId, action = "dismiss" } = body;
+    const userId = await resolveMyraUser(req);
+    if (!userId) return NextResponse.json({ error: "Sign in to update suggestions." }, { status: 401 });
 
-    if (!userId) {
-      return NextResponse.json({ error: "userId is required" }, { status: 400 });
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== "object") {
+      return NextResponse.json({ error: "Invalid suggestion request." }, { status: 400 });
+    }
+    const { suggestionId, userId: requestedUserId, action = "dismiss" } = body;
+    if (requestedUserId && requestedUserId !== userId) {
+      return NextResponse.json({ error: "Student identity does not match the session." }, { status: 403 });
+    }
+    if (typeof suggestionId !== "string" || !suggestionId || (action !== "dismiss" && action !== "act")) {
+      return NextResponse.json({ error: "A suggestion ID and valid action are required." }, { status: 400 });
     }
 
-    const todayDateStr = new Date().toISOString().split("T")[0];
-
-    if (action === "dismiss") {
-      if (suggestionId && suggestionId !== "temp_today") {
-        await supabase
-          .from("myra_proactive_suggestions")
-          .update({ dismissed: true })
-          .eq("id", suggestionId)
-          .eq("user_id", userId);
-      } else {
-        await supabase
-          .from("myra_proactive_suggestions")
-          .update({ dismissed: true })
-          .eq("user_id", userId)
-          .eq("date_bucket", todayDateStr);
-      }
-
-      return NextResponse.json({ success: true, message: "Suggestion dismissed for today." });
-    }
-
-    if (action === "act") {
-      if (suggestionId && suggestionId !== "temp_today") {
-        await supabase
-          .from("myra_proactive_suggestions")
-          .update({ acted_on: true })
-          .eq("id", suggestionId)
-          .eq("user_id", userId);
-      }
-      return NextResponse.json({ success: true, message: "Suggestion marked as acted on." });
-    }
-
-    return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+    const { data, error } = await createClient()
+      .from("myra_proactive_suggestions")
+      .update(action === "dismiss" ? { dismissed: true } : { acted_on: true })
+      .eq("id", suggestionId)
+      .eq("user_id", userId)
+      .select("id")
+      .maybeSingle();
+    if (error) throw error;
+    if (!data) return NextResponse.json({ error: "Suggestion unavailable." }, { status: 404 });
+    return NextResponse.json({ success: true });
   } catch (err: any) {
     console.error("[Proactive Suggestion POST Error]:", err);
-    return NextResponse.json({ error: err.message || "Failed to update suggestion" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to update suggestion" }, { status: 500 });
   }
 }

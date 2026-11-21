@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import { ToastProvider } from "@/lib/toast-context";
@@ -7,8 +7,23 @@ import AppShell from "@/components/AppShell";
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-sans",
   display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+  weight: ["600", "700", "800"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap",
+  weight: ["400", "500", "600"],
 });
 
 export const viewport: Viewport = {
@@ -35,7 +50,7 @@ export const metadata: Metadata = {
     "EdWorld",
     "Career Readiness",
     "ATS Resume Maker",
-    "AI Mock Interviews",
+    "Interactive Mock Interviews",
     "Student Network",
     "Job Board",
     "Skill Calibration",
@@ -80,7 +95,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "EdWorld Co. — Career & Skills Platform",
-    description: "Adaptive AI mock interviews, ATS resume optimization, and curated opportunities for students.",
+    description: "Adaptive mock interviews, ATS resume optimization, and curated opportunities for students.",
     images: ["/images/edworld-logo.png"],
   },
 };
@@ -91,8 +106,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} scroll-smooth font-sans`}>
-      <body className="min-h-screen flex flex-col bg-white text-[#111827] antialiased selection:bg-[#2563EB] selection:text-white">
+    <html lang="en" className={`${inter.variable} ${plusJakartaSans.variable} ${jetbrainsMono.variable} scroll-smooth font-sans`}>
+      <body className="min-h-screen flex flex-col bg-[#F4F5FA] text-slate-900 antialiased selection:bg-[#5C59E8] selection:text-white">
         <AuthProvider>
           <ToastProvider>
             <AppShell>{children}</AppShell>

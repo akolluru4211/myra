@@ -150,10 +150,6 @@ export default function Navbar() {
     };
   }, [user?.uid]);
 
-  // Do not render navbar on auth routes or landing
-  const isAuthPage = pathname === "/auth/login" || pathname === "/auth/signup" || pathname?.startsWith("/auth/");
-  if (isAuthPage || pathname === "/") return null;
-
   // Close drawer on path change
   useEffect(() => {
     setIsDrawerOpen(false);
@@ -179,9 +175,8 @@ export default function Navbar() {
     };
   }, [isDrawerOpen]);
 
-  // Comprehensive Feature Registry across the entire EdWorld Platform
   // Comprehensive Feature Registry across the entire EdWorld Platform (Build, Practice, Grow, Org)
-  const ALL_FEATURES: FeatureMenuItem[] = [
+  const ALL_FEATURES: FeatureMenuItem[] = useMemo(() => [
     // 1. BUILD (Resume, Projects, Portfolio, Verified Documents)
     {
       href: "/resumes",
@@ -309,7 +304,7 @@ export default function Navbar() {
 
     // 4. ORGANIZATION (Staff & Admin only)
     {
-      href: "/billing",
+      href: "/settings/billing",
       label: "Plans & Subscriptions",
       shortLabel: "Billing",
       icon: CreditCard,
@@ -334,7 +329,7 @@ export default function Navbar() {
       category: "org",
       staffOnly: true
     }
-  ];
+  ], []);
 
   // Filter features based on search, category, and permissions
   const filteredFeatures = useMemo(() => {
@@ -353,6 +348,10 @@ export default function Navbar() {
       return true;
     });
   }, [ALL_FEATURES, isStaff, isAdult, user, activeCategory, searchQuery]);
+
+  // Do not render navbar on auth routes or landing
+  const isAuthPage = pathname === "/auth/login" || pathname === "/auth/signup" || pathname?.startsWith("/auth/");
+  if (isAuthPage || pathname === "/") return null;
 
   return (
     <>
@@ -730,7 +729,7 @@ export default function Navbar() {
                         <span>Profile &amp; Settings</span>
                       </Link>
                       <Link
-                        href="/billing"
+                        href="/settings/billing"
                         onClick={() => setIsDrawerOpen(false)}
                         className="flex items-center gap-1.5 font-bold text-zinc-950 hover:underline"
                       >

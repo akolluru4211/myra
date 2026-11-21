@@ -21,10 +21,12 @@ import { VOICE_PROFILES, VoiceChoice } from "@/lib/interview/voice-profiles";
 
 interface PreFlightAudioCheckModalProps {
   isOpen: boolean;
+  initialCompanyTrack?: string;
   onProceed: (config: {
     audioOptIn: boolean;
     voiceChoice: VoiceChoice;
     speakingSpeed: number;
+    companyTrack: string;
     isAudioOnly: boolean;
     useKeyboardFallback: boolean;
   }) => void;
@@ -33,6 +35,7 @@ interface PreFlightAudioCheckModalProps {
 
 export default function PreFlightAudioCheckModal({
   isOpen,
+  initialCompanyTrack = "Big Tech (FAANG)",
   onProceed,
   onCancel,
 }: PreFlightAudioCheckModalProps) {
@@ -43,8 +46,9 @@ export default function PreFlightAudioCheckModal({
   
   // User Preferences
   const [audioOptIn, setAudioOptIn] = useState<boolean>(false);
-  const [voiceChoice, setVoiceChoice] = useState<VoiceChoice>("myra-neutral");
+  const [voiceChoice, setVoiceChoice] = useState<VoiceChoice>("elena-tech-lead");
   const [speakingSpeed, setSpeakingSpeed] = useState<number>(1.0);
+  const [companyTrack, setCompanyTrack] = useState<string>(initialCompanyTrack);
   const [isAudioOnly, setIsAudioOnly] = useState<boolean>(false);
 
   // Audio Context & Stream Refs
@@ -280,20 +284,37 @@ export default function PreFlightAudioCheckModal({
         <div className="p-4 rounded-2xl bg-white border border-neutral-200 space-y-3">
           <span className="text-xs font-bold text-black flex items-center gap-2">
             <Sliders className="w-4 h-4 text-black" />
-            <span>Step 3: Interviewer Voice &amp; Pacing</span>
+            <span>Step 3: Interviewer Persona, Voice &amp; Target Company Track</span>
           </span>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             <div>
-              <label className="text-[11px] font-bold text-neutral-600 block mb-1">Myra Voice Profile</label>
+              <label className="text-[11px] font-bold text-neutral-600 block mb-1">Lead Interviewer</label>
               <select
                 value={voiceChoice}
                 onChange={(e) => setVoiceChoice(e.target.value as VoiceChoice)}
                 className="w-full p-2.5 rounded-xl border border-neutral-200 bg-neutral-50 text-xs font-medium text-black focus:outline-none focus:ring-1 focus:ring-black"
               >
-                <option value="myra-neutral">Neutral (Balanced &amp; Clear)</option>
-                <option value="myra-warm">Warm (Supportive &amp; Friendly)</option>
-                <option value="myra-executive">Executive (Direct &amp; Measured)</option>
+                <option value="elena-tech-lead">Elena Vance (Staff Tech Lead • US)</option>
+                <option value="marcus-director">Marcus Reed (Director of Engineering • UK/US)</option>
+                <option value="priya-architect">Priya Sharma (Principal Cloud Architect • Global)</option>
+                <option value="myra-neutral">Myra Neutral (Standard Balanced)</option>
+                <option value="myra-warm">Myra Warm (Supportive Coach)</option>
+                <option value="myra-executive">Myra Executive (Direct &amp; Measured)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-[11px] font-bold text-neutral-600 block mb-1">Company Track</label>
+              <select
+                value={companyTrack}
+                onChange={(e) => setCompanyTrack(e.target.value)}
+                className="w-full p-2.5 rounded-xl border border-neutral-200 bg-neutral-50 text-xs font-medium text-black focus:outline-none focus:ring-1 focus:ring-black"
+              >
+                <option value="Big Tech (FAANG)">Big Tech (Google / Meta / Amazon)</option>
+                <option value="Unicorn Startup">High-Growth Unicorn (Stripe / Uber)</option>
+                <option value="FinTech & Quant">FinTech Systems (Goldman / Citadel)</option>
+                <option value="General Engineering">General Tech Industry</option>
               </select>
             </div>
 
@@ -304,9 +325,9 @@ export default function PreFlightAudioCheckModal({
                 onChange={(e) => setSpeakingSpeed(parseFloat(e.target.value))}
                 className="w-full p-2.5 rounded-xl border border-neutral-200 bg-neutral-50 text-xs font-medium text-black focus:outline-none focus:ring-1 focus:ring-black"
               >
-                <option value={0.85}>0.85x (Deliberate Pacing)</option>
+                <option value={0.9}>0.90x (Deliberate Pacing)</option>
                 <option value={1.0}>1.0x (Standard Speed)</option>
-                <option value={1.15}>1.15x (Brisk Pacing)</option>
+                <option value={1.1}>1.10x (Brisk Pacing)</option>
               </select>
             </div>
           </div>
@@ -344,6 +365,7 @@ export default function PreFlightAudioCheckModal({
                 audioOptIn: false,
                 voiceChoice,
                 speakingSpeed,
+                companyTrack,
                 isAudioOnly: true,
                 useKeyboardFallback: true,
               })}
@@ -359,6 +381,7 @@ export default function PreFlightAudioCheckModal({
                 audioOptIn: false,
                 voiceChoice,
                 speakingSpeed,
+                companyTrack,
                 isAudioOnly: true,
                 useKeyboardFallback: true,
               })}
@@ -382,6 +405,7 @@ export default function PreFlightAudioCheckModal({
                 audioOptIn,
                 voiceChoice,
                 speakingSpeed,
+                companyTrack,
                 isAudioOnly,
                 useKeyboardFallback: micPermission === "denied",
               })}

@@ -12,6 +12,20 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        canvas: {
+          DEFAULT: "#F4F5FA",
+          subtle: "#F8F9FD",
+        },
+        periwinkle: {
+          DEFAULT: "#5C59E8",
+          hover: "#4E4AC8",
+          light: "#EEF0FD",
+          subtle: "#E0E3FA",
+          dark: "#3B38B8",
+        },
+        card: {
+          DEFAULT: "#FFFFFF",
+        },
         // Strict Two-Color Minimal Tokens (White background, Black text, Neutral structural gray)
         paper: {
           DEFAULT: "#ffffff",
@@ -31,6 +45,12 @@ const config: Config = {
         status: {
           error: "#dc2626",
           success: "#16a34a",
+          mint: "#10B981",
+          "mint-bg": "#D1FAE5",
+          coral: "#F43F5E",
+          "coral-bg": "#FFE4E6",
+          amber: "#F59E0B",
+          "amber-bg": "#FEF3C7",
         },
         // EdWorld Forest Green & Mint Theme
         forest: {
@@ -55,6 +75,16 @@ const config: Config = {
           400: "#95D5B2",
           500: "#74C69D",
           DEFAULT: "#D8F3DC",
+        },
+        gold: {
+          DEFAULT: "#d97706",
+          dark: "#b45309",
+          light: "#fef3c7",
+        },
+        teal: {
+          DEFAULT: "#0d9488",
+          dark: "#0f766e",
+          light: "#ccfbf1",
         },
         amber: {
           50: "#FFFBEB",
@@ -95,10 +125,34 @@ const config: Config = {
           "coral-hover": "#0369a1",
           gold: "#38bdf8",
         },
+        // Quixel Modern Gamified Aesthetic Tokens
+        quixel: {
+          dark: "#13141B",
+          darker: "#0B0C10",
+          bg: "#F4F6FB",
+          card: "#FFFFFF",
+          lime: "#D7FC51",
+          limeLight: "#E9FFA4",
+          cyan: "#00D2B4",
+          cyanLight: "#E0FAF6",
+          purple: "#7B57FF",
+          purpleLight: "#F0ECFF",
+          gold: "#FFB800",
+          goldLight: "#FFF6DC",
+          orange: "#FF7A50",
+          orangeLight: "#FFEFEA",
+          lavender: "#EDE8FD",
+          border: "#E8ECF2",
+          borderSoft: "#F1F4F9",
+          textMuted: "#8E95A5",
+          textDark: "#181920",
+        },
       },
       fontFamily: {
         sans: [
+          "var(--font-sans)",
           "var(--font-inter)",
+          "var(--font-plus-jakarta)",
           "-apple-system",
           "BlinkMacSystemFont",
           '"Segoe UI"',
@@ -107,8 +161,23 @@ const config: Config = {
           "Arial",
           "sans-serif",
         ],
+        display: [
+          "var(--font-display)",
+          "var(--font-sans)",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "sans-serif",
+        ],
+        mono: [
+          "var(--font-mono)",
+          "JetBrains Mono",
+          "monospace",
+        ],
       },
       boxShadow: {
+        'ambient-card': '0 10px 30px rgba(80, 90, 130, 0.06)',
+        'ambient-elevated': '0 15px 35px rgba(80, 90, 130, 0.08)',
+        'ambient-float': '0 20px 40px rgba(100, 110, 160, 0.09)',
         'xs': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
         'sm': '0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.08)',
         'md': '0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.08)',
@@ -117,11 +186,16 @@ const config: Config = {
         'card-subtle': '0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04)',
         'card-hover': '0 12px 30px -10px rgba(2, 132, 199, 0.12), 0 4px 10px -2px rgba(0, 0, 0, 0.04)',
         'tablet': '0 8px 30px -8px rgba(2, 132, 199, 0.12)',
+        'quixel': '0 8px 30px rgba(0, 0, 0, 0.04)',
+        'quixel-hover': '0 12px 36px rgba(0, 0, 0, 0.08)',
+        'quixel-card': '0 2px 10px rgba(0, 0, 0, 0.02), 0 10px 30px rgba(0, 0, 0, 0.04)',
+        'quixel-streak': '0 20px 40px -15px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.05)',
       },
       borderRadius: {
         '2xl': '1rem',
         '3xl': '1.5rem',
         '4xl': '2rem',
+        'canvas': '2.5rem',
         'tablet': '1.5rem',
       },
     },

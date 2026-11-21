@@ -139,7 +139,7 @@ export default function ProfessionalOnboardingPage() {
       </div>
 
       {/* Main Form Container */}
-      <div className="max-w-2xl mx-auto w-full my-8 bg-slate-900/90 border border-amber-900/50 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
+      <div className="max-w-2xl mx-auto w-full my-8 bg-slate-900 border border-amber-900/50 rounded-3xl p-6 sm:p-8 shadow-2xl">
         {/* Progress bar */}
         <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mb-6">
           <div

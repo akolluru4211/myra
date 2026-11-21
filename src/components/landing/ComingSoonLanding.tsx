@@ -24,8 +24,8 @@ interface ComingSoonLandingProps {
 }
 
 export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate }: ComingSoonLandingProps) {
-  // Target Launch Date: Dynamic or future date (e.g., Nov 20, 2026)
-  const targetDateStr = targetLaunchDate || "2026-11-20T00:00:00+05:30";
+  // Target Launch Date: Dynamic or future date (December 25, 2026)
+  const targetDateStr = targetLaunchDate || "2026-12-25T00:00:00+05:30";
   const launchTimestamp = new Date(targetDateStr).getTime();
 
   const [timeLeft, setTimeLeft] = useState<{
@@ -54,8 +54,10 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
 
       if (difference <= 0) {
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0, hasLaunched: true });
-        // NOTE: Strict safety guard. We NEVER auto-bypass to the live site automatically.
-        // The platform features only unlock when the administrator explicitly approves & launches from /admin.
+        // Automatically transition into the live site when the launch timer expires
+        if (onBypassComingSoon) {
+          onBypassComingSoon();
+        }
       } else {
         const days = Math.floor(difference / (1000 * 60 * 60 * 24));
         const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -68,7 +70,7 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
     updateCountdown();
     const timer = setInterval(updateCountdown, 1000);
     return () => clearInterval(timer);
-  }, [launchTimestamp]);
+  }, [launchTimestamp, onBypassComingSoon]);
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,17 +107,12 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 selection:bg-neutral-800 selection:text-white flex flex-col justify-between relative overflow-hidden">
-      {/* Background Ambient Glow Gradients */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-b from-blue-600/10 via-indigo-600/5 to-transparent blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-emerald-500/5 blur-3xl pointer-events-none" />
-
-
       {/* Main Content */}
       <main className="relative z-10 max-w-4xl w-full mx-auto px-6 py-12 sm:py-16 text-center my-auto">
         {/* Centered Logo & Brand Name */}
         <div className="flex flex-col items-center justify-center mb-6">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl overflow-hidden bg-black flex items-center justify-center shadow-xl border border-neutral-800">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl overflow-hidden bg-black flex items-center justify-center shadow-md border border-neutral-800">
               <Image
                 src="/images/edworld-mark.png"
                 alt="EdWorld Co. Logo"
@@ -144,7 +141,7 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
         {/* Launch Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neutral-900 border border-neutral-800 text-xs text-neutral-300 font-medium mb-8">
           <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-          <span>Official Public Launch Arriving Soon • Pre-Release Phase</span>
+          <span>Official Public Launch: December 25, 2026 • Pre-Release Early Access Active</span>
         </div>
 
         {/* Hero Title */}
@@ -153,15 +150,14 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
         </h1>
 
         {/* Subtitle */}
-        <p className="text-base sm:text-xl text-neutral-400 max-w-2xl mx-auto mb-12 leading-relaxed">
-          Edworld Co. is putting the finishing touches on our end-to-end career intelligence platform.
-          Real-time AI mock interviews, JD-matched resume crafting, and verified employer pipelines.
+        <p className="text-base sm:text-lg text-neutral-400 max-w-xl mx-auto mb-10 leading-relaxed font-normal">
+          Putting the finishing touches on our career platform. Official launch on December 25, 2026.
         </p>
 
-        {/* Countdown Timer Grid */}
-        <div className="grid grid-cols-4 gap-3 sm:gap-6 max-w-xl mx-auto mb-14">
+        {/* Countdown Timer Grid with Crisp Solid Cards */}
+        <div className="grid grid-cols-4 gap-3 sm:gap-6 max-w-xl mx-auto mb-10">
           {/* Days */}
-          <div className="bg-neutral-900/80 border border-neutral-800/80 rounded-2xl p-4 sm:p-6 backdrop-blur-xs flex flex-col items-center justify-center">
+          <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col items-center justify-center">
             <span className="text-3xl sm:text-5xl font-mono font-bold text-white tracking-tight">
               {String(timeLeft.days).padStart(2, "0")}
             </span>
@@ -171,7 +167,7 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
           </div>
 
           {/* Hours */}
-          <div className="bg-neutral-900/80 border border-neutral-800/80 rounded-2xl p-4 sm:p-6 backdrop-blur-xs flex flex-col items-center justify-center">
+          <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col items-center justify-center">
             <span className="text-3xl sm:text-5xl font-mono font-bold text-white tracking-tight">
               {String(timeLeft.hours).padStart(2, "0")}
             </span>
@@ -181,7 +177,7 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
           </div>
 
           {/* Minutes */}
-          <div className="bg-neutral-900/80 border border-neutral-800/80 rounded-2xl p-4 sm:p-6 backdrop-blur-xs flex flex-col items-center justify-center">
+          <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col items-center justify-center">
             <span className="text-3xl sm:text-5xl font-mono font-bold text-white tracking-tight">
               {String(timeLeft.minutes).padStart(2, "0")}
             </span>
@@ -191,7 +187,7 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
           </div>
 
           {/* Seconds */}
-          <div className="bg-neutral-900/80 border border-neutral-800/80 rounded-2xl p-4 sm:p-6 backdrop-blur-xs flex flex-col items-center justify-center">
+          <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col items-center justify-center">
             <span className="text-3xl sm:text-5xl font-mono font-bold text-blue-400 tracking-tight">
               {String(timeLeft.seconds).padStart(2, "0")}
             </span>
@@ -199,6 +195,26 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
               Seconds
             </span>
           </div>
+        </div>
+
+        {/* Interactive Loop to Landing Page */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 mb-14">
+          <button
+            type="button"
+            onClick={onBypassComingSoon ? onBypassComingSoon : () => { window.location.href = "/?preview=true"; }}
+            className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+          >
+            <span>Explore Live Landing Page &amp; Features</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+
+          <Link
+            href="/auth/signup"
+            className="w-full sm:w-auto px-7 py-3.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-white font-bold text-sm border border-neutral-700 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <Sparkles className="w-4 h-4 text-amber-300" />
+            <span>Join Early Access Free</span>
+          </Link>
         </div>
 
         {/* Early Access / Waitlist Form */}
@@ -210,14 +226,14 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email for early access..."
+                  placeholder="Enter your email for launch alerts..."
                   required
-                  className="flex-1 bg-neutral-900/90 border border-neutral-800 rounded-xl px-4 py-3.5 text-sm text-white placeholder-neutral-500 focus:outline-hidden focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+                  className="flex-1 bg-neutral-900 border border-neutral-700 rounded-full px-5 py-3.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500 transition"
                 />
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-6 py-3.5 bg-white text-black hover:bg-neutral-200 font-semibold text-sm rounded-xl transition flex items-center justify-center gap-2 shrink-0 disabled:opacity-50"
+                  className="px-6 py-3.5 bg-white text-black hover:bg-neutral-100 font-bold text-sm rounded-full transition flex items-center justify-center gap-2 shrink-0 disabled:opacity-50 shadow-sm cursor-pointer"
                 >
                   <Bell className="w-4 h-4" />
                   {submitting ? "Joining..." : "Notify Me"}
@@ -227,46 +243,54 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
                 <p className="text-xs text-rose-400 text-left">{errorMessage}</p>
               )}
               <p className="text-xs text-neutral-400 text-left">
-                Join 1,200+ students and early career professionals. Zero spam, honest updates only.
+                Zero spam. Instant launch notification only.
               </p>
             </form>
           ) : (
-            <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center gap-3 text-emerald-400 text-sm">
+            <div className="p-4 bg-emerald-950/70 border border-emerald-800/80 rounded-2xl flex items-center justify-center gap-3 text-emerald-300 text-sm">
               <CheckCircle2 className="w-5 h-5 shrink-0" />
-              <span>You&apos;re on the early access list! We&apos;ll notify you on October 20, 2026.</span>
+              <span>You&apos;re on the early access list! We&apos;ll notify you on December 25, 2026.</span>
             </div>
           )}
         </div>
 
         {/* Feature Teasers Bento */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-left">
-          <div className="p-4 bg-neutral-900/40 border border-neutral-900 rounded-xl">
-            <Mic className="w-5 h-5 text-blue-400 mb-2" />
-            <h3 className="text-sm font-semibold text-neutral-200">AI Mock Interviews</h3>
+          <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-2xl">
+            <div className="w-9 h-9 metallic-icon-badge metallic-cyan mb-3">
+              <Mic className="w-4 h-4 stroke-[1.85]" />
+            </div>
+            <h3 className="text-sm font-bold text-neutral-200 font-display">AI Mock Interviews</h3>
             <p className="text-xs text-neutral-400 mt-1 leading-relaxed">
               Real-time voice and behavioral feedback with instant score breakdown.
             </p>
           </div>
 
-          <div className="p-4 bg-neutral-900/40 border border-neutral-900 rounded-xl">
-            <FileText className="w-5 h-5 text-indigo-400 mb-2" />
-            <h3 className="text-sm font-semibold text-neutral-200">ATS Resume Maker</h3>
+          <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-2xl">
+            <div className="w-9 h-9 metallic-icon-badge metallic-indigo mb-3">
+              <FileText className="w-4 h-4 stroke-[1.85]" />
+            </div>
+            <h3 className="text-sm font-bold text-neutral-200 font-display">ATS Resume Maker</h3>
             <p className="text-xs text-neutral-400 mt-1 leading-relaxed">
               Keyword matching against real job descriptions and tailored bullet advice.
             </p>
           </div>
 
-          <div className="p-4 bg-neutral-900/40 border border-neutral-900 rounded-xl">
-            <Briefcase className="w-5 h-5 text-emerald-400 mb-2" />
-            <h3 className="text-sm font-semibold text-neutral-200">Verified Job Board</h3>
+          <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-2xl">
+            <div className="w-9 h-9 metallic-icon-badge metallic-emerald mb-3">
+              <Briefcase className="w-4 h-4 stroke-[1.85]" />
+            </div>
+            <h3 className="text-sm font-bold text-neutral-200 font-display">Verified Job Board</h3>
             <p className="text-xs text-neutral-400 mt-1 leading-relaxed">
               Curated opportunities with transparent source tags and real status updates.
             </p>
           </div>
 
-          <div className="p-4 bg-neutral-900/40 border border-neutral-900 rounded-xl">
-            <Users className="w-5 h-5 text-amber-400 mb-2" />
-            <h3 className="text-sm font-semibold text-neutral-200">Peer Mentorship</h3>
+          <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-2xl">
+            <div className="w-9 h-9 metallic-icon-badge metallic-amber mb-3">
+              <Users className="w-4 h-4 stroke-[1.85]" />
+            </div>
+            <h3 className="text-sm font-bold text-neutral-200 font-display">Peer Mentorship</h3>
             <p className="text-xs text-neutral-400 mt-1 leading-relaxed">
               Safe community networking across colleges, alumni, and employers.
             </p>
@@ -281,10 +305,12 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
           <span>Infrastructure verified • All systems operational</span>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex flex-wrap items-center justify-center sm:justify-end gap-4 sm:gap-6">
           <Link href="/privacy" className="hover:text-neutral-300 transition">Privacy Policy</Link>
           <Link href="/terms" className="hover:text-neutral-300 transition">Terms of Service</Link>
-          <span>&copy; {new Date().getFullYear()} Edworld Co. All rights reserved.</span>
+          <Link href="/cookies" className="hover:text-neutral-300 transition">Cookie Policy</Link>
+          <Link href="/refund" className="hover:text-neutral-300 transition">Refund Policy</Link>
+          <span>&copy; {new Date().getFullYear()} EdWorld Co. All rights reserved.</span>
         </div>
       </footer>
     </div>

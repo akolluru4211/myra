@@ -482,7 +482,7 @@ export default function AptitudeStudioPage() {
                 <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200">{answeredCount} of {questions.length} Answered</span>
               </div>
 
-              <div className="grid grid-cols-10 gap-1.5">
+              <div className="grid grid-cols-5 sm:grid-cols-10 gap-1.5">
                 {questions.map((q, idx) => {
                   const isAnswered = !!userAnswers[q.id];
                   const isCurrent = idx === currentIdx;

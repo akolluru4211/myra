@@ -1,0 +1,5 @@
+requests
+beautifulsoup4
+scikit-learn
+joblib
+anthropic   # only if you use --llm anthropic

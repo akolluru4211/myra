@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { UniversalAI } from "@/lib/ai/universal-ai";
+import { resolveMyraUser } from "@/lib/ai/myra-session";
 import { MyraOrchestrator } from "@/lib/ai/myra-orchestration";
-import { buildMyraContextPrompt, StudentProfileContext } from "@/lib/ai/myra-agent";
+import { 
+  buildMyraContextPrompt, 
+  StudentProfileContext, 
+  MYRA_ONBOARDING_OPENING_MESSAGE,
+  MYRA_CAREER_WRITING_OPENING_MESSAGE 
+} from "@/lib/ai/myra-agent";
 import { resolveWebReach } from "@/lib/ai/web-reach";
 import { 
   syncUserLearningProfile, 
@@ -9,69 +14,89 @@ import {
   resetUserLearningProfile,
   MyraCognitiveMemory 
 } from "@/lib/ai/myra-learning-engine";
-import { MyraNeuralEngine } from "@/lib/ai/myra-neural-engine";
 import { formatToolRegistrySystemPrompt, isActionOffLimits } from "@/lib/ai/myra-tools";
 import { proposeToolAction, executeConfirmedToolAction } from "@/lib/ai/myra-tool-executor";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
-  let body: any = null;
+  const body = await req.json().catch(() => null);
+  if (!body || typeof body !== "object" || Array.isArray(body) ||
+      (body.message != null && typeof body.message !== "string")) {
+    return NextResponse.json({ error: "Invalid Myra request." }, { status: 400 });
+  }
+
   try {
-    body = await req.json();
-    const { message, userId, profile, history = [], action, tool, parameters } = body || {};
+    const { 
+      message, 
+      userId: requestedUserId, 
+      profile, 
+      history = [], 
+      action, 
+      tool, 
+      parameters,
+      interviewContext,
+      onboardingContext,
+      writingContext,
+      mode
+    } = body || {};
 
-    // Resolve authenticated caller identity strictly
-    let authUserId: string | null = null;
-    try {
-      const { createClient } = await import("@/lib/supabase/server");
-      const supabaseServer = createClient();
-      const { data: { user } } = await supabaseServer.auth.getUser();
-      if (user?.id) {
-        authUserId = user.id;
-      }
-    } catch {}
+    // 0. Handle Onboarding Fast-Path Initial Greeting
+    if (mode === "onboarding" && (!message || message.trim().toLowerCase() === "start" || message.trim().toLowerCase() === "init")) {
+      const studentName = profile?.name ? profile.name.split(" ")[0] : null;
+      const initialGreeting = studentName
+        ? `Hi ${studentName}! 👋 Welcome to EdWorld Co. I'm here to help you get set up and make a plan that fits your goals. It'll only take about 10 minutes. First, what brings you to EdWorld?`
+        : MYRA_ONBOARDING_OPENING_MESSAGE;
 
-    if (!authUserId) {
-      const sessionCookie = 
-        req.cookies.get("edworld_session")?.value ||
-        req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
-      if (sessionCookie && sessionCookie.startsWith("edw_sess_")) {
-        const { validateSession } = await import("@/lib/otp-service");
-        const sess = validateSession(sessionCookie);
-        if (sess.valid && sess.userId) {
-          authUserId = sess.userId;
-        }
-      }
+      return NextResponse.json({
+        reply: initialGreeting,
+        model: "Myra Onboarding Assistant",
+        stage: 1,
+        actionProposal: null,
+      });
+    }
+
+    // 0B. Handle Career & Writing Fast-Path Initial Greeting
+    if (mode === "career_writing" && (!message || message.trim().toLowerCase() === "start" || message.trim().toLowerCase() === "init")) {
+      return NextResponse.json({
+        reply: MYRA_CAREER_WRITING_OPENING_MESSAGE,
+        model: "Myra Career & Writing Assistant",
+        module: writingContext?.module || "Professional Summary",
+        actionProposal: null,
+      });
+    }
+
+    const userId = await resolveMyraUser(req);
+    if (requestedUserId && requestedUserId !== userId) {
+      return NextResponse.json(
+        { error: userId ? "Student identity does not match the session." : "Please sign in to use personalized Myra features." },
+        { status: userId ? 403 : 401 }
+      );
     }
 
     // 0A. Handle Direct Action Execution (Confirmed by User)
     if (action === "execute_confirmed") {
-      if (!authUserId) {
+      if (!userId) {
         return NextResponse.json({ error: "Authentication required to execute actions." }, { status: 401 });
-      }
-      if (userId && userId !== authUserId) {
-        return NextResponse.json({ error: "Forbidden: You cannot execute tool actions on behalf of another user." }, { status: 403 });
       }
       if (!tool) {
         return NextResponse.json({ error: "Tool name is required." }, { status: 400 });
       }
 
-      const execResult = await executeConfirmedToolAction(authUserId, tool, parameters || {});
+      const execResult = await executeConfirmedToolAction(userId, tool, parameters || {});
       return NextResponse.json(execResult, { status: execResult.success ? 200 : 400 });
     }
 
     // 0B. Handle Direct Action Proposal (e.g. from Resume or Interview UI buttons)
     if (action === "propose_direct") {
-      const targetUserId = authUserId || userId;
-      if (!targetUserId) {
+      if (!userId) {
         return NextResponse.json({ error: "Authentication required to propose actions." }, { status: 401 });
       }
       if (!tool) {
         return NextResponse.json({ error: "Tool name is required." }, { status: 400 });
       }
 
-      const proposalResult = await proposeToolAction(targetUserId, tool, parameters || {}, message);
+      const proposalResult = await proposeToolAction(userId, tool, parameters || {}, message);
       if (proposalResult.error) {
         return NextResponse.json({ error: proposalResult.error }, { status: 400 });
       }
@@ -158,19 +183,36 @@ export async function POST(req: NextRequest) {
       searchedTechnologies: existingMemory?.searchedTechnologies?.slice(0, 5) || profile?.searchedTechnologies,
       strugglePoints: existingMemory?.strugglePoints?.slice(-5) || profile?.strugglePoints,
       learningStylePreference: existingMemory?.learningStylePreference || profile?.learningStylePreference,
+      interviewContext: interviewContext || profile?.interviewContext,
+      onboardingContext: onboardingContext || (mode === "onboarding" ? { stage: 1 } : profile?.onboardingContext),
+      writingContext: writingContext || (mode === "career_writing" ? { module: "Professional Summary" } : profile?.writingContext),
     };
+
+    // Dynamically separate explicit [CONTEXT: ...] prefix from actual student query if present
+    let rawStudentQuery = (message || "").trim();
+    let detectedScreenContext = body?.screenContext || "";
+    if (rawStudentQuery.startsWith("[CONTEXT:")) {
+      const newlineIdx = rawStudentQuery.indexOf("\n");
+      if (newlineIdx !== -1) {
+        if (!detectedScreenContext) {
+          detectedScreenContext = rawStudentQuery.slice(0, newlineIdx).trim();
+        }
+        rawStudentQuery = rawStudentQuery.slice(newlineIdx + 1).trim();
+      }
+    }
+    const finalStudentQuery = rawStudentQuery || detectedScreenContext || "Hello Myra";
 
     // 2. Dynamically resolve live GitHub repository or web URL / search reach
     let webReachContext = null;
     try {
-      webReachContext = await resolveWebReach(message.trim());
+      webReachContext = await resolveWebReach(finalStudentQuery);
     } catch (e) {
       console.warn("Web reach resolution skipped:", e);
     }
 
     // 3. Build adaptive prompt with learned memory, web data and strict tool registry
     const { systemPrompt, prompt } = buildMyraContextPrompt(
-      message.trim(),
+      finalStudentQuery,
       enrichedProfile,
       history,
       webReachContext
@@ -181,14 +223,14 @@ export async function POST(req: NextRequest) {
 
     // 4. Generate AI response through centralized Myra Orchestration Service
     const orchestrationResult = await MyraOrchestrator.execute({
-      userId,
+      userId: userId ?? undefined,
       featureContext: "ask_myra",
       prompt,
-      rawQuery: message.trim(),
+      rawQuery: finalStudentQuery,
       systemPromptOverride: combinedSystemPrompt,
       clientProfile: enrichedProfile,
-      temperature: 0.4,
-      maxTokens: 900,
+      temperature: 0.6,
+      maxTokens: 1000,
       metadata: { hasWebReach: Boolean(webReachContext) },
     });
 
@@ -211,9 +253,9 @@ export async function POST(req: NextRequest) {
     if (actionMatch && actionMatch[1]) {
       try {
         const parsedAction = JSON.parse(actionMatch[1]);
-        if (parsedAction && parsedAction.tool) {
+        if (userId && parsedAction?.tool) {
           const propRes = await proposeToolAction(
-            userId || "anonymous",
+            userId,
             parsedAction.tool,
             parsedAction.parameters || {},
             message.trim()
@@ -264,18 +306,7 @@ export async function POST(req: NextRequest) {
   } catch (error: any) {
     console.error("Myra AI route outer error:", error);
     
-    // High-quality personalized fallback through neural engine
-    const fallbackResponse = MyraNeuralEngine.synthesizeResponse(
-      (body?.message || "").trim(),
-      body?.profile,
-      null
-    );
-
-    return NextResponse.json({
-      reply: sanitizeMyraText(fallbackResponse.text),
-      model: `Myra Neural Knowledge Engine (${fallbackResponse.topicDetected})`,
-      timestamp: new Date().toISOString(),
-    });
+    return NextResponse.json({ error: "Myra could not complete the request. Please try again." }, { status: 500 });
   }
 }
 
@@ -293,35 +324,40 @@ function sanitizeMyraText(text: string): string {
 }
 
 export async function GET(req: NextRequest) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const userId = searchParams.get("userId");
-    const action = searchParams.get("action");
-
-    if (!userId) {
-      return NextResponse.json({ error: "userId is required" }, { status: 400 });
-    }
-
-    if (action === "reset") {
-      const resetSuccess = await resetUserLearningProfile(userId);
-      return NextResponse.json({ success: resetSuccess, message: "Myra memory reset successfully." });
-    }
-
-    const memory = await getUserLearningProfile(userId);
-    return NextResponse.json({
-      success: true,
-      memory: memory || {
-        userId,
-        totalInteractions: 0,
-        frequentTopics: [],
-        searchedTechnologies: [],
-        strugglePoints: [],
-        learningStylePreference: "deep_architectural",
-        lastInteractionAt: new Date().toISOString(),
-      },
-    });
-  } catch (err: any) {
-    console.error("Myra memory GET error:", err);
-    return NextResponse.json({ error: err.message || "Failed to handle memory request" }, { status: 500 });
+  const userId = await resolveMyraUser(req);
+  if (!userId) {
+    return NextResponse.json({ error: "Authentication required to view memory." }, { status: 401 });
   }
+
+  const requestedUserId = req.nextUrl.searchParams.get("userId");
+  if (requestedUserId && requestedUserId !== userId) {
+    return NextResponse.json({ error: "Student identity does not match the session." }, { status: 403 });
+  }
+  if (req.nextUrl.searchParams.has("action")) {
+    return NextResponse.json({ error: "Use DELETE to reset memory." }, { status: 405, headers: { Allow: "GET, DELETE" } });
+  }
+
+  try {
+    const memory = await getUserLearningProfile(userId);
+    return NextResponse.json({ success: true, memory }, { headers: { "Cache-Control": "private, no-store" } });
+  } catch {
+    return NextResponse.json({ error: "Failed to load Myra memory." }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  const userId = await resolveMyraUser(req);
+  if (!userId) {
+    return NextResponse.json({ error: "Authentication required to reset memory." }, { status: 401 });
+  }
+
+  const requestedUserId = req.nextUrl.searchParams.get("userId");
+  if (requestedUserId && requestedUserId !== userId) {
+    return NextResponse.json({ error: "Student identity does not match the session." }, { status: 403 });
+  }
+
+  const success = await resetUserLearningProfile(userId);
+  return success
+    ? NextResponse.json({ success: true })
+    : NextResponse.json({ error: "Failed to reset Myra memory." }, { status: 500 });
 }

@@ -80,7 +80,7 @@ export const OpportunityDetailScreen: React.FC<OpportunityDetailScreenProps> = (
           <button
             type="button"
             onClick={onBack}
-            className="w-10 h-10 rounded-xl bg-black/30 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/50 transition-colors cursor-pointer"
+            className="w-10 h-10 rounded-xl bg-black/60 border border-white/20 flex items-center justify-center text-white hover:bg-black/80 transition-colors cursor-pointer"
             aria-label="Go back"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -90,7 +90,7 @@ export const OpportunityDetailScreen: React.FC<OpportunityDetailScreenProps> = (
             <button
               type="button"
               onClick={handleShare}
-              className="w-10 h-10 rounded-xl bg-black/30 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/50 transition-colors cursor-pointer"
+              className="w-10 h-10 rounded-xl bg-black/60 border border-white/20 flex items-center justify-center text-white hover:bg-black/80 transition-colors cursor-pointer"
               aria-label="Share"
             >
               <Share2 className="w-4 h-4" />
@@ -99,8 +99,8 @@ export const OpportunityDetailScreen: React.FC<OpportunityDetailScreenProps> = (
               type="button"
               onClick={() => setIsBookmarked(!isBookmarked)}
               className={cn(
-                "w-10 h-10 rounded-xl bg-black/30 backdrop-blur-md flex items-center justify-center transition-colors cursor-pointer",
-                isBookmarked ? "text-[#FF6B00]" : "text-white hover:bg-black/50"
+                "w-10 h-10 rounded-xl bg-black/60 border border-white/20 flex items-center justify-center transition-colors cursor-pointer",
+                isBookmarked ? "text-[#FF6B00]" : "text-white hover:bg-black/80"
               )}
               aria-label="Bookmark"
             >
@@ -111,10 +111,10 @@ export const OpportunityDetailScreen: React.FC<OpportunityDetailScreenProps> = (
 
         {/* Hero Bottom Tags */}
         <div className="flex items-center gap-2 z-10">
-          <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-black/30 backdrop-blur-md">
+          <span className="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-black/60 border border-white/20">
             {opportunity.type}
           </span>
-          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-md flex items-center gap-1">
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/60 border border-white/20 flex items-center gap-1">
             <Clock className="w-3 h-3 text-[#FF6B00]" /> {opportunity.deadlineText}
           </span>
         </div>
@@ -429,7 +429,7 @@ export const OpportunityDetailScreen: React.FC<OpportunityDetailScreenProps> = (
       </div>
 
       {/* Sticky Bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 max-w-[390px] mx-auto p-3.5 bg-white/95 dark:bg-[#161922]/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 z-40 flex items-center justify-between gap-3 shadow-lg">
+      <div className="fixed bottom-0 left-0 right-0 max-w-[390px] mx-auto p-3.5 bg-white dark:bg-[#161922] border-t border-slate-200 dark:border-slate-800 z-40 flex items-center justify-between gap-3 shadow-lg">
         <div>
           <span className="block text-[10px] text-slate-400 uppercase font-semibold">
             Registration Status

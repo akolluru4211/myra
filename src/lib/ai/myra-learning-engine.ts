@@ -4,7 +4,7 @@
  * and resume activity to continuously adapt Myra's tutoring and career coaching.
  */
 
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
 
 export interface LearnedTopicItem {
   topic: string;
@@ -131,19 +131,8 @@ export async function syncUserLearningProfile(
     lastInteractionAt: now,
   };
 
-  try {
-    const { data } = await supabase
-      .from("user_ai_learning_profiles")
-      .select("*")
-      .eq("user_id", userId)
-      .maybeSingle();
-
-    if (data && data.cognitive_memory) {
-      currentMemory = data.cognitive_memory;
-    }
-  } catch (e) {
-    // Graceful fallback to memory instance
-  }
+  const savedMemory = await getUserLearningProfile(userId);
+  if (savedMemory) currentMemory = savedMemory;
 
   // 2. Merge interaction counter
   currentMemory.totalInteractions = (currentMemory.totalInteractions || 0) + 1;
@@ -213,21 +202,18 @@ export async function syncUserLearningProfile(
   currentMemory.strugglePoints = currentMemory.strugglePoints.slice(-10);
 
   // 6. Save back to Supabase
-  try {
-    await supabase.from("user_ai_learning_profiles").upsert(
-      {
-        user_id: userId,
-        cognitive_memory: currentMemory,
-        total_interactions: currentMemory.totalInteractions,
-        top_topics: currentMemory.frequentTopics.slice(0, 5).map((t) => t.topic),
-        top_technologies: currentMemory.searchedTechnologies.slice(0, 5).map((t) => t.tech),
-        updated_at: now,
-      },
-      { onConflict: "user_id" }
-    );
-  } catch (err) {
-    console.warn("[Myra Learning Sync Note]:", err);
-  }
+  const { error } = await createClient().from("user_ai_learning_profiles").upsert(
+    {
+      user_id: userId,
+      cognitive_memory: currentMemory,
+      total_interactions: currentMemory.totalInteractions,
+      top_topics: currentMemory.frequentTopics.slice(0, 5).map((t) => t.topic),
+      top_technologies: currentMemory.searchedTechnologies.slice(0, 5).map((t) => t.tech),
+      updated_at: now,
+    },
+    { onConflict: "user_id" }
+  );
+  if (error) throw error;
 
   return currentMemory;
 }
@@ -238,21 +224,13 @@ export async function syncUserLearningProfile(
 export async function getUserLearningProfile(userId: string): Promise<MyraCognitiveMemory | null> {
   if (!userId) return null;
 
-  try {
-    const { data } = await supabase
-      .from("user_ai_learning_profiles")
-      .select("*")
-      .eq("user_id", userId)
-      .maybeSingle();
-
-    if (data && data.cognitive_memory) {
-      return data.cognitive_memory;
-    }
-  } catch (e) {
-    console.warn("Failed to fetch user learning profile:", e);
-  }
-
-  return null;
+  const { data, error } = await createClient()
+    .from("user_ai_learning_profiles")
+    .select("cognitive_memory")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error) throw error;
+  return data?.cognitive_memory ?? null;
 }
 
 /**
@@ -262,10 +240,11 @@ export async function resetUserLearningProfile(userId: string): Promise<boolean>
   if (!userId) return false;
 
   try {
-    await supabase
+    const { error } = await createClient()
       .from("user_ai_learning_profiles")
       .delete()
       .eq("user_id", userId);
+    if (error) throw error;
     return true;
   } catch (e) {
     console.warn("Failed to reset learning profile:", e);

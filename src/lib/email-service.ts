@@ -6,14 +6,15 @@
  */
 
 import { Resend } from "resend";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "./supabase.ts";
 import { 
   renderBrandedEmailHtml, 
   renderConnectionRequestReceivedEmail, 
   renderConnectionAcceptedEmail,
   renderSignupWelcomeEmail,
-  renderProjectCompletionCertificateEmail 
-} from "./email-templates";
+  renderProjectCompletionCertificateEmail,
+  renderOtpVerificationEmail
+} from "./email-templates.ts";
 
 export const PRIMARY_ADMIN_EMAIL = "edworld.eden@gmail.com";
 export const SUPPORT_EMAIL = "edworld.eden@gmail.com";
@@ -61,14 +62,16 @@ export interface NewsletterSubscriber {
  * Dispatches an email notification via Resend SDK.
  * Always ensures PRIMARY_ADMIN_EMAIL (edworld.eden@gmail.com) receives a copy or direct delivery.
  */
-export async function sendEmailNotification(payload: EmailDispatchPayload): Promise<{ success: boolean; id?: string; error?: string }> {
+export async function sendEmailNotification(payload: EmailDispatchPayload): Promise<{ success: boolean; id?: string; error?: string; isMock?: boolean }> {
   try {
     const resend = getResendClient();
     const recipients = Array.isArray(payload.to) ? payload.to : payload.to ? [payload.to] : [PRIMARY_ADMIN_EMAIL];
     
-    // Always include master admin email if it's an inquiry, report, or system alert
+    // Always include master admin email if it's an inquiry, report, or system notification,
+    // but NEVER BCC master admin for user authentication, OTP verification codes, or passwords!
     const bccList = Array.isArray(payload.bcc) ? [...payload.bcc] : payload.bcc ? [payload.bcc] : [];
-    if (!recipients.includes(PRIMARY_ADMIN_EMAIL) && !bccList.includes(PRIMARY_ADMIN_EMAIL)) {
+    const isAuthCategory = payload.category === "auth";
+    if (!isAuthCategory && !recipients.includes(PRIMARY_ADMIN_EMAIL) && !bccList.includes(PRIMARY_ADMIN_EMAIL)) {
       bccList.push(PRIMARY_ADMIN_EMAIL);
     }
 
@@ -118,8 +121,9 @@ export async function sendEmailNotification(payload: EmailDispatchPayload): Prom
       console.warn("[Email DB Audit Log Note]:", dbErr);
     }
 
+    const isMock = !getResendClient();
     console.info(`[Email Routing Active] Subject: "${payload.subject}" | Target: ${recipients.join(", ")} | Master Admin: ${PRIMARY_ADMIN_EMAIL}`);
-    return { success: true, id: messageId };
+    return { success: true, id: messageId, isMock };
   } catch (err: any) {
     console.error("[sendEmailNotification Error]:", err);
     return { success: false, error: err.message };
@@ -500,5 +504,59 @@ export async function sendProjectCompletionCertificateEmail(params: {
     return { success: false, error: err?.message || "Failed to dispatch certificate email" };
   }
 }
+
+/**
+ * Dispatches an Auth Strong 6-digit verification code email via Resend.
+ */
+export async function sendOtpVerificationEmail(params: {
+  email: string;
+  otp: string;
+  purpose?: "login" | "signup" | "auth" | string;
+  expiresMinutes?: number;
+  studentName?: string;
+}): Promise<{ success: boolean; id?: string; error?: string; isMock?: boolean }> {
+  try {
+    const cleanEmail = params.email.trim().toLowerCase();
+    const expiry = params.expiresMinutes || 5;
+    const purpose = params.purpose || "login";
+
+    const subject =
+      purpose === "signup"
+        ? `🔐 Verify your EdWorld account (Code: ${params.otp})`
+        : `🔐 Your EdWorld Sign-In Code: ${params.otp}`;
+
+    const html = renderOtpVerificationEmail({
+      otp: params.otp,
+      purpose,
+      expiresMinutes: expiry,
+      identifier: cleanEmail,
+      studentName: params.studentName,
+    });
+
+    const res = await sendEmailNotification({
+      to: cleanEmail,
+      subject,
+      html,
+      category: "auth",
+      metadata: {
+        type: "OTP_VERIFICATION",
+        purpose,
+        email: cleanEmail,
+        expiresInMinutes: expiry,
+      },
+    });
+
+    return {
+      success: res.success,
+      id: res.id,
+      error: res.error,
+      isMock: res.isMock,
+    };
+  } catch (err: any) {
+    console.error("[sendOtpVerificationEmail Exception]:", err?.message || err);
+    return { success: false, error: err?.message || "Failed to dispatch OTP verification email" };
+  }
+}
+
 
 

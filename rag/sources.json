@@ -1,0 +1,65 @@
+{
+  "web": {
+    "start_urls": [
+      "http://localhost:3000/",
+      "http://localhost:3000/dashboard",
+      "http://localhost:3000/focus",
+      "http://localhost:3000/interviews",
+      "http://localhost:3000/resumes",
+      "http://localhost:3000/projects",
+      "http://localhost:3000/edbuild",
+      "http://localhost:3000/dsa",
+      "http://localhost:3000/career",
+      "http://localhost:3000/career/roadmap",
+      "http://localhost:3000/career/scam-checker",
+      "http://localhost:3000/pricing",
+      "http://localhost:3000/about",
+      "http://localhost:3000/contact",
+      "http://localhost:3000/for-college",
+      "http://localhost:3000/learn",
+      "http://localhost:3000/problems"
+    ],
+    "allowed_domains": ["localhost", "127.0.0.1", "edworld.co"],
+    "max_pages": 150,
+    "delay_seconds": 0.05,
+    "respect_robots_txt": false,
+    "skip_url_contains": [
+      "/login",
+      "/signup",
+      "/account",
+      "/cart",
+      "/admin",
+      "?session",
+      "/logout",
+      "/hr",
+      "/employee",
+      "/employer"
+    ]
+  },
+  "code": {
+    "paths": ["src", "README.md"],
+    "extensions": [".ts", ".tsx", ".js", ".jsx", ".json", ".md", ".css"],
+    "skip_dirs": [
+      ".git",
+      "node_modules",
+      ".next",
+      "venv",
+      "__pycache__",
+      "coverage",
+      "rag/index",
+      ".system_generated",
+      "functions"
+    ],
+    "skip_files": [
+      ".env",
+      ".env.local",
+      "package-lock.json",
+      "yarn.lock",
+      "id_rsa",
+      "serviceAccount.json"
+    ],
+    "max_file_kb": 200
+  },
+  "chunk_words": 220,
+  "chunk_overlap_words": 40
+}

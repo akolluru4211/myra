@@ -1700,4 +1700,344 @@ export interface CareerPlanOverview {
   }>;
 }
 
+// ============================================================================
+// CANONICAL ER DIAGRAM PLATFORM INTERFACES (24 Entities & 23 Relationships)
+// ============================================================================
+
+export interface College {
+  id: string;
+  name: string;
+  slug?: string;
+  location: string;
+  state?: string;
+  tier?: string;
+  courses: string[];
+  fee_range?: string;
+  typical_cutoff_range?: string;
+  source_url?: string;
+  verified: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Skill {
+  id: string;
+  name: string;
+  slug: string;
+  category: "frontend" | "backend" | "dsa" | "database" | "devops" | "ai_ml" | "soft_skill" | "general";
+  description?: string;
+  created_at: string;
+}
+
+export interface UserSkill {
+  id: string;
+  user_id: string;
+  skill_id: string;
+  proficiency: "beginner" | "intermediate" | "advanced" | "expert";
+  verified: boolean;
+  verified_at?: string;
+  created_at: string;
+}
+
+export interface Problem {
+  id: string;
+  title: string;
+  slug: string;
+  difficulty: "easy" | "medium" | "hard";
+  category: string;
+  description: string;
+  constraints: string[];
+  starter_code?: Record<string, string>;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TestCase {
+  id: string;
+  problem_id: string;
+  input: string;
+  expected_output: string;
+  is_hidden: boolean;
+  explanation?: string;
+  time_limit_ms: number;
+  memory_limit_kb: number;
+  order_index: number;
+  created_at: string;
+}
+
+export interface Submission {
+  id: string;
+  problem_id: string;
+  user_id: string;
+  code: string;
+  language: string;
+  status: "pending" | "running" | "accepted" | "wrong_answer" | "time_limit_exceeded" | "runtime_error" | "compilation_error";
+  runtime_ms?: number;
+  memory_kb?: number;
+  passed_test_cases: number;
+  total_test_cases: number;
+  error_message?: string;
+  created_at: string;
+}
+
+export interface AptitudeTest {
+  id: string;
+  title: string;
+  slug: string;
+  category: "quantitative" | "logical" | "verbal" | "technical" | "mixed";
+  duration_minutes: number;
+  total_questions: number;
+  passing_score: number;
+  is_published: boolean;
+  created_at: string;
+}
+
+export interface AptitudeAttempt {
+  id: string;
+  test_id?: string;
+  user_id: string;
+  answers: Record<string, any>;
+  score: number;
+  total_questions: number;
+  time_spent_seconds: number;
+  passed: boolean;
+  created_at: string;
+}
+
+export interface DailyChallenge {
+  id: string;
+  challenge_date: string;
+  title: string;
+  description: string;
+  challenge_type: "dsa" | "aptitude" | "project_task" | "quiz" | "interview";
+  target_entity_id?: string;
+  xp_reward: number;
+  created_at: string;
+}
+
+export interface ChallengeCompletion {
+  id: string;
+  challenge_id: string;
+  user_id: string;
+  completed_at: string;
+  xp_awarded: number;
+}
+
+export interface UserStats {
+  user_id: string;
+  points: number;
+  current_streak: number;
+  longest_streak: number;
+  last_active_date?: string;
+  timezone: string;
+  updated_at: string;
+}
+
+export interface XpEvent {
+  id: string;
+  user_id: string;
+  amount: number;
+  source_feature: string;
+  source_id?: string;
+  description?: string;
+  created_at: string;
+}
+
+export interface Badge {
+  id: string;
+  code: string;
+  name: string;
+  description?: string;
+  icon?: string;
+  tier: "bronze" | "silver" | "gold" | "platinum" | "legendary";
+  created_at: string;
+}
+
+export interface UserBadge {
+  user_id: string;
+  badge_id: string;
+  earned_at: string;
+}
+
+export interface Squad {
+  id: string;
+  name: string;
+  slug?: string;
+  description?: string;
+  access_type: "public" | "private" | "invite_only";
+  max_members: number;
+  avatar_url?: string;
+  created_by?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SquadMember {
+  id: string;
+  squad_id: string;
+  user_id: string;
+  role: "leader" | "co_lead" | "member";
+  joined_at: string;
+}
+
+export interface ProjectMember {
+  id: string;
+  project_id: string;
+  user_id: string;
+  role: "owner" | "maintainer" | "contributor";
+  joined_at: string;
+}
+
+export interface ProjectApplication {
+  id: string;
+  project_id: string;
+  user_id: string;
+  desired_role?: string;
+  pitch: string;
+  status: "pending" | "accepted" | "rejected" | "withdrawn";
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProjectTask {
+  id: string;
+  project_id: string;
+  assigned_to?: string;
+  title: string;
+  description?: string;
+  status: "todo" | "in_progress" | "review" | "done";
+  priority: "low" | "medium" | "high" | "critical";
+  due_date?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface InterviewFeedbackRelational {
+  id: string;
+  session_id: string;
+  overall_score?: number;
+  technical_accuracy_score?: number;
+  communication_clarity_score?: number;
+  strengths: string[];
+  improvements: string[];
+  detailed_summary?: string;
+  next_practice_advice?: string;
+  created_at: string;
+}
+
+// ============================================================================
+// DAILY HABIT LOOP INTERFACES (Canonical Gamification & Retention Engine)
+// ============================================================================
+
+export type HabitLevel = 1 | 2 | 3 | 4 | 5;
+export type HabitDifficulty = "beginner" | "intermediate" | "advanced";
+export type SquadGoalType = "dsa_mastery" | "faang_prep" | "aptitude_crack" | "gate_exam" | "full_stack";
+export type LeaderboardScope = "global" | "college" | "branch" | "squad";
+
+export interface HabitUserStats {
+  user_id: string;
+  total_xp: number;
+  level: HabitLevel;
+  current_streak: number;
+  longest_streak: number;
+  last_streak_date: string | null;
+  streak_freezes: number;
+  weekly_xp: number;
+  freeze_last_purchased_week?: string | null;
+  hide_from_global_leaderboard?: boolean;
+  updated_at?: string;
+}
+
+export interface HabitDailyChallenge {
+  id: string;
+  challenge_date: string; // YYYY-MM-DD
+  level: HabitDifficulty;
+  problem_id: string;
+  aptitude_question_ids: string[] | number[];
+  interview_question_id: string;
+  created_at?: string;
+}
+
+export interface HabitChallengeProgress {
+  user_id: string;
+  challenge_id: string;
+  items: {
+    dsa?: boolean;
+    apt_1?: boolean;
+    apt_2?: boolean;
+    apt_3?: boolean;
+    interview?: boolean;
+    [key: string]: boolean | undefined;
+  };
+  items_done: number; // 0 to 5
+  completed: boolean;
+  completed_at: string | null;
+}
+
+export interface StudySquad {
+  id: string;
+  name: string;
+  college_id?: string | null;
+  college_name?: string | null;
+  branch?: string | null;
+  graduation_year?: number | null;
+  goal_type: SquadGoalType;
+  weekly_target_xp: number;
+  invite_code: string;
+  squad_streak: number;
+  last_squad_streak_date?: string | null;
+  max_members: number;
+  created_by?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface StudySquadMember {
+  squad_id: string;
+  user_id: string;
+  role: "leader" | "member";
+  joined_at: string;
+  display_name?: string;
+  avatar_url?: string | null;
+  current_streak?: number;
+  weekly_xp?: number;
+}
+
+export interface StudySquadMessage {
+  id: string;
+  squad_id: string;
+  sender_id: string;
+  sender_name?: string;
+  sender_avatar?: string | null;
+  body: string;
+  is_system?: boolean;
+  created_at: string;
+}
+
+export interface LeaderboardEntry {
+  user_id: string;
+  display_name: string;
+  avatar_url?: string | null;
+  college_name?: string | null;
+  college_id?: string | null;
+  branch?: string | null;
+  weekly_xp: number;
+  current_streak: number;
+  level: number;
+  rank: number;
+}
+
+export interface HabitNotificationPrefs {
+  user_id: string;
+  streak_reminder: boolean;
+  squad_activity: boolean;
+  reminder_hour: number;
+  quiet_start: number;
+  quiet_end: number;
+  hide_from_global_leaderboard: boolean;
+  updated_at?: string;
+}
+
+
 

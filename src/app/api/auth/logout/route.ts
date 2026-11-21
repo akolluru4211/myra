@@ -32,6 +32,13 @@ export async function POST(req: NextRequest) {
       maxAge: 0,
       path: "/",
     });
+    response.cookies.set("edworld_auth", "", {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 0,
+      path: "/",
+    });
 
     return response;
   } catch (err: any) {
