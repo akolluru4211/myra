@@ -30,19 +30,39 @@ CREATE TABLE IF NOT EXISTS public.user_dob_records (
 -- ------------------------------------------------------------------------------
 -- 2. USER PROFILES & INTERESTS
 -- ------------------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS public.profiles (
-  user_id UUID PRIMARY KEY REFERENCES public.users(id) ON DELETE CASCADE,
-  username TEXT UNIQUE,
-  headline TEXT,
-  bio TEXT,
-  primary_goal TEXT,
-  is_public BOOLEAN DEFAULT FALSE
-);
+-- Ensure public.profiles is fully compatible whether created by 20260830000000_init_schema
+-- (which defines id UUID PRIMARY KEY REFERENCES auth.users(id)) or on a standalone run.
+-- Add user_id column if not present and backfill/sync with id.
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'profiles') THEN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'profiles' AND column_name = 'user_id') THEN
+      ALTER TABLE public.profiles ADD COLUMN user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE;
+      UPDATE public.profiles SET user_id = id WHERE user_id IS NULL;
+    END IF;
+  ELSE
+    CREATE TABLE public.profiles (
+      id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+      user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+      username TEXT UNIQUE,
+      headline TEXT,
+      bio TEXT,
+      primary_goal TEXT,
+      is_public BOOLEAN DEFAULT FALSE
+    );
+  END IF;
+END $$;
+
+CREATE INDEX IF NOT EXISTS idx_profiles_user_id ON public.profiles(user_id);
 
 CREATE TABLE IF NOT EXISTS public.user_interests (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
   interest_id TEXT NOT NULL,
+  self_level INT CHECK (self_level BETWEEN 0 AND 2),
+  effective_level INT CHECK (effective_level BETWEEN 0 AND 2),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (user_id, interest_id)
+);
   self_level INT CHECK (self_level BETWEEN 0 AND 2),
   effective_level INT CHECK (effective_level BETWEEN 0 AND 2),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
@@ -258,15 +278,17 @@ CREATE POLICY "users_insert_own" ON public.users
   FOR INSERT WITH CHECK (auth.uid() = id);
 
 -- 2. Profiles Policies
+DROP POLICY IF EXISTS "profiles_select_public_or_own" ON public.profiles;
 CREATE POLICY "profiles_select_public_or_own" ON public.profiles
   FOR SELECT USING (
-    user_id = auth.uid() OR
-    (is_public = TRUE AND EXISTS (SELECT 1 FROM public.users u WHERE u.id = public.profiles.user_id AND u.age_band = '18+')) OR
+    COALESCE(user_id, id) = auth.uid() OR
+    (is_public = TRUE AND EXISTS (SELECT 1 FROM public.users u WHERE u.id = COALESCE(public.profiles.user_id, public.profiles.id) AND u.age_band = '18+')) OR
     EXISTS (SELECT 1 FROM public.users u WHERE u.id = auth.uid() AND u.is_admin = TRUE)
   );
 
+DROP POLICY IF EXISTS "profiles_manage_own" ON public.profiles;
 CREATE POLICY "profiles_manage_own" ON public.profiles
-  FOR ALL USING (user_id = auth.uid());
+  FOR ALL USING (COALESCE(user_id, id) = auth.uid());
 
 -- 3. User Interests Policies
 CREATE POLICY "user_interests_manage_own" ON public.user_interests
@@ -417,13 +439,16 @@ BEGIN
   )
   ON CONFLICT (id) DO NOTHING;
 
-  INSERT INTO public.profiles (user_id, username, primary_goal)
+  INSERT INTO public.profiles (id, user_id, username, primary_goal)
   VALUES (
+    new.id,
     new.id,
     LOWER(REPLACE(COALESCE(new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'name', 'candidate'), ' ', '_')) || '_' || SUBSTRING(new.id::text, 1, 4),
     'Master technical interviews and build ATS-ready portfolio'
   )
-  ON CONFLICT (user_id) DO NOTHING;
+  ON CONFLICT (id) DO UPDATE SET
+    user_id = EXCLUDED.user_id,
+    username = COALESCE(public.profiles.username, EXCLUDED.username);
 
   RETURN NEW;
 END;
