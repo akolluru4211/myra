@@ -1,15 +1,16 @@
 -- ==============================================================================
--- EDWORLD CO � LIVE DATA TABLES, MCP ENGINE INTEGRATION & DATABASE SEEDING
+-- EDWORLD CO — LIVE DATA TABLES, MCP ENGINE INTEGRATION & DATABASE SEEDING
 -- ==============================================================================
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- 1. INTERVIEW QUESTIONS TABLE
+-- 1. INTERVIEW QUESTIONS TABLE HARDENING & BACKWARD COMPATIBILITY
+-- Ensure interview_questions table has all required columns and text ID compatibility
 CREATE TABLE IF NOT EXISTS public.interview_questions (
   id TEXT PRIMARY KEY,
   category TEXT NOT NULL,
   text TEXT NOT NULL,
-  difficulty_level INTEGER DEFAULT 0 CHECK (difficulty_level IN (0, 1, 2, 3)),
+  difficulty_level INTEGER DEFAULT 0,
   key_points JSONB DEFAULT '[]'::jsonb,
   suggested_duration_seconds INTEGER DEFAULT 120,
   is_active BOOLEAN DEFAULT TRUE,
@@ -17,13 +18,39 @@ CREATE TABLE IF NOT EXISTS public.interview_questions (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Ensure columns exist if table was created in an earlier migration with fewer columns
+ALTER TABLE public.interview_questions ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;
+ALTER TABLE public.interview_questions ADD COLUMN IF NOT EXISTS key_points JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE public.interview_questions ADD COLUMN IF NOT EXISTS suggested_duration_seconds INTEGER DEFAULT 120;
+ALTER TABLE public.interview_questions ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE public.interview_questions ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
+
+-- Ensure id column can store text slugs if originally declared UUID
+DO $$
+BEGIN
+  ALTER TABLE public.interview_questions ALTER COLUMN id TYPE TEXT;
+EXCEPTION WHEN OTHERS THEN
+  NULL;
+END $$;
+
+-- Relax difficulty_level check constraint to support levels 0, 1, 2, 3
+DO $$
+BEGIN
+  ALTER TABLE public.interview_questions DROP CONSTRAINT IF EXISTS interview_questions_difficulty_level_check;
+  ALTER TABLE public.interview_questions ADD CONSTRAINT interview_questions_difficulty_level_check CHECK (difficulty_level IN (0, 1, 2, 3));
+EXCEPTION WHEN OTHERS THEN
+  NULL;
+END $$;
+
 ALTER TABLE public.interview_questions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Allow public read on active interview questions" ON public.interview_questions;
 CREATE POLICY "Allow public read on active interview questions"
 ON public.interview_questions FOR SELECT
 TO anon, authenticated
 USING (is_active = true);
 
+DROP POLICY IF EXISTS "Allow admin manage on interview questions" ON public.interview_questions;
 CREATE POLICY "Allow admin manage on interview questions"
 ON public.interview_questions FOR ALL
 TO authenticated
@@ -54,15 +81,28 @@ ON CONFLICT (id) DO UPDATE SET
   suggested_duration_seconds = EXCLUDED.suggested_duration_seconds,
   updated_at = NOW();
 
--- 3. SEED LIVE PROBLEMS
+-- 3. SEED LIVE PROBLEMS & RELAX CHECKS
+-- Ensure category and difficulty checks accommodate modern tracks (AI, engineering, sustainability, levels 0-4)
+DO $$
+BEGIN
+  ALTER TABLE public.problems DROP CONSTRAINT IF EXISTS problems_category_check;
+  ALTER TABLE public.problems DROP CONSTRAINT IF EXISTS problems_difficulty_level_check;
+  ALTER TABLE public.problems ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;
+  ALTER TABLE public.problems ADD COLUMN IF NOT EXISTS min_age_band TEXT DEFAULT '13-15';
+  ALTER TABLE public.problems ADD COLUMN IF NOT EXISTS last_reviewed_at TIMESTAMPTZ DEFAULT NOW();
+EXCEPTION WHEN OTHERS THEN
+  NULL;
+END $$;
+
+-- Seed problems using deterministic UUIDs compatible with UUID primary keys and text lookup
 INSERT INTO public.problems (id, title, description, category, difficulty_level, min_age_band, interest_tags, is_active, created_at, last_reviewed_at)
 VALUES
-  ('prob-torchleet-lora', 'Implement LoRA (Low-Rank Adaptation) in PyTorch', 'Implement a custom nn.Module for LoRA linear layers with trainable A and B rank decomposition matrices, alpha scaling factor, and zero-init initialization.', 'ai', 2, '18+', '["pytorch", "deep-learning", "transformers", "lora", "meta", "openai", "anthropic"]'::jsonb, true, NOW(), NOW()),
-  ('prob-torchleet-kvcache', 'Implement KV Cache for LLM Token Generation', 'Implement an efficient Key-Value cache in PyTorch that avoids quadratic re-computation of attention keys and values across autoregressive generation steps.', 'ai', 2, '18+', '["pytorch", "llm-inference", "kv-cache", "anthropic", "openai", "perplexity"]'::jsonb, true, NOW(), NOW()),
-  ('prob-torchleet-dpo', 'Direct Preference Optimization (DPO) Loss', 'Implement the closed-form DPO loss function in PyTorch comparing policy model log-probabilities against reference model log-probabilities on chosen vs rejected pairs.', 'ai', 3, '18+', '["pytorch", "rlhf", "dpo", "alignment", "deepmind", "openai"]'::jsonb, true, NOW(), NOW()),
-  ('prob-torchleet-grpo', 'GRPO (Group Relative Policy Optimization - DeepSeek-R1)', 'Implement group-relative policy optimization loss with group reward normalization and clipped surrogate objective for reasoning models.', 'ai', 4, '18+', '["pytorch", "reasoning", "deepseek", "grpo", "rl"]'::jsonb, true, NOW(), NOW()),
-  ('prob-torchleet-triton-softmax', 'Fused Softmax Kernel in Triton', 'Write a high-performance fused softmax GPU kernel in OpenAI Triton with row-wise online normalization and SRAM shared memory caching.', 'engineering', 4, '18+', '["triton", "gpu-systems", "cuda", "nvidia", "xai"]'::jsonb, true, NOW(), NOW()),
-  ('prob-junior-eco-tracker', 'Eco-Friendly Campus Energy Optimizer', 'Design an automated sensor dashboard to detect unnecessary classroom lighting and calculate daily kilowatt savings.', 'sustainability', 1, '13-15', '["sustainability", "climate", "iot"]'::jsonb, true, NOW(), NOW())
+  ('c1000001-0000-4000-8000-000000000001', 'Implement LoRA (Low-Rank Adaptation) in PyTorch', 'Implement a custom nn.Module for LoRA linear layers with trainable A and B rank decomposition matrices, alpha scaling factor, and zero-init initialization.', 'ai', 2, '18+', ARRAY['pytorch', 'deep-learning', 'transformers', 'lora', 'meta', 'openai', 'anthropic'], true, NOW(), NOW()),
+  ('c1000001-0000-4000-8000-000000000002', 'Implement KV Cache for LLM Token Generation', 'Implement an efficient Key-Value cache in PyTorch that avoids quadratic re-computation of attention keys and values across autoregressive generation steps.', 'ai', 2, '18+', ARRAY['pytorch', 'llm-inference', 'kv-cache', 'anthropic', 'openai', 'perplexity'], true, NOW(), NOW()),
+  ('c1000001-0000-4000-8000-000000000003', 'Direct Preference Optimization (DPO) Loss', 'Implement the closed-form DPO loss function in PyTorch comparing policy model log-probabilities against reference model log-probabilities on chosen vs rejected pairs.', 'ai', 3, '18+', ARRAY['pytorch', 'rlhf', 'dpo', 'alignment', 'deepmind', 'openai'], true, NOW(), NOW()),
+  ('c1000001-0000-4000-8000-000000000004', 'GRPO (Group Relative Policy Optimization - DeepSeek-R1)', 'Implement group-relative policy optimization loss with group reward normalization and clipped surrogate objective for reasoning models.', 'ai', 4, '18+', ARRAY['pytorch', 'reasoning', 'deepseek', 'grpo', 'rl'], true, NOW(), NOW()),
+  ('c1000001-0000-4000-8000-000000000005', 'Fused Softmax Kernel in Triton', 'Write a high-performance fused softmax GPU kernel in OpenAI Triton with row-wise online normalization and SRAM shared memory caching.', 'engineering', 4, '18+', ARRAY['triton', 'gpu-systems', 'cuda', 'nvidia', 'xai'], true, NOW(), NOW()),
+  ('c1000001-0000-4000-8000-000000000006', 'Eco-Friendly Campus Energy Optimizer', 'Design an automated sensor dashboard to detect unnecessary classroom lighting and calculate daily kilowatt savings.', 'sustainability', 1, '13-15', ARRAY['sustainability', 'climate', 'iot'], true, NOW(), NOW())
 ON CONFLICT (id) DO UPDATE SET
   title = EXCLUDED.title,
   description = EXCLUDED.description,
@@ -70,12 +110,21 @@ ON CONFLICT (id) DO UPDATE SET
   last_reviewed_at = NOW();
 
 -- 4. SEED LIVE VERIFIED JOBS
+-- Prepare jobs table for platform seed data (allow null posted_by and application_deadline defaults)
+DO $$
+BEGIN
+  ALTER TABLE public.jobs ALTER COLUMN posted_by DROP NOT NULL;
+  ALTER TABLE public.jobs ALTER COLUMN application_deadline DROP NOT NULL;
+EXCEPTION WHEN OTHERS THEN
+  NULL;
+END $$;
+
 INSERT INTO public.jobs (id, title, company, description, location, type, skills_required, salary_range, is_active, moderation_status, created_at)
 VALUES
-  ('job-live-001', 'Full-Stack Software Engineer (Next.js & Supabase)', 'NexCorp Technologies', 'Join our core platform engineering team building scalable real-time applications with Next.js App Router, Supabase Postgres, and TypeScript.', 'Remote (India / Global)', 'full_time', '["React", "Next.js", "TypeScript", "PostgreSQL", "Supabase", "REST APIs"]'::jsonb, '?14,00,000 - ?22,00,000 / year', true, 'approved', NOW()),
-  ('job-live-002', 'AI & Machine Learning Engineer', 'Aether Dynamics', 'Develop and optimize LLM fine-tuning, RAG retrieval pipelines, and high-throughput model inference infrastructure.', 'Bengaluru, India (Hybrid)', 'full_time', '["Python", "PyTorch", "Transformers", "RAG", "FastAPI", "Docker"]'::jsonb, '?18,00,000 - ?30,00,000 / year', true, 'approved', NOW()),
-  ('job-live-003', 'Junior Frontend Developer Intern', 'PixelForge Interactive', 'Exciting 6-month paid engineering internship working on responsive UI components, Tailwind styling, and accessibility optimization.', 'Hyderabad, India (Remote Available)', 'internship', '["JavaScript", "React", "HTML5", "CSS3", "Tailwind CSS", "Git"]'::jsonb, '?35,000 - ?50,000 / month', true, 'approved', NOW()),
-  ('job-live-004', 'Cloud Infrastructure & DevOps Engineer', 'ScaleGrid Systems', 'Maintain Kubernetes clusters, automate Terraform provisioning, and optimize CI/CD pipelines across AWS and GCP environments.', 'Pune, India (Hybrid)', 'full_time', '["Kubernetes", "Docker", "AWS", "Terraform", "CI/CD", "Linux"]'::jsonb, '?16,00,000 - ?26,00,000 / year', true, 'approved', NOW())
+  ('d1000001-0000-4000-8000-000000000001', 'Full-Stack Software Engineer (Next.js & Supabase)', 'NexCorp Technologies', 'Join our core platform engineering team building scalable real-time applications with Next.js App Router, Supabase Postgres, and TypeScript.', 'Remote (India / Global)', 'full_time', '["React", "Next.js", "TypeScript", "PostgreSQL", "Supabase", "REST APIs"]'::jsonb, '₹14,00,000 - ₹22,00,000 / year', true, 'approved', NOW()),
+  ('d1000001-0000-4000-8000-000000000002', 'AI & Machine Learning Engineer', 'Aether Dynamics', 'Develop and optimize LLM fine-tuning, RAG retrieval pipelines, and high-throughput model inference infrastructure.', 'Bengaluru, India (Hybrid)', 'full_time', '["Python", "PyTorch", "Transformers", "RAG", "FastAPI", "Docker"]'::jsonb, '₹18,00,000 - ₹30,00,000 / year', true, 'approved', NOW()),
+  ('d1000001-0000-4000-8000-000000000003', 'Junior Frontend Developer Intern', 'PixelForge Interactive', 'Exciting 6-month paid engineering internship working on responsive UI components, Tailwind styling, and accessibility optimization.', 'Hyderabad, India (Remote Available)', 'internship', '["JavaScript", "React", "HTML5", "CSS3", "Tailwind CSS", "Git"]'::jsonb, '₹35,000 - ₹50,000 / month', true, 'approved', NOW()),
+  ('d1000001-0000-4000-8000-000000000004', 'Cloud Infrastructure & DevOps Engineer', 'ScaleGrid Systems', 'Maintain Kubernetes clusters, automate Terraform provisioning, and optimize CI/CD pipelines across AWS and GCP environments.', 'Pune, India (Hybrid)', 'full_time', '["Kubernetes", "Docker", "AWS", "Terraform", "CI/CD", "Linux"]'::jsonb, '₹16,00,000 - ₹26,00,000 / year', true, 'approved', NOW())
 ON CONFLICT (id) DO UPDATE SET
   title = EXCLUDED.title,
   company = EXCLUDED.company,

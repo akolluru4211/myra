@@ -215,6 +215,40 @@ export default function InterviewsHubPage() {
           </div>
         </div>
 
+        {/* Primary Hero Action: Start Text Practice (No resume, no mic, no camera needed) */}
+        <div className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-[0_10px_30px_rgba(80,90,130,0.06)] relative overflow-hidden">
+          <div className="space-y-2 max-w-2xl">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 uppercase tracking-wider font-display">
+                Zero Setup &bull; Text Practice
+              </span>
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold text-neutral-600 bg-neutral-100 border border-neutral-200">
+                No Resume Needed
+              </span>
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold text-neutral-600 bg-neutral-100 border border-neutral-200 hidden sm:inline">
+                No Mic / Camera Required
+              </span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-black text-black tracking-tight font-display">
+              Practice interview questions at your own pace
+            </h2>
+            <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed">
+              Answer 5 targeted technical or behavioral questions from 46 sectors. Get evaluated immediately on relevance, clarity, and role-specific depth with structured STAR feedback.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full md:w-auto">
+            <Link
+              href={`/interviews/swe?mode=text&sector=${encodeURIComponent(selectedSector)}`}
+              className="px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-600/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <BookOpen className="w-4 h-4 text-white" />
+              <span>Start text practice</span>
+              <ArrowRight className="w-4 h-4 text-white" />
+            </Link>
+          </div>
+        </div>
+
         {/* 1,000 Questions Bank & 46 Sectors Explorer */}
         <div className="p-6 sm:p-8 bg-white border border-slate-100/80 rounded-3xl space-y-5 shadow-[0_10px_30px_rgba(80,90,130,0.06)]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
@@ -527,6 +561,15 @@ export default function InterviewsHubPage() {
                         <div className="space-y-1.5 flex-1 min-w-0">
                           <div className="flex flex-wrap items-center gap-2">
                             <span className="text-xs font-semibold text-slate-900">{session.category}</span>
+                            {(session.metrics as any)?.format === "text" ? (
+                              <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                Text Practice
+                              </span>
+                            ) : (
+                              <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                Voice Studio
+                              </span>
+                            )}
                             <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full border ${getDifficultyBadgeColor(session.difficultyLevel)}`}>
                               Level {session.difficultyLevel}
                             </span>

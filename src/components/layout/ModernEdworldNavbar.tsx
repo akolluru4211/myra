@@ -350,7 +350,7 @@ export default function ModernEdworldNavbar() {
         ref={drawerRef}
         aria-label="Right Side Navigation Menu"
         className={cn(
-          "fixed inset-y-0 right-0 z-50 w-80 sm:w-96 bg-white border-l border-slate-200 shadow-2xl flex flex-col transition-transform duration-300 ease-out select-none",
+          "fixed inset-y-0 right-0 z-50 w-full max-w-[calc(100vw-2rem)] sm:w-96 sm:max-w-md bg-white border-l border-slate-200 shadow-2xl flex flex-col transition-transform duration-300 ease-out select-none",
           isRightDrawerOpen ? "translate-x-0" : "translate-x-full pointer-events-none"
         )}
       >

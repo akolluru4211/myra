@@ -6,6 +6,8 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Sparkles,
+  Mail,
+  GraduationCap,
   ArrowRight,
   Flame,
   Target,
@@ -154,6 +156,22 @@ export default function DashboardPage() {
               >
                 <span>Mock Interviews</span>
                 <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+              <Link
+                href="/edmail"
+                className="px-4 py-2.5 text-xs sm:text-sm font-bold rounded-2xl bg-indigo-50 hover:bg-indigo-100/80 border border-indigo-200/80 text-indigo-900 flex items-center gap-2 transition-all cursor-pointer shadow-2xs"
+                title="Open or Activate EdMail Student Mailbox"
+              >
+                <Mail className="w-4 h-4 text-[#5C59E8]" />
+                <span>EdMail</span>
+              </Link>
+              <Link
+                href="/student-record"
+                className="px-4 py-2.5 text-xs sm:text-sm font-bold rounded-2xl bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200/80 text-emerald-900 flex items-center gap-2 transition-all cursor-pointer shadow-2xs"
+                title="Open Private Student Record: Marks, Events, Notes & Certificates"
+              >
+                <GraduationCap className="w-4 h-4 text-emerald-600" />
+                <span>Student Record</span>
               </Link>
             </div>
           </div>

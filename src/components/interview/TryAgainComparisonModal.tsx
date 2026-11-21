@@ -32,8 +32,8 @@ export default function TryAgainComparisonModal({
   const { attempt1, attempt2, deltas, overallVerdict } = comparison;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="bg-slate-900 rounded-3xl max-w-2xl w-full border border-slate-800 shadow-2xl p-6 sm:p-8 space-y-6 animate-in zoom-in-95 text-white">
+    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <div className="bg-slate-900 rounded-3xl max-w-2xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto border border-slate-800 shadow-2xl p-5 sm:p-8 space-y-5 animate-in zoom-in-95 text-white">
         
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-4">

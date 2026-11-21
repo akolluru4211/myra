@@ -159,18 +159,24 @@ TRANSCRIPTION DIRECTIVES:
       }
     }
 
-    // 3. Fallback when no keys are configured (mock safe response for test environments)
+    // 3. Fallback when vision providers are unavailable or fail to extract text
     return NextResponse.json({
-      success: true,
-      text: "[OCR Engine Active]: Visual capture received. To perform live neural transcription, set GEMINI_API_KEY or OPENAI_API_KEY in environment variables.",
+      success: false,
+      error: "Unable to read text from the provided image clearly. Please retake the photo with better lighting or focus, or paste the question text directly into the chat.",
       model: "EdWorld Neural OCR Engine (Standby)",
-      linesCount: 1,
-      confidence: 1.0,
-    });
+      retryable: true,
+      text: "",
+      linesCount: 0,
+      confidence: 0.0,
+    }, { status: 422 });
   } catch (err: any) {
     console.error("OCR API Fatal Error:", err);
     return NextResponse.json(
-      { success: false, error: err?.message || "Internal server error processing OCR image." },
+      {
+        success: false,
+        error: "Image processing encountered a temporary error. Please try uploading the image again or paste the text directly.",
+        retryable: true
+      },
       { status: 500 }
     );
   }

@@ -107,7 +107,7 @@ export function MobileBottomNav({
     <nav
       aria-label="Mobile Bottom Navigation"
       className={cn(
-        "lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-[#E5E7EB] px-2 py-1 flex items-center justify-around shadow-sm select-none",
+        "lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-[#E5E7EB] px-2 py-1 flex items-center justify-around shadow-sm select-none safe-bottom",
         className
       )}
     >

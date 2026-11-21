@@ -553,7 +553,7 @@ export default function MediaRecorderStudio({
 
           {/* Candidate Webcam Stream or Audio Active Card */}
           {!useKeyboardMode && !isAudioOnly && stream ? (
-            <div className="relative w-full h-44 sm:h-52 rounded-2xl overflow-hidden border border-white/10 bg-black/60 shadow-inner my-2">
+            <div className="relative w-full aspect-video max-h-56 rounded-2xl overflow-hidden border border-white/10 bg-black/60 shadow-inner my-2">
               <video
                 ref={videoRef}
                 autoPlay

@@ -444,12 +444,12 @@ export default function MyraChatbot() {
   };
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 font-sans">
+    <div className="fixed bottom-4 right-4 sm:bottom-5 sm:right-5 z-50 font-sans safe-bottom">
       {/* Floating Trigger Button (when closed) */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-[#0C101A] hover:bg-[#121624] text-white border border-white/15 shadow-2xl transition-all hover:scale-105 active:scale-95 cursor-pointer group"
+          className="flex items-center gap-2.5 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full bg-[#0C101A] hover:bg-[#121624] text-white border border-white/15 shadow-2xl transition-all hover:scale-105 active:scale-95 cursor-pointer group"
           aria-label="Open Myra AI Chat"
         >
           <div className="relative w-6 h-6 rounded-full overflow-hidden border border-white/20 shrink-0">
@@ -470,8 +470,8 @@ export default function MyraChatbot() {
         <div
           className={`relative bg-[#0C101A] text-white border border-white/10 rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-200 animate-in fade-in slide-in-from-bottom-3 ${
             isExpanded
-              ? "w-[calc(100vw-2rem)] sm:w-[680px] h-[calc(100dvh-4rem)] max-h-[880px]"
-              : "w-[calc(100vw-1.5rem)] sm:w-[440px] h-[calc(100dvh-5rem)] sm:h-[640px] max-h-[82dvh]"
+              ? "w-[calc(100vw-1.5rem)] sm:w-[680px] h-[calc(100dvh-3.5rem)] max-h-[880px]"
+              : "w-[calc(100vw-1.5rem)] sm:w-[440px] h-[calc(100dvh-4.5rem)] sm:h-[640px] max-h-[82dvh]"
           }`}
         >
           {/* ChatGPT Sleek Minimalist Header */}
@@ -738,7 +738,7 @@ export default function MyraChatbot() {
             </form>
 
             <p className="text-[10px] text-center text-slate-500 mt-2 font-normal">
-              Myra can make mistakes. Verify important career and code info.
+              Myra is an AI assistant. Uploaded images and text are processed securely in memory and never retained for model training.
             </p>
           </div>
         </div>

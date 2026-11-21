@@ -3,7 +3,6 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Sparkles } from "lucide-react";
 
 interface FigmaAuthLayoutProps {
   children: React.ReactNode;
@@ -19,71 +18,73 @@ export default function FigmaAuthLayout({
   activeTab,
 }: FigmaAuthLayoutProps) {
   return (
-    <div className="min-h-screen w-full text-slate-100 flex flex-col justify-center py-8 sm:py-14 px-4 sm:px-6 lg:px-8 font-sans selection:bg-[#4F46E5] selection:text-white relative">
+    <div className="min-h-screen w-full bg-[#F4F5FA] text-slate-900 flex flex-col justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8 font-sans selection:bg-[#5C59E8] selection:text-white relative">
       
-      {/* Centered 3D Spatial Tactile Auth Card */}
-      <div className="w-full max-w-xl mx-auto tactile-chassis bg-[#0C101A]/95 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-[0_25px_60px_rgba(0,0,0,0.85)] overflow-hidden animate-in fade-in duration-300 text-white">
+      {/* Centered Structured Student Dashboard-Themed Card */}
+      <div className="w-full max-w-xl mx-auto bg-white border border-slate-200/90 rounded-3xl shadow-[0_10px_35px_rgba(80,90,130,0.08)] overflow-hidden animate-in fade-in duration-200">
         
-        {/* Top Mini Brand Navigation */}
-        <div className="px-6 sm:px-8 pt-6 pb-4 flex items-center justify-between border-b border-white/10 bg-[#0F1422]/80 backdrop-blur-xl">
+        {/* Top Header / Branding & Toggle Bar */}
+        <div className="px-6 sm:px-8 pt-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-[#F8F9FD]">
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="relative w-9 h-9 rounded-xl metallic-icon-badge metallic-indigo !p-1 group-hover:scale-105 transition-transform shrink-0">
+            <div className="relative w-8 h-8 rounded-xl overflow-hidden bg-black flex items-center justify-center shadow-xs border border-slate-300 group-hover:scale-105 transition-transform shrink-0">
               <Image
                 src="/images/edworld-mark.png"
-                alt="EdWorld Co. Mark"
+                alt="Edworld Logo"
                 width={32}
                 height={32}
-                className="w-full h-full object-contain rounded-lg"
+                className="w-full h-full object-cover"
+                priority
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-display font-black text-base sm:text-lg text-white leading-none">
-                EdWorld <span className="text-emerald-400">Co.</span>
-              </span>
-              <span className="font-semibold text-[10.5px] uppercase tracking-wider text-slate-400 mt-1 flex items-center gap-1.5">
-                <span className="text-slate-300">Learn</span>
-                <span className="text-emerald-400 font-black">•</span>
-                <span className="text-slate-300">Grow</span>
-                <span className="text-cyan-400 font-black">•</span>
-                <span className="text-slate-300">Build</span>
+              <div className="flex items-center gap-1.5 leading-none">
+                <span className="font-extrabold text-base text-slate-900 font-display">
+                  Edworld
+                </span>
+                <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700">
+                  Co.
+                </span>
+              </div>
+              <span className="font-semibold text-[10px] uppercase tracking-wider text-slate-500 mt-1">
+                Student Career OS
               </span>
             </div>
           </Link>
 
           {/* Quick Switcher Pills */}
-          <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-black/50 border border-white/10 text-xs font-semibold shadow-inner">
+          <div className="flex items-center gap-1 p-1 rounded-2xl bg-slate-200/70 border border-slate-200 text-xs font-semibold">
             <Link
               href="/auth/login"
-              className={`px-4 py-1.5 rounded-xl transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer ${
                 activeTab === "login"
-                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-md shadow-indigo-500/25"
-                  : "bg-transparent text-slate-400 hover:text-white"
+                  ? "bg-white text-slate-900 font-bold shadow-xs border border-slate-200/60"
+                  : "bg-transparent text-slate-600 hover:text-slate-900"
               }`}
             >
               Sign In
             </Link>
             <Link
               href="/auth/signup"
-              className={`px-4 py-1.5 rounded-xl transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer ${
                 activeTab === "signup"
-                  ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold shadow-md shadow-emerald-500/25"
-                  : "bg-transparent text-slate-400 hover:text-white"
+                  ? "bg-[#5C59E8] text-white font-bold shadow-xs"
+                  : "bg-transparent text-slate-600 hover:text-slate-900"
               }`}
             >
-              Start Free
+              Sign Up
             </Link>
           </div>
         </div>
 
         {/* Card Body: Form Canvas */}
-        <div className="p-6 sm:p-10 space-y-6">
+        <div className="p-6 sm:p-8 space-y-6">
           
           {/* Form Header */}
           <div className="space-y-1.5 text-center sm:text-left">
-            <h1 className="font-display font-black text-2xl sm:text-3xl text-white tracking-tight">
+            <h1 className="font-display font-black text-2xl sm:text-3xl text-slate-900 tracking-tight">
               {title}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
               {subtitle}
             </p>
           </div>

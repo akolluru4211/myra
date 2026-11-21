@@ -48,17 +48,21 @@ ALTER TABLE public.problem_solutions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.solution_feedback ENABLE ROW LEVEL SECURITY;
 
 -- Problems: Active problems readable by authenticated users
+DROP POLICY IF EXISTS "problems_read_active" ON public.problems;
 CREATE POLICY "problems_read_active" ON public.problems
   FOR SELECT USING (is_active = TRUE OR EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND is_admin = TRUE));
 
+DROP POLICY IF EXISTS "problems_admin_all" ON public.problems;
 CREATE POLICY "problems_admin_all" ON public.problems
   FOR ALL USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND is_admin = TRUE));
 
 -- Problem Solutions: Owner can read/write own solutions
+DROP POLICY IF EXISTS "solutions_owner_all" ON public.problem_solutions;
 CREATE POLICY "solutions_owner_all" ON public.problem_solutions
   FOR ALL USING (user_id = auth.uid());
 
 -- Problem Solutions: Peers can read ONLY approved classroom/public solutions (Pending is NEVER leaked)
+DROP POLICY IF EXISTS "solutions_peer_approved_read" ON public.problem_solutions;
 CREATE POLICY "solutions_peer_approved_read" ON public.problem_solutions
   FOR SELECT USING (
     (visibility IN ('classroom', 'public') AND moderation_status = 'approved') OR
@@ -66,6 +70,7 @@ CREATE POLICY "solutions_peer_approved_read" ON public.problem_solutions
   );
 
 -- Solution Feedback: Only owner of solution, author of feedback, or admin can read
+DROP POLICY IF EXISTS "feedback_authorized_read" ON public.solution_feedback;
 CREATE POLICY "feedback_authorized_read" ON public.solution_feedback
   FOR SELECT USING (
     given_by = auth.uid() OR
@@ -73,14 +78,18 @@ CREATE POLICY "feedback_authorized_read" ON public.solution_feedback
     EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND is_admin = TRUE)
   );
 
+DROP POLICY IF EXISTS "feedback_authorized_insert" ON public.solution_feedback;
 CREATE POLICY "feedback_authorized_insert" ON public.solution_feedback
   FOR INSERT WITH CHECK (
     given_by = auth.uid() AND (
       EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND (is_admin = TRUE OR is_teacher = TRUE)) OR
       EXISTS (
-        SELECT 1 FROM public.mentor_connections mc
-        JOIN public.problem_solutions ps ON ps.user_id = mc.mentee_id
-        WHERE ps.id = solution_id AND mc.mentor_id = auth.uid() AND mc.status = 'accepted'
+        SELECT 1 FROM public.connections c
+        JOIN public.problem_solutions ps ON (ps.user_id = c.requester_id OR ps.user_id = c.recipient_id)
+        WHERE ps.id = solution_id
+          AND ((c.requester_id = auth.uid() AND c.recipient_id = ps.user_id) OR (c.recipient_id = auth.uid() AND c.requester_id = ps.user_id))
+          AND (c.type = 'mentorship' OR EXISTS (SELECT 1 FROM public.users u WHERE u.id = auth.uid() AND u.is_mentor = TRUE))
+          AND c.status = 'accepted'
       )
     )
   );

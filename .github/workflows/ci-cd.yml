@@ -61,33 +61,45 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: 1. Unit Tests (Scoring, Myra Allowlist, Entitlements, Age Band)
+      - name: 1. Supabase Local Migration & Clean Reset Verification
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Verify Clean Supabase DB Reset & Migration Replay
+        run: |
+          supabase start
+          supabase db reset --local
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: 2. Unit Tests (Scoring, Myra Allowlist, Entitlements, Age Band, DB RLS)
         run: |
           node test/unit/scoring_logic.test.js
           node test/unit/myra_tool_registry.test.js
+          node test/unit/database_migration_rls.test.mjs
           node test/unit/age_band.test.js
           node test/unit/effective_level.test.js
           node test/unit/entitlements.test.js
           node test/unit/razorpay_signatures.test.js
           node test/unit/gamification_idempotency.test.js
 
-      - name: 2. Integration Tests (Auth Onboarding, RLS Enforcement, Razorpay HMAC, Full Pipeline)
+      - name: 3. Integration Tests (Auth Onboarding, RLS Enforcement, Razorpay HMAC, Full Pipeline)
         run: |
           node test/integration/auth_onboarding_flow.test.js
           node test/integration/rls_enforcement.test.js
           node test/integration/razorpay_verification.test.js
           node test/integration/pipeline_end_to_end.test.js
 
-      - name: 3. Security Regression Suite
+      - name: 4. Security Regression Suite
         run: node test/security/security_regression_suite.test.js
 
-      - name: 4. Critical User Journeys (E2E)
+      - name: 5. Critical User Journeys (E2E)
         run: node test/e2e/critical_user_journeys.test.js
 
-      - name: 5. Database Query & Performance Scan
+      - name: 6. Database Query & Performance Scan
         run: node scripts/verify_db_query_performance.js
 
-      - name: 6. Production Next.js Build Verification
+      - name: 7. Production Next.js Build Verification
         run: npm run build
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://wgyscapdywroefsjenno.supabase.co' }}

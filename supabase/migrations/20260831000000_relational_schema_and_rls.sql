@@ -63,11 +63,6 @@ CREATE TABLE IF NOT EXISTS public.user_interests (
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE (user_id, interest_id)
 );
-  self_level INT CHECK (self_level BETWEEN 0 AND 2),
-  effective_level INT CHECK (effective_level BETWEEN 0 AND 2),
-  updated_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE (user_id, interest_id)
-);
 
 -- ------------------------------------------------------------------------------
 -- 3. CONSENTS (DPDP Act & Minor Safety)

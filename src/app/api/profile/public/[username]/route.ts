@@ -146,7 +146,7 @@ export async function GET(
     // 4. Public Student Portfolios are open and accessible to all peers and recruiters
     // Everyone on the network can view public showcase portfolios.
 
-    // 5. Fetch verified public projects
+    // 5. Fetch verified public projects & student record published projects
     let projects: any[] = [];
     if (targetUserId) {
       try {
@@ -156,10 +156,35 @@ export async function GET(
           .eq("user_id", targetUserId)
           .order("created_at", { ascending: false });
         if (pData) projects = pData;
+
+        // Also fetch published projects from student_projects
+        const { data: srProjects } = await supabase
+          .from("student_projects")
+          .select("id, title, description, github_url, live_url, tech_stack, is_published, published_fields, created_at")
+          .eq("user_id", targetUserId)
+          .eq("is_published", true)
+          .order("created_at", { ascending: false });
+
+        if (srProjects && srProjects.length > 0) {
+          const formattedSr = srProjects.map((p) => {
+            const fields = p.published_fields || {};
+            return {
+              id: p.id,
+              title: p.title,
+              description: fields.description !== false ? p.description : "",
+              githubUrl: fields.github_url !== false ? p.github_url : null,
+              liveUrl: fields.live_url !== false ? p.live_url : null,
+              tags: fields.tech_stack !== false ? (p.tech_stack || []) : [],
+              isStudentRecord: true,
+              created_at: p.created_at,
+            };
+          });
+          projects = [...projects, ...formattedSr];
+        }
       } catch (_) {}
     }
 
-    // 6. Fetch verified certifications
+    // 6. Fetch verified certifications & student record published certificates
     let certs: any[] = [];
     if (targetUserId) {
       try {
@@ -169,6 +194,29 @@ export async function GET(
           .eq("user_id", targetUserId)
           .order("created_at", { ascending: false });
         if (cData) certs = cData;
+
+        // Also fetch published certificates from student_certificates
+        const { data: srCerts } = await supabase
+          .from("student_certificates")
+          .select("id, title, issuer, issue_date, credential_id, verification_url, is_verified, is_published, created_at")
+          .eq("user_id", targetUserId)
+          .eq("is_published", true)
+          .order("created_at", { ascending: false });
+
+        if (srCerts && srCerts.length > 0) {
+          const formattedCerts = srCerts.map((c) => ({
+            id: c.id,
+            title: c.title,
+            issuer: c.issuer,
+            issueDate: c.issue_date,
+            credentialId: c.credential_id,
+            verificationUrl: c.verification_url,
+            isVerified: c.is_verified,
+            isStudentRecord: true,
+            created_at: c.created_at,
+          }));
+          certs = [...certs, ...formattedCerts];
+        }
       } catch (_) {}
     }
 

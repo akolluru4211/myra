@@ -193,7 +193,7 @@ export default function StudentPortfolioViewPage() {
             <FolderGit2 className="w-8 h-8 text-slate-500 mx-auto" />
             <h3 className="text-sm font-bold text-white">No projects published yet</h3>
             <p className="text-xs text-slate-400 max-w-sm mx-auto font-normal">
-              Projects and repositories verified through EdBuild and DSA arenas will appear here automatically.
+              Projects and repositories verified through EdBuild and Student Record will appear here automatically.
             </p>
           </div>
         ) : (
@@ -209,7 +209,7 @@ export default function StudentPortfolioViewPage() {
                       {proj.title}
                     </h3>
                     <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[10px] font-mono">
-                      Verified
+                      {proj.isStudentRecord ? "Portfolio Evidence" : "Verified"}
                     </span>
                   </div>
                   {proj.description && (
@@ -217,12 +217,21 @@ export default function StudentPortfolioViewPage() {
                       {proj.description}
                     </p>
                   )}
+                  {proj.tags && proj.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 pt-1">
+                      {proj.tags.map((t: string, i: number) => (
+                        <span key={i} className="text-[10px] px-2 py-0.5 rounded-md bg-white/5 text-slate-400 border border-white/5 font-mono">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2.5 pt-2 border-t border-white/10">
-                  {proj.live_url && (
+                  {proj.live_url || proj.liveUrl ? (
                     <a
-                      href={proj.live_url}
+                      href={proj.live_url || proj.liveUrl}
                       target="_blank"
                       rel="noreferrer"
                       className="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1 transition-all"
@@ -230,10 +239,10 @@ export default function StudentPortfolioViewPage() {
                       <span>Live Demo</span>
                       <ExternalLink className="w-3 h-3" />
                     </a>
-                  )}
-                  {proj.github_url && (
+                  ) : null}
+                  {proj.github_url || proj.githubUrl ? (
                     <a
-                      href={proj.github_url}
+                      href={proj.github_url || proj.githubUrl}
                       target="_blank"
                       rel="noreferrer"
                       className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white font-semibold text-xs flex items-center gap-1 transition-colors border border-white/10"
@@ -241,13 +250,65 @@ export default function StudentPortfolioViewPage() {
                       <Github className="w-3.5 h-3.5" />
                       <span>Source Code</span>
                     </a>
-                  )}
+                  ) : null}
                 </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Certifications Section */}
+      {profile?.certifications && profile.certifications.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold font-display text-white flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-emerald-400" />
+              <span>Verified Credentials &amp; Certifications ({profile.certifications.length})</span>
+            </h2>
+            <span className="text-xs text-slate-400 font-mono">Academic &amp; Professional Proof</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {profile.certifications.map((cert: any) => (
+              <div
+                key={cert.id}
+                className="p-5 rounded-3xl bg-[#0C101A] border border-white/10 hover:border-emerald-500/40 transition-all flex items-center justify-between gap-4"
+              >
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-bold text-white text-sm font-display">{cert.title}</h3>
+                    <span
+                      className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${
+                        cert.isVerified
+                          ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                          : "bg-white/5 text-slate-400 border-white/10"
+                      }`}
+                    >
+                      {cert.isVerified ? "Institution Verified" : "Student-Entered"}
+                    </span>
+                  </div>
+                  <div className="text-xs text-slate-400">
+                    Issued by {cert.issuer} {cert.issueDate ? `• ${cert.issueDate}` : ""}
+                  </div>
+                </div>
+
+                {cert.verificationUrl && (
+                  <a
+                    href={cert.verificationUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-emerald-400 border border-white/10 text-xs font-semibold shrink-0"
+                    title="View Credential"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Skills Matrix */}
       {profile?.skills && profile.skills.length > 0 && (

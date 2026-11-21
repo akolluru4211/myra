@@ -50,8 +50,8 @@ export async function POST(req: NextRequest) {
     };
     const trackLabel = companyTrackNames[companyTrack] || companyTrackNames.faang;
 
-    // Fast-path: Direct 1,000 Questions Bank drill mode
-    if (mode === "question_bank") {
+    // Fast-path: Direct 1,000 Questions Bank drill mode or Text Practice mode (no resume needed)
+    if (mode === "question_bank" || mode === "text") {
       const bankQuestions = pickInterviewQuestions({
         sector: sector || targetRole || category,
         level: levelLabel,
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
       const formattedBankQuestions: GeneratedQuestion[] = bankQuestions.map((q, idx) => ({
         id: q.id || `bank_q_${idx + 1}`,
         text: idx === 0 && firstName
-          ? `Hi ${firstName}, welcome to your sector interview drill for ${q.sector}. ${q.question}`
+          ? `Hi ${firstName}, welcome to your ${mode === "text" ? "text practice drill" : "sector interview drill"} for ${q.sector}. ${q.question}`
           : q.question,
         category: q.sector || category,
         difficultyLevel: (q.level.toLowerCase().includes("senior") ? 2 : q.level.toLowerCase().includes("mid") ? 1 : 0) as 0 | 1 | 2,
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        source: "EdWorld 1,000 Questions Bank",
+        source: mode === "text" ? "EdWorld Text Practice Engine" : "EdWorld 1,000 Questions Bank",
         modelUsed: "1,000 Questions Bank & 46 Sectors Engine",
         resumeConnected: false,
         resumeTitle: null,
@@ -85,6 +85,7 @@ export async function POST(req: NextRequest) {
         extractedProjectsCount: 0,
         adaptiveProfileApplied: false,
         sector: sector || targetRole,
+        mode,
       });
     }
 

@@ -161,8 +161,8 @@ export default function ApplyModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 sm:p-8 space-y-6 animate-in fade-in zoom-in-95 duration-200">
+      <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full max-h-[calc(100dvh-2rem)] overflow-y-auto p-5 sm:p-8 space-y-5 animate-in fade-in zoom-in-95 duration-200">
           <div className="flex items-start justify-between border-b border-slate-100 pb-3">
             <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-2 py-0.5 rounded">
@@ -267,6 +267,27 @@ export default function ApplyModal({
                   placeholder="Share a key highlight from your projects or why this role excites you..."
                   className="w-full p-3 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 leading-relaxed"
                 />
+              </div>
+
+              {/* Recruiter Preview Disclosure */}
+              <div className="p-3 bg-indigo-50/70 border border-indigo-100 rounded-xl space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-indigo-950 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                    <span>Recruiter Submission Preview</span>
+                  </span>
+                  <span className="text-[10px] font-bold text-indigo-600 bg-white px-2 py-0.5 rounded-full border border-indigo-200">
+                    Immutable Snapshot
+                  </span>
+                </div>
+                <div className="text-[11px] text-indigo-900/80 space-y-1">
+                  <div><strong>Applicant:</strong> {user?.name || "Student"} &bull; {user?.email}</div>
+                  <div><strong>Resume:</strong> {resumes.find(r => r.id === selectedResumeId)?.title || "Active Version"}</div>
+                  {coverNote && <div className="truncate"><strong>Note:</strong> &ldquo;{coverNote}&rdquo;</div>}
+                  <p className="text-[10px] text-indigo-700 pt-1 border-t border-indigo-200/50">
+                    A permanent snapshot of this resume will be stored with your application. Modifying your resume later in Resume Studio will not alter this submitted copy.
+                  </p>
+                </div>
               </div>
 
               {/* Pro Gating Notice */}

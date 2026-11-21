@@ -106,16 +106,24 @@ export default function InterviewResultsPage() {
 
         if (data) {
           const metrics = data.metrics || {};
+          const isTextSession = Boolean(
+            metrics.format === "text" ||
+            data.format === "text" ||
+            (!data.voice_opt_in && !metrics.voiceDelivery && metrics.wordsPerMinute === null)
+          );
+
           setSessionData({
             sessionId: data.id,
+            isTextSession,
+            format: isTextSession ? "text" : (metrics.format || "standard"),
             overallScore: data.overall_score || 82,
             contentScore: metrics.contentScore || 85,
-            voiceScore: metrics.voiceDelivery || 80,
-            engagementScore: metrics.facialEngagement || 85,
+            voiceScore: isTextSession ? null : (metrics.voiceDelivery || 80),
+            engagementScore: isTextSession ? null : (metrics.facialEngagement || 85),
             languageScore: metrics.languageScore || metrics.voiceDelivery || 78,
             grammarScore: metrics.grammarScore || 82,
             clarityScore: metrics.clarityScore || 80,
-            fluencyScore: metrics.fluencyScore || 78,
+            fluencyScore: isTextSession ? null : (metrics.fluencyScore || 78),
             vocabularyScore: metrics.vocabularyScore || 80,
             professionalScore: metrics.professionalScore || 84,
             voiceOptIn: Boolean(data.voice_opt_in ?? metrics.voice_opt_in),
@@ -153,7 +161,7 @@ export default function InterviewResultsPage() {
               ],
               detailedSummary: metrics.detailedSummary || "Strong technical delivery with clear communicative flow and solid engineering instincts.",
               nextPracticeAdvice: metrics.nextPracticeAdvice || "Practice framing your next technical answer using the STAR method with concrete numerical outcomes.",
-              eyeContactFeedback: "Good eye contact — steady visual engagement maintained during the session."
+              eyeContactFeedback: isTextSession ? null : "Good eye contact — steady visual engagement maintained during the session."
             },
             fullscreenExitEvents: metrics.fullscreen_exit_events || []
           });
@@ -161,6 +169,7 @@ export default function InterviewResultsPage() {
           // Fallback preview record
           setSessionData({
             sessionId,
+            isTextSession: false,
             overallScore: 86,
             contentScore: 88,
             voiceScore: 84,
@@ -241,24 +250,57 @@ export default function InterviewResultsPage() {
     loadResult();
   }, [sessionId, user]);
 
-  if (loading || !sessionData) {
+  if (loading) {
     return (
-      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-slate-950 p-4">
-        <div className="max-w-md w-full bg-slate-900 border border-emerald-500/30 rounded-3xl p-8 text-center space-y-5 shadow-2xl">
+      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-white p-4">
+        <div className="max-w-md w-full bg-white border border-neutral-200 rounded-3xl p-8 text-center space-y-5 shadow-lg">
           <div className="relative w-16 h-16 mx-auto">
-            <div className="absolute inset-0 rounded-full border-4 border-emerald-500/20 animate-ping" />
-            <div className="w-16 h-16 rounded-full border-4 border-emerald-400 border-t-transparent animate-spin flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-emerald-300" />
+            <div className="w-16 h-16 rounded-full border-4 border-emerald-600 border-t-transparent animate-spin flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-emerald-600" />
             </div>
           </div>
           <div>
-            <h3 className="text-lg font-black text-white font-serif">Evaluating Interview Telemetry</h3>
-            <p className="text-xs text-emerald-400 font-medium mt-1">Cross-referencing JD competency keywords &amp; STAR structure...</p>
+            <h3 className="text-lg font-black text-black">Evaluating Interview Answers</h3>
+            <p className="text-xs text-neutral-600 font-medium mt-1">Cross-referencing technical depth &amp; STAR structure...</p>
           </div>
-          <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-700">
-            <div className="bg-white h-full w-3/4 animate-pulse rounded-full" />
+          <div className="w-full bg-neutral-100 rounded-full h-2 overflow-hidden border border-neutral-200">
+            <div className="bg-emerald-600 h-full w-3/4 animate-pulse rounded-full" />
           </div>
-          <p className="text-[11px] text-slate-400">EdWorld Production Evaluation &bull; Zero Mock Data</p>
+          <p className="text-[11px] text-neutral-400">EdWorld Production Evaluation &bull; Real Time Analysis</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Unavailable State if sessionData could not be found or loaded
+  if (!sessionData) {
+    return (
+      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-white p-4">
+        <div className="max-w-md w-full bg-white border border-neutral-300 rounded-3xl p-8 text-center space-y-5 shadow-lg">
+          <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-200">
+            <AlertCircle className="w-7 h-7" />
+          </div>
+          <div className="space-y-1.5">
+            <h2 className="text-xl font-black text-black">Interview Feedback Unavailable</h2>
+            <p className="text-xs text-neutral-600 leading-relaxed">
+              We couldn't retrieve the evaluation for session <code className="font-mono text-neutral-800">{sessionId}</code>. It may have expired or not yet finalized.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <Link
+              href="/interviews"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-sm"
+            >
+              Back to Practice Hub
+            </Link>
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-xs font-bold border border-neutral-300 transition-all cursor-pointer"
+            >
+              Retry Loading
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -288,39 +330,39 @@ export default function InterviewResultsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 py-10 px-4 sm:px-6 lg:px-8 selection:bg-[#00D2B4] selection:text-slate-950">
+    <div className="min-h-screen bg-white text-slate-900 py-10 px-4 sm:px-6 lg:px-8 selection:bg-emerald-500 selection:text-white">
       <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in">
         
         {/* Top Navigation */}
         <div className="flex items-center justify-between flex-wrap gap-4">
           <Link 
             href="/interviews" 
-            className="text-xs font-bold text-slate-400 hover:text-[#00D2B4] flex items-center gap-2 transition-colors group"
+            className="text-xs font-bold text-neutral-500 hover:text-black flex items-center gap-2 transition-colors group"
           >
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
             <span>Back to Mock Interview Studio</span>
           </Link>
           <div className="flex items-center gap-2.5 flex-wrap">
             {displayName && (
-              <span className="text-xs font-bold text-slate-300 bg-slate-900/90 border border-slate-800 px-3.5 py-1.5 rounded-full">
+              <span className="text-xs font-bold text-slate-700 bg-neutral-100 border border-neutral-200 px-3.5 py-1.5 rounded-full">
                 Candidate: {displayName}
               </span>
             )}
-            <span className="text-xs font-bold text-[#00D2B4] bg-[#00D2B4]/10 border border-[#00D2B4]/30 px-3.5 py-1.5 rounded-full flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#00D2B4]" />
+            <span className="text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3.5 py-1.5 rounded-full flex items-center gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
               Evaluation Finalized
             </span>
           </div>
         </div>
 
         {/* Myra Reviewer Hero Header */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900/90 to-emerald-950/40 border border-slate-800 p-6 sm:p-8 shadow-2xl">
-          <div className="absolute -top-24 -right-24 w-96 h-96 bg-[#00D2B4]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative overflow-hidden rounded-3xl bg-neutral-900 text-white border border-neutral-800 p-6 sm:p-8 shadow-xl">
+          <div className="absolute -top-24 -right-24 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
           
           <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
             {/* Myra Avatar Bubble */}
             <div className="flex flex-col items-center text-center shrink-0">
-              <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-3xl overflow-hidden border-2 border-[#00D2B4]/50 shadow-xl bg-slate-950 ring-4 ring-[#00D2B4]/20 group">
+              <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-3xl overflow-hidden border-2 border-emerald-500/50 shadow-xl bg-black ring-4 ring-emerald-500/20 group">
                 <Image
                   src="/images/teddy-interviewer.png"
                   alt="Myra AI Lead Interviewer"
@@ -328,33 +370,33 @@ export default function InterviewResultsPage() {
                   className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
-              <div className="mt-2.5 flex items-center gap-1.5 bg-slate-950/80 border border-slate-800 px-3 py-1 rounded-full text-[10px] font-bold text-slate-300">
-                <span className="w-2 h-2 rounded-full bg-[#00D2B4] animate-pulse" />
-                <span>Myra &bull; Lead AI Interviewer</span>
+              <div className="mt-2.5 flex items-center gap-1.5 bg-black/80 border border-neutral-800 px-3 py-1 rounded-full text-[10px] font-bold text-neutral-300">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Myra &bull; Lead AI Evaluator</span>
               </div>
             </div>
 
             {/* Title & Myra's Summary Speech Bubble */}
             <div className="space-y-3 text-center md:text-left flex-1">
               <div className="flex items-center gap-2 justify-center md:justify-start flex-wrap">
-                <span className="text-[10px] uppercase tracking-wider font-extrabold text-[#00D2B4] bg-[#00D2B4]/10 border border-[#00D2B4]/30 px-2.5 py-0.5 rounded-full">
-                  AI Evaluation Report
+                <span className="text-[10px] uppercase tracking-wider font-extrabold text-emerald-300 bg-emerald-950/80 border border-emerald-700/50 px-2.5 py-0.5 rounded-full">
+                  {sessionData.isTextSession ? "Written Evaluation Report" : "AI Video Evaluation"}
                 </span>
-                <span className="text-[10px] font-mono text-slate-400 bg-slate-800/80 border border-slate-700/60 px-2.5 py-0.5 rounded-full">
+                <span className="text-[10px] font-mono text-neutral-300 bg-neutral-800/80 border border-neutral-700/60 px-2.5 py-0.5 rounded-full">
                   Sector: {sessionData.sector}
                 </span>
-                <span className="text-[10px] font-mono text-indigo-300 bg-indigo-950/80 border border-indigo-700/40 px-2.5 py-0.5 rounded-full">
+                <span className="text-[10px] font-mono text-neutral-300 bg-neutral-800/80 border border-neutral-700/60 px-2.5 py-0.5 rounded-full">
                   Role: {sessionData.targetRole}
                 </span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                 Interview Diagnostic &amp; Upgrade Review
               </h1>
-              <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 text-xs text-slate-300 leading-relaxed space-y-2.5">
-                <p className="font-semibold text-[#00D2B4] flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5" /> Myra's Feedback:
+              <div className="p-4 rounded-2xl bg-black/70 border border-neutral-800 text-xs text-neutral-300 leading-relaxed space-y-2.5">
+                <p className="font-semibold text-emerald-400 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-400" /> Myra's Feedback:
                 </p>
-                <p className="italic text-slate-300">
+                <p className="italic text-neutral-200">
                   &ldquo;{sessionData.feedback?.detailedSummary || "Great effort! You communicated the core technical concepts well. Review the upgrade roadmap below to level up your storytelling and technical depth for your next round."}&rdquo;
                 </p>
 
@@ -362,9 +404,9 @@ export default function InterviewResultsPage() {
                 <div className="pt-1 flex justify-start">
                   <button
                     onClick={handleAskMyraAboutResult}
-                    className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white text-black hover:bg-neutral-100 font-extrabold text-xs shadow-xs transition-all cursor-pointer active:scale-95 border border-white"
+                    className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow-sm transition-all cursor-pointer active:scale-95 border border-emerald-500"
                   >
-                    <Sparkles className="w-3.5 h-3.5 text-black" />
+                    <Sparkles className="w-3.5 h-3.5 text-white" />
                     <span>Ask Myra about this result</span>
                   </button>
                 </div>
@@ -373,48 +415,54 @@ export default function InterviewResultsPage() {
 
             {/* Prominent Overall Score Badge & Status */}
             <div className="flex flex-row md:flex-col items-center gap-3 shrink-0">
-              <div className="p-5 rounded-3xl bg-neutral-900 border border-neutral-700 text-white text-center min-w-[140px] shadow-sm">
+              <div className="p-5 rounded-3xl bg-black border border-neutral-800 text-white text-center min-w-[140px] shadow-sm">
                 <span className="text-[9px] uppercase font-black tracking-wider text-neutral-400 block">Overall Score</span>
                 <div className="text-4xl font-black text-white font-mono mt-0.5">{overallScore}%</div>
                 <div className={`mt-2 px-2.5 py-1 rounded-full text-[9px] font-bold border ${scoreStatus.bg} ${scoreStatus.color}`}>
                   {scoreStatus.label}
                 </div>
               </div>
-              <div className="p-4 rounded-2xl bg-neutral-900 border border-neutral-700 text-white text-center min-w-[140px] shadow-xs">
-                <span className="text-[9px] uppercase font-extrabold tracking-wider text-neutral-400 block">Delivery Score</span>
-                <div className="text-2xl font-black text-white font-mono mt-0.5">{sessionData.languageScore || 80}%</div>
+              <div className="p-4 rounded-2xl bg-black border border-neutral-800 text-white text-center min-w-[140px] shadow-xs">
+                <span className="text-[9px] uppercase font-extrabold tracking-wider text-neutral-400 block">
+                  {sessionData.isTextSession ? "Clarity Score" : "Delivery Score"}
+                </span>
+                <div className="text-2xl font-black text-white font-mono mt-0.5">
+                  {sessionData.isTextSession ? (sessionData.clarityScore || 85) : (sessionData.languageScore || 80)}%
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Anti-Cheat & Screen Lockdown Integrity Badge */}
-        <div className="flex items-center justify-between p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800 text-xs">
-          <div className="flex items-center gap-2.5">
-            <div className={`p-2 rounded-xl ${exitCount === 0 ? "bg-white/10 text-white" : "bg-neutral-800 text-neutral-300"}`}>
-              {exitCount === 0 ? <ShieldCheck className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+        {/* Anti-Cheat & Screen Lockdown Integrity Badge (Hidden for Text Practice) */}
+        {!sessionData.isTextSession && (
+          <div className="flex items-center justify-between p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800 text-xs">
+            <div className="flex items-center gap-2.5">
+              <div className={`p-2 rounded-xl ${exitCount === 0 ? "bg-white/10 text-white" : "bg-neutral-800 text-neutral-300"}`}>
+                {exitCount === 0 ? <ShieldCheck className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+              </div>
+              <div>
+                <p className="font-bold text-neutral-200">
+                  {exitCount === 0 ? "100% Screen Lockdown Integrity Verified" : `${exitCount} Focus Lost Warning${exitCount > 1 ? "s" : ""} Recorded`}
+                </p>
+                <p className="text-[11px] text-neutral-400">
+                  {exitCount === 0
+                    ? "Full screen lockdown remained active with continuous camera and audio telemetry."
+                    : "Candidate switched tabs or exited fullscreen during the interview session."}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="font-bold text-neutral-200">
-                {exitCount === 0 ? "100% Screen Lockdown Integrity Verified" : `${exitCount} Focus Lost Warning${exitCount > 1 ? "s" : ""} Recorded`}
-              </p>
-              <p className="text-[11px] text-neutral-400">
-                {exitCount === 0 
-                  ? "Full screen lockdown remained active with continuous camera and audio telemetry." 
-                  : "Candidate switched tabs or exited fullscreen during the interview session."}
-              </p>
-            </div>
+            <span className={`text-[10px] font-mono font-bold px-3 py-1 rounded-full border ${
+              exitCount === 0
+                ? "bg-neutral-900 border-neutral-700 text-white"
+                : "bg-neutral-900 border-neutral-700 text-neutral-300"
+            }`}>
+              {exitCount === 0 ? "Passed Anti-Cheat" : `${exitCount} Interruption${exitCount > 1 ? "s" : ""}`}
+            </span>
           </div>
-          <span className={`text-[10px] font-mono font-bold px-3 py-1 rounded-full border ${
-            exitCount === 0 
-              ? "bg-neutral-900 border-neutral-700 text-white" 
-              : "bg-neutral-900 border-neutral-700 text-neutral-300"
-          }`}>
-            {exitCount === 0 ? "Passed Anti-Cheat" : `${exitCount} Interruption${exitCount > 1 ? "s" : ""}`}
-          </span>
-        </div>
+        )}
 
-        {/* 4 Category Breakdown Cards */}
+        {/* Category Breakdown Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div className="bg-neutral-900/80 rounded-3xl p-5 border border-neutral-800 shadow-xs space-y-1">
             <span className="text-[10px] uppercase font-extrabold tracking-wider text-neutral-400 block">Technical Depth</span>
@@ -425,14 +473,22 @@ export default function InterviewResultsPage() {
           <div className="bg-neutral-900/80 rounded-3xl p-5 border border-neutral-800 shadow-xs space-y-1">
             <span className="text-[10px] uppercase font-extrabold tracking-wider text-neutral-400 block">STAR Storytelling</span>
             <div className="text-2xl font-black text-white font-mono">{sessionData.clarityScore || 82}%</div>
-            <p className="text-[10px] text-neutral-400">Narrative arc &amp; results</p>
+            <p className="text-[10px] text-neutral-400">Narrative arc &amp; structure</p>
           </div>
 
-          <div className="bg-slate-900/80 rounded-3xl p-5 border border-slate-800 shadow-sm space-y-1">
-            <span className="text-[10px] uppercase font-extrabold tracking-wider text-slate-400 block">Pacing &amp; Articulation</span>
-            <div className="text-2xl font-black text-[#00D2B4] font-mono">{sessionData.metrics?.wordsPerMinute || 132} <span className="text-xs text-slate-400">WPM</span></div>
-            <p className="text-[10px] text-slate-400">{sessionData.metrics?.fillerWordCount || 0} filler words recorded</p>
-          </div>
+          {sessionData.isTextSession ? (
+            <div className="bg-slate-900/80 rounded-3xl p-5 border border-slate-800 shadow-sm space-y-1">
+              <span className="text-[10px] uppercase font-extrabold tracking-wider text-slate-400 block">Written Precision</span>
+              <div className="text-2xl font-black text-emerald-400 font-mono">{sessionData.grammarScore || 88}%</div>
+              <p className="text-[10px] text-slate-400">Clarity &amp; role specificity</p>
+            </div>
+          ) : (
+            <div className="bg-slate-900/80 rounded-3xl p-5 border border-slate-800 shadow-sm space-y-1">
+              <span className="text-[10px] uppercase font-extrabold tracking-wider text-slate-400 block">Pacing &amp; Articulation</span>
+              <div className="text-2xl font-black text-[#00D2B4] font-mono">{sessionData.metrics?.wordsPerMinute || 132} <span className="text-xs text-slate-400">WPM</span></div>
+              <p className="text-[10px] text-slate-400">{sessionData.metrics?.fillerWordCount || 0} filler words recorded</p>
+            </div>
+          )}
 
           <div className="bg-slate-900/80 rounded-3xl p-5 border border-slate-800 shadow-sm space-y-1">
             <span className="text-[10px] uppercase font-extrabold tracking-wider text-slate-400 block">JD Keyword Match</span>
@@ -569,24 +625,24 @@ export default function InterviewResultsPage() {
           )}
         </div>
 
-        {/* Strengths & Improvement Areas */}
+        {/* Strengths & Improvement Areas ("What worked" and "What to improve") */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="p-5 rounded-3xl bg-slate-900/70 border border-slate-800 text-xs text-slate-200 space-y-2.5">
-            <span className="font-bold flex items-center gap-2 text-emerald-400 text-sm">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Key Strengths Demonstrated
+          <div className="p-6 rounded-3xl bg-neutral-900 border border-neutral-800 text-xs text-white space-y-3 shadow-sm">
+            <span className="font-extrabold flex items-center gap-2 text-emerald-400 text-sm">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" /> What worked
             </span>
-            <ul className="list-disc list-inside space-y-1.5 text-slate-300 pl-1 text-xs">
+            <ul className="list-disc list-inside space-y-1.5 text-neutral-300 pl-1 text-xs leading-relaxed">
               {sessionData.feedback?.strengths?.map((s: string, idx: number) => (
                 <li key={idx}>{s}</li>
               ))}
             </ul>
           </div>
 
-          <div className="p-5 rounded-3xl bg-slate-900/70 border border-slate-800 text-xs text-slate-200 space-y-2.5">
-            <span className="font-bold flex items-center gap-2 text-amber-400 text-sm">
-              <TrendingUp className="w-4 h-4 text-amber-400" /> Targeted Upgrade Opportunities
+          <div className="p-6 rounded-3xl bg-neutral-900 border border-neutral-800 text-xs text-white space-y-3 shadow-sm">
+            <span className="font-extrabold flex items-center gap-2 text-amber-400 text-sm">
+              <TrendingUp className="w-4 h-4 text-amber-400" /> What to improve
             </span>
-            <ul className="list-disc list-inside space-y-1.5 text-slate-300 pl-1 text-xs">
+            <ul className="list-disc list-inside space-y-1.5 text-neutral-300 pl-1 text-xs leading-relaxed">
               {sessionData.feedback?.areasForImprovement?.map((a: string, idx: number) => (
                 <li key={idx}>{a}</li>
               ))}
@@ -650,38 +706,40 @@ export default function InterviewResultsPage() {
           )}
         </div>
 
-        {/* Voice Privacy & Audio Retention Controls */}
-        <div className="bg-white rounded-3xl p-5 sm:p-6 border border-neutral-200 shadow-xs space-y-3 text-black">
-          <div className="flex items-center justify-between flex-wrap gap-3">
-            <div className="space-y-0.5">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-black" />
-                <h3 className="text-xs font-bold text-black uppercase tracking-wider">
-                  Voice Privacy &amp; Recording Retention
-                </h3>
+        {/* Voice Privacy & Audio Retention Controls (Only for Voice Sessions) */}
+        {!sessionData.isTextSession && (
+          <div className="bg-white rounded-3xl p-5 sm:p-6 border border-neutral-200 shadow-xs space-y-3 text-black">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-black" />
+                  <h3 className="text-xs font-bold text-black uppercase tracking-wider">
+                    Voice Privacy &amp; Recording Retention
+                  </h3>
+                </div>
+                <p className="text-xs text-neutral-600">
+                  {audioDeleted || sessionData.audioDeletedAt
+                    ? "Raw audio recording has been permanently deleted per privacy policy."
+                    : sessionData.voiceOptIn
+                    ? `Recording retained until ${sessionData.retentionExpiresAt ? new Date(sessionData.retentionExpiresAt).toLocaleDateString() : "7 days"}. You can delete it anytime.`
+                    : "No raw audio stored per your privacy preferences (audio was permanently discarded immediately after scoring)."}
+                </p>
               </div>
-              <p className="text-xs text-neutral-600">
-                {audioDeleted || sessionData.audioDeletedAt
-                  ? "Raw audio recording has been permanently deleted per privacy policy."
-                  : sessionData.voiceOptIn
-                  ? `Recording retained until ${sessionData.retentionExpiresAt ? new Date(sessionData.retentionExpiresAt).toLocaleDateString() : "7 days"}. You can delete it anytime.`
-                  : "No raw audio stored per your privacy preferences (audio was permanently discarded immediately after scoring)."}
-              </p>
-            </div>
 
-            {(!audioDeleted && !sessionData.audioDeletedAt && sessionData.voiceOptIn) && (
-              <button
-                type="button"
-                onClick={handleDeleteAudio}
-                disabled={deletingAudio}
-                className="px-4 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-black text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer border border-neutral-300 disabled:opacity-50"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-                <span>{deletingAudio ? "Deleting..." : "Delete Recording Now"}</span>
-              </button>
-            )}
+              {(!audioDeleted && !sessionData.audioDeletedAt && sessionData.voiceOptIn) && (
+                <button
+                  type="button"
+                  onClick={handleDeleteAudio}
+                  disabled={deletingAudio}
+                  className="px-4 py-2 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-black text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer border border-neutral-300 disabled:opacity-50"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>{deletingAudio ? "Deleting..." : "Delete Recording Now"}</span>
+                </button>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* 1-Click Action Hub */}
         <div className="bg-neutral-900 rounded-3xl p-6 sm:p-8 border border-neutral-800 space-y-4">

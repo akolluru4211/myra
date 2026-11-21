@@ -22,6 +22,18 @@ const LEARN_SUBDOMAINS = [
   "learn.localhost",
 ];
 
+// EdMail Webmail Subdomains
+const MAILS_SUBDOMAINS = [
+  "edmail.edworld.co.in",
+  "edmail.edworldco.in",
+  "edmail.localhost",
+  "mails.edworld.co.in",
+  "mails.edworldco.in",
+  "mails.localhost",
+  "mail.edworld.co.in",
+  "mail.localhost",
+];
+
 // Public page paths accessible without authentication
 const PUBLIC_PAGE_PREFIXES = [
   "/login",
@@ -252,6 +264,22 @@ export function middleware(req: NextRequest) {
     // If visitor accesses nested paths on learn subdomain (e.g. /dsa-mastery), rewrite to /learn/dsa-mastery
     if (!pathname.startsWith("/learn") && !pathname.startsWith("/api") && !pathname.startsWith("/verify") && !pathname.startsWith("/certificate") && !pathname.startsWith("/_next")) {
       const rewriteUrl = new URL(`/learn${pathname}`, req.url);
+      const res = NextResponse.rewrite(rewriteUrl);
+      return applySecurityHeaders(res, requestId);
+    }
+  }
+
+  // 3C. Subdomain Routing: EdMail Webmail (mails.edworld.co.in, mails.localhost)
+  if (MAILS_SUBDOMAINS.includes(host)) {
+    // If visitor visits root on mails subdomain, rewrite internally to /edmail
+    if (pathname === "/" || pathname === "") {
+      const rewriteUrl = new URL("/edmail", req.url);
+      const res = NextResponse.rewrite(rewriteUrl);
+      return applySecurityHeaders(res, requestId);
+    }
+    // If visitor accesses nested paths on mails subdomain, rewrite to /edmail or keep api/assets
+    if (!pathname.startsWith("/edmail") && !pathname.startsWith("/api") && !pathname.startsWith("/_next")) {
+      const rewriteUrl = new URL(`/edmail${pathname}`, req.url);
       const res = NextResponse.rewrite(rewriteUrl);
       return applySecurityHeaders(res, requestId);
     }

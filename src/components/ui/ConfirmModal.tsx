@@ -53,7 +53,7 @@ export default function ConfirmModal({
       aria-describedby="confirm-modal-desc"
     >
       <div
-        className="w-full max-w-md bg-white rounded-3xl border border-[#E8ECF2] shadow-2xl p-6 sm:p-7 space-y-5 animate-in zoom-in-95 duration-150"
+        className="w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto bg-white rounded-3xl border border-[#E8ECF2] shadow-2xl p-6 sm:p-7 space-y-5 animate-in zoom-in-95 duration-150"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-4">
