@@ -1,25 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
-import { validateSession } from "@/lib/otp-service";
-import { createClient } from "@/lib/supabase/server";
+import { resolveServerSessionUserId } from "@/lib/auth/server-session";
 
 export const dynamic = "force-dynamic";
-
-async function resolveAuthenticatedUserId(req: NextRequest): Promise<string | null> {
-  try {
-    const supabaseServer = createClient();
-    const { data: { user } } = await supabaseServer.auth.getUser();
-    if (user?.id) return user.id;
-  } catch {}
-
-  const sessionToken = req.cookies.get("edworld_session")?.value;
-  if (sessionToken) {
-    const sess = validateSession(sessionToken);
-    if (sess.valid && sess.userId) return sess.userId;
-  }
-
-  return null;
-}
 
 /**
  * Generates an iCalendar (.ics) string for export
@@ -73,7 +56,7 @@ function generateIcs(event: any): string {
  */
 export async function GET(req: NextRequest) {
   try {
-    const userId = await resolveAuthenticatedUserId(req);
+    const userId = await resolveServerSessionUserId(req);
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -128,7 +111,7 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   try {
-    const userId = await resolveAuthenticatedUserId(req);
+    const userId = await resolveServerSessionUserId(req);
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -149,6 +132,25 @@ export async function POST(req: NextRequest) {
 
     if (!title || !startTime) {
       return NextResponse.json({ error: "Title and start time are required." }, { status: 400 });
+    }
+
+    // Check for duplicate record if sourceMessageId is provided
+    if (sourceMessageId) {
+      const { data: existingEvents } = await supabase
+        .from("student_events")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("source_message_id", sourceMessageId)
+        .eq("title", title.trim())
+        .limit(1);
+
+      if (existingEvents && existingEvents.length > 0) {
+        return NextResponse.json({
+          success: true,
+          event: existingEvents[0],
+          notice: "Event already added to calendar from this email.",
+        });
+      }
     }
 
     const { data: mailbox } = await supabase
@@ -194,7 +196,7 @@ export async function POST(req: NextRequest) {
  */
 export async function DELETE(req: NextRequest) {
   try {
-    const userId = await resolveAuthenticatedUserId(req);
+    const userId = await resolveServerSessionUserId(req);
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

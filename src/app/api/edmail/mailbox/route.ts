@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
-import { validateSession } from "@/lib/otp-service";
-import { createClient } from "@/lib/supabase/server";
+import { resolveServerSessionUserId } from "@/lib/auth/server-session";
 import {
   validateEdMailUsername,
   checkEdMailAvailability,
@@ -13,30 +12,11 @@ import {
 export const dynamic = "force-dynamic";
 
 /**
- * Resolves current authenticated student ID from session cookie or Supabase SSR.
- */
-async function resolveAuthenticatedUserId(req: NextRequest): Promise<string | null> {
-  try {
-    const supabaseServer = createClient();
-    const { data: { user } } = await supabaseServer.auth.getUser();
-    if (user?.id) return user.id;
-  } catch {}
-
-  const sessionToken = req.cookies.get("edworld_session")?.value;
-  if (sessionToken) {
-    const sess = validateSession(sessionToken);
-    if (sess.valid && sess.userId) return sess.userId;
-  }
-
-  return null;
-}
-
-/**
  * GET: Retrieve the student's current EdMail mailbox status
  */
 export async function GET(req: NextRequest) {
   try {
-    const userId = await resolveAuthenticatedUserId(req);
+    const userId = await resolveServerSessionUserId(req);
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized: Authentication required." }, { status: 401 });
     }
@@ -80,7 +60,7 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   try {
-    const userId = await resolveAuthenticatedUserId(req);
+    const userId = await resolveServerSessionUserId(req);
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized: Authentication required." }, { status: 401 });
     }

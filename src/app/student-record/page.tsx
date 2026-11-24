@@ -212,7 +212,7 @@ export default function StudentRecordPage() {
     <AuthGuard>
       <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
         {/* Top Header */}
-        <header className="h-16 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30">
+        <header className="h-16 bg-white border-b border-blue-200 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30">
           <div className="flex items-center gap-3">
             <Link href="/dashboard" className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-xs">
@@ -220,7 +220,7 @@ export default function StudentRecordPage() {
               </div>
               <div>
                 <span className="font-extrabold text-slate-900 tracking-tight font-display">Student Record</span>
-                <span className="ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                <span className="ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-blue-200">
                   Private Vault
                 </span>
               </div>
@@ -230,14 +230,14 @@ export default function StudentRecordPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/edmail"
-              className="text-xs font-bold px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 flex items-center gap-1.5 transition-colors"
+              className="text-xs font-bold px-3 py-1.5 rounded-xl bg-[#EFF6FF] hover:bg-indigo-100 text-indigo-700 flex items-center gap-1.5 transition-colors"
             >
               <Mail className="w-3.5 h-3.5 text-indigo-600" />
               <span className="hidden sm:inline">Open EdMail</span>
             </Link>
             <Link
               href="/dashboard"
-              className="text-xs font-semibold px-3 py-1.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
+              className="text-xs font-semibold px-3 py-1.5 rounded-xl border border-blue-200 text-slate-600 hover:bg-slate-50 transition-colors"
             >
               Dashboard
             </Link>
@@ -247,7 +247,7 @@ export default function StudentRecordPage() {
         {/* Workspace Hub */}
         <div className="max-w-6xl mx-auto w-full p-4 sm:p-6 lg:p-8 flex-1 flex flex-col space-y-6">
           {/* Hero Banner */}
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="bg-white rounded-3xl border border-blue-200 p-6 sm:p-8 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="space-y-1">
               <h1 className="text-2xl font-black text-slate-900 font-display">My Academic Organizer</h1>
               <p className="text-xs sm:text-sm text-slate-600">
@@ -286,7 +286,7 @@ export default function StudentRecordPage() {
           </div>
 
           {/* 6 Labeled Tabs */}
-          <div className="flex items-center gap-1 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 overflow-x-auto">
+          <div className="flex items-center gap-1 bg-slate-100 p-1.5 rounded-2xl border border-blue-200 overflow-x-auto">
             {[
               { id: "marks", label: "Marks & Grades", icon: GraduationCap },
               { id: "events", label: "Events & Calendar", icon: Calendar },
@@ -315,7 +315,7 @@ export default function StudentRecordPage() {
           </div>
 
           {/* Tab Content */}
-          <div className="flex-1 bg-white rounded-3xl border border-slate-200 p-6 shadow-xs">
+          <div className="flex-1 bg-white rounded-3xl border border-blue-200 p-6 shadow-xs">
             {loading ? (
               <div className="py-16 text-center">
                 <Loader2 className="w-6 h-6 animate-spin text-indigo-600 mx-auto mb-2" />
@@ -344,8 +344,8 @@ export default function StudentRecordPage() {
                                 <span
                                   className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                                     m.is_verified
-                                      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                      : "bg-slate-100 text-slate-600 border-slate-200"
+                                      ? "bg-[#EFF6FF] text-[#1E40AF] border-blue-200"
+                                      : "bg-slate-100 text-slate-600 border-blue-200"
                                   }`}
                                 >
                                   {m.is_verified ? "Institution-verified" : "Student-entered"}
@@ -387,7 +387,7 @@ export default function StudentRecordPage() {
                             <div className="space-y-1">
                               <div className="flex items-center gap-2">
                                 <span className="text-sm font-bold text-slate-900">{ev.title}</span>
-                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 uppercase">
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EFF6FF] text-indigo-700 border border-blue-200 uppercase">
                                   {ev.event_type}
                                 </span>
                               </div>
@@ -403,7 +403,7 @@ export default function StudentRecordPage() {
                               <a
                                 href={`/api/edmail/records/events?id=${ev.id}&export=ics`}
                                 download={`${ev.title.replace(/[^a-z0-9]/gi, "_")}.ics`}
-                                className="px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 flex items-center gap-1 transition-colors"
+                                className="px-2.5 py-1.5 rounded-xl border border-blue-200 text-xs font-bold text-slate-600 hover:bg-slate-50 flex items-center gap-1 transition-colors"
                                 title="Download .ics calendar event"
                               >
                                 <Download className="w-3.5 h-3.5" />
@@ -433,7 +433,7 @@ export default function StudentRecordPage() {
                         {notes.map((n) => (
                           <div key={n.id} className="py-3 flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                              <div className="w-8 h-8 rounded-lg bg-[#EFF6FF] text-indigo-600 flex items-center justify-center">
                                 <FileText className="w-4 h-4" />
                               </div>
                               <div>
@@ -472,14 +472,14 @@ export default function StudentRecordPage() {
                                 <span
                                   className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                                     c.is_verified
-                                      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                      : "bg-slate-100 text-slate-600 border-slate-200"
+                                      ? "bg-[#EFF6FF] text-[#1E40AF] border-blue-200"
+                                      : "bg-slate-100 text-slate-600 border-blue-200"
                                   }`}
                                 >
                                   {c.is_verified ? "Institution Verified" : "Personal Copy"}
                                 </span>
                                 {c.is_published && (
-                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EFF6FF] text-indigo-700 border border-blue-200">
                                     In Portfolio
                                   </span>
                                 )}
@@ -513,7 +513,7 @@ export default function StudentRecordPage() {
                                 className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-colors cursor-pointer border ${
                                   c.is_published
                                     ? "bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200"
-                                    : "bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100"
+                                    : "bg-[#EFF6FF] text-indigo-700 border-blue-200 hover:bg-indigo-100"
                                 }`}
                               >
                                 {c.is_published ? "Revoke Link" : "Include in portfolio"}
@@ -523,7 +523,7 @@ export default function StudentRecordPage() {
                                   href={c.verification_url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="p-2 rounded-xl text-indigo-600 hover:bg-indigo-50"
+                                  className="p-2 rounded-xl text-indigo-600 hover:bg-[#EFF6FF]"
                                 >
                                   <ExternalLink className="w-4 h-4" />
                                 </a>
@@ -555,7 +555,7 @@ export default function StudentRecordPage() {
                               <div className="flex items-center gap-2">
                                 <span className="text-sm font-bold text-slate-900">{p.title}</span>
                                 {p.is_published && (
-                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#1E40AF] border border-blue-200">
                                     Published in Portfolio
                                   </span>
                                 )}
@@ -594,7 +594,7 @@ export default function StudentRecordPage() {
                                 className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-colors cursor-pointer border ${
                                   p.is_published
                                     ? "bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200"
-                                    : "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                                    : "bg-[#EFF6FF] text-[#1E40AF] border-blue-200 hover:bg-emerald-100"
                                 }`}
                               >
                                 {p.is_published ? "Revoke Link" : "Include in portfolio"}
@@ -653,7 +653,7 @@ export default function StudentRecordPage() {
         {/* MODAL: ADD MARK */}
         {addMarkOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
-            <div className="bg-white rounded-3xl border border-slate-200 p-6 max-w-md w-full shadow-xl space-y-4">
+            <div className="bg-white rounded-3xl border border-blue-200 p-6 max-w-md w-full shadow-xl space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-base font-bold text-slate-900 font-display">Add Assessment Result</h3>
                 <button onClick={() => setAddMarkOpen(false)} className="p-1 rounded-lg text-slate-400 hover:bg-slate-100">
@@ -670,7 +670,7 @@ export default function StudentRecordPage() {
                     value={markSubject}
                     onChange={(e) => setMarkSubject(e.target.value)}
                     placeholder="e.g. Data Structures"
-                    className="w-full mt-1 px-3 py-2 text-xs border border-slate-200 rounded-xl"
+                    className="w-full mt-1 px-3 py-2 text-xs border border-blue-200 rounded-xl"
                   />
                 </div>
                 <div>
@@ -680,7 +680,7 @@ export default function StudentRecordPage() {
                     value={markAssessment}
                     onChange={(e) => setMarkAssessment(e.target.value)}
                     placeholder="e.g. Midterm Examination"
-                    className="w-full mt-1 px-3 py-2 text-xs border border-slate-200 rounded-xl"
+                    className="w-full mt-1 px-3 py-2 text-xs border border-blue-200 rounded-xl"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
@@ -692,7 +692,7 @@ export default function StudentRecordPage() {
                       value={markScore}
                       onChange={(e) => setMarkScore(e.target.value)}
                       placeholder="85"
-                      className="w-full mt-1 px-3 py-2 text-xs border border-slate-200 rounded-xl"
+                      className="w-full mt-1 px-3 py-2 text-xs border border-blue-200 rounded-xl"
                     />
                   </div>
                   <div>
@@ -702,7 +702,7 @@ export default function StudentRecordPage() {
                       value={markMax}
                       onChange={(e) => setMarkMax(e.target.value)}
                       placeholder="100"
-                      className="w-full mt-1 px-3 py-2 text-xs border border-slate-200 rounded-xl"
+                      className="w-full mt-1 px-3 py-2 text-xs border border-blue-200 rounded-xl"
                     />
                   </div>
                 </div>
@@ -713,7 +713,7 @@ export default function StudentRecordPage() {
                     value={markSemester}
                     onChange={(e) => setMarkSemester(e.target.value)}
                     placeholder="Semester 4"
-                    className="w-full mt-1 px-3 py-2 text-xs border border-slate-200 rounded-xl"
+                    className="w-full mt-1 px-3 py-2 text-xs border border-blue-200 rounded-xl"
                   />
                 </div>
                 <div className="pt-2 flex justify-end gap-2">
@@ -740,7 +740,7 @@ export default function StudentRecordPage() {
         {/* MODAL: ADD EVENT */}
         {addEventOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
-            <div className="bg-white rounded-3xl border border-slate-200 p-6 max-w-md w-full shadow-xl space-y-4">
+            <div className="bg-white rounded-3xl border border-blue-200 p-6 max-w-md w-full shadow-xl space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-base font-bold text-slate-900 font-display">Schedule Academic Event</h3>
                 <button onClick={() => setAddEventOpen(false)} className="p-1 rounded-lg text-slate-400 hover:bg-slate-100">
@@ -757,7 +757,7 @@ export default function StudentRecordPage() {
                     value={eventTitle}
                     onChange={(e) => setEventTitle(e.target.value)}
                     placeholder="e.g. AI & ML Workshop"
-                    className="w-full mt-1 px-3 py-2 text-xs border border-slate-200 rounded-xl"
+                    className="w-full mt-1 px-3 py-2 text-xs border border-blue-200 rounded-xl"
                   />
                 </div>
                 <div>
@@ -765,7 +765,7 @@ export default function StudentRecordPage() {
                   <select
                     value={eventType}
                     onChange={(e) => setEventType(e.target.value)}
-                    className="w-full mt-1 px-3 py-2 text-xs border border-slate-200 rounded-xl bg-white"
+                    className="w-full mt-1 px-3 py-2 text-xs border border-blue-200 rounded-xl bg-white"
                   >
                     <option value="workshop">Workshop</option>
                     <option value="class">Class</option>
@@ -781,7 +781,7 @@ export default function StudentRecordPage() {
                     required
                     value={eventStart}
                     onChange={(e) => setEventStart(e.target.value)}
-                    className="w-full mt-1 px-3 py-2 text-xs border border-slate-200 rounded-xl"
+                    className="w-full mt-1 px-3 py-2 text-xs border border-blue-200 rounded-xl"
                   />
                 </div>
                 <div>
@@ -791,7 +791,7 @@ export default function StudentRecordPage() {
                     value={eventLocation}
                     onChange={(e) => setEventLocation(e.target.value)}
                     placeholder="https://meet.google.com/..."
-                    className="w-full mt-1 px-3 py-2 text-xs border border-slate-200 rounded-xl"
+                    className="w-full mt-1 px-3 py-2 text-xs border border-blue-200 rounded-xl"
                   />
                 </div>
                 <div className="pt-2 flex justify-end gap-2">
@@ -818,7 +818,7 @@ export default function StudentRecordPage() {
         {/* MODAL: ADD CERTIFICATE */}
         {addCertOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
-            <div className="bg-white rounded-3xl border border-slate-200 p-6 max-w-md w-full shadow-xl space-y-4">
+            <div className="bg-white rounded-3xl border border-blue-200 p-6 max-w-md w-full shadow-xl space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-base font-bold text-slate-900 font-display">Add Certificate Record</h3>
                 <button onClick={() => setAddCertOpen(false)} className="p-1 rounded-lg text-slate-400 hover:bg-slate-100">
@@ -835,7 +835,7 @@ export default function StudentRecordPage() {
                     value={certTitle}
                     onChange={(e) => setCertTitle(e.target.value)}
                     placeholder="e.g. AWS Cloud Practitioner"
-                    className="w-full mt-1 px-3 py-2 text-xs border border-slate-200 rounded-xl"
+                    className="w-full mt-1 px-3 py-2 text-xs border border-blue-200 rounded-xl"
                   />
                 </div>
                 <div>
@@ -846,7 +846,7 @@ export default function StudentRecordPage() {
                     value={certIssuer}
                     onChange={(e) => setCertIssuer(e.target.value)}
                     placeholder="e.g. Amazon Web Services"
-                    className="w-full mt-1 px-3 py-2 text-xs border border-slate-200 rounded-xl"
+                    className="w-full mt-1 px-3 py-2 text-xs border border-blue-200 rounded-xl"
                   />
                 </div>
                 <div>
@@ -856,7 +856,7 @@ export default function StudentRecordPage() {
                     value={certUrl}
                     onChange={(e) => setCertUrl(e.target.value)}
                     placeholder="https://..."
-                    className="w-full mt-1 px-3 py-2 text-xs border border-slate-200 rounded-xl"
+                    className="w-full mt-1 px-3 py-2 text-xs border border-blue-200 rounded-xl"
                   />
                 </div>
                 <div className="pt-2 flex justify-end gap-2">

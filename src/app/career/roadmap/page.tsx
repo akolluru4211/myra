@@ -217,7 +217,7 @@ export default function CareerRoadmapPage() {
 
             {/* Overall Progress Status Bar */}
             {roadmap && (
-              <div className="pt-4 border-t border-slate-200/60 grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+              <div className="pt-4 border-t border-blue-200/60 grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
                 <div className="sm:col-span-8 space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-semibold text-slate-900">
@@ -254,7 +254,7 @@ export default function CareerRoadmapPage() {
           {/* Empty State */}
           {!loading && !roadmap && (
             <div className="p-12 liquid-glass-card text-center space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-slate-500/10 flex items-center justify-center mx-auto text-slate-500 border border-slate-200">
+              <div className="w-12 h-12 rounded-xl bg-slate-500/10 flex items-center justify-center mx-auto text-slate-500 border border-blue-200">
                 <Target className="w-6 h-6" />
               </div>
               <div className="space-y-1">
@@ -278,7 +278,7 @@ export default function CareerRoadmapPage() {
             <div className="space-y-6">
               
               {/* Strategic Horizon Switcher (1 Year vs 3 Years vs 5 Years) */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-slate-200/60 pb-4">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-blue-200/60 pb-4">
                 <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
                   {[
                     { id: "1_year", label: "1-Year Horizon", sub: "Foundation & Proof-of-Work" },

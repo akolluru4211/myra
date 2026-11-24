@@ -227,7 +227,7 @@ export default function NetworkPage() {
       <div className="tactile-chassis bg-[#0C101A] border border-white/10 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl text-white">
           <div className="space-y-2 max-w-2xl">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-display">
+              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#EFF6FF]0/10 text-emerald-300 border border-emerald-500/20 font-display">
                 Verified Student Network
               </span>
               <span className="text-xs text-slate-400 font-medium">
@@ -526,7 +526,7 @@ export default function NetworkPage() {
                       <button
                         onClick={() => handleAcceptConnection(member.connectionId || "", member.name)}
                         disabled={actionInProgress === member.connectionId}
-                        className="py-2 px-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center gap-1 cursor-pointer shadow-md"
+                        className="py-2 px-3.5 rounded-xl bg-emerald-600 hover:bg-[#EFF6FF]0 text-white text-xs font-bold transition-all flex items-center gap-1 cursor-pointer shadow-md"
                       >
                         <Check className="w-3.5 h-3.5" />
                         <span>Accept</span>

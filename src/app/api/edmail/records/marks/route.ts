@@ -1,25 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
-import { validateSession } from "@/lib/otp-service";
-import { createClient } from "@/lib/supabase/server";
+import { resolveServerSessionUserId } from "@/lib/auth/server-session";
 
 export const dynamic = "force-dynamic";
-
-async function resolveAuthenticatedUserId(req: NextRequest): Promise<string | null> {
-  try {
-    const supabaseServer = createClient();
-    const { data: { user } } = await supabaseServer.auth.getUser();
-    if (user?.id) return user.id;
-  } catch {}
-
-  const sessionToken = req.cookies.get("edworld_session")?.value;
-  if (sessionToken) {
-    const sess = validateSession(sessionToken);
-    if (sess.valid && sess.userId) return sess.userId;
-  }
-
-  return null;
-}
 
 /**
  * Calculates letter grade based on percentage if not manually provided.
@@ -40,7 +23,7 @@ function calculateGrade(score: number, maxMarks: number): string {
  */
 export async function GET(req: NextRequest) {
   try {
-    const userId = await resolveAuthenticatedUserId(req);
+    const userId = await resolveServerSessionUserId(req);
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -77,7 +60,7 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   try {
-    const userId = await resolveAuthenticatedUserId(req);
+    const userId = await resolveServerSessionUserId(req);
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -112,6 +95,25 @@ export async function POST(req: NextRequest) {
       .select("id")
       .eq("user_id", userId)
       .maybeSingle();
+
+    // Check for duplicate record if sourceMessageId is provided
+    if (sourceMessageId) {
+      const { data: existingMarks } = await supabase
+        .from("student_marks")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("source_message_id", sourceMessageId)
+        .eq("subject", subject.trim())
+        .limit(1);
+
+      if (existingMarks && existingMarks.length > 0) {
+        return NextResponse.json({
+          success: true,
+          mark: existingMarks[0],
+          notice: "Mark record already saved from this email.",
+        });
+      }
+    }
 
     // Enforce verified status authenticity:
     // Only mark as institution_verified if source is trusted or approved
@@ -162,7 +164,7 @@ export async function POST(req: NextRequest) {
  */
 export async function DELETE(req: NextRequest) {
   try {
-    const userId = await resolveAuthenticatedUserId(req);
+    const userId = await resolveServerSessionUserId(req);
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

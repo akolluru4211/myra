@@ -52,41 +52,41 @@ export default function ModernEdworldLanding({ onViewComingSoon }: ModernEdworld
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-[#080B11] text-slate-100 selection:bg-emerald-500 selection:text-slate-950 font-sans overflow-x-hidden flex flex-col justify-between">
+    <div className="relative min-h-screen w-full bg-white text-black selection:bg-[#2563EB] selection:text-white font-sans overflow-x-hidden flex flex-col justify-between">
 
       {/* ========================================================================= */}
       {/* 1. STICKY TOP NAVBAR                                                      */}
       {/* ========================================================================= */}
-      <header className="sticky top-0 z-50 bg-[#080B11]/90 backdrop-blur-xl border-b border-white/10 transition-all">
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-blue-200/80 transition-all shadow-xs">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
 
           {/* Brand Logo & Wordmark */}
           <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-            <div className="w-8 h-8 rounded-xl overflow-hidden border border-white/20 bg-black flex items-center justify-center p-0.5 shadow-md group-hover:border-emerald-500/50 transition-colors">
+            <div className="w-9 h-9 rounded-2xl overflow-hidden bg-[#2563EB] flex items-center justify-center p-1 shadow-sm transition-transform group-hover:scale-105 duration-200">
               <Image
                 src="/images/edworld-logo.png"
                 alt="Edworld Co. Logo"
                 width={32}
                 height={32}
-                className="w-full h-full object-cover rounded-lg"
+                className="w-full h-full object-cover rounded-md"
               />
             </div>
             <div className="flex items-center gap-1.5 leading-none">
-              <span className="font-extrabold text-base sm:text-lg tracking-tight font-display text-white">
+              <span className="font-extrabold text-base sm:text-lg tracking-tight font-display text-black">
                 Edworld
               </span>
-              <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-display">
+              <span className="text-[10px] font-black px-1.5 py-0.5 rounded-full bg-[#2563EB] text-white shadow-xs font-display">
                 Co.
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-300">
-            <a href="#events" className="hover:text-emerald-400 transition-colors">
+          <nav className="hidden md:flex items-center gap-6 text-xs font-bold text-slate-600">
+            <a href="#events" className="hover:text-[#2563EB] transition-colors">
               Explore events
             </a>
-            <Link href="/pricing" className="hover:text-emerald-400 transition-colors">
+            <Link href="/pricing" className="hover:text-[#2563EB] transition-colors">
               Pricing
             </Link>
           </nav>
@@ -95,14 +95,14 @@ export default function ModernEdworldLanding({ onViewComingSoon }: ModernEdworld
           <div className="flex items-center gap-3">
             <Link
               href="/login"
-              className="text-xs font-bold text-slate-300 hover:text-white transition-colors px-2.5 py-1.5"
+              className="text-xs font-bold text-slate-700 hover:text-black transition-colors px-3 py-1.5 rounded-xl hover:bg-white"
             >
               Sign In
             </Link>
 
             <Link
               href="/signup"
-              className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs tracking-wide transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-extrabold text-xs tracking-wide transition-all shadow-md shadow-blue-500/15 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
             >
               Get started
             </Link>
@@ -111,45 +111,45 @@ export default function ModernEdworldLanding({ onViewComingSoon }: ModernEdworld
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:text-white md:hidden cursor-pointer"
+              className="p-2 rounded-xl bg-white border border-blue-200/80 text-slate-700 hover:text-black md:hidden cursor-pointer shadow-xs"
               aria-label="Toggle navigation menu"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5 text-slate-700" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-[#0C101A] border-b border-white/10 px-4 py-4 space-y-3 animate-in slide-in-from-top-3">
-            <nav className="flex flex-col space-y-2 text-sm font-semibold text-slate-300">
+          <div className="md:hidden bg-white border-b border-blue-200 px-4 py-4 space-y-3 animate-in slide-in-from-top-3 shadow-lg">
+            <nav className="flex flex-col space-y-2 text-sm font-semibold text-slate-700">
               <a
                 href="#events"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-2 px-3 rounded-lg hover:bg-white/5 hover:text-emerald-400"
+                className="py-2 px-3 rounded-lg hover:bg-[#EFF6FF] hover:text-[#2563EB]"
               >
                 Explore events
               </a>
               <Link
                 href="/pricing"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-2 px-3 rounded-lg hover:bg-white/5 hover:text-emerald-400"
+                className="py-2 px-3 rounded-lg hover:bg-[#EFF6FF] hover:text-[#2563EB]"
               >
                 Pricing
               </Link>
             </nav>
-            <div className="pt-2 border-t border-white/10 flex flex-col gap-2">
+            <div className="pt-2 border-t border-blue-100 flex flex-col gap-2">
               <Link
                 href="/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full py-2.5 rounded-xl border border-white/15 text-white text-center font-bold text-xs"
+                className="w-full py-2.5 rounded-xl border border-blue-200 text-slate-800 text-center font-bold text-xs hover:bg-[#EFF6FF]"
               >
                 Sign In
               </Link>
               <Link
                 href="/signup"
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full py-2.5 rounded-xl bg-emerald-500 text-slate-950 text-center font-extrabold text-xs shadow-md"
+                className="w-full py-2.5 rounded-xl bg-[#2563EB] text-white text-center font-extrabold text-xs shadow-md shadow-blue-500/15"
               >
                 Get started
               </Link>
@@ -163,17 +163,14 @@ export default function ModernEdworldLanding({ onViewComingSoon }: ModernEdworld
       {/* ========================================================================= */}
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-14 flex flex-col justify-center">
 
-        {/* Subtle Ambient Radial Glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none" />
-
         {/* ----------------------------------------------------------------------- */}
         {/* SECTION 1: WELCOME                                                      */}
         {/* ----------------------------------------------------------------------- */}
         <section className="text-center relative z-10">
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-display tracking-tight text-white leading-tight">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-display tracking-tight text-black leading-tight">
             Welcome to Edworld
           </h1>
-          <p className="mt-3 sm:mt-4 text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-3 sm:mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
             Learn new skills, build projects with others, and get ready for your next opportunity.
           </p>
 
@@ -181,7 +178,7 @@ export default function ModernEdworldLanding({ onViewComingSoon }: ModernEdworld
           <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
             <Link
               href="/signup"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-sm sm:text-base tracking-wide transition-all shadow-[0_0_20px_rgba(16,185,129,0.35)] hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-extrabold text-sm sm:text-base tracking-wide transition-all shadow-md shadow-indigo-500/25 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
             >
               <span>Get started</span>
               <ArrowRight className="w-4 h-4" />
@@ -189,36 +186,36 @@ export default function ModernEdworldLanding({ onViewComingSoon }: ModernEdworld
 
             <a
               href="#events"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-white font-semibold text-sm transition-all"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-white hover:bg-[#EFF6FF] border border-blue-200/80 text-slate-800 font-bold text-sm transition-all shadow-2xs"
             >
-              <Calendar className="w-4 h-4 text-emerald-400" />
+              <Calendar className="w-4 h-4 text-[#2563EB]" />
               <span>Explore events</span>
             </a>
           </div>
 
-          {/* SECTION 3: WHAT HAPPENS NEXT (Directly near main button) */}
-          <p className="mt-3 text-xs sm:text-sm text-slate-400 font-medium">
+          {/* WHAT HAPPENS NEXT (Directly near main button) */}
+          <p className="mt-3.5 text-xs sm:text-sm text-slate-500 font-medium">
             Choose a goal, get a plan, and start with one activity.
           </p>
         </section>
 
         {/* ----------------------------------------------------------------------- */}
-        {/* UPCOMING EVENT (Compact Row)                                            */}
+        {/* UPCOMING EVENT (Compact Card)                                           */}
         {/* ----------------------------------------------------------------------- */}
         <section id="events" className="mt-8 sm:mt-12 relative z-10">
-          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-3.5 sm:p-4 backdrop-blur-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center shrink-0">
-                <Calendar className="w-5 h-5 text-emerald-400" />
+          <div className="rounded-3xl border border-indigo-100 bg-white p-4 sm:p-5 shadow-[0_10px_30px_rgba(80,90,130,0.06)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-2xl bg-[#EEF0FD] flex items-center justify-center shrink-0">
+                <Calendar className="w-5 h-5 text-[#2563EB]" />
               </div>
               <div className="text-left">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-[#EEF0FD] text-[#4338CA]">
                     Upcoming Event
                   </span>
-                  <span className="text-xs text-slate-400">Dec 15, 2026</span>
+                  <span className="text-xs text-slate-500 font-medium">Dec 15, 2026</span>
                 </div>
-                <h3 className="text-sm font-bold text-white mt-0.5">
+                <h3 className="text-sm font-bold text-black mt-1">
                   Smart India Hackathon &amp; Google Cloud Generative AI Sprint
                 </h3>
               </div>
@@ -226,7 +223,7 @@ export default function ModernEdworldLanding({ onViewComingSoon }: ModernEdworld
 
             <Link
               href="/signup"
-              className="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20 text-emerald-300 font-bold text-xs transition-colors"
+              className="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#EEF0FD] hover:bg-[#E0E3FA] text-[#3730A3] font-bold text-xs transition-colors"
             >
               <span>Register Now</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -245,64 +242,64 @@ export default function ModernEdworldLanding({ onViewComingSoon }: ModernEdworld
           {/* Row 1: Learn */}
           <Link
             href="/learn"
-            className="group flex items-center justify-between p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-emerald-500/40 transition-all shadow-sm"
+            className="group flex items-center justify-between p-4 rounded-3xl bg-white hover:border-indigo-200 border border-blue-200/70 transition-all shadow-sm"
           >
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-105 transition-transform shrink-0">
+              <div className="w-10 h-10 rounded-2xl bg-[#EEF0FD] flex items-center justify-center text-[#2563EB] group-hover:scale-105 transition-transform shrink-0">
                 <BookOpen className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-sm font-extrabold text-white group-hover:text-emerald-400 transition-colors flex items-center gap-2">
+                <span className="text-sm font-extrabold text-black group-hover:text-[#2563EB] transition-colors flex items-center gap-2">
                   Learn
                 </span>
-                <p className="text-xs sm:text-sm text-slate-300 mt-0.5">
+                <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
                   Follow a learning path or ask Myra for help.
                 </p>
               </div>
             </div>
-            <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#2563EB] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
           </Link>
 
           {/* Row 2: Build */}
           <Link
             href="/edbuild"
-            className="group flex items-center justify-between p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-emerald-500/40 transition-all shadow-sm"
+            className="group flex items-center justify-between p-4 rounded-3xl bg-white hover:border-indigo-200 border border-blue-200/70 transition-all shadow-sm"
           >
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-105 transition-transform shrink-0">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:scale-105 transition-transform shrink-0">
                 <Code2 className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-sm font-extrabold text-white group-hover:text-emerald-400 transition-colors flex items-center gap-2">
+                <span className="text-sm font-extrabold text-black group-hover:text-[#2563EB] transition-colors flex items-center gap-2">
                   Build
                 </span>
-                <p className="text-xs sm:text-sm text-slate-300 mt-0.5">
+                <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
                   Join a challenge and create something you can share.
                 </p>
               </div>
             </div>
-            <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#2563EB] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
           </Link>
 
           {/* Row 3: Prepare */}
           <Link
             href="/career"
-            className="group flex items-center justify-between p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-emerald-500/40 transition-all shadow-sm"
+            className="group flex items-center justify-between p-4 rounded-3xl bg-white hover:border-indigo-200 border border-blue-200/70 transition-all shadow-sm"
           >
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:scale-105 transition-transform shrink-0">
+              <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] flex items-center justify-center text-amber-600 group-hover:scale-105 transition-transform shrink-0">
                 <Briefcase className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-sm font-extrabold text-white group-hover:text-emerald-400 transition-colors flex items-center gap-2">
+                <span className="text-sm font-extrabold text-black group-hover:text-[#2563EB] transition-colors flex items-center gap-2">
                   Prepare
                 </span>
-                <p className="text-xs sm:text-sm text-slate-300 mt-0.5">
+                <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
                   Practice an interview, improve your resume, or find an internship.
                 </p>
               </div>
             </div>
-            <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#2563EB] group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
           </Link>
         </section>
 
@@ -381,40 +378,40 @@ export default function ModernEdworldLanding({ onViewComingSoon }: ModernEdworld
       {/* ========================================================================= */}
       {/* FOOTER                                                                    */}
       {/* ========================================================================= */}
-      <footer className="border-t border-white/10 bg-[#06080D] mt-12 py-8 text-xs text-slate-400">
+      <footer className="border-t border-blue-200 bg-white mt-12 py-8 text-xs text-slate-500">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded overflow-hidden border border-white/20 bg-black flex items-center justify-center p-0.5">
+            <div className="w-6 h-6 rounded-lg overflow-hidden bg-[#2563EB] flex items-center justify-center p-0.5">
               <Image
                 src="/images/edworld-logo.png"
                 alt="Edworld Logo"
                 width={20}
                 height={20}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded"
               />
             </div>
-            <span className="font-semibold text-slate-300">
+            <span className="font-semibold text-slate-700">
               Edworld Co. &copy; 2026. All rights reserved.
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-5 text-slate-400">
-            <Link href="/pricing" className="hover:text-emerald-400 transition-colors">
+          <div className="flex flex-wrap items-center justify-center gap-5 text-slate-600 font-medium">
+            <Link href="/pricing" className="hover:text-[#2563EB] transition-colors">
               Pricing
             </Link>
-            <Link href="/login" className="hover:text-emerald-400 transition-colors">
+            <Link href="/login" className="hover:text-[#2563EB] transition-colors">
               Sign In
             </Link>
-            <Link href="/privacy" className="hover:text-emerald-400 transition-colors">
+            <Link href="/privacy" className="hover:text-[#2563EB] transition-colors">
               Privacy Policy
             </Link>
-            <Link href="/terms" className="hover:text-emerald-400 transition-colors">
+            <Link href="/terms" className="hover:text-[#2563EB] transition-colors">
               Terms
             </Link>
-            <Link href="/cookies" className="hover:text-emerald-400 transition-colors">
+            <Link href="/cookies" className="hover:text-[#2563EB] transition-colors">
               Cookies
             </Link>
-            <Link href="/contact" className="hover:text-emerald-400 transition-colors">
+            <Link href="/contact" className="hover:text-[#2563EB] transition-colors">
               Contact
             </Link>
           </div>

@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { validateSession } from "@/lib/otp-service";
 import { sendEmailNotification, PRIMARY_ADMIN_EMAIL } from "@/lib/email-service";
 import { renderBrandedEmailHtml } from "@/lib/email-templates";
+import { queryDb } from "@/lib/db-server";
 
 export const dynamic = "force-dynamic";
 
@@ -16,27 +17,69 @@ function escapeHtml(str: string): string {
     .replace(/'/g, "&#039;");
 }
 
+const ALLOWED_ADMIN_ROLES = ["ADMIN", "SUPER_ADMIN", "FOUNDER", "EXECUTIVE"];
+
 async function verifyAdminClearance(req: NextRequest): Promise<boolean> {
   try {
+    // 1. Supabase SSR auth
     const supabaseServer = createClient();
     const { data: { user } } = await supabaseServer.auth.getUser();
-    if (user) {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("is_admin, role")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      if (profile?.is_admin || ["ADMIN", "SUPER_ADMIN", "FOUNDER", "EXECUTIVE"].includes(profile?.role)) {
+    if (user?.id) {
+      const dbRes = await queryDb(
+        `SELECT is_admin, role FROM public.profiles WHERE id = $1`,
+        [user.id]
+      );
+      const profile = dbRes.rows[0];
+      if (profile?.is_admin || ALLOWED_ADMIN_ROLES.includes((profile?.role || "").toUpperCase())) {
         return true;
       }
     }
 
-    const sessionCookie = req.cookies.get("edworld_session")?.value;
-    if (sessionCookie) {
-      const { valid, role } = validateSession(sessionCookie);
-      if (valid && ["ADMIN", "SUPER_ADMIN", "FOUNDER", "EXECUTIVE"].includes(role || "")) {
+    // 2. Cookie or Bearer header session
+    const sessionToken =
+      req.cookies.get("edworld_session")?.value ||
+      req.headers.get("authorization")?.replace("Bearer ", "");
+
+    if (sessionToken) {
+      const sess = validateSession(sessionToken);
+      if (sess.valid && sess.role && ALLOWED_ADMIN_ROLES.includes(sess.role.toUpperCase())) {
         return true;
+      }
+
+      // If sess.userId exists (e.g. from raw user ID/UUID in session token), check database clearance
+      const effectiveId = sess.userId || (sessionToken.startsWith("usr_") || /^[0-9a-f-]{36}$/i.test(sessionToken) ? sessionToken : null);
+      if (effectiveId) {
+        // Query profiles and users table using direct Postgres connection (immune to RLS)
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(effectiveId);
+        if (isUuid) {
+          const profileCheck = await queryDb(
+            `SELECT is_admin, role FROM public.profiles WHERE id = $1`,
+            [effectiveId]
+          );
+          const p = profileCheck.rows[0];
+          if (p?.is_admin || ALLOWED_ADMIN_ROLES.includes((p?.role || "").toUpperCase())) {
+            return true;
+          }
+
+          const userCheck = await queryDb(
+            `SELECT is_admin, role FROM auth.users WHERE id = $1`,
+            [effectiveId]
+          );
+          const u = userCheck.rows[0];
+          if (u?.is_admin || ALLOWED_ADMIN_ROLES.includes((u?.role || "").toUpperCase())) {
+            return true;
+          }
+        } else {
+          // Non-uuid user identifier (e.g. usr_...)
+          const profileByCustomId = await queryDb(
+            `SELECT is_admin, role FROM public.profiles WHERE email ILIKE $1 OR id::text = $1`,
+            [effectiveId]
+          );
+          const p = profileByCustomId.rows[0];
+          if (p?.is_admin || ALLOWED_ADMIN_ROLES.includes((p?.role || "").toUpperCase())) {
+            return true;
+          }
+        }
       }
     }
   } catch (err) {

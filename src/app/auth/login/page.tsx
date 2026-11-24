@@ -219,13 +219,13 @@ function LoginForm() {
       <div className="space-y-5">
         
         {/* Method Switcher Tabs: Email OTP (Student default) vs Password */}
-        <div className="grid grid-cols-2 p-1 rounded-2xl bg-slate-100 border border-slate-200/80 text-xs font-semibold">
+        <div className="grid grid-cols-2 p-1 rounded-2xl bg-[#DBEAFE] border border-blue-200/80 text-xs font-semibold">
           <button
             type="button"
             onClick={() => { setAuthMethod("otp"); setError(null); }}
             className={`py-2 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
               authMethod === "otp"
-                ? "bg-white text-slate-900 font-bold shadow-xs border border-slate-200/70"
+                ? "bg-white text-slate-900 font-bold shadow-xs border border-blue-200/70"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
@@ -237,7 +237,7 @@ function LoginForm() {
             onClick={() => { setAuthMethod("password"); setError(null); }}
             className={`py-2 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
               authMethod === "password"
-                ? "bg-white text-slate-900 font-bold shadow-xs border border-slate-200/70"
+                ? "bg-white text-slate-900 font-bold shadow-xs border border-blue-200/70"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
@@ -266,7 +266,7 @@ function LoginForm() {
                 <div className="pt-0.5">
                   <Link
                     href={`/auth/forgot-password?email=${encodeURIComponent(email)}`}
-                    className="inline-flex items-center gap-1 font-bold text-[#5C59E8] hover:text-[#4E4BC6] hover:underline"
+                    className="inline-flex items-center gap-1 font-bold text-[#2563EB] hover:text-[#4E4BC6] hover:underline"
                   >
                     Forgot your password? Reset it here <ArrowRight className="w-3 h-3" />
                   </Link>
@@ -293,7 +293,7 @@ function LoginForm() {
                       value={identifier}
                       onChange={(e) => setIdentifier(e.target.value)}
                       placeholder="student@university.edu or +91 9876543210"
-                      className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
+                      className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-blue-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
                     />
                   </div>
                 </div>
@@ -301,7 +301,7 @@ function LoginForm() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-[#5C59E8] hover:bg-[#4E4BC6] transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer"
+                  className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-[#2563EB] hover:bg-[#1D4ED8] transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer"
                 >
                   {loading ? (
                     <>
@@ -343,7 +343,7 @@ function LoginForm() {
                       onPaste={handlePaste}
                       disabled={loading}
                       aria-label={`Digit ${idx + 1} of 6`}
-                      className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold font-mono rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all shadow-2xs"
+                      className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold font-mono rounded-xl bg-white border border-blue-300 text-slate-900 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all shadow-2xs"
                     />
                   ))}
                 </div>
@@ -369,7 +369,7 @@ function LoginForm() {
                       type="button"
                       onClick={handleResendOtp}
                       disabled={loading}
-                      className="font-bold text-[#5C59E8] hover:text-[#4E4BC6] transition-colors flex items-center gap-1 cursor-pointer"
+                      className="font-bold text-[#2563EB] hover:text-[#4E4BC6] transition-colors flex items-center gap-1 cursor-pointer"
                     >
                       <RotateCw className="w-3 h-3" />
                       <span>Resend OTP</span>
@@ -380,7 +380,7 @@ function LoginForm() {
                 <button
                   type="submit"
                   disabled={loading || otpDigits.join("").length !== 6}
-                  className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-[#5C59E8] hover:bg-[#4E4BC6] transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer"
+                  className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-[#2563EB] hover:bg-[#1D4ED8] transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer"
                 >
                   {loading ? (
                     <>
@@ -416,7 +416,7 @@ function LoginForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="student@university.edu"
-                  className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-blue-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
                 />
               </div>
             </div>
@@ -429,7 +429,7 @@ function LoginForm() {
                 </label>
                 <Link
                   href={`/auth/forgot-password?email=${encodeURIComponent(email)}`}
-                  className="text-xs font-semibold text-[#5C59E8] hover:text-[#4E4BC6] transition-colors"
+                  className="text-xs font-semibold text-[#2563EB] hover:text-[#4E4BC6] transition-colors"
                 >
                   Forgot password?
                 </Link>
@@ -442,7 +442,7 @@ function LoginForm() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full pl-10 pr-11 py-2.5 sm:py-3 text-sm bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
+                  className="w-full pl-10 pr-11 py-2.5 sm:py-3 text-sm bg-white border border-blue-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
                 />
                 <button
                   type="button"
@@ -462,7 +462,7 @@ function LoginForm() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-slate-300 text-[#5C59E8] focus:ring-[#5C59E8] cursor-pointer"
+                  className="w-4 h-4 rounded border-blue-300 text-[#2563EB] focus:ring-[#5C59E8] cursor-pointer"
                 />
                 <span className="text-xs text-slate-600 font-medium">Keep me signed in for 30 days</span>
               </label>
@@ -472,7 +472,7 @@ function LoginForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-[#5C59E8] hover:bg-[#4E4BC6] transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer"
+              className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-[#2563EB] hover:bg-[#1D4ED8] transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer"
             >
               {loading ? (
                 <>
@@ -490,12 +490,12 @@ function LoginForm() {
         )}
 
         {/* Bottom Switcher */}
-        <div className="pt-4 border-t border-slate-200 text-center">
+        <div className="pt-4 border-t border-blue-200 text-center">
           <p className="text-xs text-slate-600">
             Don&apos;t have an account yet?{" "}
             <Link
               href="/auth/signup"
-              className="font-bold text-[#5C59E8] hover:text-[#4E4BC6] underline underline-offset-3"
+              className="font-bold text-[#2563EB] hover:text-[#4E4BC6] underline underline-offset-3"
             >
               Create free student account
             </Link>
@@ -512,8 +512,8 @@ export default function LoginPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-[#F4F5FA] flex items-center justify-center">
-          <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center gap-3">
-            <Loader2 className="w-5 h-5 animate-spin text-[#5C59E8]" />
+          <div className="p-6 rounded-2xl bg-white border border-blue-200 shadow-sm flex items-center gap-3">
+            <Loader2 className="w-5 h-5 animate-spin text-[#2563EB]" />
             <span className="text-sm font-semibold text-slate-800">Loading sign in...</span>
           </div>
         </div>

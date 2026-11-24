@@ -84,10 +84,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <AuthGuard allowedRoles={["ADMIN", "SUPER_ADMIN", "FOUNDER"]}>
       <ErrorBoundary moduleName="Admin Operations Portal" fallbackTitle="Admin Hub Notice">
-        <div className="min-h-screen bg-[#F7F8FA] text-[#111827] flex flex-col font-sans selection:bg-[#2563EB] selection:text-white">
+        <div className="min-h-screen bg-white text-black flex flex-col font-sans selection:bg-[#2563EB] selection:text-white">
           
           {/* Top Dedicated Admin Navigation Header (Pure SaaS Minimal) */}
-          <header className="sticky top-0 z-40 bg-white border-b border-[#E5E7EB] shadow-2xs">
+          <header className="sticky top-0 z-40 bg-white border-b border-blue-200 shadow-2xs">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex items-center justify-between h-16 gap-4">
                 
@@ -105,7 +105,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       />
                     </div>
                     <div className="flex items-center gap-1.5 leading-none">
-                      <span className="font-bold text-base tracking-tight text-[#111827]">
+                      <span className="font-bold text-base tracking-tight text-black">
                         EdWorld
                       </span>
                       <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#111827] text-white">
@@ -129,11 +129,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         href={item.href}
                         className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all inline-flex items-center gap-1.5 shrink-0 ${
                           isActive
-                            ? "bg-[#F7F8FA] text-[#2563EB] border border-[#E5E7EB] shadow-2xs"
-                            : "text-[#6B7280] hover:text-[#111827] hover:bg-[#F7F8FA]"
+                            ? "bg-white text-[#2563EB] border border-blue-200 shadow-2xs"
+                            : "text-slate-700 hover:text-black hover:bg-white"
                         }`}
                       >
-                        <Icon className={`w-3.5 h-3.5 ${isActive ? "text-[#2563EB]" : "text-[#6B7280]"}`} />
+                        <Icon className={`w-3.5 h-3.5 ${isActive ? "text-[#2563EB]" : "text-slate-700"}`} />
                         <span>{item.label}</span>
                       </Link>
                     );
@@ -144,12 +144,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                   
                   {/* Identity Badge */}
-                  <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[#F7F8FA] border border-[#E5E7EB] text-xs">
+                  <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white border border-blue-200 text-xs">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="font-bold text-[#111827] max-w-[120px] truncate" title={adminName}>
+                    <span className="font-bold text-black max-w-[120px] truncate" title={adminName}>
                       {adminName}
                     </span>
-                    <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded bg-white border border-[#E5E7EB] text-[#2563EB]">
+                    <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded bg-white border border-blue-200 text-[#2563EB]">
                       {adminRole}
                     </span>
                   </div>
@@ -157,7 +157,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   {/* Return to Student App */}
                   <Link
                     href="/dashboard"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#111827] bg-white hover:bg-[#F7F8FA] border border-[#E5E7EB] rounded-lg transition-colors cursor-pointer shadow-2xs"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-black bg-white hover:bg-white border border-blue-200 rounded-lg transition-colors cursor-pointer shadow-2xs"
                     title="Exit Admin to Student Dashboard"
                   >
                     <ArrowLeft className="w-3.5 h-3.5 text-[#2563EB]" />
@@ -167,7 +167,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   {/* Sign Out */}
                   <button
                     onClick={handleSignOut}
-                    className="p-1.5 sm:px-2.5 sm:py-1.5 text-xs font-semibold text-[#6B7280] hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5"
+                    className="p-1.5 sm:px-2.5 sm:py-1.5 text-xs font-semibold text-slate-700 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5"
                     title="Sign Out of Admin"
                   >
                     <LogOut className="w-3.5 h-3.5" />
@@ -177,7 +177,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   {/* Mobile Drawer Toggle */}
                   <button
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    className="xl:hidden p-2 rounded-lg text-[#6B7280] hover:text-[#111827] hover:bg-[#F7F8FA] border border-[#E5E7EB]"
+                    className="xl:hidden p-2 rounded-lg text-slate-700 hover:text-black hover:bg-white border border-blue-200"
                     aria-label="Toggle admin navigation menu"
                   >
                     {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -188,7 +188,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
 
             {/* Tablet Sub-Navigation Strip (Visible on md & lg, hidden on xl and mobile) */}
-            <div className="hidden md:flex xl:hidden border-t border-[#E5E7EB] bg-[#F7F8FA] px-4 sm:px-6 lg:px-8 py-2 overflow-x-auto no-scrollbar gap-1">
+            <div className="hidden md:flex xl:hidden border-t border-blue-200 bg-white px-4 sm:px-6 lg:px-8 py-2 overflow-x-auto no-scrollbar gap-1">
               {ADMIN_NAV_LINKS.map((item) => {
                 const Icon = item.icon;
                 const isActive = item.exact 
@@ -201,11 +201,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     href={item.href}
                     className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all inline-flex items-center gap-1.5 shrink-0 ${
                       isActive
-                        ? "bg-white text-[#2563EB] border border-[#E5E7EB] shadow-2xs"
-                        : "text-[#6B7280] hover:text-[#111827] hover:bg-white/60"
+                        ? "bg-white text-[#2563EB] border border-blue-200 shadow-2xs"
+                        : "text-slate-700 hover:text-black hover:bg-white/60"
                     }`}
                   >
-                    <Icon className={`w-3.5 h-3.5 ${isActive ? "text-[#2563EB]" : "text-[#6B7280]"}`} />
+                    <Icon className={`w-3.5 h-3.5 ${isActive ? "text-[#2563EB]" : "text-slate-700"}`} />
                     <span>{item.label}</span>
                   </Link>
                 );
@@ -214,8 +214,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
             {/* Mobile Navigation Drawer */}
             {mobileMenuOpen && (
-              <div className="xl:hidden border-t border-[#E5E7EB] bg-white px-4 py-3 space-y-1 shadow-md animate-in slide-in-from-top-2 duration-150">
-                <div className="px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-[#6B7280]">
+              <div className="xl:hidden border-t border-blue-200 bg-white px-4 py-3 space-y-1 shadow-md animate-in slide-in-from-top-2 duration-150">
+                <div className="px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-700">
                   Admin Modules
                 </div>
                 {ADMIN_NAV_LINKS.map((item) => {
@@ -231,8 +231,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       onClick={() => setMobileMenuOpen(false)}
                       className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
                         isActive
-                          ? "bg-[#F7F8FA] text-[#2563EB] border border-[#E5E7EB]"
-                          : "text-[#111827] hover:bg-[#F7F8FA]"
+                          ? "bg-white text-[#2563EB] border border-blue-200"
+                          : "text-black hover:bg-white"
                       }`}
                     >
                       <Icon className="w-4 h-4 text-[#2563EB]" />
@@ -241,11 +241,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   );
                 })}
 
-                <div className="pt-2 border-t border-[#E5E7EB] space-y-1">
+                <div className="pt-2 border-t border-blue-200 space-y-1">
                   <Link
                     href="/dashboard"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#111827] hover:bg-[#F7F8FA] rounded-lg"
+                    className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-black hover:bg-white rounded-lg"
                   >
                     <ArrowLeft className="w-3.5 h-3.5 text-[#2563EB]" />
                     <span>Exit Admin to Student Dashboard</span>

@@ -122,36 +122,36 @@ export default function PricingPage() {
   ];
 
   return (
-    <div className="w-full space-y-12 sm:space-y-16 font-sans text-slate-100 animate-in fade-in duration-200">
+    <div className="w-full space-y-12 sm:space-y-16 font-sans text-black animate-in fade-in duration-200">
       
       {/* 1. HERO HEADER */}
       <section className="text-center max-w-3xl mx-auto space-y-4 pt-4">
         <div className="flex flex-wrap items-center justify-center gap-2">
-          <span className="text-xs font-semibold px-3 py-1 bg-blue-500/10 text-cyan-300 border border-blue-500/20 rounded-full font-display">
+          <span className="text-xs font-semibold px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-full font-display">
             Honest Student Pricing
           </span>
-          <span className="text-xs font-medium px-3 py-1 bg-white/5 text-slate-300 border border-white/10 rounded-full font-mono">
+          <span className="text-xs font-medium px-3 py-1 bg-blue-50/50 text-slate-700 border border-blue-200 rounded-full font-mono">
             No Hidden Fees &bull; GST Included
           </span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-black font-display text-white tracking-tight">
+        <h1 className="text-3xl sm:text-5xl font-black font-display text-black tracking-tight">
           Fair, predictable plans for every student.
         </h1>
 
-        <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl mx-auto font-normal">
+        <p className="text-sm sm:text-base text-slate-700 leading-relaxed max-w-2xl mx-auto font-normal">
           Start completely free with foundational resume optimization and AI mock interviews. Upgrade to Career Pro for unlimited interview reps and production labs.
         </p>
 
         {/* Monthly / Annual Billing Toggle */}
         <div className="pt-4 flex items-center justify-center gap-2">
-          <div className="inline-flex items-center gap-1.5 p-1.5 bg-[#0F1422] border border-white/10 rounded-2xl shadow-inner">
+          <div className="inline-flex items-center gap-1.5 p-1.5 bg-[#EFF6FF] border border-[#BFDBFE] rounded-2xl shadow-sm">
             <button
               onClick={() => setBillingCycle("monthly")}
               className={`px-4 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${
                 billingCycle === "monthly"
-                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-md shadow-indigo-500/25"
-                  : "bg-transparent text-slate-400 hover:text-white"
+                  ? "bg-[#2563EB] text-white font-bold shadow-sm"
+                  : "bg-transparent text-slate-700 hover:text-black"
               }`}
             >
               Monthly Billing
@@ -161,12 +161,12 @@ export default function PricingPage() {
               onClick={() => setBillingCycle("annual")}
               className={`px-4 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer flex items-center gap-2 ${
                 billingCycle === "annual"
-                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-md shadow-indigo-500/25"
-                  : "bg-transparent text-slate-400 hover:text-white"
+                  ? "bg-[#2563EB] text-white font-bold shadow-sm"
+                  : "bg-transparent text-slate-700 hover:text-black"
               }`}
             >
               <span>Annual Billing</span>
-              <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 text-[10px] font-bold rounded-md border border-emerald-500/30">
+              <span className="px-1.5 py-0.5 bg-blue-100 text-blue-800 text-[10px] font-bold rounded-md border border-blue-200">
                 Save 20%
               </span>
             </button>
@@ -179,15 +179,15 @@ export default function PricingPage() {
         {plans.map((p) => (
           <div
             key={p.id}
-            className={`tactile-chassis bg-[#0C101A] rounded-3xl p-6 sm:p-8 flex flex-col justify-between space-y-6 transition-all relative shadow-2xl text-white ${
+            className={`bg-[#EFF6FF] rounded-3xl p-6 sm:p-8 flex flex-col justify-between space-y-6 transition-all relative border border-[#BFDBFE] shadow-sm text-black ${
               p.isPopular
-                ? "border-2 border-white/40 shadow-2xl"
-                : "border border-white/10 hover:border-white/20"
+                ? "border-2 border-[#2563EB] ring-2 ring-blue-100"
+                : "hover:border-blue-300"
             }`}
           >
             {p.isPopular && (
               <div className="absolute -top-3 right-6">
-                <span className="px-3 py-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[11px] font-bold rounded-full shadow-md border border-indigo-400/40 font-display">
+                <span className="px-3 py-1 bg-[#2563EB] text-white text-[11px] font-bold rounded-full shadow-sm border border-blue-300 font-display">
                   {p.badge}
                 </span>
               </div>
@@ -196,42 +196,40 @@ export default function PricingPage() {
             <div className="space-y-6">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400 font-display">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-600 font-display">
                     {p.name}
                   </span>
                   {!p.isPopular && (
-                    <span className="text-[11px] font-semibold px-2 py-0.5 bg-white/5 text-slate-300 border border-white/10 rounded-full">
+                    <span className="text-[11px] font-semibold px-2 py-0.5 bg-white text-slate-700 border border-blue-200 rounded-full">
                       {p.badge}
                     </span>
                   )}
                 </div>
 
                 <div className="flex items-baseline gap-1.5 pt-1">
-                  <span className="text-4xl sm:text-5xl font-black font-display text-white tracking-tight">
+                  <span className="text-4xl sm:text-5xl font-black font-display text-black tracking-tight">
                     {p.priceInr === null ? "Custom" : `₹${p.priceInr}`}
                   </span>
-                  <span className="text-xs text-slate-400 font-medium">
+                  <span className="text-xs text-slate-600 font-medium">
                     / {p.period}
                   </span>
                 </div>
 
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed pt-1">
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed pt-1">
                   {p.description}
                 </p>
               </div>
 
               {/* Included Features List */}
-              <div className="space-y-3 pt-4 border-t border-white/10">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block font-display">
+              <div className="space-y-3 pt-4 border-t border-blue-200">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 block font-display">
                   Included Capabilities:
                 </span>
                 <div className="space-y-2.5">
                   {p.features.map((feat, idx) => (
-                    <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-200">
+                    <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-800">
                       <CheckCircle2
-                        className={`w-4 h-4 shrink-0 mt-0.5 ${
-                          p.isPopular ? "text-cyan-400" : "text-emerald-400"
-                        }`}
+                        className="w-4 h-4 shrink-0 mt-0.5 text-[#2563EB]"
                       />
                       <span className="leading-tight">{feat}</span>
                     </div>
@@ -240,14 +238,14 @@ export default function PricingPage() {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-white/10">
+            <div className="pt-4 border-t border-blue-200">
               <Link
                 href={p.ctaHref}
                 onClick={p.isPopular ? triggerConfetti : undefined}
-                className={`w-full py-3 text-xs font-bold text-center flex items-center justify-center gap-2 cursor-pointer rounded-xl transition-all shadow-md ${
+                className={`w-full py-3 text-xs font-bold text-center flex items-center justify-center gap-2 cursor-pointer rounded-xl transition-all ${
                   p.isPopular
-                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-indigo-500/25"
-                    : "bg-white/5 hover:bg-white/10 border border-white/10 text-white"
+                    ? "bg-[#2563EB] hover:bg-blue-700 text-white shadow-sm"
+                    : "bg-[#DBEAFE] hover:bg-blue-200 border border-blue-200 text-[#1E40AF]"
                 }`}
               >
                 <span>{p.ctaLabel}</span>
@@ -259,41 +257,41 @@ export default function PricingPage() {
       </section>
 
       {/* 3. FEATURE COMPARISON MATRIX TABLE */}
-      <section className="tactile-chassis bg-[#0C101A] border border-white/10 p-6 sm:p-8 max-w-5xl mx-auto space-y-6 rounded-3xl shadow-xl text-white">
+      <section className="bg-[#EFF6FF] border border-[#BFDBFE] p-6 sm:p-8 max-w-5xl mx-auto space-y-6 rounded-3xl shadow-sm text-black">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-blue-500/10 text-cyan-300 border border-blue-500/20 text-xs font-semibold rounded-full font-display">
-            <Sparkles className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-blue-100 text-blue-800 border border-blue-200 text-xs font-semibold rounded-full font-display">
+            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
             <span>Side-by-Side Entitlements</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black text-white font-display">
+          <h2 className="text-xl sm:text-2xl font-black text-black font-display">
             Plan Feature Matrix
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-600">
             Detailed breakdown of limits and capabilities across tiers.
           </p>
         </div>
 
-        <div className="overflow-x-auto border border-white/10 rounded-2xl bg-[#0F1422] shadow-inner">
+        <div className="overflow-x-auto border border-[#BFDBFE] rounded-2xl bg-white shadow-sm">
           <table className="w-full text-xs text-left">
             <thead>
-              <tr className="bg-slate-900 border-b border-white/10 text-white font-bold uppercase tracking-wider font-display">
+              <tr className="bg-[#EFF6FF] border-b border-blue-200 text-black font-bold uppercase tracking-wider font-display">
                 <th className="py-3.5 px-4">Feature</th>
                 <th className="py-3.5 px-4">Free Starter</th>
-                <th className="py-3.5 px-4 bg-indigo-500/10 text-cyan-300 font-bold">
+                <th className="py-3.5 px-4 bg-blue-100 text-[#2563EB] font-bold">
                   Career Pro (₹49)
                 </th>
                 <th className="py-3.5 px-4">Campus Plan</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/10">
+            <tbody className="divide-y divide-blue-100">
               {comparisonRows.map((row, i) => (
-                <tr key={i} className="hover:bg-white/5 transition-colors">
-                  <td className="py-3.5 px-4 font-semibold text-white">{row.feature}</td>
-                  <td className="py-3.5 px-4 text-slate-300">{row.free}</td>
-                  <td className="py-3.5 px-4 font-semibold text-cyan-300 bg-indigo-500/5">
+                <tr key={i} className="hover:bg-blue-50/50 transition-colors">
+                  <td className="py-3.5 px-4 font-semibold text-black">{row.feature}</td>
+                  <td className="py-3.5 px-4 text-slate-700">{row.free}</td>
+                  <td className="py-3.5 px-4 font-semibold text-[#2563EB] bg-blue-50/80">
                     {row.pro}
                   </td>
-                  <td className="py-3.5 px-4 text-slate-300">{row.campus}</td>
+                  <td className="py-3.5 px-4 text-slate-700">{row.campus}</td>
                 </tr>
               ))}
             </tbody>
@@ -302,17 +300,17 @@ export default function PricingPage() {
       </section>
 
       {/* 4. 100% TRANSPARENT BILLING GUARANTEE */}
-      <section className="tactile-chassis bg-[#0C101A] border border-white/10 p-6 sm:p-8 text-center space-y-3 max-w-4xl mx-auto shadow-xl rounded-3xl text-white">
-        <div className="flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm font-bold text-white font-display">
+      <section className="bg-[#EFF6FF] border border-[#BFDBFE] p-6 sm:p-8 text-center space-y-3 max-w-4xl mx-auto shadow-sm rounded-3xl text-black">
+        <div className="flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm font-bold text-black font-display">
           <span>✦ All prices inclusive of applicable GST (18%)</span>
-          <span className="text-slate-600">&bull;</span>
+          <span className="text-slate-400">&bull;</span>
           <span>Zero hidden platform surcharges</span>
-          <span className="text-slate-600">&bull;</span>
+          <span className="text-slate-400">&bull;</span>
           <span>1-Click self-service cancellation</span>
         </div>
-        <p className="text-xs text-slate-300 max-w-xl mx-auto leading-relaxed">
+        <p className="text-xs text-slate-600 max-w-xl mx-auto leading-relaxed">
           All paid tiers are backed by our transparent 7-Day Money-Back Guarantee. Subscriptions may be cancelled anytime with zero penalty. View our full{" "}
-          <Link href="/terms" className="font-semibold underline text-cyan-400 hover:text-cyan-300">
+          <Link href="/terms" className="font-semibold underline text-[#2563EB] hover:text-blue-800">
             Terms of Learning
           </Link>.
         </p>
@@ -321,10 +319,10 @@ export default function PricingPage() {
       {/* 5. PRICING FAQS ACCORDION */}
       <section className="max-w-4xl mx-auto space-y-6">
         <div className="text-center space-y-1">
-          <h2 className="text-2xl sm:text-3xl font-black text-white font-display">
+          <h2 className="text-2xl sm:text-3xl font-black text-black font-display">
             Pricing Questions &amp; Answers
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-600">
             Everything you need to know about plans, billing, and cancellations.
           </p>
         </div>
@@ -335,21 +333,21 @@ export default function PricingPage() {
             return (
               <div
                 key={idx}
-                className="tactile-chassis bg-[#0C101A] border border-white/10 rounded-2xl p-5 transition-all shadow-md text-white"
+                className="bg-[#EFF6FF] border border-[#BFDBFE] rounded-2xl p-5 transition-all shadow-sm text-black"
               >
                 <button
                   onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
-                  className="w-full flex items-center justify-between text-left gap-4 font-bold text-sm sm:text-base text-white cursor-pointer font-display"
+                  className="w-full flex items-center justify-between text-left gap-4 font-bold text-sm sm:text-base text-black cursor-pointer font-display"
                 >
                   <span>{faq.q}</span>
                   <ChevronDown
-                    className={`w-4 h-4 text-cyan-400 transition-transform duration-200 shrink-0 ${
+                    className={`w-4 h-4 text-[#2563EB] transition-transform duration-200 shrink-0 ${
                       isOpen ? "rotate-180" : ""
                     }`}
                   />
                 </button>
                 {isOpen && (
-                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mt-3 pt-3 border-t border-white/10 animate-in fade-in">
+                  <p className="text-xs sm:text-sm text-slate-700 leading-relaxed mt-3 pt-3 border-t border-blue-200 animate-in fade-in">
                     {faq.a}
                   </p>
                 )}

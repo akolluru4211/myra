@@ -18,13 +18,13 @@ export default function FigmaAuthLayout({
   activeTab,
 }: FigmaAuthLayoutProps) {
   return (
-    <div className="min-h-screen w-full bg-[#F4F5FA] text-slate-900 flex flex-col justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8 font-sans selection:bg-[#5C59E8] selection:text-white relative">
+    <div className="min-h-screen w-full bg-white text-black flex flex-col justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8 font-sans selection:bg-[#2563EB] selection:text-white relative">
       
       {/* Centered Structured Student Dashboard-Themed Card */}
-      <div className="w-full max-w-xl mx-auto bg-white border border-slate-200/90 rounded-3xl shadow-[0_10px_35px_rgba(80,90,130,0.08)] overflow-hidden animate-in fade-in duration-200">
+      <div className="w-full max-w-xl mx-auto bg-white border border-blue-200/90 rounded-3xl shadow-[0_10px_35px_rgba(80,90,130,0.08)] overflow-hidden animate-in fade-in duration-200">
         
         {/* Top Header / Branding & Toggle Bar */}
-        <div className="px-6 sm:px-8 pt-6 pb-4 flex items-center justify-between border-b border-slate-100 bg-[#F8F9FD]">
+        <div className="px-6 sm:px-8 pt-6 pb-4 flex items-center justify-between border-b border-blue-100 bg-[#EFF6FF]">
           <Link href="/" className="flex items-center gap-2.5 group">
             <div className="relative w-8 h-8 rounded-xl overflow-hidden bg-black flex items-center justify-center shadow-xs border border-slate-300 group-hover:scale-105 transition-transform shrink-0">
               <Image
@@ -38,10 +38,10 @@ export default function FigmaAuthLayout({
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5 leading-none">
-                <span className="font-extrabold text-base text-slate-900 font-display">
+                <span className="font-extrabold text-base text-black font-display">
                   Edworld
                 </span>
-                <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700">
+                <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md bg-white border border-blue-200 text-slate-700">
                   Co.
                 </span>
               </div>
@@ -52,13 +52,13 @@ export default function FigmaAuthLayout({
           </Link>
 
           {/* Quick Switcher Pills */}
-          <div className="flex items-center gap-1 p-1 rounded-2xl bg-slate-200/70 border border-slate-200 text-xs font-semibold">
+          <div className="flex items-center gap-1 p-1 rounded-2xl bg-slate-200/70 border border-blue-200 text-xs font-semibold">
             <Link
               href="/auth/login"
               className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer ${
                 activeTab === "login"
-                  ? "bg-white text-slate-900 font-bold shadow-xs border border-slate-200/60"
-                  : "bg-transparent text-slate-600 hover:text-slate-900"
+                  ? "bg-white text-black font-bold shadow-xs border border-blue-200/60"
+                  : "bg-transparent text-slate-600 hover:text-black"
               }`}
             >
               Sign In
@@ -67,8 +67,8 @@ export default function FigmaAuthLayout({
               href="/auth/signup"
               className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer ${
                 activeTab === "signup"
-                  ? "bg-[#5C59E8] text-white font-bold shadow-xs"
-                  : "bg-transparent text-slate-600 hover:text-slate-900"
+                  ? "bg-[#2563EB] text-white font-bold shadow-xs"
+                  : "bg-transparent text-slate-600 hover:text-black"
               }`}
             >
               Sign Up
@@ -81,7 +81,7 @@ export default function FigmaAuthLayout({
           
           {/* Form Header */}
           <div className="space-y-1.5 text-center sm:text-left">
-            <h1 className="font-display font-black text-2xl sm:text-3xl text-slate-900 tracking-tight">
+            <h1 className="font-display font-black text-2xl sm:text-3xl text-black tracking-tight">
               {title}
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">

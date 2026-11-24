@@ -68,35 +68,35 @@ export default function ProblemStatementDetailModal({
   }[problem.difficulty] || "bg-gray-50 text-gray-700 border-gray-200";
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 animate-in fade-in duration-150">
       <div 
-        className="bg-white rounded-2xl border border-[#E5E7EB] shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden text-[#111827] font-sans"
+        className="bg-white rounded-2xl border border-blue-200 shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden text-black font-sans"
         role="dialog"
         aria-modal="true"
       >
         {/* Modal Header */}
-        <div className="p-5 sm:p-6 border-b border-[#E5E7EB] flex items-start justify-between gap-4 bg-white shrink-0">
+        <div className="p-5 sm:p-6 border-b border-blue-200 flex items-start justify-between gap-4 bg-white shrink-0">
           <div className="space-y-1.5 min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-[#F7F8FA] border border-[#E5E7EB] text-[#6B7280]">
+              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-[#EFF6FF] border border-blue-200 text-slate-700">
                 {problem.domain}
               </span>
               <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-md border ${difficultyColors}`}>
                 {problem.difficulty}
               </span>
-              <span className="text-xs text-[#6B7280] flex items-center gap-1 font-medium">
+              <span className="text-xs text-slate-700 flex items-center gap-1 font-medium">
                 <Clock className="w-3.5 h-3.5" />
                 {problem.timeEstimate}
               </span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-[#111827] tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-bold text-black tracking-tight">
               {problem.title}
             </h2>
           </div>
 
           <button
             onClick={onClose}
-            className="text-[#6B7280] hover:text-[#111827] p-1.5 rounded-lg hover:bg-[#F7F8FA] transition-colors shrink-0"
+            className="text-slate-700 hover:text-black p-1.5 rounded-lg hover:bg-[#EFF6FF] transition-colors shrink-0"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" />
@@ -114,13 +114,13 @@ export default function ProblemStatementDetailModal({
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-[#111827]">{problem.companySponsor.name}</span>
+                    <span className="text-xs font-bold text-black">{problem.companySponsor.name}</span>
                     <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-blue-100 text-[#2563EB]">
                       {problem.companySponsor.tier}
                     </span>
                   </div>
-                  <p className="text-[11px] text-[#6B7280]">
-                    Hiring Track: <strong className="text-[#111827]">{problem.companySponsor.hiringTrack}</strong>
+                  <p className="text-[11px] text-slate-700">
+                    Hiring Track: <strong className="text-black">{problem.companySponsor.hiringTrack}</strong>
                   </p>
                 </div>
               </div>
@@ -128,27 +128,27 @@ export default function ProblemStatementDetailModal({
           )}
 
           {/* Industry Relevance Alert */}
-          <div className="p-3.5 rounded-xl bg-[#F7F8FA] border border-[#E5E7EB] flex items-start gap-3">
+          <div className="p-3.5 rounded-xl bg-[#EFF6FF] border border-blue-200 flex items-start gap-3">
             <ShieldCheck className="w-4 h-4 text-[#2563EB] shrink-0 mt-0.5" />
-            <div className="text-xs text-[#6B7280]">
-              <strong className="text-[#111827] font-semibold">Industry Relevance: </strong>
+            <div className="text-xs text-slate-700">
+              <strong className="text-black font-semibold">Industry Relevance: </strong>
               {problem.industryRelevance}
             </div>
           </div>
 
           {/* Problem Statement Section */}
           <div className="space-y-2">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#6B7280]">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
               The Problem Statement & Scenario
             </h3>
-            <div className="p-4 rounded-xl bg-[#F7F8FA] border border-[#E5E7EB] text-[#111827] whitespace-pre-line leading-relaxed text-xs sm:text-sm">
+            <div className="p-4 rounded-xl bg-[#EFF6FF] border border-blue-200 text-black whitespace-pre-line leading-relaxed text-xs sm:text-sm">
               {problem.problemStatement}
             </div>
           </div>
 
           {/* Functional Requirements */}
           <div className="space-y-2">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#6B7280]">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
               Core Functional Requirements
             </h3>
             <ul className="space-y-2">
@@ -163,10 +163,10 @@ export default function ProblemStatementDetailModal({
 
           {/* Non-Functional Constraints */}
           <div className="space-y-2">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#6B7280]">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
               Engineering Constraints & SLA Targets
             </h3>
-            <div className="p-3.5 rounded-xl bg-white border border-[#E5E7EB] space-y-1.5">
+            <div className="p-3.5 rounded-xl bg-white border border-blue-200 space-y-1.5">
               {problem.nonFunctionalConstraints.map((constraint, index) => (
                 <div key={index} className="flex items-start gap-2 text-xs text-[#4B5563]">
                   <Zap className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
@@ -178,14 +178,14 @@ export default function ProblemStatementDetailModal({
 
           {/* Recommended Tech Stack */}
           <div className="space-y-2">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#6B7280]">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
               Recommended Tech Stack & Tools
             </h3>
             <div className="flex flex-wrap gap-1.5">
               {problem.techStack.map((tech, index) => (
                 <span
                   key={index}
-                  className="px-2.5 py-1 text-xs font-medium rounded-md bg-[#F7F8FA] border border-[#E5E7EB] text-[#111827]"
+                  className="px-2.5 py-1 text-xs font-medium rounded-md bg-[#EFF6FF] border border-blue-200 text-black"
                 >
                   {tech}
                 </span>
@@ -195,16 +195,16 @@ export default function ProblemStatementDetailModal({
 
           {/* Implementation Roadmap */}
           <div className="space-y-2.5">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#6B7280]">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
               Suggested Implementation Steps
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
               {problem.suggestedRoadmap.map((step, index) => (
-                <div key={index} className="p-3 rounded-lg border border-[#E5E7EB] bg-[#F7F8FA] space-y-1">
+                <div key={index} className="p-3 rounded-lg border border-blue-200 bg-[#EFF6FF] space-y-1">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#2563EB]">
                     {step.phase}
                   </span>
-                  <p className="text-xs text-[#6B7280] leading-snug">
+                  <p className="text-xs text-slate-700 leading-snug">
                     {step.description}
                   </p>
                 </div>
@@ -214,10 +214,10 @@ export default function ProblemStatementDetailModal({
         </div>
 
         {/* Modal Footer Controls */}
-        <div className="p-4 sm:p-5 border-t border-[#E5E7EB] bg-[#F7F8FA] flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+        <div className="p-4 sm:p-5 border-t border-blue-200 bg-[#EFF6FF] flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
           <button
             onClick={handleCopy}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-3.5 py-2 text-xs font-semibold text-[#111827] bg-white hover:bg-gray-50 border border-[#E5E7EB] rounded-lg transition-colors cursor-pointer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-3.5 py-2 text-xs font-semibold text-black bg-white hover:bg-gray-50 border border-blue-200 rounded-lg transition-colors cursor-pointer"
           >
             {copied ? (
               <>
@@ -226,7 +226,7 @@ export default function ProblemStatementDetailModal({
               </>
             ) : (
               <>
-                <Copy className="w-3.5 h-3.5 text-[#6B7280]" />
+                <Copy className="w-3.5 h-3.5 text-slate-700" />
                 <span>Copy Problem Statement</span>
               </>
             )}
@@ -236,7 +236,7 @@ export default function ProblemStatementDetailModal({
             <Link
               href={`/edbuild?problemId=${problem.id}&create=true`}
               onClick={onClose}
-              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3.5 py-2 text-xs font-semibold text-[#111827] bg-white hover:bg-gray-50 border border-[#E5E7EB] rounded-lg transition-colors"
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3.5 py-2 text-xs font-semibold text-black bg-white hover:bg-gray-50 border border-blue-200 rounded-lg transition-colors"
             >
               <Users className="w-3.5 h-3.5 text-[#2563EB]" />
               <span>Create Squad in EdBuild</span>
@@ -252,7 +252,7 @@ export default function ProblemStatementDetailModal({
 
             <button
               onClick={onClose}
-              className="px-3 py-2 text-xs font-semibold text-[#6B7280] hover:text-[#111827] hover:bg-gray-200/60 rounded-lg transition-colors cursor-pointer"
+              className="px-3 py-2 text-xs font-semibold text-slate-700 hover:text-black hover:bg-gray-200/60 rounded-lg transition-colors cursor-pointer"
             >
               Close
             </button>

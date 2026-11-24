@@ -1,17 +1,17 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import Link from "next/link";
+import Image from "next/image";
 import { 
   ChevronLeft, 
   ChevronRight, 
   Heart, 
-  Sparkles, 
-  Trophy, 
   Calendar, 
-  ExternalLink,
   Loader2,
-  Check
+  Sparkles,
+  Trophy,
+  Users,
+  ExternalLink
 } from "lucide-react";
 import { EventRecord } from "@/app/api/events/route";
 import EventDetailModal from "./EventDetailModal";
@@ -26,6 +26,8 @@ export default function FeaturedEventsCarousel({ userId }: FeaturedEventsCarouse
   const [error, setError] = useState<string | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<EventRecord | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -39,7 +41,7 @@ export default function FeaturedEventsCarousel({ userId }: FeaturedEventsCarouse
       if (data.success && Array.isArray(data.events)) {
         setEvents(data.events);
       } else {
-        setError("Unable to load featured events.");
+        setError("Unable to load upcoming events.");
       }
     } catch (err) {
       setError("Failed to connect to events service.");
@@ -52,15 +54,47 @@ export default function FeaturedEventsCarousel({ userId }: FeaturedEventsCarouse
     fetchEvents();
   }, [userId]);
 
-  // Smooth scroll left and right
+  const updateScrollButtons = () => {
+    if (!scrollContainerRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+    setCanScrollLeft(scrollLeft > 10);
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+  };
+
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    updateScrollButtons();
+    el.addEventListener("scroll", updateScrollButtons, { passive: true });
+    window.addEventListener("resize", updateScrollButtons);
+    return () => {
+      el.removeEventListener("scroll", updateScrollButtons);
+      window.removeEventListener("resize", updateScrollButtons);
+    };
+  }, [events]);
+
+  // Smooth scroll left and right advancing one banner at a time
   const handleScroll = (direction: "left" | "right") => {
     if (!scrollContainerRef.current) return;
-    const cardWidth = 320; // approximate width of one card + gap
-    const scrollAmount = direction === "left" ? -cardWidth * 2 : cardWidth * 2;
-    scrollContainerRef.current.scrollBy({
+    const container = scrollContainerRef.current;
+    const firstChild = container.firstElementChild as HTMLElement | null;
+    const cardWidth = firstChild ? firstChild.getBoundingClientRect().width + 16 : 340;
+    const scrollAmount = direction === "left" ? -cardWidth : cardWidth;
+    container.scrollBy({
       left: scrollAmount,
       behavior: "smooth"
     });
+  };
+
+  // Keyboard navigation for carousel
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      handleScroll("left");
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      handleScroll("right");
+    }
   };
 
   // Toggle bookmark/save event
@@ -82,7 +116,6 @@ export default function FeaturedEventsCarousel({ userId }: FeaturedEventsCarouse
       });
     } catch (err) {
       console.warn("Could not save event:", err);
-      // Revert on failure
       fetchEvents();
     }
   };
@@ -93,337 +126,229 @@ export default function FeaturedEventsCarousel({ userId }: FeaturedEventsCarouse
     setIsModalOpen(true);
   };
 
-  // Visual poster renderer for each competition
-  const renderPosterCard = (event: EventRecord) => {
-    const style = event.banner_style || {};
-    const theme = style.theme || "corporate";
-
-    if (theme === "corporate") {
-      // White/Rose style like HDFC Life Aspire 3.0
-      return (
-        <div className="w-full h-full bg-gradient-to-b from-rose-50 via-white to-neutral-50 p-5 flex flex-col justify-between border border-rose-100 select-none">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase font-mono font-bold tracking-wider px-2 py-0.5 bg-rose-600 text-white rounded">
-                Case Challenge
-              </span>
-              <span className="text-[10px] font-mono text-neutral-500 font-bold">
-                {event.organizer}
-              </span>
-            </div>
-
-            <h4 className="text-sm font-black text-neutral-900 leading-snug">
-              {style.headline || "Solve a real business case. Win up to ₹1.8 lakh."}
-            </h4>
-
-            <div className="p-3 bg-white rounded-xl border border-rose-200/80 shadow-2xs space-y-1.5">
-              <span className="text-xs font-black tracking-tight text-rose-600 block">
-                {event.title}
-              </span>
-              <p className="text-[10px] text-neutral-600 leading-tight">
-                {style.subHeadline || "National case-study competition for MBA & college students"}
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-2 pt-2 border-t border-rose-100">
-            <div className="flex items-center justify-between text-[10px] font-mono">
-              <span className="text-neutral-500 font-bold">Prize:</span>
-              <span className="font-extrabold text-neutral-900">{event.prize_pool}</span>
-            </div>
-            <div className="w-full py-1.5 rounded-lg bg-rose-600 text-white text-[10px] font-bold text-center">
-              Register on EdWorld
-            </div>
-          </div>
-        </div>
-      );
+  // Format date readable
+  const formatEventDate = (dateString?: string) => {
+    if (!dateString) return "Registration Open";
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("en-IN", {
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+      });
+    } catch {
+      return dateString;
     }
-
-    if (theme === "automotive") {
-      // Royal blue style like Eurogrip TORQ Challenge 4.0
-      return (
-        <div className="w-full h-full bg-gradient-to-br from-blue-900 via-indigo-950 to-black p-5 text-white flex flex-col justify-between select-none">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase font-mono font-bold tracking-wider px-2 py-0.5 bg-white/20 text-white backdrop-blur-xs rounded">
-                National Case
-              </span>
-              <span className="text-[10px] font-mono text-blue-200 font-bold">
-                {event.organizer}
-              </span>
-            </div>
-
-            <div className="space-y-1">
-              <span className="text-base font-black tracking-widest text-white uppercase block font-mono">
-                TORQ 4.0
-              </span>
-              <h4 className="text-xs font-extrabold text-blue-100 leading-snug">
-                {style.headline || "Write a great case study. Make a case for your career!"}
-              </h4>
-            </div>
-
-            <div className="p-3 bg-white/10 rounded-xl backdrop-blur-xs border border-white/10 space-y-1">
-              <span className="text-[10px] font-bold text-blue-300 block">
-                Awards &amp; PPIs:
-              </span>
-              <p className="text-[11px] font-extrabold text-white">
-                {event.prize_pool}
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-2 pt-2 border-t border-white/10">
-            <div className="w-full py-1.5 rounded-lg bg-red-600 text-white text-[10px] font-bold text-center tracking-wider uppercase">
-              Register Now
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    if (theme === "hacker") {
-      // Builder / Hacker dark style like DJXHack Residency
-      return (
-        <div className="w-full h-full bg-gradient-to-br from-stone-900 via-neutral-900 to-black p-5 text-white flex flex-col justify-between border border-neutral-800 select-none">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase font-mono font-bold tracking-wider px-2 py-0.5 bg-amber-500 text-black font-extrabold rounded">
-                Residency
-              </span>
-              <span className="text-[10px] font-mono text-neutral-400">
-                {event.organizer}
-              </span>
-            </div>
-
-            <div className="space-y-1">
-              <span className="text-xs font-mono font-bold text-neutral-400 block tracking-wider">
-                DJX HACK
-              </span>
-              <h4 className="text-sm font-black text-white leading-tight uppercase font-mono">
-                {style.headline || "BUILD IT FROM HOME"}
-              </h4>
-              <p className="text-[10px] text-neutral-400">
-                Ideas. Code. Interact. Anywhere.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-1.5 pt-1">
-              <div className="p-2 rounded-lg bg-white/5 border border-white/10">
-                <span className="text-[9px] text-neutral-400 block font-mono">Prize</span>
-                <span className="text-[10px] font-bold text-amber-400 font-mono">₹75,000</span>
-              </div>
-              <div className="p-2 rounded-lg bg-white/5 border border-white/10">
-                <span className="text-[9px] text-neutral-400 block font-mono">Residency</span>
-                <span className="text-[10px] font-bold text-white font-mono">Sponsored</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-2 pt-2 border-t border-white/10">
-            <div className="w-full py-1.5 rounded-lg bg-white text-black text-[10px] font-extrabold text-center tracking-wider uppercase">
-              Participate Now →
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    if (theme === "networking") {
-      // Dark corporate networking style like LinkedIn x Unstop
-      return (
-        <div className="w-full h-full bg-gradient-to-br from-sky-950 via-slate-900 to-black p-5 text-white flex flex-col justify-between select-none">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase font-mono font-bold tracking-wider px-2 py-0.5 bg-sky-500/20 text-sky-300 border border-sky-500/30 rounded">
-                Career Sprint
-              </span>
-              <span className="text-[10px] font-mono text-sky-300 font-bold">
-                {event.organizer}
-              </span>
-            </div>
-
-            <div className="space-y-1">
-              <h4 className="text-sm font-black text-white leading-tight">
-                {style.headline || "Get Unstoppable on LinkedIn"}
-              </h4>
-              <p className="text-[10px] text-neutral-300">
-                Show up. Speak up. Stand out. Build your high-signal presence.
-              </p>
-            </div>
-
-            <div className="p-3 bg-white/5 rounded-xl border border-white/10">
-              <span className="text-[10px] font-bold text-sky-400 block">
-                Executive Perks:
-              </span>
-              <p className="text-[11px] font-medium text-neutral-200">
-                Priority Recruiter Referrals &amp; Mentorship
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-2 pt-2 border-t border-white/10">
-            <div className="w-full py-1.5 rounded-lg bg-white text-slate-900 text-[10px] font-bold text-center">
-              Register Now
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // Default National Hackathon theme (SIH / Flipkart GRiD)
-    return (
-      <div className="w-full h-full bg-gradient-to-br from-neutral-900 via-neutral-950 to-black p-5 text-white flex flex-col justify-between border border-neutral-800 select-none">
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] uppercase font-mono font-bold tracking-wider px-2 py-0.5 bg-neutral-800 text-neutral-200 rounded">
-              {event.category}
-            </span>
-            <span className="text-[10px] font-mono text-neutral-400">
-              {event.organizer}
-            </span>
-          </div>
-
-          <div className="space-y-1">
-            <h4 className="text-sm font-black text-white leading-snug">
-              {event.title}
-            </h4>
-            <p className="text-[10px] text-neutral-400 line-clamp-2">
-              {event.description}
-            </p>
-          </div>
-
-          <div className="p-3 bg-white/5 rounded-xl border border-white/10 space-y-1">
-            <span className="text-[10px] font-bold text-neutral-400 block font-mono">
-              Grand Prize Pool:
-            </span>
-            <span className="text-xs font-black text-white font-mono block">
-              {event.prize_pool}
-            </span>
-          </div>
-        </div>
-
-        <div className="space-y-2 pt-2 border-t border-white/10">
-          <div className="w-full py-1.5 rounded-lg bg-neutral-100 hover:bg-white text-black text-[10px] font-bold text-center">
-            View Challenge Details
-          </div>
-        </div>
-      </div>
-    );
   };
 
+  // 0 events: Hide the entire strip
+  if (!loading && events.length === 0) {
+    return null;
+  }
+
   return (
-    <section className="space-y-4 font-sans">
-      {/* Header with Title & Arrow Navigation Controls */}
+    <section 
+      aria-label="Upcoming Events and Hackathons"
+      data-testid="upcoming-events-strip"
+      className="space-y-3 font-sans w-full"
+    >
+      {/* Strip Header with Title & Arrow Controls */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-black flex items-center gap-2">
-            <span>Featured</span>
+          <h2 className="text-lg sm:text-xl font-black tracking-tight text-slate-900 font-display flex items-center gap-2">
+            <span>Upcoming Events</span>
+            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#2563EB] border border-blue-200 hidden sm:inline-block">
+              Hackathons & Contests
+            </span>
           </h2>
-          <p className="text-xs text-neutral-500 mt-0.5">
-            Premier national hackathons, case competitions, and innovation residencies
+          <p className="text-xs text-slate-500 mt-0.5">
+            Participate in premier national challenges, hackathons, and placement competitions
           </p>
         </div>
 
-        {/* Circular Slider Navigation Controls */}
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => handleScroll("left")}
-            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white border border-neutral-300 hover:border-black hover:bg-neutral-50 text-black flex items-center justify-center transition-all shadow-xs cursor-pointer"
-            aria-label="Scroll left"
-          >
-            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-          </button>
-          <button
-            type="button"
-            onClick={() => handleScroll("right")}
-            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white border border-neutral-300 hover:border-black hover:bg-neutral-50 text-black flex items-center justify-center transition-all shadow-xs cursor-pointer"
-            aria-label="Scroll right"
-          >
-            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
-          </button>
-        </div>
+        {/* Labeled Previous and Next controls on Desktop (Hidden if only 1 event) */}
+        {events.length > 1 && (
+          <div className="flex items-center gap-2" role="group" aria-label="Event slider controls">
+            <button
+              type="button"
+              onClick={() => handleScroll("left")}
+              disabled={!canScrollLeft}
+              className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all shadow-2xs ${
+                canScrollLeft
+                  ? "bg-white border-blue-200 text-slate-800 hover:border-slate-400 hover:bg-slate-50 cursor-pointer"
+                  : "bg-slate-100 border-blue-200/60 text-slate-400 cursor-not-allowed opacity-60"
+              }`}
+              aria-label="Previous events"
+              title="Previous banner"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => handleScroll("right")}
+              disabled={!canScrollRight}
+              className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all shadow-2xs ${
+                canScrollRight
+                  ? "bg-white border-blue-200 text-slate-800 hover:border-slate-400 hover:bg-slate-50 cursor-pointer"
+                  : "bg-slate-100 border-blue-200/60 text-slate-400 cursor-not-allowed opacity-60"
+              }`}
+              aria-label="Next events"
+              title="Next banner"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Loading State */}
       {loading && (
-        <div className="py-12 flex items-center justify-center gap-2 text-neutral-500 font-mono text-xs">
-          <Loader2 className="w-4 h-4 animate-spin text-black" />
-          <span>Loading featured competitions...</span>
+        <div className="py-8 flex items-center justify-center gap-2 text-slate-400 font-mono text-xs bg-white rounded-2xl border border-blue-100">
+          <Loader2 className="w-4 h-4 animate-spin text-[#2563EB]" />
+          <span>Loading upcoming event banners...</span>
         </div>
       )}
 
       {/* Error State */}
       {error && !loading && (
-        <div className="p-4 rounded-xl bg-neutral-50 border border-neutral-200 text-xs text-neutral-600">
+        <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-100 text-xs text-rose-700">
           {error}
         </div>
       )}
 
-      {/* Horizontal Carousel Track */}
+      {/* Horizontal Sliding Banner Strip */}
       {!loading && events.length > 0 && (
         <div
           ref={scrollContainerRef}
-          className="flex gap-4 sm:gap-5 overflow-x-auto pb-4 pt-1 snap-x scrollbar-none scroll-smooth -mx-4 px-4 sm:mx-0 sm:px-0"
+          tabIndex={0}
+          onKeyDown={handleKeyDown}
+          role="region"
+          aria-label="Upcoming Events Carousel"
+          className="flex gap-4 overflow-x-auto pb-2 pt-1 snap-x snap-mandatory scrollbar-none scroll-smooth focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 rounded-2xl -mx-1 px-1"
         >
-          {events.map((event) => (
-            <div
-              key={event.id}
-              onClick={() => handleCardClick(event)}
-              className="flex-shrink-0 w-[270px] sm:w-[290px] group cursor-pointer snap-start flex flex-col justify-between"
-            >
-              {/* Vertical Poster Card Graphic (~3:4 aspect ratio) */}
-              <div className="w-full h-[360px] sm:h-[380px] rounded-2xl overflow-hidden shadow-xs border border-neutral-200 group-hover:border-neutral-400 group-hover:shadow-md transition-all duration-200 relative">
-                {renderPosterCard(event)}
-              </div>
+          {events.map((event, idx) => {
+            const style = event.banner_style || {};
+            const bgGradient = style.bgGradient || "from-slate-900 via-indigo-950 to-slate-900";
+            const imageUrl = style.imageUrl;
 
-              {/* Badges & Save Row Underneath Poster */}
-              <div className="pt-3 pb-1 flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-medium border border-neutral-200 bg-white text-neutral-700">
-                    {event.mode}
-                  </span>
-                  {event.is_free && (
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-medium border border-neutral-200 bg-white text-neutral-700">
-                      Free
-                    </span>
+            // Responsive widths:
+            // Mobile: 1 banner (w-[85%] or w-[88vw] to preview next)
+            // Tablet: 2 banners (sm:w-[calc(50%-0.5rem)])
+            // Desktop: 3 banners (lg:w-[calc(33.333%-0.67rem)])
+            const cardWidthClass = events.length === 1
+              ? "w-full max-w-xl"
+              : "w-[85vw] sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.67rem)] shrink-0";
+
+            return (
+              <div
+                key={event.id}
+                data-testid={`event-banner-card-${idx}`}
+                onClick={() => handleCardClick(event)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleCardClick(event);
+                  }
+                }}
+                tabIndex={0}
+                role="button"
+                aria-label={`View details for ${event.title}`}
+                className={`${cardWidthClass} group cursor-pointer snap-start flex flex-col justify-between bg-white rounded-2xl border border-blue-100 hover:border-blue-200/80 p-3 transition-all duration-200 shadow-2xs hover:shadow-md select-none`}
+              >
+                {/* 16:9 Banner Image Container (1200 x 675 Aspect Ratio) */}
+                <div className="w-full aspect-[16/9] rounded-xl overflow-hidden relative bg-[#EFF6FF] border border-[#BFDBFE] shadow-sm">
+                  {imageUrl ? (
+                    <Image
+                      src={imageUrl}
+                      alt={event.title}
+                      fill
+                      sizes="(max-width: 640px) 85vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    /* Themed 16:9 Graphic Banner with Safe Center Placement */
+                    <div className="w-full h-full bg-[#EFF6FF] border-b border-[#BFDBFE] p-4 sm:p-5 flex flex-col justify-between text-black relative overflow-hidden">
+                      {/* Top Badges inside Banner (Inward padding safe from edges) */}
+                      <div className="flex items-center justify-between z-10">
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 bg-blue-100 rounded text-[#2563EB] border border-blue-200">
+                          {event.category || "Event"}
+                        </span>
+                        <span className="text-[10px] font-mono text-slate-600 font-bold">
+                          {event.organizer}
+                        </span>
+                      </div>
+
+                      {/* Main Center Headline (Safe from edges for phone viewing) */}
+                      <div className="z-10 px-1 py-0.5">
+                        <p className="text-xs sm:text-sm font-black text-black leading-snug line-clamp-2">
+                          {style.headline || event.title}
+                        </p>
+                        {style.subHeadline && (
+                          <p className="text-[10px] sm:text-[11px] text-slate-600 line-clamp-1 mt-0.5">
+                            {style.subHeadline}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Bottom Prize & Mode inside banner */}
+                      <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-semibold text-slate-800 z-10 pt-1 border-t border-blue-200">
+                        <span className="flex items-center gap-1 font-bold text-[#2563EB]">
+                          <Trophy className="w-3 h-3 text-[#2563EB] shrink-0" />
+                          <span>{event.prize_pool || "Recognition & Certificates"}</span>
+                        </span>
+                        <span className="text-slate-600 font-mono text-[9px] uppercase tracking-wide">
+                          {event.mode}
+                        </span>
+                      </div>
+                    </div>
                   )}
-                  {event.registration_status === "Closing Soon" && (
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold border border-neutral-300 bg-neutral-100 text-neutral-900 font-mono">
-                      Closing Soon
-                    </span>
-                  )}
+
+                  {/* Bookmark Save Action Button (Top-Right overlay on banner) */}
+                  <button
+                    type="button"
+                    onClick={(e) => handleToggleSave(event.id, e)}
+                    className={`absolute top-2.5 right-2.5 z-20 p-1.5 rounded-full backdrop-blur-md transition-all shadow-sm ${
+                      event.is_saved
+                        ? "bg-rose-500 text-white"
+                        : "bg-black/40 hover:bg-black/60 text-white/90 hover:text-white"
+                    }`}
+                    aria-label={event.is_saved ? "Remove from saved events" : "Save this event"}
+                    title={event.is_saved ? "Saved" : "Save event"}
+                  >
+                    <Heart className={`w-3.5 h-3.5 ${event.is_saved ? "fill-current" : ""}`} />
+                  </button>
                 </div>
 
-                {/* Heart Bookmark Button */}
-                <button
-                  type="button"
-                  onClick={(e) => handleToggleSave(event.id, e)}
-                  className={`p-1.5 rounded-full hover:bg-neutral-100 transition-colors ${
-                    event.is_saved ? "text-black" : "text-neutral-400 hover:text-black"
-                  }`}
-                  aria-label={event.is_saved ? "Saved" : "Save competition"}
-                  title={event.is_saved ? "Saved" : "Save competition"}
-                >
-                  <Heart className={`w-4 h-4 ${event.is_saved ? "fill-current" : ""}`} />
-                </button>
-              </div>
+                {/* Event Name & Date as Readable Text Below Image (Works even if image fails) */}
+                <div className="pt-2.5 pb-0.5 px-0.5 space-y-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="font-bold text-xs sm:text-sm text-slate-900 group-hover:text-[#2563EB] transition-colors line-clamp-1">
+                      {event.title}
+                    </h3>
+                    {event.is_free && (
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-[#EFF6FF] text-[#1E40AF] border border-blue-200 shrink-0">
+                        Free
+                      </span>
+                    )}
+                  </div>
 
-              {/* Event Title & Organizer */}
-              <div className="space-y-0.5">
-                <h3 className="font-bold text-xs sm:text-sm text-black group-hover:underline line-clamp-1">
-                  {event.title}
-                </h3>
-                <p className="text-[11px] text-neutral-500 font-mono line-clamp-1">
-                  {event.organizer} • {event.prize_pool}
-                </p>
+                  <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                    <span className="flex items-center gap-1 text-slate-600">
+                      <Calendar className="w-3 h-3 text-[#2563EB] shrink-0" />
+                      <span>Deadline: {formatEventDate(event.registration_deadline)}</span>
+                    </span>
+                    <span className="text-[10px] text-slate-400 truncate max-w-[120px]">
+                      {event.organizer}
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
-      {/* Event Detail Modal */}
+      {/* Event Detail Modal for Full Interaction */}
       <EventDetailModal
         event={selectedEvent}
         isOpen={isModalOpen}

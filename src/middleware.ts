@@ -84,9 +84,11 @@ const RESERVED_FIRST_LEVEL_ROUTES = new Set([
   "consent",
   "contact",
   "cookies",
+  "daily",
   "dashboard",
   "dsa",
   "edbuild",
+  "edmail",
   "employee",
   "employer",
   "focus",
@@ -102,6 +104,7 @@ const RESERVED_FIRST_LEVEL_ROUTES = new Set([
   "leadership-assessment",
   "learn",
   "login",
+  "mails",
   "messages",
   "mobile",
   "network",
@@ -123,6 +126,8 @@ const RESERVED_FIRST_LEVEL_ROUTES = new Set([
   "sector-landing",
   "settings",
   "signup",
+  "squads",
+  "student-record",
   "styleguide",
   "terms",
   "u",
@@ -156,6 +161,9 @@ const PUBLIC_API_PREFIXES = [
   "/api/learn",
   "/api/certificates",
   "/api/feature-flags",
+  "/api/edmail/check-username",
+  "/api/edmail/inbound-webhook",
+  "/api/edmail/health",
 ];
 
 // Apply hardened security, anti-AI-scraping & data protection headers to responses
@@ -348,17 +356,16 @@ export function middleware(req: NextRequest) {
     return applySecurityHeaders(res, requestId);
   }
 
-  // 5. Intercept root-level student handle URLs (e.g. edworld.co.in/adarsh_2026) and 301-redirect to /u/:username
-  const segments = pathname.split("/").filter(Boolean);
-  const isDirectUsernamePage =
-    segments.length === 1 &&
-    !RESERVED_FIRST_LEVEL_ROUTES.has(segments[0].toLowerCase()) &&
-    !segments[0].includes(".");
-
-  if (isDirectUsernamePage) {
-    const redirectUrl = new URL(`/u/${segments[0]}`, req.url);
-    const redirectRes = NextResponse.redirect(redirectUrl, 301);
-    return applySecurityHeaders(redirectRes, requestId);
+  // 4B. Temporary recovery redirects for legacy /u/ destinations
+  if (pathname === "/u/squads") {
+    const recoveryUrl = new URL("/squads", req.url);
+    const res = NextResponse.redirect(recoveryUrl, 307);
+    return applySecurityHeaders(res, requestId);
+  }
+  if (pathname === "/u/daily") {
+    const recoveryUrl = new URL("/daily", req.url);
+    const res = NextResponse.redirect(recoveryUrl, 307);
+    return applySecurityHeaders(res, requestId);
   }
 
   const isPublicPage = PUBLIC_PAGE_PREFIXES.some((prefix) => pathname.startsWith(prefix));

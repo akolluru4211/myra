@@ -12,33 +12,33 @@ module.exports = {
         background: "var(--background)",
         foreground: "var(--foreground)",
         canvas: {
-          DEFAULT: "#F4F5FA",
-          subtle: "#F8F9FD",
+          DEFAULT: "#FFFFFF",
+          subtle: "#EFF6FF",
         },
         periwinkle: {
-          DEFAULT: "#5C59E8",
-          hover: "#4E4AC8",
-          light: "#EEF0FD",
-          subtle: "#E0E3FA",
-          dark: "#3B38B8",
+          DEFAULT: "#2563EB",
+          hover: "#1D4ED8",
+          light: "#EFF6FF",
+          subtle: "#DBEAFE",
+          dark: "#1E40AF",
         },
         card: {
-          DEFAULT: "#FFFFFF",
+          DEFAULT: "#EFF6FF",
         },
-        // Strict Two-Color Minimal Tokens (White background, Black text, Neutral structural gray)
+        // Design system tokens (White background, Black text, Light blue panels & borders)
         paper: {
           DEFAULT: "#ffffff",
-          raised: "#ffffff",
-          soft: "#fafafa",
+          raised: "#EFF6FF",
+          soft: "#EFF6FF",
         },
         ink: {
           DEFAULT: "#000000",
-          soft: "#525252",
-          muted: "#737373",
+          soft: "#1E293B",
+          muted: "#334155",
         },
         line: {
-          DEFAULT: "#e5e5e5",
-          dark: "#d4d4d4",
+          DEFAULT: "#BFDBFE",
+          dark: "#93C5FD",
         },
         // Functional status colors only (minimal, non-decorative)
         status: {

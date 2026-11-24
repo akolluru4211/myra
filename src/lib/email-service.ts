@@ -13,8 +13,16 @@ import {
   renderConnectionAcceptedEmail,
   renderSignupWelcomeEmail,
   renderProjectCompletionCertificateEmail,
-  renderOtpVerificationEmail
+  renderOtpVerificationEmail,
+  renderOtpVerificationText,
+  renderConnectionRequestText,
+  renderConnectionAcceptedText,
+  renderJobAlertEmail,
+  renderJobAlertText,
+  renderEventInvitationEmail,
+  renderEventInvitationText
 } from "./email-templates.ts";
+import { getUserAlertPreferences } from "./alerts/multi-channel-service.ts";
 
 export const PRIMARY_ADMIN_EMAIL = "edworld.eden@gmail.com";
 export const SUPPORT_EMAIL = "edworld.eden@gmail.com";
@@ -379,6 +387,7 @@ export async function sendConnectionRequestNotification(params: {
   requesterHeadline?: string;
   requesterCollegeOrCompany?: string;
   message?: string;
+  acceptUrl?: string;
 }) {
   const html = renderConnectionRequestReceivedEmail({
     recipientName: params.recipientName,
@@ -386,12 +395,23 @@ export async function sendConnectionRequestNotification(params: {
     requesterHeadline: params.requesterHeadline,
     requesterCollegeOrCompany: params.requesterCollegeOrCompany,
     message: params.message,
+    acceptUrl: params.acceptUrl,
+  });
+
+  const text = renderConnectionRequestText({
+    recipientName: params.recipientName,
+    requesterName: params.requesterName,
+    requesterHeadline: params.requesterHeadline,
+    requesterCollegeOrCompany: params.requesterCollegeOrCompany,
+    message: params.message,
+    acceptUrl: params.acceptUrl,
   });
 
   return sendEmailNotification({
     to: params.recipientEmail,
     subject: `👋 ${params.requesterName} wants to connect with you on EdWorld Co`,
     html,
+    text,
     category: "system",
     metadata: {
       type: "CONNECTION_REQUEST_RECEIVED",
@@ -410,18 +430,28 @@ export async function sendConnectionAcceptedNotification(params: {
   accepterName: string;
   accepterHeadline?: string;
   accepterCollegeOrCompany?: string;
+  profileUrl?: string;
 }) {
   const html = renderConnectionAcceptedEmail({
     recipientName: params.requesterName,
     accepterName: params.accepterName,
     accepterHeadline: params.accepterHeadline,
     accepterCollegeOrCompany: params.accepterCollegeOrCompany,
+    profileUrl: params.profileUrl,
+  });
+
+  const text = renderConnectionAcceptedText({
+    recipientName: params.requesterName,
+    accepterName: params.accepterName,
+    accepterHeadline: params.accepterHeadline,
+    profileUrl: params.profileUrl,
   });
 
   return sendEmailNotification({
     to: params.requesterEmail,
     subject: `✨ ${params.accepterName} accepted your connection request on EdWorld Co`,
     html,
+    text,
     category: "system",
     metadata: {
       type: "CONNECTION_REQUEST_ACCEPTED",
@@ -520,10 +550,11 @@ export async function sendOtpVerificationEmail(params: {
     const expiry = params.expiresMinutes || 5;
     const purpose = params.purpose || "login";
 
+    // Keep the verification code out of the subject and preheader for privacy
     const subject =
       purpose === "signup"
-        ? `🔐 Verify your EdWorld account (Code: ${params.otp})`
-        : `🔐 Your EdWorld Sign-In Code: ${params.otp}`;
+        ? "🔐 Complete your EdWorld account verification"
+        : "🔐 Your EdWorld Sign-In Verification Code";
 
     const html = renderOtpVerificationEmail({
       otp: params.otp,
@@ -533,10 +564,18 @@ export async function sendOtpVerificationEmail(params: {
       studentName: params.studentName,
     });
 
+    const text = renderOtpVerificationText({
+      otp: params.otp,
+      purpose,
+      expiresMinutes: expiry,
+      studentName: params.studentName,
+    });
+
     const res = await sendEmailNotification({
       to: cleanEmail,
       subject,
       html,
+      text,
       category: "auth",
       metadata: {
         type: "OTP_VERIFICATION",
@@ -560,3 +599,158 @@ export async function sendOtpVerificationEmail(params: {
 
 
 
+
+/**
+ * Dispatches a Job or Internship opportunity alert if the recipient has notifications enabled.
+ * Respects user alert preferences and prevents duplicate sends on retries via idempotency key.
+ */
+export async function sendJobAlertEmail(params: {
+  userId?: string;
+  email: string;
+  recipientName?: string;
+  roleTitle: string;
+  companyName: string;
+  location?: string;
+  type?: "job" | "internship" | string;
+  deadline?: string;
+  salaryRange?: string;
+  jobId?: string;
+  listingUrl?: string;
+  idempotencyKey?: string;
+}): Promise<{ success: boolean; skipped?: boolean; id?: string; error?: string }> {
+  try {
+    const cleanEmail = params.email.trim().toLowerCase();
+    const isInternship = (params.type || "").toLowerCase().includes("intern");
+    const opportunityType = isInternship ? "internship" : "job";
+
+    // 1. Check user notification preferences if userId provided
+    if (params.userId) {
+      const prefs = await getUserAlertPreferences(params.userId);
+      if (!prefs.notifyJobs) {
+        console.info(`[Job Alert Skipped] User ${params.userId} has notifyJobs disabled.`);
+        return { success: true, skipped: true };
+      }
+    }
+
+    const html = renderJobAlertEmail({
+      recipientName: params.recipientName,
+      roleTitle: params.roleTitle,
+      companyName: params.companyName,
+      location: params.location,
+      type: params.type,
+      deadline: params.deadline,
+      salaryRange: params.salaryRange,
+      jobId: params.jobId,
+      listingUrl: params.listingUrl,
+    });
+
+    const text = renderJobAlertText({
+      recipientName: params.recipientName,
+      roleTitle: params.roleTitle,
+      companyName: params.companyName,
+      location: params.location,
+      type: params.type,
+      deadline: params.deadline,
+      salaryRange: params.salaryRange,
+      jobId: params.jobId,
+      listingUrl: params.listingUrl,
+    });
+
+    const subject = `💼 New ${isInternship ? "Internship" : "Job"} Opportunity: ${params.roleTitle} at ${params.companyName}`;
+
+    const res = await sendEmailNotification({
+      to: cleanEmail,
+      subject,
+      html,
+      text,
+      category: "application",
+      metadata: {
+        type: "JOB_ALERT",
+        opportunityType,
+        jobId: params.jobId,
+        idempotencyKey: params.idempotencyKey || `job_alert_${params.jobId || "generic"}_${cleanEmail}`,
+      },
+    });
+
+    return { success: res.success, id: res.id, error: res.error };
+  } catch (err: any) {
+    console.error("[sendJobAlertEmail Exception]:", err?.message || err);
+    return { success: false, error: err?.message || "Failed to dispatch job alert email" };
+  }
+}
+
+/**
+ * Dispatches an Event Invitation alert if the recipient has hackathon/event notifications enabled.
+ * Respects user alert preferences and prevents duplicate sends on retries via idempotency key.
+ */
+export async function sendEventInvitationEmail(params: {
+  userId?: string;
+  email: string;
+  recipientName?: string;
+  eventName: string;
+  organizer?: string;
+  date?: string;
+  timeZone?: string;
+  locationOrOnline?: string;
+  description?: string;
+  eventId?: string;
+  eventUrl?: string;
+  idempotencyKey?: string;
+}): Promise<{ success: boolean; skipped?: boolean; id?: string; error?: string }> {
+  try {
+    const cleanEmail = params.email.trim().toLowerCase();
+
+    // 1. Check user notification preferences if userId provided
+    if (params.userId) {
+      const prefs = await getUserAlertPreferences(params.userId);
+      if (!prefs.notifyHackathons) {
+        console.info(`[Event Invitation Skipped] User ${params.userId} has notifyHackathons disabled.`);
+        return { success: true, skipped: true };
+      }
+    }
+
+    const html = renderEventInvitationEmail({
+      recipientName: params.recipientName,
+      eventName: params.eventName,
+      organizer: params.organizer,
+      date: params.date,
+      timeZone: params.timeZone,
+      locationOrOnline: params.locationOrOnline,
+      description: params.description,
+      eventId: params.eventId,
+      eventUrl: params.eventUrl,
+    });
+
+    const text = renderEventInvitationText({
+      recipientName: params.recipientName,
+      eventName: params.eventName,
+      organizer: params.organizer,
+      date: params.date,
+      timeZone: params.timeZone,
+      locationOrOnline: params.locationOrOnline,
+      description: params.description,
+      eventId: params.eventId,
+      eventUrl: params.eventUrl,
+    });
+
+    const subject = `🗓️ Event Invitation: ${params.eventName}`;
+
+    const res = await sendEmailNotification({
+      to: cleanEmail,
+      subject,
+      html,
+      text,
+      category: "system",
+      metadata: {
+        type: "EVENT_INVITATION",
+        eventId: params.eventId,
+        idempotencyKey: params.idempotencyKey || `event_invitation_${params.eventId || "generic"}_${cleanEmail}`,
+      },
+    });
+
+    return { success: res.success, id: res.id, error: res.error };
+  } catch (err: any) {
+    console.error("[sendEventInvitationEmail Exception]:", err?.message || err);
+    return { success: false, error: err?.message || "Failed to dispatch event invitation email" };
+  }
+}

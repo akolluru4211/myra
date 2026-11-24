@@ -4,25 +4,27 @@
 
 @layer base {
   :root {
-    --background: #F4F5FA;
-    --foreground: #0F172A;
-    --border: rgba(15, 23, 42, 0.08);
+    --background: #FFFFFF;
+    --foreground: #000000;
+    --border: #BFDBFE;
+    --card: #EFF6FF;
     --font-inter: var(--font-sans);
     --font-plus-jakarta: var(--font-display);
     --font-jetbrains-mono: var(--font-mono);
   }
 
   .dark {
-    --background: #080B11;
-    --foreground: #FFFFFF;
-    --border: rgba(255, 255, 255, 0.1);
+    --background: #FFFFFF;
+    --foreground: #000000;
+    --border: #BFDBFE;
+    --card: #EFF6FF;
   }
 
   html {
     font-size: 15px;
     scroll-behavior: smooth;
-    background-color: var(--background);
-    color: var(--foreground);
+    background-color: #FFFFFF;
+    color: #000000;
   }
 
   @media (min-width: 640px) {
@@ -44,8 +46,8 @@
   }
 
   body {
-    color: var(--foreground);
-    background-color: var(--background);
+    color: #000000;
+    background-color: #FFFFFF;
     font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -60,10 +62,11 @@
   h1, h2, h3, h4, .font-display {
     font-family: var(--font-display), var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     letter-spacing: -0.025em;
+    color: #000000;
   }
 
   ::selection {
-    background-color: #5C59E8;
+    background-color: #2563EB;
     color: #ffffff;
   }
 
@@ -104,23 +107,22 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background-color: #5C59E8;
+  background-color: #2563EB;
   color: #FFFFFF;
   font-weight: 700;
   border-radius: 9999px;
   padding: 0.55rem 1.25rem;
   font-size: 0.875rem;
   transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 14px rgba(92, 89, 232, 0.25);
+  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
   cursor: pointer;
   user-select: none;
   border: 1px solid transparent;
 }
 
 .btn-pill-primary:hover {
-  background-color: #4E4AC8;
+  background-color: #1D4ED8;
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(92, 89, 232, 0.35);
 }
 
 .btn-pill-primary:active {
@@ -132,11 +134,11 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background-color: #EEF0FD;
-  color: #3730A3;
+  background-color: #DBEAFE;
+  color: #1E40AF;
   font-weight: 700;
   border-radius: 9999px;
-  border: 1px solid rgba(92, 89, 232, 0.15);
+  border: 1px solid #BFDBFE;
   padding: 0.55rem 1.25rem;
   font-size: 0.875rem;
   transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
@@ -145,8 +147,8 @@
 }
 
 .btn-pill-secondary:hover {
-  background-color: #E0E3FA;
-  border-color: rgba(92, 89, 232, 0.25);
+  background-color: #BFDBFE;
+  border-color: #93C5FD;
   transform: translateY(-1px);
 }
 
@@ -163,14 +165,14 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background-color: #000000;
+  background-color: #2563EB;
   color: #ffffff;
   font-weight: 700;
   border-radius: 0.75rem;
-  border: 1px solid #000000;
+  border: 1px solid #2563EB;
   padding: 0.625rem 1.25rem;
   font-size: 0.875rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.15);
   transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
@@ -180,9 +182,9 @@
 .btn-primary-elevated:hover,
 .btn-neumorphic-primary:hover,
 .btn-quixel-primary:hover {
-  background-color: #1f1f23;
+  background-color: #1D4ED8;
+  border-color: #1D4ED8;
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
 .btn-primary:active,
@@ -201,14 +203,13 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background-color: #ffffff;
-  color: #000000;
+  background-color: #DBEAFE;
+  color: #1E40AF;
   font-weight: 600;
   border-radius: 0.75rem;
-  border: 1px solid #e5e5e5;
+  border: 1px solid #BFDBFE;
   padding: 0.625rem 1.25rem;
   font-size: 0.875rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
   transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
@@ -217,10 +218,9 @@
 .figma-btn-secondary:hover,
 .btn-secondary-elevated:hover,
 .btn-neumorphic:hover {
-  background-color: #fafafa;
-  border-color: #000000;
+  background-color: #BFDBFE;
+  border-color: #93C5FD;
   transform: translateY(-1px);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
 }
 
 .btn-secondary:active,
@@ -236,7 +236,7 @@
   justify-content: center;
   gap: 0.5rem;
   background-color: transparent;
-  color: #000000;
+  color: #2563EB;
   font-weight: 600;
   border-radius: 0.75rem;
   border: 1px solid transparent;
@@ -247,7 +247,8 @@
 }
 
 .btn-ghost:hover {
-  background-color: #f4f4f5;
+  background-color: #EFF6FF;
+  color: #1D4ED8;
 }
 
 .btn-outline {
@@ -255,11 +256,11 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background-color: transparent;
-  color: #000000;
+  background-color: #FFFFFF;
+  color: #2563EB;
   font-weight: 600;
   border-radius: 0.75rem;
-  border: 1px solid #d4d4d8;
+  border: 1px solid #BFDBFE;
   padding: 0.625rem 1.25rem;
   font-size: 0.875rem;
   transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
@@ -267,21 +268,21 @@
 }
 
 .btn-outline:hover {
-  border-color: #000000;
-  background-color: #fafafa;
+  border-color: #2563EB;
+  background-color: #EFF6FF;
 }
 
-/* Unified Monochrome Card Classes */
+/* Unified Light Blue Card Classes */
 .card-minimal,
 .figma-card,
 .card-quixel,
 .card-interactive-light,
 .lucid-card,
 .lucid-card-hover {
-  background-color: #ffffff;
-  border: 1px solid #e5e5e5;
+  background-color: #EFF6FF;
+  border: 1px solid #BFDBFE;
   border-radius: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  color: #000000;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -291,9 +292,8 @@
 .card-quixel-interactive:hover,
 .card-interactive-light:hover,
 .lucid-card-hover:hover {
-  border-color: #000000;
+  border-color: #60A5FA;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 }
 
 /* Hairline borders & neutral badges */
@@ -307,9 +307,9 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  background-color: #f4f4f5;
-  color: #000000;
-  border: 1px solid #e4e4e7;
+  background-color: #DBEAFE;
+  color: #1E40AF;
+  border: 1px solid #BFDBFE;
 }
 
 /* Minimal Custom Scrollbar */

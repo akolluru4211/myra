@@ -136,6 +136,9 @@
           "GOOGLE_OAUTH_CLIENT_ID": "${input:google_oauth_client_id}",
           "GOOGLE_OAUTH_CLIENT_SECRET": "${input:google_oauth_client_secret}"
         }
+      },
+      "openaiDeveloperDocs": {
+        "serverUrl": "https://developers.openai.com/mcp"
       }
     }
   }

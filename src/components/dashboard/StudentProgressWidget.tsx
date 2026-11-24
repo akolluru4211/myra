@@ -56,12 +56,12 @@ export default function StudentProgressWidget({ onOpenMyra }: StudentProgressWid
   const readinessOffset = ringCircumference - (readinessPercent / 100) * ringCircumference;
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 sm:p-7 space-y-6 text-slate-900">
+    <div className="bg-white rounded-3xl border border-blue-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 sm:p-7 space-y-6 text-slate-900">
       {/* Header with Title and Streak Badge */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#4338CA] bg-[#EEF0FD] px-3 py-0.5 rounded-full font-display">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#1E40AF] bg-[#EFF6FF] px-3 py-0.5 rounded-full font-display">
               Learning Progress
             </span>
             <span className="text-xs font-medium text-slate-400">Real-time Academic Index</span>
@@ -72,12 +72,12 @@ export default function StudentProgressWidget({ onOpenMyra }: StudentProgressWid
         </div>
 
         {/* Streak Pill */}
-        <div className="flex items-center gap-3 bg-[#FFE4E6] border border-rose-200/60 px-4 py-2 rounded-2xl shrink-0">
+        <div className="flex items-center gap-3 bg-[#EFF6FF] border border-rose-200/60 px-4 py-2 rounded-2xl shrink-0">
           <div className="w-8 h-8 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-xs">
-            <Flame className="w-4 h-4 fill-[#F43F5E] text-[#F43F5E]" />
+            <Flame className="w-4 h-4 fill-[#2563EB] text-[#2563EB]" />
           </div>
           <div>
-            <div className="text-xs font-bold text-[#F43F5E] flex items-center gap-1.5 font-display">
+            <div className="text-xs font-bold text-[#2563EB] flex items-center gap-1.5 font-display">
               <span>{streakDays} Day Study Streak</span>
             </div>
             <p className="text-[11px] font-medium text-rose-700/80">Top 10% consistency this week</p>
@@ -88,10 +88,10 @@ export default function StudentProgressWidget({ onOpenMyra }: StudentProgressWid
       {/* 3 Metric Cards Grid with Circular Progress Gauges */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Metric 1: Daily Study Hours */}
-        <div className="p-5 rounded-2xl bg-[#F8F9FD] border border-slate-100/90 flex flex-col justify-between shadow-xs">
+        <div className="p-5 rounded-2xl bg-[#EFF6FF] border border-blue-100/90 flex flex-col justify-between shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-600">Daily Study Goal</span>
-            <div className="w-7 h-7 rounded-lg bg-[#EEF0FD] flex items-center justify-center text-[#5C59E8]">
+            <div className="w-7 h-7 rounded-lg bg-[#EFF6FF] flex items-center justify-center text-[#2563EB]">
               <Clock className="w-3.5 h-3.5 stroke-[2]" />
             </div>
           </div>
@@ -130,10 +130,10 @@ export default function StudentProgressWidget({ onOpenMyra }: StudentProgressWid
         </div>
 
         {/* Metric 2: Weekly Consistency */}
-        <div className="p-5 rounded-2xl bg-[#F8F9FD] border border-slate-100/90 flex flex-col justify-between shadow-xs">
+        <div className="p-5 rounded-2xl bg-[#EFF6FF] border border-blue-100/90 flex flex-col justify-between shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-600">Weekly Consistency</span>
-            <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 border border-emerald-200/60">
+            <div className="w-7 h-7 rounded-lg bg-[#EFF6FF] flex items-center justify-center text-[#2563EB] border border-blue-200/60">
               <TrendingUp className="w-3.5 h-3.5 stroke-[2]" />
             </div>
           </div>
@@ -144,8 +144,8 @@ export default function StudentProgressWidget({ onOpenMyra }: StudentProgressWid
                   <div
                     className={`w-full aspect-square rounded-xl flex items-center justify-center text-[10px] font-bold transition-all shadow-xs ${
                       activeDays[idx]
-                        ? "bg-emerald-500 text-white font-bold"
-                        : "bg-white text-slate-400 border border-slate-200"
+                        ? "bg-[#EFF6FF]0 text-white font-bold"
+                        : "bg-white text-slate-400 border border-blue-200"
                     }`}
                   >
                     {activeDays[idx] ? "✓" : ""}
@@ -161,23 +161,23 @@ export default function StudentProgressWidget({ onOpenMyra }: StudentProgressWid
         </div>
 
         {/* Metric 3: Target Role Readiness */}
-        <div className="p-5 rounded-2xl bg-[#F8F9FD] border border-slate-100/90 flex flex-col justify-between shadow-xs">
+        <div className="p-5 rounded-2xl bg-[#EFF6FF] border border-blue-100/90 flex flex-col justify-between shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-600">Role Readiness</span>
-            <div className="w-7 h-7 rounded-lg bg-[#EEF0FD] flex items-center justify-center text-[#5C59E8]">
+            <div className="w-7 h-7 rounded-lg bg-[#EFF6FF] flex items-center justify-center text-[#2563EB]">
               <Target className="w-3.5 h-3.5 stroke-[2]" />
             </div>
           </div>
           <div className="mt-3 flex items-center justify-between gap-3">
             <div>
               <div className="text-2xl font-black font-display text-slate-900">
-                86% <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/60">Ready</span>
+                86% <span className="text-xs font-semibold text-[#1E40AF] bg-[#EFF6FF] px-2.5 py-0.5 rounded-full border border-blue-200/60">Ready</span>
               </div>
               <p className="text-[11px] text-slate-500 mt-1 truncate font-normal">
                 Benchmarked for <strong className="text-slate-800">{targetRole}</strong>
               </p>
               <div className="mt-1 flex items-center gap-1.5 text-[11px] text-slate-600 font-medium">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#2563EB]" />
                 <span>14 of 18 milestones verified</span>
               </div>
             </div>

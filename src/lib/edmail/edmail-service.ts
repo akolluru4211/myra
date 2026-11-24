@@ -263,8 +263,16 @@ export async function dispatchOutboundEdMail(params: {
       ? `${params.fromName} <${params.fromAddress}>`
       : params.fromAddress;
 
+    // In testing/sandbox, if the sending domain isn't verified in Resend yet,
+    // route test/sandbox emails via onboarding@resend.dev so real deliveries succeed.
+    let resolvedFrom = formattedFrom;
+    const isSandboxRecipient = params.to.every(t => t.includes("resend.dev") || t.includes("example.com"));
+    if (isSandboxRecipient || process.env.NODE_ENV === "test" || process.env.EDMAIL_USE_RESEND_SANDBOX === "true") {
+      resolvedFrom = params.fromName ? `${params.fromName} <onboarding@resend.dev>` : "onboarding@resend.dev";
+    }
+
     const payload: any = {
-      from: formattedFrom,
+      from: resolvedFrom,
       to: params.to,
       subject: params.subject,
       html: params.html,

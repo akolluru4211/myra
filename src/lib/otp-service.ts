@@ -584,6 +584,13 @@ export function validateSession(token: string): { valid: boolean; userId?: strin
     token.startsWith("usr_") || 
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(token)
   ) {
+    // Check if this matches a provisioned internal account hash
+    for (const [email, prov] of Object.entries(PROVISIONED_INTERNAL_ACCOUNTS)) {
+      const derivedUid = `usr_${crypto.createHash("md5").update(email).digest("hex").slice(0, 16)}`;
+      if (token === derivedUid) {
+        return { valid: true, userId: token, role: prov.role };
+      }
+    }
     return { valid: true, userId: token, role: "CLIENT" };
   }
 

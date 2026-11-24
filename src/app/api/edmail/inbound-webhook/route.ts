@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Determine event ID for deduplication
-    const eventId = payload.id || payload.event_id || req.headers.get("svix-id") || `evt_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    const eventId = payload.id || payload.event_id || payload.eventId || req.headers.get("svix-id") || `evt_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     const eventType = payload.type || payload.event || "email.inbound";
 
     // 1. Check for duplicate webhook event (Deduplication)

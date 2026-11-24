@@ -168,17 +168,17 @@ export default function CareerPathSelectorWidget() {
   });
 
   return (
-    <div className="tactile-chassis bg-[#0C101A] border border-white/10 p-6 sm:p-7 rounded-3xl space-y-6 shadow-xl text-white">
+    <div className="bg-[#EFF6FF] border border-[#BFDBFE] p-6 sm:p-7 rounded-3xl space-y-6 shadow-sm text-black">
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-2.5 py-0.5 rounded-full font-display">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#2563EB] bg-blue-100 border border-blue-200 px-2.5 py-0.5 rounded-full font-display">
               Career Trajectory
             </span>
-            <span className="text-xs font-medium text-slate-400">Primary Specialization</span>
+            <span className="text-xs font-medium text-slate-600">Primary Specialization</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight font-display">
+          <h2 className="text-xl sm:text-2xl font-black text-black tracking-tight font-display">
             Selected Career Path
           </h2>
         </div>
@@ -186,49 +186,49 @@ export default function CareerPathSelectorWidget() {
         {/* Change Career Path Button */}
         <button
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white self-start sm:self-auto cursor-pointer transition-all shadow-sm"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white self-start sm:self-auto cursor-pointer transition-all shadow-sm"
         >
-          <Compass className="w-4 h-4 text-cyan-400" />
+          <Compass className="w-4 h-4 text-white" />
           <span>Switch Career Path</span>
         </button>
       </div>
 
       {saveSuccess && (
-        <div className="p-3.5 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-xs font-semibold text-emerald-300 flex items-center gap-2 animate-in fade-in duration-200">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+        <div className="p-3.5 rounded-xl bg-blue-50 border border-blue-200 text-xs font-semibold text-[#1E40AF] flex items-center gap-2 animate-in fade-in duration-200">
+          <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
           <span>Career trajectory successfully updated to <strong>{selectedPath.name}</strong>. Timetable and practice tracks adjusted.</span>
         </div>
       )}
 
       {/* Primary Selected Path Card */}
-      <div className="tactile-chassis bg-[#0F1422] border border-white/10 p-6 space-y-4 rounded-2xl shadow-md text-white">
+      <div className="bg-white border border-[#BFDBFE] p-6 space-y-4 rounded-2xl shadow-2xs text-black">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div className="space-y-2 max-w-2xl">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-cyan-300 px-2.5 py-0.5 bg-cyan-500/10 border border-cyan-500/20 rounded-full font-display">
+              <span className="text-xs font-semibold text-[#2563EB] px-2.5 py-0.5 bg-blue-50 border border-blue-200 rounded-full font-display">
                 {selectedPath.category}
               </span>
-              <span className="text-[11px] font-medium text-slate-400">Target Specialization</span>
+              <span className="text-[11px] font-medium text-slate-600">Target Specialization</span>
             </div>
-            <h3 className="text-lg sm:text-xl font-black text-white font-display">
+            <h3 className="text-lg sm:text-xl font-black text-black font-display">
               {selectedPath.name}
             </h3>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-normal">
               {selectedPath.description}
             </p>
           </div>
 
           <div className="flex sm:flex-col items-end justify-between sm:justify-start gap-2 shrink-0">
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 rounded-full">
-              <Check className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1E40AF] bg-blue-100 border border-blue-200 px-3 py-1 rounded-full">
+              <Check className="w-3.5 h-3.5 text-[#2563EB]" />
               <span>Active Target</span>
             </span>
           </div>
         </div>
 
         {/* Required Skills & Competencies */}
-        <div className="pt-3 border-t border-white/10">
-          <span className="text-xs font-semibold text-slate-300 block mb-2 font-display">
+        <div className="pt-3 border-t border-blue-100">
+          <span className="text-xs font-semibold text-slate-700 block mb-2 font-display">
             Core Competencies &amp; Learning Modules:
           </span>
           <div className="flex flex-wrap gap-2">
@@ -236,7 +236,7 @@ export default function CareerPathSelectorWidget() {
               selectedPath.typical_skills.map((skill, index) => (
                 <span
                   key={index}
-                  className="px-3 py-1 text-xs font-medium text-slate-200 bg-white/5 border border-white/10 rounded-full shadow-xs"
+                  className="px-3 py-1 text-xs font-medium text-slate-800 bg-[#EFF6FF] border border-blue-200 rounded-full shadow-2xs"
                 >
                   {skill}
                 </span>
@@ -250,36 +250,36 @@ export default function CareerPathSelectorWidget() {
 
       {/* Career Path Picker Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-150">
-          <div className="tactile-chassis bg-[#0C101A] border border-white/10 shadow-2xl rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden text-white">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
+          <div className="bg-white border border-[#BFDBFE] shadow-xl rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden text-black">
             {/* Modal Header */}
-            <div className="p-4 sm:p-5 border-b border-white/10 flex items-center justify-between bg-[#0F1422]">
+            <div className="p-4 sm:p-5 border-b border-blue-200 flex items-center justify-between bg-[#EFF6FF]">
               <div>
-                <h3 className="text-base font-bold text-white font-display">
+                <h3 className="text-base font-bold text-black font-display">
                   Select Your Career Path
                 </h3>
-                <p className="text-xs text-slate-300 mt-0.5">
+                <p className="text-xs text-slate-600 mt-0.5">
                   Pick your primary target. Myra AI and your timetable will tailor modules and question sets accordingly.
                 </p>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+                className="text-slate-600 hover:text-black p-1.5 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Search and Category Filter */}
-            <div className="p-4 border-b border-white/10 space-y-3 bg-[#0C101A]">
+            <div className="p-4 border-b border-blue-200 space-y-3 bg-white">
               <div className="relative">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   placeholder="Search by role name or skill (e.g. Python, Product, DevOps)..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-xs bg-[#0F1422] border border-white/10 rounded-xl text-white placeholder:text-slate-500 focus:outline-none focus:border-white/30"
+                  className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-blue-200 rounded-xl text-black placeholder:text-slate-400 focus:outline-none focus:border-[#2563EB]"
                 />
               </div>
 
@@ -291,8 +291,8 @@ export default function CareerPathSelectorWidget() {
                     onClick={() => setSelectedCategory(cat)}
                     className={`px-2.5 py-1 text-xs font-mono font-medium rounded-lg border transition-all cursor-pointer ${
                       selectedCategory === cat
-                        ? "bg-white text-slate-950 font-bold border-white shadow-sm"
-                        : "bg-[#0F1422] text-slate-300 hover:text-white border-white/10 hover:bg-white/10"
+                        ? "bg-[#2563EB] text-white font-bold border-[#2563EB] shadow-2xs"
+                        : "bg-[#EFF6FF] text-slate-700 hover:text-black border-blue-200 hover:bg-blue-100"
                     }`}
                   >
                     {cat}
@@ -302,7 +302,7 @@ export default function CareerPathSelectorWidget() {
             </div>
 
             {/* Paths List */}
-            <div className="p-4 space-y-2.5 overflow-y-auto max-h-[50vh] bg-[#0C101A]">
+            <div className="p-4 space-y-2.5 overflow-y-auto max-h-[50vh] bg-white">
               {filteredPaths.map((path) => {
                 const isCurrent = selectedPath.id === path.id;
 
@@ -311,28 +311,28 @@ export default function CareerPathSelectorWidget() {
                     key={path.id}
                     className={`p-4 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                       isCurrent
-                        ? "bg-white/10 border-white/30 ring-1 ring-white/20"
-                        : "bg-[#0F1422] border-white/10 hover:border-white/25 hover:bg-[#13192a]"
+                        ? "bg-blue-50 border-blue-300 ring-1 ring-blue-300"
+                        : "bg-[#EFF6FF] border-blue-200 hover:border-blue-300 hover:bg-blue-50/70"
                     }`}
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-600">
                           {path.category}
                         </span>
                         {isCurrent && (
-                          <span className="text-[10px] font-bold text-slate-950 bg-white px-2 py-0.5 rounded-full">
+                          <span className="text-[10px] font-bold text-white bg-[#2563EB] px-2 py-0.5 rounded-full">
                             Current
                           </span>
                         )}
                       </div>
-                      <h4 className="text-sm font-bold text-white font-display">{path.name}</h4>
-                      <p className="text-xs text-slate-300 line-clamp-2">{path.description}</p>
+                      <h4 className="text-sm font-bold text-black font-display">{path.name}</h4>
+                      <p className="text-xs text-slate-700 line-clamp-2">{path.description}</p>
                       <div className="flex flex-wrap gap-1 pt-1.5">
                         {path.typical_skills.slice(0, 4).map((skill, sIdx) => (
                           <span
                             key={sIdx}
-                            className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-slate-300 border border-white/10"
+                            className="text-[10px] font-mono px-2 py-0.5 rounded bg-white text-slate-700 border border-blue-200"
                           >
                             {skill}
                           </span>
@@ -345,8 +345,8 @@ export default function CareerPathSelectorWidget() {
                       onClick={() => handleSelectPath(path)}
                       className={`px-3.5 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all inline-flex items-center gap-1.5 cursor-pointer ${
                         isCurrent
-                          ? "bg-white text-slate-950 cursor-default"
-                          : "bg-white hover:bg-slate-200 text-slate-950"
+                          ? "bg-blue-200 text-[#1E40AF] cursor-default"
+                          : "bg-[#2563EB] hover:bg-blue-700 text-white"
                       }`}
                     >
                       {isCurrent ? (
@@ -368,17 +368,17 @@ export default function CareerPathSelectorWidget() {
               })}
 
               {filteredPaths.length === 0 && (
-                <div className="p-8 text-center text-xs text-slate-400">
+                <div className="p-8 text-center text-xs text-slate-500">
                   No career paths matched "{searchQuery}".
                 </div>
               )}
             </div>
 
             {/* Modal Footer */}
-            <div className="p-3 border-t border-white/10 bg-[#0F1422] flex items-center justify-end">
+            <div className="p-3 border-t border-blue-200 bg-[#EFF6FF] flex items-center justify-end">
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-1.5 text-xs font-semibold rounded-lg bg-white/10 hover:bg-white/20 text-white cursor-pointer transition-colors"
+                className="px-4 py-1.5 text-xs font-semibold rounded-lg bg-blue-100 hover:bg-blue-200 text-slate-800 cursor-pointer transition-colors"
               >
                 Close
               </button>

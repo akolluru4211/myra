@@ -1,190 +1,154 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
-import { createClient } from "@/lib/supabase/server";
-import { validateSession } from "@/lib/otp-service";
+import { queryDb } from "@/lib/db-server";
+import { resolveStaffClearance } from "@/lib/staff-clearance";
 
-async function verifyAdminClearance(req: NextRequest): Promise<boolean> {
-  try {
-    const supabaseServer = createClient();
-    const { data: { user } } = await supabaseServer.auth.getUser();
-    if (user) {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("is_admin, role")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      if (profile?.is_admin || ["ADMIN", "SUPER_ADMIN", "FOUNDER", "EXECUTIVE"].includes(profile?.role)) {
-        return true;
-      }
-    }
-
-    const sessionCookie = req.cookies.get("edworld_session")?.value;
-    if (sessionCookie) {
-      const { valid, role } = validateSession(sessionCookie);
-      if (valid && ["ADMIN", "SUPER_ADMIN", "FOUNDER", "EXECUTIVE"].includes(role || "")) {
-        return true;
-      }
-    }
-  } catch (err) {
-    console.error("[Ambassador Admin Auth Error]:", err);
-  }
-  return false;
-}
+export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
-    const isAuthorized = await verifyAdminClearance(req);
-    if (!isAuthorized) {
-      return NextResponse.json({ error: "Forbidden: Administrator clearance required." }, { status: 403 });
+    const actor = await resolveStaffClearance(req);
+    if (!actor) {
+      return NextResponse.json({ success: false, error: "Unauthorized: Staff clearance required." }, { status: 403 });
     }
 
     const { searchParams } = new URL(req.url);
     const status = searchParams.get("status");
+    const college = searchParams.get("college");
 
-    let query = supabase
-      .from("ambassador_applications")
-      .select("*, users:user_id(name, email)")
-      .order("created_at", { ascending: false });
-
+    // Fetch applications
+    let appSql = `
+      SELECT id, user_id, student_name, email, college_name, degree_year,
+             why_ambassador, relevant_experience, social_links, status,
+             decision_message, internal_notes, reviewed_by, reviewed_at, created_at
+      FROM public.ambassador_applications
+      WHERE 1=1
+    `;
+    const appParams: any[] = [];
     if (status && status !== "all") {
-      query = query.eq("status", status);
+      appParams.push(status);
+      appSql += ` AND status = $${appParams.length}`;
     }
-
-    const { data: apps, error: appsError } = await query;
-    if (appsError) {
-      return NextResponse.json({ error: appsError.message }, { status: 500 });
+    if (college && college !== "all") {
+      appParams.push(`%${college.trim()}%`);
+      appSql += ` AND college_name ILIKE $${appParams.length}`;
     }
+    appSql += ` ORDER BY created_at DESC`;
+    const { rows: applications } = await queryDb(appSql, appParams);
 
-    const { data: ambassadors } = await supabase
-      .from("ambassadors")
-      .select("*, users:user_id(name, email)")
-      .order("joined_at", { ascending: false });
+    // Fetch active ambassadors
+    const { rows: ambassadors } = await queryDb(
+      `SELECT a.id, a.user_id, a.college_name, a.referral_code, a.is_active, a.status,
+              a.status_reason, a.verified_rewards, a.assigned_tasks, a.campus_events, a.joined_at,
+              COALESCE(p.name, u.name, 'Learner') as student_name,
+              COALESCE(u.email, p.email, 'No email') as email
+       FROM public.ambassadors a
+       LEFT JOIN public.profiles p ON p.id = a.user_id
+       LEFT JOIN public.users u ON u.id = a.user_id
+       ORDER BY a.joined_at DESC`
+    );
 
     return NextResponse.json({
-      applications: apps || [],
-      ambassadors: ambassadors || []
+      success: true,
+      applications,
+      ambassadors,
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to fetch admin data" }, { status: 500 });
+    console.error("[Ambassador Admin GET Error]:", err);
+    return NextResponse.json({ success: false, error: "Failed to fetch ambassador admin records" }, { status: 500 });
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const isAuthorized = await verifyAdminClearance(req);
-    if (!isAuthorized) {
-      return NextResponse.json({ error: "Forbidden: Administrator clearance required." }, { status: 403 });
+    const actor = await resolveStaffClearance(req);
+    if (!actor) {
+      return NextResponse.json({ success: false, error: "Unauthorized: Staff clearance required." }, { status: 403 });
     }
 
-    const body = await req.json();
-    const { applicationId, reviewerId, action, reviewNotes } = body;
+    const body = await req.json().catch(() => ({}));
+    const { action, ambassadorId, targetStatus, reason, newTask, newEvent } = body;
 
-    if (!applicationId || !['approved', 'rejected'].includes(action)) {
-      return NextResponse.json({ error: "applicationId and valid action ('approved' | 'rejected') are required" }, { status: 400 });
-    }
-
-    const { data: app, error: appErr } = await supabase
-      .from("ambassador_applications")
-      .select("*")
-      .eq("id", applicationId)
-      .single();
-
-    if (appErr || !app) {
-      return NextResponse.json({ error: "Application not found" }, { status: 404 });
-    }
-
-    const now = new Date().toISOString();
-
-    const { error: updateErr } = await supabase
-      .from("ambassador_applications")
-      .update({
-        status: action,
-        reviewed_by: reviewerId || null,
-        reviewed_at: now,
-        review_notes: reviewNotes || null
-      })
-      .eq("id", applicationId);
-
-    if (updateErr) {
-      return NextResponse.json({ error: updateErr.message }, { status: 500 });
-    }
-
-    if (action === "approved") {
-      const cleanCollege = app.college_name.replace(/[^a-zA-Z0-9]/g, "").substring(0, 4).toUpperCase() || "CAMPUS";
-      const randomSuffix = Math.floor(1000 + Math.random() * 9000);
-      const referralCode = "EDW-" + cleanCollege + "-" + randomSuffix;
-
-      const { data: ambData, error: ambErr } = await supabase
-        .from("ambassadors")
-        .upsert({
-          user_id: app.user_id,
-          college_name: app.college_name,
-          referral_code: referralCode,
-          is_active: true,
-          joined_at: now
-        })
-        .select()
-        .single();
-
-      if (ambErr) {
-        return NextResponse.json({ error: ambErr.message }, { status: 500 });
+    // Action 1: Status Change (Active <-> Suspended)
+    if (action === "update_status") {
+      if (!ambassadorId || !targetStatus) {
+        return NextResponse.json({ success: false, error: "ambassadorId and targetStatus required." }, { status: 400 });
+      }
+      if (!reason || !reason.trim()) {
+        return NextResponse.json({ success: false, error: "A clear administrative reason is required for status modifications." }, { status: 400 });
       }
 
-      const { data: badge } = await supabase
-        .from("badges")
-        .select("id")
-        .eq("code", "campus_ambassador")
-        .maybeSingle();
+      const isActive = targetStatus === "active";
+      await queryDb(
+        `UPDATE public.ambassadors
+         SET status = $1, is_active = $2, status_reason = $3, updated_at = NOW()
+         WHERE id = $4 OR user_id = $4`,
+        [targetStatus, isActive, reason, ambassadorId]
+      );
 
-      if (badge) {
-        await supabase
-          .from("user_badges")
-          .upsert({
-            user_id: app.user_id,
-            badge_id: badge.id,
-            earned_at: now
-          });
+      await queryDb(
+        `INSERT INTO public.staff_audit_history (
+          item_type, item_id, action, reviewer_id, reviewer_name, reason, new_status
+        ) VALUES ('ambassador_status', $1, 'update_status', $2, $3, $4, $5)`,
+        [ambassadorId, actor.id, actor.name, reason, targetStatus]
+      );
+
+      return NextResponse.json({ success: true, message: `Ambassador status updated to ${targetStatus}` });
+    }
+
+    // Action 2: Add Task Assignment
+    if (action === "assign_task") {
+      if (!ambassadorId || !newTask || !newTask.title) {
+        return NextResponse.json({ success: false, error: "ambassadorId and valid task payload required." }, { status: 400 });
       }
 
-      return NextResponse.json({
-        success: true,
+      const taskItem = {
+        id: `task_${Date.now()}`,
+        title: newTask.title,
+        description: newTask.description || "",
+        dueDate: newTask.dueDate || null,
+        assignedBy: actor.name,
+        assignedAt: new Date().toISOString(),
+        status: "pending",
+      };
+
+      await queryDb(
+        `UPDATE public.ambassadors
+         SET assigned_tasks = COALESCE(assigned_tasks, '[]'::jsonb) || $1::jsonb, updated_at = NOW()
+         WHERE id = $2 OR user_id = $2`,
+        [JSON.stringify([taskItem]), ambassadorId]
+      );
+
+      return NextResponse.json({ success: true, message: "Task assigned successfully to ambassador", task: taskItem });
+    }
+
+    // Action 3: Add Approved Campus Event
+    if (action === "add_event") {
+      if (!ambassadorId || !newEvent || !newEvent.title) {
+        return NextResponse.json({ success: false, error: "ambassadorId and valid event payload required." }, { status: 400 });
+      }
+
+      const eventItem = {
+        id: `event_${Date.now()}`,
+        title: newEvent.title,
+        eventDate: newEvent.eventDate || null,
+        venue: newEvent.venue || "Campus Auditorium",
         status: "approved",
-        ambassador: ambData
-      });
+        approvedBy: actor.name,
+      };
+
+      await queryDb(
+        `UPDATE public.ambassadors
+         SET campus_events = COALESCE(campus_events, '[]'::jsonb) || $1::jsonb, updated_at = NOW()
+         WHERE id = $2 OR user_id = $2`,
+        [JSON.stringify([eventItem]), ambassadorId]
+      );
+
+      return NextResponse.json({ success: true, message: "Campus event recorded for ambassador", event: eventItem });
     }
 
-    return NextResponse.json({
-      success: true,
-      status: "rejected"
-    });
+    return NextResponse.json({ success: false, error: "Unknown action" }, { status: 400 });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to process review" }, { status: 500 });
-  }
-}
-
-export async function PATCH(req: NextRequest) {
-  try {
-    const body = await req.json();
-    const { userId, isActive } = body;
-
-    if (!userId || typeof isActive !== "boolean") {
-      return NextResponse.json({ error: "userId and boolean isActive required" }, { status: 400 });
-    }
-
-    const { data, error } = await supabase
-      .from("ambassadors")
-      .update({ is_active: isActive })
-      .eq("user_id", userId)
-      .select()
-      .single();
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    return NextResponse.json({ success: true, ambassador: data });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to update ambassador status" }, { status: 500 });
+    console.error("[Ambassador Admin POST Error]:", err);
+    return NextResponse.json({ success: false, error: "Failed to process ambassador admin action" }, { status: 500 });
   }
 }

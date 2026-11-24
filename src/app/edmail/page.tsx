@@ -121,6 +121,11 @@ export default function EdMailWebmailPage() {
   const [usernameAvailability, setUsernameAvailability] = useState<{ available: boolean; error?: string } | null>(null);
   const [checkingUsername, setCheckingUsername] = useState(false);
   const [activatingMailbox, setActivatingMailbox] = useState(false);
+  const [activationError, setActivationError] = useState<{
+    message: string;
+    action?: "signin" | "change_username" | "retry";
+  } | null>(null);
+  const [activationSuccess, setActivationSuccess] = useState<string | null>(null);
 
   // Mobile sidebar
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -250,6 +255,8 @@ export default function EdMailWebmailPage() {
     e.preventDefault();
     if (!activationUsername) return;
     setActivatingMailbox(true);
+    setActivationError(null);
+    setActivationSuccess(null);
     try {
       const res = await fetch("/api/edmail/mailbox", {
         method: "POST",
@@ -260,14 +267,32 @@ export default function EdMailWebmailPage() {
         }),
       });
       const data = await res.json();
-      if (data.success) {
+      if (res.status === 401) {
+        setActivationError({
+          message: "Your session has expired or authentication is required. Please sign in again to activate your mailbox.",
+          action: "signin",
+        });
+      } else if (res.status === 409) {
+        setActivationError({
+          message: data.error || `The address "${activationUsername}@${EDMAIL_DOMAIN}" was claimed by another student. Please choose a different username.`,
+          action: "change_username",
+        });
+        setUsernameAvailability({ available: false, error: data.error || "Username claimed" });
+      } else if (res.ok && data.success && data.mailbox) {
+        setActivationSuccess(`EdMail address ${data.mailbox.address} is ready!`);
         setMailbox(data.mailbox);
         setMailboxStatus("ready");
       } else {
-        alert(data.error || "Mailbox creation failed");
+        setActivationError({
+          message: data.error || "Provisioning service temporarily unavailable. Please retry in a few moments.",
+          action: "retry",
+        });
       }
     } catch (err: any) {
-      alert(err.message || "Activation request failed");
+      setActivationError({
+        message: err.message || "Network error occurred while connecting to provisioning service. Please retry.",
+        action: "retry",
+      });
     } finally {
       setActivatingMailbox(false);
     }
@@ -519,7 +544,7 @@ export default function EdMailWebmailPage() {
     <AuthGuard>
       <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
         {/* Top Header Bar */}
-        <header className="h-16 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30">
+        <header className="h-16 bg-white border-b border-blue-200 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -528,12 +553,12 @@ export default function EdMailWebmailPage() {
               <Menu className="w-5 h-5" />
             </button>
             <Link href="/dashboard" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-[#5C59E8] flex items-center justify-center text-white shadow-xs">
+              <div className="w-8 h-8 rounded-xl bg-[#2563EB] flex items-center justify-center text-white shadow-xs">
                 <Mail className="w-4 h-4" />
               </div>
               <div>
                 <span className="font-extrabold text-slate-900 tracking-tight font-display">EdMail</span>
-                <span className="ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100">
+                <span className="ml-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[#EFF6FF] text-indigo-700 border border-blue-200">
                   @edworld.co.in
                 </span>
               </div>
@@ -541,7 +566,7 @@ export default function EdMailWebmailPage() {
           </div>
 
           {/* Primary View Switcher: Webmail vs Student Records */}
-          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-2xl border border-slate-200">
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-2xl border border-blue-200">
             <button
               onClick={() => setActiveSection("webmail")}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
@@ -550,7 +575,7 @@ export default function EdMailWebmailPage() {
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
-              <Inbox className="w-3.5 h-3.5 text-[#5C59E8]" />
+              <Inbox className="w-3.5 h-3.5 text-[#2563EB]" />
               <span>Inbox</span>
             </button>
 
@@ -590,7 +615,7 @@ export default function EdMailWebmailPage() {
             )}
             <Link
               href="/dashboard"
-              className="text-xs font-semibold px-3 py-1.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
+              className="text-xs font-semibold px-3 py-1.5 rounded-xl border border-blue-200 text-slate-600 hover:bg-slate-50 transition-colors"
             >
               Dashboard
             </Link>
@@ -601,7 +626,7 @@ export default function EdMailWebmailPage() {
         {mailboxStatus === "loading" && (
           <div className="flex-1 flex items-center justify-center p-8">
             <div className="text-center space-y-3">
-              <Loader2 className="w-8 h-8 animate-spin text-[#5C59E8] mx-auto" />
+              <Loader2 className="w-8 h-8 animate-spin text-[#2563EB] mx-auto" />
               <p className="text-sm font-semibold text-slate-600">Loading student mailbox...</p>
             </div>
           </div>
@@ -610,8 +635,8 @@ export default function EdMailWebmailPage() {
         {/* Unregistered State */}
         {mailboxStatus === "unregistered" && (
           <div className="flex-1 max-w-2xl mx-auto w-full p-4 sm:p-8 flex items-center justify-center">
-            <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-xs space-y-6 w-full">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-[#5C59E8]">
+            <div className="bg-white rounded-3xl border border-blue-200 p-6 sm:p-8 shadow-xs space-y-6 w-full">
+              <div className="w-12 h-12 rounded-2xl bg-[#EFF6FF] border border-blue-200 flex items-center justify-center text-[#2563EB]">
                 <Mail className="w-6 h-6" />
               </div>
               <div className="space-y-2">
@@ -622,20 +647,75 @@ export default function EdMailWebmailPage() {
               </div>
 
               <form onSubmit={handleActivateMailbox} className="space-y-4">
+                {/* Accessible Inline Status & Feedback */}
+                {activationError && (
+                  <div
+                    role="alert"
+                    aria-live="assertive"
+                    className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs space-y-2"
+                  >
+                    <div className="flex items-start gap-2.5">
+                      <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                      <div className="flex-1 font-medium leading-relaxed">{activationError.message}</div>
+                    </div>
+                    {activationError.action === "signin" && (
+                      <div className="pt-1">
+                        <Link
+                          href="/auth/login?redirectUrl=/edmail"
+                          className="inline-flex items-center gap-1 font-bold text-rose-700 underline hover:text-rose-900"
+                        >
+                          Sign in again <ExternalLink className="w-3 h-3" />
+                        </Link>
+                      </div>
+                    )}
+                    {activationError.action === "change_username" && (
+                      <div className="pt-1 text-[11px] text-rose-600 font-semibold">
+                        Please modify your handle above to continue.
+                      </div>
+                    )}
+                    {activationError.action === "retry" && (
+                      <div className="pt-1">
+                        <button
+                          type="button"
+                          onClick={handleActivateMailbox}
+                          disabled={activatingMailbox}
+                          className="font-bold text-rose-700 underline hover:text-rose-900 cursor-pointer"
+                        >
+                          Retry activation now
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {activationSuccess && (
+                  <div
+                    role="status"
+                    aria-live="polite"
+                    className="p-4 rounded-2xl bg-[#EFF6FF] border border-blue-200 text-emerald-800 text-xs flex items-center gap-2.5"
+                  >
+                    <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
+                    <span className="font-semibold">{activationSuccess}</span>
+                  </div>
+                )}
+
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                     Choose your username
                   </label>
-                  <div className="flex items-center rounded-2xl border border-slate-300 bg-white focus-within:border-[#5C59E8] focus-within:ring-2 focus-within:ring-[#5C59E8]/20 overflow-hidden">
+                  <div className="flex items-center rounded-2xl border border-slate-300 bg-white focus-within:border-[#2563EB] focus-within:ring-2 focus-within:ring-[#5C59E8]/20 overflow-hidden">
                     <input
                       type="text"
                       required
                       value={activationUsername}
-                      onChange={(e) => setActivationUsername(e.target.value.toLowerCase())}
+                      onChange={(e) => {
+                        setActivationUsername(e.target.value.toLowerCase());
+                        if (activationError) setActivationError(null);
+                      }}
                       placeholder="e.g. adarsh.cs"
                       className="flex-1 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
                     />
-                    <span className="px-4 py-3 bg-slate-50 text-slate-500 font-semibold text-sm border-l border-slate-200">
+                    <span className="px-4 py-3 bg-slate-50 text-slate-500 font-semibold text-sm border-l border-blue-200">
                       @{EDMAIL_DOMAIN}
                     </span>
                   </div>
@@ -649,8 +729,8 @@ export default function EdMailWebmailPage() {
                   {usernameAvailability && !checkingUsername && (
                     <div className="pt-1">
                       {usernameAvailability.available ? (
-                        <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                        <div className="flex items-center gap-1.5 text-xs text-[#1E40AF] font-semibold">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[#2563EB]" />
                           <span>{activationUsername}@{EDMAIL_DOMAIN} is available!</span>
                         </div>
                       ) : (
@@ -670,9 +750,10 @@ export default function EdMailWebmailPage() {
                   <button
                     type="submit"
                     disabled={activatingMailbox || !usernameAvailability?.available}
-                    className="px-6 py-3 rounded-2xl bg-[#5C59E8] hover:bg-[#4E4AC8] disabled:bg-slate-300 text-white font-bold text-sm shadow-sm transition-all flex items-center gap-2 cursor-pointer"
+                    className="px-6 py-3 rounded-2xl bg-[#2563EB] hover:bg-[#1D4ED8] disabled:bg-slate-300 text-white font-bold text-sm shadow-sm transition-all flex items-center gap-2 cursor-pointer"
                   >
-                    {activatingMailbox ? "Provisioning..." : "Activate EdMail"}
+                    {activatingMailbox && <Loader2 className="w-4 h-4 animate-spin text-white" />}
+                    <span>{activatingMailbox ? "Provisioning..." : "Activate EdMail"}</span>
                   </button>
                 </div>
               </form>
@@ -685,7 +766,7 @@ export default function EdMailWebmailPage() {
           <div className="flex-1 flex overflow-hidden">
             {/* Sidebar Navigation */}
             <aside
-              className={`w-64 bg-white border-r border-slate-200 flex flex-col justify-between p-4 shrink-0 fixed lg:static inset-y-16 left-0 z-20 transition-transform ${
+              className={`w-64 bg-white border-r border-blue-200 flex flex-col justify-between p-4 shrink-0 fixed lg:static inset-y-16 left-0 z-20 transition-transform ${
                 mobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
               }`}
             >
@@ -693,7 +774,7 @@ export default function EdMailWebmailPage() {
                 {/* Compose Button */}
                 <button
                   onClick={() => setIsComposeOpen(true)}
-                  className="w-full py-3 px-4 rounded-2xl bg-[#5C59E8] hover:bg-[#4E4AC8] text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  className="w-full py-3 px-4 rounded-2xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Compose</span>
@@ -724,16 +805,16 @@ export default function EdMailWebmailPage() {
                           }}
                           className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
                             isActive
-                              ? "bg-indigo-50 text-[#5C59E8]"
+                              ? "bg-[#EFF6FF] text-[#2563EB]"
                               : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                           }`}
                         >
                           <div className="flex items-center gap-2.5">
-                            <Icon className={`w-4 h-4 ${isActive ? "text-[#5C59E8]" : "text-slate-400"}`} />
+                            <Icon className={`w-4 h-4 ${isActive ? "text-[#2563EB]" : "text-slate-400"}`} />
                             <span>{folder.label}</span>
                           </div>
                           {folder.count && folder.count > 0 ? (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#5C59E8] text-white">
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#2563EB] text-white">
                               {folder.count}
                             </span>
                           ) : null}
@@ -764,11 +845,11 @@ export default function EdMailWebmailPage() {
                           }}
                           className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
                             isActive
-                              ? "bg-indigo-50 text-[#5C59E8]"
+                              ? "bg-[#EFF6FF] text-[#2563EB]"
                               : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                           }`}
                         >
-                          <Icon className={`w-4 h-4 ${isActive ? "text-[#5C59E8]" : "text-slate-400"}`} />
+                          <Icon className={`w-4 h-4 ${isActive ? "text-[#2563EB]" : "text-slate-400"}`} />
                           <span>{tab.label}</span>
                         </button>
                       );
@@ -779,14 +860,14 @@ export default function EdMailWebmailPage() {
 
               {/* Storage & Privacy Controls Footer */}
               <div className="space-y-2">
-                <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                <div className="p-3 bg-slate-50 rounded-2xl border border-blue-200 space-y-2">
                   <div className="flex items-center justify-between text-[11px] font-semibold text-slate-600">
                     <span>Storage Used</span>
                     <span>512 MB</span>
                   </div>
                   <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-[#5C59E8] rounded-full transition-all"
+                      className="h-full bg-[#2563EB] rounded-full transition-all"
                       style={{
                         width: `${Math.min(
                           100,
@@ -798,7 +879,7 @@ export default function EdMailWebmailPage() {
                 </div>
 
                 {/* Data Export & Account Deletion Controls */}
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between px-1">
+                <div className="pt-2 border-t border-blue-100 flex items-center justify-between px-1">
                   <button
                     onClick={async () => {
                       if (!confirm("Download a full archive of your EdMail messages and Student Record?")) return;
@@ -862,11 +943,11 @@ export default function EdMailWebmailPage() {
                 <div className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">
                   {/* Messages List Column */}
                   <div
-                    className={`w-full md:w-96 border-r border-slate-200 flex flex-col shrink-0 ${
+                    className={`w-full md:w-96 border-r border-blue-200 flex flex-col shrink-0 ${
                       selectedMessage ? "hidden md:flex" : "flex"
                     }`}
                   >
-                    <div className="p-3 border-b border-slate-200 flex items-center gap-2">
+                    <div className="p-3 border-b border-blue-200 flex items-center gap-2">
                       <div className="flex-1 relative">
                         <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                         <input
@@ -875,7 +956,7 @@ export default function EdMailWebmailPage() {
                           onChange={(e) => setSearchQuery(e.target.value)}
                           onKeyDown={(e) => e.key === "Enter" && fetchMessages()}
                           placeholder="Search in mail..."
-                          className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8]"
+                          className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-blue-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#2563EB]"
                         />
                       </div>
                       <button
@@ -890,7 +971,7 @@ export default function EdMailWebmailPage() {
                     <div className="flex-1 overflow-y-auto divide-y divide-slate-100">
                       {loadingMessages ? (
                         <div className="p-8 text-center text-slate-400">
-                          <Loader2 className="w-5 h-5 animate-spin mx-auto mb-2 text-[#5C59E8]" />
+                          <Loader2 className="w-5 h-5 animate-spin mx-auto mb-2 text-[#2563EB]" />
                           <span className="text-xs">Loading mail...</span>
                         </div>
                       ) : messages.length === 0 ? (
@@ -907,7 +988,7 @@ export default function EdMailWebmailPage() {
                               onClick={() => handleOpenMessage(msg)}
                               className={`p-3.5 transition-colors cursor-pointer flex gap-3 ${
                                 isSelected
-                                  ? "bg-indigo-50/70"
+                                  ? "bg-[#EFF6FF]/70"
                                   : msg.is_read
                                   ? "bg-white hover:bg-slate-50"
                                   : "bg-slate-50/70 hover:bg-slate-100 font-bold"
@@ -952,7 +1033,7 @@ export default function EdMailWebmailPage() {
                     {selectedMessage ? (
                       <div className="flex-1 flex flex-col min-h-0 overflow-y-auto">
                         {/* Action Bar with Save to Student Record Buttons */}
-                        <div className="p-3 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 bg-white sticky top-0 z-10">
+                        <div className="p-3 border-b border-blue-200 flex flex-wrap items-center justify-between gap-2 bg-white sticky top-0 z-10">
                           <button
                             onClick={() => setSelectedMessage(null)}
                             className="md:hidden p-1.5 rounded-xl text-slate-600 hover:bg-slate-100"
@@ -970,7 +1051,7 @@ export default function EdMailWebmailPage() {
                                 setMarkSubject(selectedMessage.subject?.replace(/^(re|fwd):\s*/i, "").slice(0, 30) || "CS Assessment");
                                 setSaveToMarksModalOpen(true);
                               }}
-                              className="px-2.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-[#5C59E8] text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                              className="px-2.5 py-1.5 rounded-xl bg-[#EFF6FF] hover:bg-indigo-100 text-[#2563EB] text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
                               title="Save assessment results or mark sheet from this email"
                             >
                               <GraduationCap className="w-3.5 h-3.5" />
@@ -983,7 +1064,7 @@ export default function EdMailWebmailPage() {
                                 setEventDesc(selectedMessage.snippet || "");
                                 setSaveToEventModalOpen(true);
                               }}
-                              className="px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                              className="px-2.5 py-1.5 rounded-xl bg-[#EFF6FF] hover:bg-emerald-100 text-[#1E40AF] text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
                               title="Add workshop, exam, or deadline from this email to calendar"
                             >
                               <Calendar className="w-3.5 h-3.5" />
@@ -996,7 +1077,7 @@ export default function EdMailWebmailPage() {
                                 setCertIssuer(selectedMessage.from_name || "Institution");
                                 setSaveCertModalOpen(true);
                               }}
-                              className="px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                              className="px-2.5 py-1.5 rounded-xl bg-[#EFF6FF] hover:bg-amber-100 text-[#1E40AF] text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
                               title="Save certificate credential"
                             >
                               <Award className="w-3.5 h-3.5" />
@@ -1040,13 +1121,13 @@ export default function EdMailWebmailPage() {
                         </div>
 
                         {/* Email Header */}
-                        <div className="p-6 border-b border-slate-100 space-y-4">
+                        <div className="p-6 border-b border-blue-100 space-y-4">
                           <h1 className="text-xl font-black text-slate-900 font-display">
                             {selectedMessage.subject || "(No Subject)"}
                           </h1>
                           <div className="flex items-start justify-between">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-[#5C59E8] font-black flex items-center justify-center text-sm">
+                              <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] text-[#2563EB] font-black flex items-center justify-center text-sm">
                                 {(selectedMessage.from_name || selectedMessage.from_address)[0].toUpperCase()}
                               </div>
                               <div>
@@ -1075,7 +1156,7 @@ export default function EdMailWebmailPage() {
 
                         {/* Attachments Section */}
                         {selectedMessage.attachments && selectedMessage.attachments.length > 0 && (
-                          <div className="p-6 border-t border-slate-200 bg-slate-50/50 space-y-3">
+                          <div className="p-6 border-t border-blue-200 bg-slate-50/50 space-y-3">
                             <div className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                               <Paperclip className="w-4 h-4 text-slate-500" />
                               <span>Attachments ({selectedMessage.attachments.length})</span>
@@ -1084,7 +1165,7 @@ export default function EdMailWebmailPage() {
                               {selectedMessage.attachments.map((att: any, idx: number) => (
                                 <div
                                   key={idx}
-                                  className="p-3 bg-white rounded-xl border border-slate-200 flex items-center justify-between"
+                                  className="p-3 bg-white rounded-xl border border-blue-200 flex items-center justify-between"
                                 >
                                   <div className="truncate mr-2">
                                     <div className="text-xs font-bold text-slate-800 truncate">{att.filename}</div>
@@ -1096,7 +1177,7 @@ export default function EdMailWebmailPage() {
                                         setMarkSubject(att.filename.replace(/\.[^/.]+$/, ""));
                                         setSaveToMarksModalOpen(true);
                                       }}
-                                      className="px-2 py-1 rounded-lg bg-indigo-50 text-[#5C59E8] text-[10px] font-bold"
+                                      className="px-2 py-1 rounded-lg bg-[#EFF6FF] text-[#2563EB] text-[10px] font-bold"
                                       title="Extract marks from attachment"
                                     >
                                       Mark Sheet
@@ -1144,7 +1225,7 @@ export default function EdMailWebmailPage() {
               {activeSection === "student_records" && (
                 <div className="flex-1 flex flex-col min-h-0 overflow-y-auto p-4 sm:p-8 space-y-6">
                   {/* Student Record Tab Bar */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-blue-200 pb-4">
                     <div>
                       <h2 className="text-xl font-black text-slate-900 font-display">Student Record</h2>
                       <p className="text-xs text-slate-500">
@@ -1152,7 +1233,7 @@ export default function EdMailWebmailPage() {
                       </p>
                     </div>
 
-                    <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-2xl border border-slate-200 self-start sm:self-auto overflow-x-auto">
+                    <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-2xl border border-blue-200 self-start sm:self-auto overflow-x-auto">
                       {[
                         { id: "marks", label: "Marks", icon: GraduationCap },
                         { id: "events", label: "Events & Agenda", icon: Calendar },
@@ -1171,7 +1252,7 @@ export default function EdMailWebmailPage() {
                                 : "text-slate-600 hover:text-slate-900"
                             }`}
                           >
-                            <Icon className={`w-3.5 h-3.5 ${isTabActive ? "text-[#5C59E8]" : "text-slate-400"}`} />
+                            <Icon className={`w-3.5 h-3.5 ${isTabActive ? "text-[#2563EB]" : "text-slate-400"}`} />
                             <span>{t.label}</span>
                           </button>
                         );
@@ -1191,7 +1272,7 @@ export default function EdMailWebmailPage() {
                             setMarkSubject("");
                             setSaveToMarksModalOpen(true);
                           }}
-                          className="px-3.5 py-1.5 rounded-xl bg-[#5C59E8] text-white text-xs font-bold flex items-center gap-1 shadow-xs cursor-pointer"
+                          className="px-3.5 py-1.5 rounded-xl bg-[#2563EB] text-white text-xs font-bold flex items-center gap-1 shadow-xs cursor-pointer"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span>Add Marks</span>
@@ -1200,7 +1281,7 @@ export default function EdMailWebmailPage() {
 
                       {loadingMarks ? (
                         <div className="p-8 text-center text-slate-400">
-                          <Loader2 className="w-5 h-5 animate-spin mx-auto text-[#5C59E8]" />
+                          <Loader2 className="w-5 h-5 animate-spin mx-auto text-[#2563EB]" />
                         </div>
                       ) : marks.length === 0 ? (
                         <div className="p-12 text-center bg-slate-50 rounded-3xl border border-dashed border-slate-300 space-y-2">
@@ -1215,14 +1296,14 @@ export default function EdMailWebmailPage() {
                           {marks.map((m) => (
                             <div
                               key={m.id}
-                              className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-3"
+                              className="p-4 rounded-2xl bg-white border border-blue-200 shadow-2xs space-y-3"
                             >
                               <div className="flex items-start justify-between">
                                 <span className="font-bold text-sm text-slate-900 truncate mr-2">{m.subject}</span>
                                 <span
                                   className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
                                     m.is_verified
-                                      ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                      ? "bg-[#EFF6FF] text-[#1E40AF] border border-blue-200"
                                       : "bg-slate-100 text-slate-600"
                                   }`}
                                 >
@@ -1236,7 +1317,7 @@ export default function EdMailWebmailPage() {
                                   <span className="text-xs text-slate-400 font-semibold"> / {m.max_marks}</span>
                                 </div>
                                 {m.grade && (
-                                  <span className="text-xs font-bold px-2.5 py-1 rounded-xl bg-indigo-50 text-[#5C59E8]">
+                                  <span className="text-xs font-bold px-2.5 py-1 rounded-xl bg-[#EFF6FF] text-[#2563EB]">
                                     Grade {m.grade}
                                   </span>
                                 )}
@@ -1246,7 +1327,7 @@ export default function EdMailWebmailPage() {
                                 Assessment: <strong>{m.assessment_name}</strong>
                               </div>
 
-                              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                              <div className="pt-2 border-t border-blue-100 flex items-center justify-between text-[10px] text-slate-400">
                                 <span>{new Date(m.created_at).toLocaleDateString()}</span>
                                 <button
                                   onClick={async () => {
@@ -1277,7 +1358,7 @@ export default function EdMailWebmailPage() {
                             setEventTitle("");
                             setSaveToEventModalOpen(true);
                           }}
-                          className="px-3.5 py-1.5 rounded-xl bg-[#5C59E8] text-white text-xs font-bold flex items-center gap-1 shadow-xs cursor-pointer"
+                          className="px-3.5 py-1.5 rounded-xl bg-[#2563EB] text-white text-xs font-bold flex items-center gap-1 shadow-xs cursor-pointer"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span>Add Event</span>
@@ -1286,7 +1367,7 @@ export default function EdMailWebmailPage() {
 
                       {loadingEvents ? (
                         <div className="p-8 text-center text-slate-400">
-                          <Loader2 className="w-5 h-5 animate-spin mx-auto text-[#5C59E8]" />
+                          <Loader2 className="w-5 h-5 animate-spin mx-auto text-[#2563EB]" />
                         </div>
                       ) : events.length === 0 ? (
                         <div className="p-12 text-center bg-slate-50 rounded-3xl border border-dashed border-slate-300 space-y-2">
@@ -1301,12 +1382,12 @@ export default function EdMailWebmailPage() {
                           {events.map((ev) => (
                             <div
                               key={ev.id}
-                              className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                              className="p-4 rounded-2xl bg-white border border-blue-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                             >
                               <div className="space-y-1">
                                 <div className="flex items-center gap-2">
                                   <span className="font-bold text-sm text-slate-900">{ev.title}</span>
-                                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 uppercase">
+                                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#EFF6FF] text-indigo-700 uppercase">
                                     {ev.event_type}
                                   </span>
                                 </div>
@@ -1316,7 +1397,7 @@ export default function EdMailWebmailPage() {
                                     <span>{new Date(ev.start_time).toLocaleString()}</span>
                                   </span>
                                   {ev.location_or_link && (
-                                    <span className="flex items-center gap-1 text-[#5C59E8] truncate max-w-xs">
+                                    <span className="flex items-center gap-1 text-[#2563EB] truncate max-w-xs">
                                       <MapPin className="w-3.5 h-3.5" />
                                       <span>{ev.location_or_link}</span>
                                     </span>
@@ -1327,7 +1408,7 @@ export default function EdMailWebmailPage() {
                               <div className="flex items-center gap-2 self-end sm:self-auto">
                                 <a
                                   href={`/api/edmail/records/events?id=${ev.id}&export=ics`}
-                                  className="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center gap-1"
+                                  className="px-3 py-1.5 rounded-xl border border-blue-200 hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center gap-1"
                                   title="Export to Google/Apple Calendar"
                                 >
                                   <Download className="w-3.5 h-3.5 text-slate-500" />
@@ -1362,7 +1443,7 @@ export default function EdMailWebmailPage() {
                             setNewDocCategory("study_material");
                             setUploadDocModalOpen(true);
                           }}
-                          className="px-3.5 py-1.5 rounded-xl bg-[#5C59E8] text-white text-xs font-bold flex items-center gap-1 shadow-xs cursor-pointer"
+                          className="px-3.5 py-1.5 rounded-xl bg-[#2563EB] text-white text-xs font-bold flex items-center gap-1 shadow-xs cursor-pointer"
                         >
                           <Upload className="w-3.5 h-3.5" />
                           <span>Upload File</span>
@@ -1384,7 +1465,7 @@ export default function EdMailWebmailPage() {
                             .map((doc) => (
                               <div
                                 key={doc.id}
-                                className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-2"
+                                className="p-4 rounded-2xl bg-white border border-blue-200 shadow-2xs space-y-2"
                               >
                                 <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
                                   <FileText className="w-4 h-4" />
@@ -1393,7 +1474,7 @@ export default function EdMailWebmailPage() {
                                 <div className="text-[10px] text-slate-400">
                                   {(doc.byte_size / 1024).toFixed(1)} KB &bull; {doc.category}
                                 </div>
-                                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                                <div className="pt-2 border-t border-blue-100 flex items-center justify-between text-xs">
                                   <span className="text-[10px] text-slate-400">{new Date(doc.created_at).toLocaleDateString()}</span>
                                   <button
                                     onClick={async () => {
@@ -1424,7 +1505,7 @@ export default function EdMailWebmailPage() {
                             setCertTitle("");
                             setSaveCertModalOpen(true);
                           }}
-                          className="px-3.5 py-1.5 rounded-xl bg-[#5C59E8] text-white text-xs font-bold flex items-center gap-1 shadow-xs cursor-pointer"
+                          className="px-3.5 py-1.5 rounded-xl bg-[#2563EB] text-white text-xs font-bold flex items-center gap-1 shadow-xs cursor-pointer"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span>Add Certificate</span>
@@ -1446,16 +1527,16 @@ export default function EdMailWebmailPage() {
                             .map((doc) => (
                               <div
                                 key={doc.id}
-                                className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-3"
+                                className="p-4 rounded-2xl bg-white border border-blue-200 shadow-2xs space-y-3"
                               >
                                 <div className="flex items-start justify-between">
-                                  <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                                  <div className="w-8 h-8 rounded-xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center">
                                     <Award className="w-4 h-4" />
                                   </div>
                                   <span
                                     className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
                                       doc.is_verified
-                                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                        ? "bg-[#EFF6FF] text-[#1E40AF] border border-blue-200"
                                         : "bg-slate-100 text-slate-600"
                                     }`}
                                   >
@@ -1468,7 +1549,7 @@ export default function EdMailWebmailPage() {
                                     Issuer: {doc.verification_issuer || "Self Added"}
                                   </div>
                                 </div>
-                                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                                <div className="pt-2 border-t border-blue-100 flex items-center justify-between text-xs">
                                   <span className="text-[10px] text-slate-400">{new Date(doc.created_at).toLocaleDateString()}</span>
                                   <button
                                     onClick={async () => {
@@ -1499,9 +1580,9 @@ export default function EdMailWebmailPage() {
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200 text-xs text-indigo-950 space-y-2">
+                  <div className="p-4 rounded-2xl bg-[#EFF6FF]/70 border border-blue-200 text-xs text-indigo-950 space-y-2">
                     <div className="font-bold flex items-center gap-2 text-indigo-900">
-                      <ShieldCheck className="w-4 h-4 text-[#5C59E8]" />
+                      <ShieldCheck className="w-4 h-4 text-[#2563EB]" />
                       <span>Important Notice Regarding Commercial Student Discounts</span>
                     </div>
                     <p className="leading-relaxed">
@@ -1520,10 +1601,10 @@ export default function EdMailWebmailPage() {
         {/* MODAL: Save to Marks */}
         {saveToMarksModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-2xs animate-in fade-in">
-            <div className="bg-white w-full max-w-md rounded-3xl border border-slate-200 shadow-xl p-6 space-y-4">
+            <div className="bg-white w-full max-w-md rounded-3xl border border-blue-200 shadow-xl p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 font-bold text-base text-slate-900">
-                  <GraduationCap className="w-5 h-5 text-[#5C59E8]" />
+                  <GraduationCap className="w-5 h-5 text-[#2563EB]" />
                   <span>Save to Student Marks</span>
                 </div>
                 <button onClick={() => setSaveToMarksModalOpen(false)} className="text-slate-400 hover:text-slate-600">
@@ -1540,7 +1621,7 @@ export default function EdMailWebmailPage() {
                     value={markSubject}
                     onChange={(e) => setMarkSubject(e.target.value)}
                     placeholder="e.g. Data Structures & Algorithms"
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-[#5C59E8]"
+                    className="w-full px-3 py-2 text-xs border border-blue-200 rounded-xl focus:outline-none focus:border-[#2563EB]"
                   />
                 </div>
 
@@ -1551,7 +1632,7 @@ export default function EdMailWebmailPage() {
                     value={markAssessment}
                     onChange={(e) => setMarkAssessment(e.target.value)}
                     placeholder="e.g. Midterm Examination or Final Grade"
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-[#5C59E8]"
+                    className="w-full px-3 py-2 text-xs border border-blue-200 rounded-xl focus:outline-none focus:border-[#2563EB]"
                   />
                 </div>
 
@@ -1565,7 +1646,7 @@ export default function EdMailWebmailPage() {
                       value={markScore}
                       onChange={(e) => setMarkScore(e.target.value)}
                       placeholder="e.g. 92"
-                      className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-[#5C59E8]"
+                      className="w-full px-3 py-2 text-xs border border-blue-200 rounded-xl focus:outline-none focus:border-[#2563EB]"
                     />
                   </div>
 
@@ -1576,12 +1657,12 @@ export default function EdMailWebmailPage() {
                       value={markMax}
                       onChange={(e) => setMarkMax(e.target.value)}
                       placeholder="e.g. 100"
-                      className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-[#5C59E8]"
+                      className="w-full px-3 py-2 text-xs border border-blue-200 rounded-xl focus:outline-none focus:border-[#2563EB]"
                     />
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-500">
+                <div className="p-3 rounded-xl bg-slate-50 border border-blue-200 text-[11px] text-slate-500">
                   Record will be stored privately under your Student Record as <strong>Student Entered</strong> unless verified through an official institution integration.
                 </div>
 
@@ -1596,7 +1677,7 @@ export default function EdMailWebmailPage() {
                   <button
                     type="submit"
                     disabled={savingMark}
-                    className="px-4 py-2 rounded-xl bg-[#5C59E8] hover:bg-[#4E4AC8] text-white font-bold text-xs shadow-xs"
+                    className="px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs shadow-xs"
                   >
                     {savingMark ? "Saving..." : "Save to Marks"}
                   </button>
@@ -1609,10 +1690,10 @@ export default function EdMailWebmailPage() {
         {/* MODAL: Add to Calendar / Events */}
         {saveToEventModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-2xs animate-in fade-in">
-            <div className="bg-white w-full max-w-md rounded-3xl border border-slate-200 shadow-xl p-6 space-y-4">
+            <div className="bg-white w-full max-w-md rounded-3xl border border-blue-200 shadow-xl p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 font-bold text-base text-slate-900">
-                  <Calendar className="w-5 h-5 text-emerald-600" />
+                  <Calendar className="w-5 h-5 text-[#2563EB]" />
                   <span>Add to Student Agenda &amp; Calendar</span>
                 </div>
                 <button onClick={() => setSaveToEventModalOpen(false)} className="text-slate-400 hover:text-slate-600">
@@ -1629,7 +1710,7 @@ export default function EdMailWebmailPage() {
                     value={eventTitle}
                     onChange={(e) => setEventTitle(e.target.value)}
                     placeholder="e.g. AI Systems Guest Lecture"
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-[#5C59E8]"
+                    className="w-full px-3 py-2 text-xs border border-blue-200 rounded-xl focus:outline-none focus:border-[#2563EB]"
                   />
                 </div>
 
@@ -1639,7 +1720,7 @@ export default function EdMailWebmailPage() {
                     <select
                       value={eventType}
                       onChange={(e: any) => setEventType(e.target.value)}
-                      className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-[#5C59E8]"
+                      className="w-full px-3 py-2 text-xs border border-blue-200 rounded-xl focus:outline-none focus:border-[#2563EB]"
                     >
                       <option value="workshop">Workshop</option>
                       <option value="class">Class</option>
@@ -1656,7 +1737,7 @@ export default function EdMailWebmailPage() {
                       required
                       value={eventStart}
                       onChange={(e) => setEventStart(e.target.value)}
-                      className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-[#5C59E8]"
+                      className="w-full px-3 py-2 text-xs border border-blue-200 rounded-xl focus:outline-none focus:border-[#2563EB]"
                     />
                   </div>
                 </div>
@@ -1668,7 +1749,7 @@ export default function EdMailWebmailPage() {
                     value={eventLocation}
                     onChange={(e) => setEventLocation(e.target.value)}
                     placeholder="e.g. Google Meet or Room 302"
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-[#5C59E8]"
+                    className="w-full px-3 py-2 text-xs border border-blue-200 rounded-xl focus:outline-none focus:border-[#2563EB]"
                   />
                 </div>
 
@@ -1696,7 +1777,7 @@ export default function EdMailWebmailPage() {
         {/* MODAL: Save Certificate */}
         {saveCertModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-2xs animate-in fade-in">
-            <div className="bg-white w-full max-w-md rounded-3xl border border-slate-200 shadow-xl p-6 space-y-4">
+            <div className="bg-white w-full max-w-md rounded-3xl border border-blue-200 shadow-xl p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 font-bold text-base text-slate-900">
                   <Award className="w-5 h-5 text-amber-500" />
@@ -1716,7 +1797,7 @@ export default function EdMailWebmailPage() {
                     value={certTitle}
                     onChange={(e) => setCertTitle(e.target.value)}
                     placeholder="e.g. Python for Data Science"
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-[#5C59E8]"
+                    className="w-full px-3 py-2 text-xs border border-blue-200 rounded-xl focus:outline-none focus:border-[#2563EB]"
                   />
                 </div>
 
@@ -1727,7 +1808,7 @@ export default function EdMailWebmailPage() {
                     value={certIssuer}
                     onChange={(e) => setCertIssuer(e.target.value)}
                     placeholder="e.g. Coursera, DeepLearning.AI, or University"
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-[#5C59E8]"
+                    className="w-full px-3 py-2 text-xs border border-blue-200 rounded-xl focus:outline-none focus:border-[#2563EB]"
                   />
                 </div>
 
@@ -1738,11 +1819,11 @@ export default function EdMailWebmailPage() {
                     value={certVerifyLink}
                     onChange={(e) => setCertVerifyLink(e.target.value)}
                     placeholder="https://..."
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-[#5C59E8]"
+                    className="w-full px-3 py-2 text-xs border border-blue-200 rounded-xl focus:outline-none focus:border-[#2563EB]"
                   />
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-500">
+                <div className="p-3 rounded-xl bg-slate-50 border border-blue-200 text-[11px] text-slate-500">
                   Saved certificates are marked as <strong>Personal Copy</strong> until verified through Edworld or an approved verification authority.
                 </div>
 
@@ -1770,7 +1851,7 @@ export default function EdMailWebmailPage() {
         {/* MODAL: Upload Document */}
         {uploadDocModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-2xs animate-in fade-in">
-            <div className="bg-white w-full max-w-md rounded-3xl border border-slate-200 shadow-xl p-6 space-y-4">
+            <div className="bg-white w-full max-w-md rounded-3xl border border-blue-200 shadow-xl p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-base text-slate-900">Upload to Study Files</h3>
                 <button onClick={() => setUploadDocModalOpen(false)} className="text-slate-400 hover:text-slate-600">
@@ -1787,7 +1868,7 @@ export default function EdMailWebmailPage() {
                     value={newDocTitle}
                     onChange={(e) => setNewDocTitle(e.target.value)}
                     placeholder="e.g. Operating Systems Notes"
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-[#5C59E8]"
+                    className="w-full px-3 py-2 text-xs border border-blue-200 rounded-xl focus:outline-none focus:border-[#2563EB]"
                   />
                 </div>
 
@@ -1802,7 +1883,7 @@ export default function EdMailWebmailPage() {
                   <button
                     type="submit"
                     disabled={uploadingDoc}
-                    className="px-4 py-2 rounded-xl bg-[#5C59E8] text-white font-bold text-xs"
+                    className="px-4 py-2 rounded-xl bg-[#2563EB] text-white font-bold text-xs"
                   >
                     {uploadingDoc ? "Saving..." : "Save File"}
                   </button>
@@ -1815,8 +1896,8 @@ export default function EdMailWebmailPage() {
         {/* Compose Modal */}
         {isComposeOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-2xs animate-in fade-in">
-            <div className="bg-white w-full max-w-xl rounded-3xl border border-slate-200 shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
-              <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
+            <div className="bg-white w-full max-w-xl rounded-3xl border border-blue-200 shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+              <div className="p-4 border-b border-blue-200 flex items-center justify-between bg-slate-50/50">
                 <span className="text-sm font-bold text-slate-900">New Message</span>
                 <button
                   onClick={() => setIsComposeOpen(false)}
@@ -1834,7 +1915,7 @@ export default function EdMailWebmailPage() {
                   </div>
                 )}
                 {composeSuccess && (
-                  <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
+                  <div className="p-3 rounded-xl bg-[#EFF6FF] border border-blue-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 shrink-0" />
                     <span>{composeSuccess}</span>
                   </div>
@@ -1847,7 +1928,7 @@ export default function EdMailWebmailPage() {
                     value={composeTo}
                     onChange={(e) => setComposeTo(e.target.value)}
                     placeholder="To (recipients separated by comma)"
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-[#5C59E8]"
+                    className="w-full px-3 py-2 text-xs border border-blue-200 rounded-xl focus:outline-none focus:border-[#2563EB]"
                   />
                 </div>
 
@@ -1857,7 +1938,7 @@ export default function EdMailWebmailPage() {
                     value={composeSubject}
                     onChange={(e) => setComposeSubject(e.target.value)}
                     placeholder="Subject"
-                    className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-[#5C59E8]"
+                    className="w-full px-3 py-2 text-xs border border-blue-200 rounded-xl focus:outline-none focus:border-[#2563EB]"
                   />
                 </div>
 
@@ -1867,11 +1948,11 @@ export default function EdMailWebmailPage() {
                     value={composeBody}
                     onChange={(e) => setComposeBody(e.target.value)}
                     placeholder="Write your email here..."
-                    className="w-full h-full p-3 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-[#5C59E8] resize-none"
+                    className="w-full h-full p-3 text-xs border border-blue-200 rounded-xl focus:outline-none focus:border-[#2563EB] resize-none"
                   />
                 </div>
 
-                <div className="pt-2 flex items-center justify-between border-t border-slate-100">
+                <div className="pt-2 flex items-center justify-between border-t border-blue-100">
                   <div className="text-[10px] text-slate-400">
                     Sending from: <strong>{mailbox?.address}</strong>
                   </div>
@@ -1886,7 +1967,7 @@ export default function EdMailWebmailPage() {
                     <button
                       type="submit"
                       disabled={sendingEmail}
-                      className="px-5 py-2 rounded-xl bg-[#5C59E8] hover:bg-[#4E4AC8] disabled:bg-slate-300 text-white font-bold text-xs shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                      className="px-5 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] disabled:bg-slate-300 text-white font-bold text-xs shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
                     >
                       {sendingEmail ? (
                         <>

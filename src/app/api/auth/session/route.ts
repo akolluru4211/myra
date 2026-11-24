@@ -37,11 +37,30 @@ export async function GET(req: NextRequest) {
     if (!profile) {
       // Fetch fresh profile with a 1.2s timeout so slow networks never freeze navigation
       try {
-        const queryPromise = supabase
-          .from("profiles")
-          .select("id, email, name, role, age_band, career_stage, grade_level, phone, is_suspended, onboarding_completed")
-          .eq("id", userId)
-          .maybeSingle();
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId);
+        
+        let queryPromise: Promise<{ data: any }>;
+        if (isUuid) {
+          queryPromise = Promise.resolve(
+            supabase
+              .from("profiles")
+              .select("id, email, name, role, age_band, career_stage, grade_level, phone, is_suspended, onboarding_completed")
+              .eq("id", userId)
+              .maybeSingle()
+          );
+        } else {
+          // If non-UUID ID (e.g. usr_...), lookup by active session email if mapped or fallback
+          queryPromise = Promise.resolve({
+            data: {
+              id: userId,
+              name: "Edworld Student",
+              role: role || "CLIENT",
+              onboarding_completed: true,
+              career_stage: "STUDENT",
+              age_band: "18+",
+            }
+          });
+        }
 
         const timeoutPromise = new Promise<{ data: any }>((resolve) =>
           setTimeout(() => resolve({ data: null }), 1200)

@@ -165,7 +165,7 @@ function SignupForm() {
     "bg-slate-200",
     "bg-rose-500",
     "bg-amber-500",
-    "bg-[#5C59E8]",
+    "bg-[#2563EB]",
     "bg-emerald-500",
   ];
 
@@ -360,7 +360,7 @@ function SignupForm() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Jane Doe"
-                      className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
+                      className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-blue-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
                     />
                   </div>
                 </div>
@@ -379,7 +379,7 @@ function SignupForm() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="jane@university.edu"
-                        className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
+                        className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-blue-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
                       />
                     </div>
                   </div>
@@ -395,7 +395,7 @@ function SignupForm() {
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="+91 98765 43210"
-                        className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
+                        className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-blue-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
                       />
                     </div>
                   </div>
@@ -415,7 +415,7 @@ function SignupForm() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="8+ chars with numbers"
-                        className="w-full pl-10 pr-10 py-2.5 sm:py-3 text-sm bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
+                        className="w-full pl-10 pr-10 py-2.5 sm:py-3 text-sm bg-white border border-blue-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
                       />
                       <button
                         type="button"
@@ -440,7 +440,7 @@ function SignupForm() {
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="Re-type password"
-                        className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
+                        className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-blue-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
                       />
                     </div>
                   </div>
@@ -448,11 +448,11 @@ function SignupForm() {
 
                 {/* Password Strength Checklist */}
                 {password.length > 0 && (
-                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-2 animate-in fade-in">
+                  <div className="p-3.5 rounded-2xl bg-[#EFF6FF] border border-blue-200/90 space-y-2 animate-in fade-in">
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-slate-600 font-medium text-[11px]">Password Strength:</span>
                       <span className={`font-bold text-[11px] ${
-                        strengthScore >= 3 ? "text-emerald-700" : strengthScore === 2 ? "text-[#5C59E8]" : "text-amber-700"
+                        strengthScore >= 3 ? "text-emerald-700" : strengthScore === 2 ? "text-[#2563EB]" : "text-amber-700"
                       }`}>
                         {strengthLabels[strengthScore] || "Moderate"}
                       </span>
@@ -485,7 +485,7 @@ function SignupForm() {
                         <span className={passwordsMatch ? "text-emerald-800 font-semibold" : "text-slate-500"}>Passwords match</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        {hasSpecial ? <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> : <div className="w-3.5 h-3.5 rounded-full border border-slate-300 shrink-0" />}
+                        {hasSpecial ? <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> : <div className="w-3.5 h-3.5 rounded-full border border-blue-300 shrink-0" />}
                         <span className={hasSpecial ? "text-emerald-800 font-semibold" : "text-slate-500"}>Symbol (Optional)</span>
                       </div>
                     </div>
@@ -504,11 +504,11 @@ function SignupForm() {
                           setEdMailHandle(name.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 15));
                         }
                       }}
-                      className="mt-0.5 w-4 h-4 rounded border-slate-300 text-[#5C59E8] focus:ring-[#5C59E8] cursor-pointer"
+                      className="mt-0.5 w-4 h-4 rounded border-blue-300 text-[#2563EB] focus:ring-[#5C59E8] cursor-pointer"
                     />
                     <div className="flex-1 text-xs text-slate-700">
                       <div className="font-bold flex items-center gap-1.5 text-slate-900">
-                        <Mail className="w-3.5 h-3.5 text-[#5C59E8]" />
+                        <Mail className="w-3.5 h-3.5 text-[#2563EB]" />
                         <span>Create my EdMail address (Optional)</span>
                       </div>
                       <p className="text-[11px] text-slate-500 font-normal">
@@ -519,7 +519,7 @@ function SignupForm() {
 
                   {wantsEdMail && (
                     <div className="pt-1.5 space-y-1.5 animate-in fade-in">
-                      <div className="flex items-center rounded-xl border border-slate-300 bg-white focus-within:border-[#5C59E8] focus-within:ring-2 focus-within:ring-[#5C59E8]/20 overflow-hidden">
+                      <div className="flex items-center rounded-xl border border-blue-300 bg-white focus-within:border-[#5C59E8] focus-within:ring-2 focus-within:ring-[#5C59E8]/20 overflow-hidden">
                         <input
                           type="text"
                           value={edMailHandle}
@@ -527,7 +527,7 @@ function SignupForm() {
                           placeholder="e.g. adarsh.cs"
                           className="flex-1 px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none"
                         />
-                        <span className="px-2.5 py-2 bg-slate-50 text-slate-500 font-semibold text-xs border-l border-slate-200">
+                        <span className="px-2.5 py-2 bg-[#EFF6FF] text-slate-500 font-semibold text-xs border-l border-blue-200">
                           @edworld.co.in
                         </span>
                       </div>
@@ -562,9 +562,9 @@ function SignupForm() {
                     <button
                       type="button"
                       onClick={() => setShowReferral(true)}
-                      className="inline-flex items-center gap-1.5 text-xs text-[#5C59E8] hover:text-[#4E4BC6] font-semibold transition-colors cursor-pointer"
+                      className="inline-flex items-center gap-1.5 text-xs text-[#2563EB] hover:text-[#4E4BC6] font-semibold transition-colors cursor-pointer"
                     >
-                      <Gift className="w-3.5 h-3.5 text-[#5C59E8]" />
+                      <Gift className="w-3.5 h-3.5 text-[#2563EB]" />
                       <span>Have an ambassador referral code?</span>
                     </button>
                   ) : (
@@ -591,7 +591,7 @@ function SignupForm() {
                           value={referralCode}
                           onChange={(e) => setReferralCode(e.target.value)}
                           placeholder="e.g. CAMPUS-2026-VIP"
-                          className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm bg-white border border-slate-300 rounded-xl text-slate-900 uppercase placeholder:normal-case font-mono focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20"
+                          className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm bg-white border border-blue-300 rounded-xl text-slate-900 uppercase placeholder:normal-case font-mono focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20"
                         />
                       </div>
                     </div>
@@ -599,22 +599,22 @@ function SignupForm() {
                 </div>
 
                 {/* Terms & Age Eligibility Checkboxes */}
-                <div className="space-y-2 pt-2 border-t border-slate-200">
+                <div className="space-y-2 pt-2 border-t border-blue-200">
                   <label className="flex items-start gap-2.5 cursor-pointer text-xs text-slate-600">
                     <input
                       type="checkbox"
                       required
                       checked={termsAgreed}
                       onChange={(e) => setTermsAgreed(e.target.checked)}
-                      className="mt-0.5 w-4 h-4 rounded border-slate-300 text-[#5C59E8] focus:ring-[#5C59E8] cursor-pointer"
+                      className="mt-0.5 w-4 h-4 rounded border-blue-300 text-[#2563EB] focus:ring-[#5C59E8] cursor-pointer"
                     />
                     <span>
                       I agree to the{" "}
-                      <Link href="/terms" target="_blank" className="font-bold text-[#5C59E8] hover:text-[#4E4BC6] underline underline-offset-2">
+                      <Link href="/terms" target="_blank" className="font-bold text-[#2563EB] hover:text-[#4E4BC6] underline underline-offset-2">
                         Terms of Service
                       </Link>
                       {" "}and{" "}
-                      <Link href="/privacy" target="_blank" className="font-bold text-[#5C59E8] hover:text-[#4E4BC6] underline underline-offset-2">
+                      <Link href="/privacy" target="_blank" className="font-bold text-[#2563EB] hover:text-[#4E4BC6] underline underline-offset-2">
                         Privacy Policy
                       </Link>.
                     </span>
@@ -626,7 +626,7 @@ function SignupForm() {
                       required
                       checked={ageConsent}
                       onChange={(e) => setAgeConsent(e.target.checked)}
-                      className="mt-0.5 w-4 h-4 rounded border-slate-300 text-[#5C59E8] focus:ring-[#5C59E8] cursor-pointer"
+                      className="mt-0.5 w-4 h-4 rounded border-blue-300 text-[#2563EB] focus:ring-[#5C59E8] cursor-pointer"
                     />
                     <span>
                       I confirm I am 18+ or have parental / guardian consent to register on EdWorld Co.
@@ -638,7 +638,7 @@ function SignupForm() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer bg-[#5C59E8] hover:bg-[#4E4BC6]"
+                  className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer bg-[#2563EB] hover:bg-[#1D4ED8]"
                 >
                   {loading ? (
                     <>
@@ -682,7 +682,7 @@ function SignupForm() {
                       onPaste={handlePaste}
                       disabled={loading}
                       aria-label={`Digit ${idx + 1} of 6`}
-                      className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold font-mono rounded-xl bg-white border border-slate-300 text-slate-900 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all shadow-2xs"
+                      className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold font-mono rounded-xl bg-white border border-blue-300 text-slate-900 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all shadow-2xs"
                     />
                   ))}
                 </div>
@@ -708,7 +708,7 @@ function SignupForm() {
                       type="button"
                       onClick={handleResendOtp}
                       disabled={loading}
-                      className="font-bold text-[#5C59E8] hover:text-[#4E4BC6] transition-colors flex items-center gap-1 cursor-pointer"
+                      className="font-bold text-[#2563EB] hover:text-[#4E4BC6] transition-colors flex items-center gap-1 cursor-pointer"
                     >
                       <RotateCw className="w-3 h-3" />
                       <span>Resend OTP</span>
@@ -719,7 +719,7 @@ function SignupForm() {
                 <button
                   type="submit"
                   disabled={loading || otpDigits.join("").length !== 6}
-                  className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer bg-[#5C59E8] hover:bg-[#4E4BC6]"
+                  className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer bg-[#2563EB] hover:bg-[#1D4ED8]"
                 >
                   {loading ? (
                     <>
@@ -737,12 +737,12 @@ function SignupForm() {
             )}
 
             {/* Bottom Switcher */}
-            <div className="pt-3 border-t border-slate-200 text-center">
+            <div className="pt-3 border-t border-blue-200 text-center">
               <p className="text-xs text-slate-600">
                 Already have an account?{" "}
                 <Link
                   href="/auth/login"
-                  className="font-bold text-[#5C59E8] hover:text-[#4E4BC6] underline underline-offset-3"
+                  className="font-bold text-[#2563EB] hover:text-[#4E4BC6] underline underline-offset-3"
                 >
                   Sign in here
                 </Link>
@@ -761,8 +761,8 @@ export default function SignupPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-[#F4F5FA] flex items-center justify-center">
-          <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center gap-3">
-            <Loader2 className="w-5 h-5 animate-spin text-[#5C59E8]" />
+          <div className="p-6 rounded-2xl bg-white border border-blue-200 shadow-sm flex items-center gap-3">
+            <Loader2 className="w-5 h-5 animate-spin text-[#2563EB]" />
             <span className="text-sm font-semibold text-slate-800">Loading sign up...</span>
           </div>
         </div>

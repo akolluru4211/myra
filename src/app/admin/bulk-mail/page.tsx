@@ -43,11 +43,20 @@ export default function AdminBulkMailSenderPage() {
   const [dispatching, setDispatching] = useState(false);
   const [dispatchResult, setDispatchResult] = useState<{ success?: boolean; message?: string } | null>(null);
 
+  const [accessDeniedMessage, setAccessDeniedMessage] = useState<string | null>(null);
+
   const fetchTelemetry = async () => {
     setLoading(true);
+    setAccessDeniedMessage(null);
     try {
       const res = await fetch("/api/admin/bulk-mail");
       const data = await res.json();
+      if (!res.ok) {
+        if (res.status === 403) {
+          setAccessDeniedMessage(data.error || "Forbidden: Platform administrator clearance required to access bulk mail operations.");
+        }
+        return;
+      }
       if (data.counts) setCounts(data.counts);
       setHasResendKey(data.hasResendKey || false);
       if (data.recentBroadcasts) setRecentBroadcasts(data.recentBroadcasts);
@@ -103,15 +112,18 @@ export default function AdminBulkMailSenderPage() {
         }
         fetchTelemetry();
       } else {
+        // Explicitly preserve the draft on failure and show clear inline error
         setDispatchResult({
           success: false,
-          message: data.error || "Failed to dispatch email.",
+          message: data.error || (res.status === 403 
+            ? "Forbidden: Platform administrator clearance required to dispatch bulk emails." 
+            : "Failed to dispatch email."),
         });
       }
     } catch (err: any) {
       setDispatchResult({
         success: false,
-        message: err.message || "Network error while dispatching email.",
+        message: err.message || "Network error while dispatching email. Draft has been preserved.",
       });
     } finally {
       setDispatching(false);
@@ -147,10 +159,10 @@ export default function AdminBulkMailSenderPage() {
           <div className="flex items-center gap-2.5">
             <span className={`px-3 py-1.5 rounded-xl text-xs font-bold font-mono border flex items-center gap-1.5 ${
               hasResendKey
-                ? "bg-emerald-50 text-emerald-900 border-emerald-200"
+                ? "bg-[#EFF6FF] text-emerald-900 border-blue-200"
                 : "bg-neutral-100 text-neutral-700 border-neutral-200"
             }`}>
-              <span className={`w-2 h-2 rounded-full ${hasResendKey ? "bg-emerald-500 animate-pulse" : "bg-neutral-400"}`} />
+              <span className={`w-2 h-2 rounded-full ${hasResendKey ? "bg-[#EFF6FF]0 animate-pulse" : "bg-neutral-400"}`} />
               <span>{hasResendKey ? "Resend Live API Active" : "Resend Audit Mode"}</span>
             </span>
 
@@ -165,6 +177,14 @@ export default function AdminBulkMailSenderPage() {
           </div>
         </div>
       </div>
+
+      {/* Access Denied Warning Banner (if clearance is missing) */}
+      {accessDeniedMessage && (
+        <div className="p-4 rounded-2xl border bg-[#EFF6FF] border-blue-200 text-amber-900 text-xs font-bold flex items-center gap-2 animate-in fade-in" role="alert">
+          <AlertCircle className="w-4 h-4 text-[#2563EB] shrink-0" />
+          <span>{accessDeniedMessage}</span>
+        </div>
+      )}
 
       {/* Main Composer & Live Preview Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -181,11 +201,11 @@ export default function AdminBulkMailSenderPage() {
           {dispatchResult && (
             <div className={`p-4 rounded-2xl border text-xs font-bold flex items-center gap-2 animate-in fade-in ${
               dispatchResult.success 
-                ? "bg-emerald-50 border-emerald-200 text-emerald-900" 
+                ? "bg-[#EFF6FF] border-blue-200 text-emerald-900" 
                 : "bg-red-50 border-red-200 text-red-900"
             }`}>
               {dispatchResult.success ? (
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
               ) : (
                 <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
               )}
@@ -368,12 +388,12 @@ export default function AdminBulkMailSenderPage() {
                 </div>
 
                 {/* Header with Official Geometric Monogram */}
-                <div className="p-4 text-center bg-gradient-to-b from-white to-slate-50 border-b border-slate-200">
+                <div className="p-4 text-center bg-gradient-to-b from-white to-slate-50 border-b border-blue-200">
                   <div className="w-12 h-12 mx-auto rounded-xl bg-black border border-slate-800 p-2 shadow-md flex items-center justify-center mb-2 text-white font-black text-xl tracking-tight">
                     E<span className="text-emerald-500">.</span>
                   </div>
                   <div className="text-lg font-black text-slate-900 tracking-tight">
-                    EdWorld <span className="text-emerald-600">Co.</span>
+                    EdWorld <span className="text-[#2563EB]">Co.</span>
                   </div>
                   <div className="text-[9.5px] font-black uppercase tracking-widest text-slate-600 mt-0.5">
                     <span className="text-slate-900">Learn</span>
@@ -386,7 +406,7 @@ export default function AdminBulkMailSenderPage() {
 
                 {/* Body Content */}
                 <div className="p-5 space-y-4">
-                  <div className="border-b border-slate-200 pb-3">
+                  <div className="border-b border-blue-200 pb-3">
                     <span className="text-[9px] font-mono font-black uppercase bg-slate-900 text-white px-2 py-0.5 rounded">
                       ANNOUNCEMENT
                     </span>

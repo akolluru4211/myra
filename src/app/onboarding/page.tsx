@@ -485,7 +485,7 @@ export default function OnboardingPage() {
   const progressPercentage = Math.round((currentStep / totalSteps) * 100);
 
   return (
-    <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8 font-sans selection:bg-white selection:text-slate-950 flex flex-col justify-center bg-[#080B11] text-white">
+    <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8 font-sans selection:bg-white selection:text-slate-950 flex flex-col justify-center bg-white text-black">
       <div className={`${currentStep === 3 ? "max-w-4xl" : "max-w-2xl"} mx-auto w-full space-y-6 transition-all duration-200`}>
         
         {/* Top Branding & Progress Tracker */}
@@ -496,14 +496,14 @@ export default function OnboardingPage() {
 
           <div className="flex items-center justify-between gap-3">
             <div className="flex-1" />
-            <h1 className="text-2xl sm:text-3xl font-black text-white font-display tracking-tight text-center">
+            <h1 className="text-2xl sm:text-3xl font-black text-black font-display tracking-tight text-center">
               Welcome to EdWorld Student Setup
             </h1>
             <div className="flex-1 text-right">
               <button
                 type="button"
                 onClick={handleSkipToDashboard}
-                className="text-xs font-semibold text-slate-400 hover:text-white underline transition-colors cursor-pointer"
+                className="text-xs font-semibold text-slate-600 hover:text-black underline transition-colors cursor-pointer"
                 title="Skip onboarding and go directly to your student dashboard"
               >
                 Skip to Dashboard →
@@ -511,7 +511,7 @@ export default function OnboardingPage() {
             </div>
           </div>
 
-          <p className="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto">
+          <p className="text-xs sm:text-sm text-slate-700 max-w-lg mx-auto">
             Configure your personalized Career Learning OS &amp; auto-generate your Harvard ATS resume in 4 quick steps.
           </p>
 
@@ -519,9 +519,9 @@ export default function OnboardingPage() {
             <button
               type="button"
               onClick={() => setShowMyraCopilot(!showMyraCopilot)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#0F1422] border border-white/10 text-white text-xs font-bold hover:bg-white/10 transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#0F1422] border border-blue-200 text-black text-xs font-bold hover:bg-[#DBEAFE] transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95"
             >
-              <Sparkles className="w-3.5 h-3.5 text-white animate-pulse" />
+              <Sparkles className="w-3.5 h-3.5 text-black animate-pulse" />
               <span>{showMyraCopilot ? "Hide Myra Onboarding Copilot" : "Need guidance? Ask Myra Copilot 🐻"}</span>
             </button>
           </div>
@@ -535,17 +535,17 @@ export default function OnboardingPage() {
         )}
 
         {/* Progress Bar Card */}
-        <div className="tactile-chassis bg-[#0C101A] border border-white/10 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3 text-white">
+        <div className="tactile-chassis bg-[#0C101A] border border-blue-200 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3 text-black">
           <div className="flex items-center justify-between text-xs font-bold">
-            <span className="text-white font-display">
+            <span className="text-black font-display">
               {currentStep === 1 && "Step 1: Personal Identity & Contact"}
               {currentStep === 2 && "Step 2: Academic Specialization & College"}
               {currentStep === 3 && "Step 3: Target Role & Skill Calibration"}
               {currentStep === 4 && "Step 4: Profiles, Links & Resume Seeding"}
             </span>
-            <span className="text-slate-400 font-mono">Step {currentStep} of {totalSteps} ({progressPercentage}%)</span>
+            <span className="text-slate-600 font-mono">Step {currentStep} of {totalSteps} ({progressPercentage}%)</span>
           </div>
-          <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden p-0.5 border border-white/10">
+          <div className="w-full bg-[#DBEAFE] h-2 rounded-full overflow-hidden p-0.5 border border-blue-200">
             <div 
               className="h-full bg-white rounded-full transition-all duration-500 ease-out" 
               style={{ width: `${progressPercentage}%` }}
@@ -566,8 +566,8 @@ export default function OnboardingPage() {
                   currentStep === s.num
                     ? "bg-white text-slate-950 font-bold shadow-xs"
                     : currentStep > s.num
-                    ? "bg-white/10 text-white border border-white/20"
-                    : "bg-white/5 text-slate-400 border border-white/5"
+                    ? "bg-[#DBEAFE] text-black border border-blue-300"
+                    : "bg-[#EFF6FF] text-slate-600 border border-white/5"
                 }`}
               >
                 <span>{s.num}. {s.label}</span>
@@ -578,28 +578,28 @@ export default function OnboardingPage() {
 
         {/* Completed Splash Card */}
         {isCompleted ? (
-          <div className="tactile-chassis bg-[#0C101A] border border-white/10 rounded-3xl p-8 shadow-2xl text-center space-y-5 animate-in fade-in zoom-in-95 text-white">
-            <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 text-white mx-auto flex items-center justify-center shadow-md animate-bounce">
-              <CheckCircle2 className="w-8 h-8 text-white" />
+          <div className="tactile-chassis bg-[#0C101A] border border-blue-200 rounded-3xl p-8 shadow-2xl text-center space-y-5 animate-in fade-in zoom-in-95 text-black">
+            <div className="w-16 h-16 rounded-2xl bg-[#DBEAFE] border border-blue-300 text-black mx-auto flex items-center justify-center shadow-md animate-bounce">
+              <CheckCircle2 className="w-8 h-8 text-black" />
             </div>
             <div className="space-y-2">
-              <h2 className="text-2xl font-black text-white font-display">Career Learning OS &amp; ATS Resume Ready!</h2>
-              <p className="text-xs sm:text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
+              <h2 className="text-2xl font-black text-black font-display">Career Learning OS &amp; ATS Resume Ready!</h2>
+              <p className="text-xs sm:text-sm text-slate-700 max-w-md mx-auto leading-relaxed">
                 We&apos;ve synthesized your personalized multi-domain track, generated your timetable, and <strong>pre-seeded your single-column Harvard ATS Resume</strong>.
               </p>
             </div>
-            <div className="p-3.5 rounded-xl bg-[#0F1422] border border-white/10 max-w-sm mx-auto text-xs text-white font-semibold flex items-center justify-center gap-2">
-              <Check className="w-4 h-4 text-white shrink-0" />
+            <div className="p-3.5 rounded-xl bg-[#0F1422] border border-blue-200 max-w-sm mx-auto text-xs text-black font-semibold flex items-center justify-center gap-2">
+              <Check className="w-4 h-4 text-black shrink-0" />
               <span>Harvard ATS Resume auto-created and saved</span>
             </div>
-            <div className="flex items-center justify-center gap-2 text-xs font-bold text-white pt-2">
-              <Loader2 className="w-4 h-4 animate-spin text-white" />
+            <div className="flex items-center justify-center gap-2 text-xs font-bold text-black pt-2">
+              <Loader2 className="w-4 h-4 animate-spin text-black" />
               <span>Redirecting to your dashboard...</span>
             </div>
           </div>
         ) : (
           /* Form Step Container */
-          <div className="tactile-chassis bg-[#0C101A] border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-white">
+          <div className="tactile-chassis bg-[#0C101A] border border-blue-200 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-black">
             
             {/* Top Global Alert Banner if errors exist */}
             {error && (
@@ -613,11 +613,11 @@ export default function OnboardingPage() {
             {currentStep === 1 && (
               <div className="space-y-4 animate-in fade-in">
                 <div className="space-y-1">
-                  <h2 className="text-lg font-bold text-white font-display flex items-center gap-2">
-                    <User className="w-5 h-5 text-white" />
+                  <h2 className="text-lg font-bold text-black font-display flex items-center gap-2">
+                    <User className="w-5 h-5 text-black" />
                     <span>Personal Profile Details</span>
                   </h2>
-                  <p className="text-xs text-slate-300">
+                  <p className="text-xs text-slate-700">
                     Your display identity on the EdWorld student networking feed, resume header, and career leaderboards.
                   </p>
                 </div>
@@ -641,10 +641,10 @@ export default function OnboardingPage() {
                         }
                       }}
                       placeholder="e.g. Adarsh Sharma"
-                      className={`w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none transition-all ${
+                      className={`w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border text-xs sm:text-sm text-black placeholder:text-slate-500 focus:outline-none transition-all ${
                         fieldErrors.displayName
                           ? "border-rose-500 ring-1 ring-rose-500/30"
-                          : "border-white/10 focus:border-white/40 focus:ring-1 focus:ring-white/20"
+                          : "border-blue-200 focus:border-white/40 focus:ring-1 focus:ring-white/20"
                       }`}
                     />
                     {fieldErrors.displayName && (
@@ -661,13 +661,13 @@ export default function OnboardingPage() {
                       <label className="block text-xs font-medium text-slate-200 uppercase tracking-wider">
                         Choose Your Portfolio Username *
                       </label>
-                      <span className="text-[10px] text-slate-400 font-mono">
+                      <span className="text-[10px] text-slate-600 font-mono">
                         lowercase &bull; letters &amp; numbers
                       </span>
                     </div>
 
                     <div className="relative flex items-center">
-                      <span className="absolute left-3.5 text-xs text-slate-400 font-mono select-none pointer-events-none">
+                      <span className="absolute left-3.5 text-xs text-slate-600 font-mono select-none pointer-events-none">
                         edworld.co.in/
                       </span>
                       <input
@@ -686,17 +686,17 @@ export default function OnboardingPage() {
                         }}
                         placeholder="yourname"
                         maxLength={24}
-                        className={`w-full pl-[106px] pr-10 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border text-xs sm:text-sm text-white font-mono placeholder:text-slate-600 focus:outline-none transition-all ${
+                        className={`w-full pl-[106px] pr-10 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border text-xs sm:text-sm text-black font-mono placeholder:text-slate-600 focus:outline-none transition-all ${
                           fieldErrors.username || usernameStatus === "unavailable"
                             ? "border-rose-500 ring-1 ring-rose-500/30"
                             : usernameStatus === "available"
                             ? "border-emerald-500/50 ring-1 ring-emerald-500/20"
-                            : "border-white/10 focus:border-white/40 focus:ring-1 focus:ring-white/20"
+                            : "border-blue-200 focus:border-white/40 focus:ring-1 focus:ring-white/20"
                         }`}
                       />
                       <div className="absolute right-3 flex items-center">
                         {usernameStatus === "checking" && (
-                          <Loader2 className="w-4 h-4 text-slate-400 animate-spin" />
+                          <Loader2 className="w-4 h-4 text-slate-600 animate-spin" />
                         )}
                         {usernameStatus === "available" && (
                           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
@@ -720,7 +720,7 @@ export default function OnboardingPage() {
                             ? "text-emerald-400"
                             : usernameStatus === "unavailable"
                             ? "text-rose-400"
-                            : "text-slate-400"
+                            : "text-slate-600"
                         }`}
                       >
                         {usernameMessage}
@@ -730,7 +730,7 @@ export default function OnboardingPage() {
                     {/* Live Portfolio Link Preview Card */}
                     {username && usernameStatus !== "unavailable" && (
                       <div className="mt-2.5 p-2.5 rounded-xl bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-cyan-500/10 border border-indigo-500/20 flex items-center justify-between text-xs">
-                        <span className="text-[11px] text-slate-300 flex items-center gap-1.5">
+                        <span className="text-[11px] text-slate-700 flex items-center gap-1.5">
                           <Sparkles className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                           <span>Public Portfolio URL:</span>
                         </span>
@@ -750,7 +750,7 @@ export default function OnboardingPage() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="+91 9876543210"
-                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
+                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-blue-200 text-xs sm:text-sm text-black placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
                     />
                   </div>
 
@@ -763,7 +763,7 @@ export default function OnboardingPage() {
                       value={headline}
                       onChange={(e) => setHeadline(e.target.value)}
                       placeholder="e.g. Aspiring Full Stack Developer | Class of 2026"
-                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
+                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-blue-200 text-xs sm:text-sm text-black placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
                     />
                   </div>
 
@@ -776,7 +776,7 @@ export default function OnboardingPage() {
                       value={bio}
                       onChange={(e) => setBio(e.target.value)}
                       placeholder="Share a short summary of your background, passions, and career interests..."
-                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
+                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-blue-200 text-xs sm:text-sm text-black placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
                     />
                   </div>
                 </div>
@@ -787,11 +787,11 @@ export default function OnboardingPage() {
             {currentStep === 2 && (
               <div className="space-y-4 animate-in fade-in">
                 <div className="space-y-1">
-                  <h2 className="text-lg font-bold text-white font-display flex items-center gap-2">
-                    <GraduationCap className="w-5 h-5 text-white" />
+                  <h2 className="text-lg font-bold text-black font-display flex items-center gap-2">
+                    <GraduationCap className="w-5 h-5 text-black" />
                     <span>Education &amp; Academic Specialization</span>
                   </h2>
-                  <p className="text-xs text-slate-300">
+                  <p className="text-xs text-slate-700">
                     Your college, branch, and CGPA will be automatically formatted into the Education section of your Harvard ATS Resume.
                   </p>
                 </div>
@@ -815,10 +815,10 @@ export default function OnboardingPage() {
                         }
                       }}
                       placeholder="e.g. National Institute of Technology / Delhi Technological University"
-                      className={`w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none transition-all ${
+                      className={`w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border text-xs sm:text-sm text-black placeholder:text-slate-500 focus:outline-none transition-all ${
                         fieldErrors.institution
                           ? "border-rose-500 ring-1 ring-rose-500/30"
-                          : "border-white/10 focus:border-white/40 focus:ring-1 focus:ring-white/20"
+                          : "border-blue-200 focus:border-white/40 focus:ring-1 focus:ring-white/20"
                       }`}
                     />
                     {fieldErrors.institution && (
@@ -837,7 +837,7 @@ export default function OnboardingPage() {
                       <select
                         value={degree}
                         onChange={(e) => setDegree(e.target.value)}
-                        className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm text-white focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all [&>option]:bg-[#0C101A] [&>option]:text-white cursor-pointer"
+                        className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-blue-200 text-xs sm:text-sm text-black focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all [&>option]:bg-[#0C101A] [&>option]:text-black cursor-pointer"
                       >
                         <option value="B.Tech / B.E.">B.Tech / B.E.</option>
                         <option value="B.Sc / BCA">B.Sc / BCA</option>
@@ -856,7 +856,7 @@ export default function OnboardingPage() {
                       <select
                         value={graduationYear}
                         onChange={(e) => setGraduationYear(e.target.value)}
-                        className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm text-white focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all [&>option]:bg-[#0C101A] [&>option]:text-white cursor-pointer"
+                        className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-blue-200 text-xs sm:text-sm text-black focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all [&>option]:bg-[#0C101A] [&>option]:text-black cursor-pointer"
                       >
                         <option value="2025">2025 (Final Year / Graduating)</option>
                         <option value="2026">2026</option>
@@ -886,10 +886,10 @@ export default function OnboardingPage() {
                           }
                         }}
                         placeholder="e.g. Computer Science, AI & ML, Electronics, IT"
-                        className={`w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none transition-all ${
+                        className={`w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border text-xs sm:text-sm text-black placeholder:text-slate-500 focus:outline-none transition-all ${
                           fieldErrors.fieldOfStudy
                             ? "border-rose-500 ring-1 ring-rose-500/30"
-                            : "border-white/10 focus:border-white/40 focus:ring-1 focus:ring-white/20"
+                            : "border-blue-200 focus:border-white/40 focus:ring-1 focus:ring-white/20"
                         }`}
                       />
                       {fieldErrors.fieldOfStudy && (
@@ -909,17 +909,17 @@ export default function OnboardingPage() {
                         value={targetRole}
                         onChange={(e) => setTargetRole(e.target.value)}
                         placeholder="e.g. Full Stack Developer, SDE-1, AI Engineer"
-                        className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
+                        className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-blue-200 text-xs sm:text-sm text-black placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
                       />
                     </div>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-[#0F1422] border border-white/10 space-y-2">
+                  <div className="p-4 rounded-2xl bg-[#0F1422] border border-blue-200 space-y-2">
                     <div className="flex items-center justify-between">
                       <label className="block text-xs font-medium text-slate-200 uppercase tracking-wider">
                         Current CGPA / Percentage
                       </label>
-                      <span className="text-[10.5px] font-bold text-white bg-white/10 px-2.5 py-0.5 rounded-full border border-white/10">
+                      <span className="text-[10.5px] font-bold text-black bg-[#DBEAFE] px-2.5 py-0.5 rounded-full border border-blue-200">
                         Placement Benchmark Grounding
                       </span>
                     </div>
@@ -928,9 +928,9 @@ export default function OnboardingPage() {
                       value={cgpa}
                       onChange={(e) => setCgpa(e.target.value)}
                       placeholder="e.g. 8.4 CGPA or 85%"
-                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0C101A] border border-white/10 text-xs sm:text-sm font-bold text-white focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
+                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0C101A] border border-blue-200 text-xs sm:text-sm font-bold text-black focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
                     />
-                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                    <p className="text-[11px] text-slate-600 leading-relaxed">
                       Myra AI benchmarks your academic metrics against placement cutoffs (Tier-1 product companies vs high-growth startups) and structures your resume education bullets.
                     </p>
                   </div>
@@ -953,16 +953,16 @@ export default function OnboardingPage() {
                 />
 
                 {/* Target Timeframe & Daily Hours */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-5 border-t border-white/10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-5 border-t border-blue-200">
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                      <Target className="w-3.5 h-3.5 text-white" />
+                    <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                      <Target className="w-3.5 h-3.5 text-black" />
                       <span>Target Timeframe</span>
                     </label>
                     <select
                       value={targetTimeframe}
                       onChange={(e) => setTargetTimeframe(Number(e.target.value))}
-                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm font-bold text-white focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all [&>option]:bg-[#0C101A] [&>option]:text-white cursor-pointer"
+                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-blue-200 text-xs sm:text-sm font-bold text-black focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all [&>option]:bg-[#0C101A] [&>option]:text-black cursor-pointer"
                     >
                       <option value={3}>3 Months (Fast-Track Placement)</option>
                       <option value={6}>6 Months (Standard Comprehensive)</option>
@@ -971,14 +971,14 @@ export default function OnboardingPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5 text-white" />
+                    <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-black" />
                       <span>Daily Available Hours</span>
                     </label>
                     <select
                       value={dailyHours}
                       onChange={(e) => setDailyHours(Number(e.target.value))}
-                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm font-bold text-white focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all [&>option]:bg-[#0C101A] [&>option]:text-white cursor-pointer"
+                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-blue-200 text-xs sm:text-sm font-bold text-black focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all [&>option]:bg-[#0C101A] [&>option]:text-black cursor-pointer"
                     >
                       <option value={1}>1 Hour / day (Light Pace)</option>
                       <option value={2}>2 Hours / day (Recommended)</option>
@@ -995,38 +995,38 @@ export default function OnboardingPage() {
               <div className="space-y-6 animate-in fade-in">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-white/10 text-white flex items-center justify-center font-bold text-xs">
+                    <div className="w-7 h-7 rounded-lg bg-[#DBEAFE] text-black flex items-center justify-center font-bold text-xs">
                       <FileText className="w-4 h-4" />
                     </div>
-                    <h2 className="text-base sm:text-lg font-bold text-white font-display tracking-tight">
+                    <h2 className="text-base sm:text-lg font-bold text-black font-display tracking-tight">
                       Zero-Waste Resume &amp; Social Links
                     </h2>
                   </div>
-                  <p className="text-xs sm:text-sm text-slate-300">
+                  <p className="text-xs sm:text-sm text-slate-700">
                     Your details will instantly generate a ready-to-use ATS Harvard Resume in your Studio.
                   </p>
                 </div>
 
                 {/* ATS Resume Instant Seeding Feature Highlight */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-[#0F1422] border border-white/10 space-y-2 text-white">
-                  <div className="flex items-center gap-2 text-white font-bold text-xs uppercase tracking-wider">
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#0F1422] border border-blue-200 space-y-2 text-black">
+                  <div className="flex items-center gap-2 text-black font-bold text-xs uppercase tracking-wider">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                     <span>Instant ATS Resume Seeding Active</span>
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed font-normal">
+                  <p className="text-xs text-slate-700 leading-relaxed font-normal">
                     EdWorld values your time. Instead of making you fill in forms twice, completing this step automatically generates your single-column Harvard ATS resume seeded with:
                   </p>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[11px] font-medium text-slate-200">
-                    <div className="p-2 rounded-xl bg-[#0C101A] border border-white/10 text-center">✓ {displayName || "Name"}</div>
-                    <div className="p-2 rounded-xl bg-[#0C101A] border border-white/10 text-center truncate">✓ {degree || "Degree"}</div>
-                    <div className="p-2 rounded-xl bg-[#0C101A] border border-white/10 text-center truncate">✓ {targetRole || "Role Focus"}</div>
-                    <div className="p-2 rounded-xl bg-[#0C101A] border border-white/10 text-center">✓ Verified Links</div>
+                    <div className="p-2 rounded-xl bg-[#0C101A] border border-blue-200 text-center">✓ {displayName || "Name"}</div>
+                    <div className="p-2 rounded-xl bg-[#0C101A] border border-blue-200 text-center truncate">✓ {degree || "Degree"}</div>
+                    <div className="p-2 rounded-xl bg-[#0C101A] border border-blue-200 text-center truncate">✓ {targetRole || "Role Focus"}</div>
+                    <div className="p-2 rounded-xl bg-[#0C101A] border border-blue-200 text-center">✓ Verified Links</div>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider">
+                    <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">
                       Primary Placement Goal
                     </label>
                     <textarea
@@ -1034,14 +1034,14 @@ export default function OnboardingPage() {
                       value={primaryGoal}
                       onChange={(e) => setPrimaryGoal(e.target.value)}
                       placeholder="e.g. Crack a Product Software Engineering or Data Science role with 90%+ ATS resume score."
-                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm font-medium text-white placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
+                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-blue-200 text-xs sm:text-sm font-medium text-black placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
                     />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                        <Github className="w-3.5 h-3.5 text-white" />
+                      <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                        <Github className="w-3.5 h-3.5 text-black" />
                         <span>GitHub Profile URL (Optional)</span>
                       </label>
                       <input
@@ -1049,13 +1049,13 @@ export default function OnboardingPage() {
                         value={githubUrl}
                         onChange={(e) => setGithubUrl(e.target.value)}
                         placeholder="https://github.com/username"
-                        className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
+                        className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-blue-200 text-xs sm:text-sm text-black placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
                       />
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                        <Linkedin className="w-3.5 h-3.5 text-white" />
+                      <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                        <Linkedin className="w-3.5 h-3.5 text-black" />
                         <span>LinkedIn Profile URL (Optional)</span>
                       </label>
                       <input
@@ -1063,14 +1063,14 @@ export default function OnboardingPage() {
                         value={linkedinUrl}
                         onChange={(e) => setLinkedinUrl(e.target.value)}
                         placeholder="https://linkedin.com/in/username"
-                        className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
+                        className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-blue-200 text-xs sm:text-sm text-black placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                      <Globe className="w-3.5 h-3.5 text-white" />
+                    <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                      <Globe className="w-3.5 h-3.5 text-black" />
                       <span>Portfolio or LeetCode URL (Optional)</span>
                     </label>
                     <input
@@ -1078,7 +1078,7 @@ export default function OnboardingPage() {
                       value={portfolioUrl}
                       onChange={(e) => setPortfolioUrl(e.target.value)}
                       placeholder="https://myportfolio.dev or https://leetcode.com/u/username"
-                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-white/10 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
+                      className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-blue-200 text-xs sm:text-sm text-black placeholder:text-slate-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
                     />
                   </div>
                 </div>
@@ -1095,7 +1095,7 @@ export default function OnboardingPage() {
                 <button
                   type="button"
                   onClick={handleSkipToDashboard}
-                  className="text-xs font-bold text-white underline hover:text-slate-200 shrink-0 cursor-pointer"
+                  className="text-xs font-bold text-black underline hover:text-slate-200 shrink-0 cursor-pointer"
                 >
                   Skip to Dashboard
                 </button>
@@ -1103,13 +1103,13 @@ export default function OnboardingPage() {
             )}
 
             {/* Navigation Action Buttons */}
-            <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-3">
+            <div className="pt-4 border-t border-blue-200 flex items-center justify-between gap-3">
               {currentStep > 1 ? (
                 <button
                   type="button"
                   onClick={handleBack}
                   disabled={saving}
-                  className="px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] hover:bg-white/10 text-xs font-bold text-slate-200 border border-white/10 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] hover:bg-[#DBEAFE] text-xs font-bold text-slate-200 border border-blue-200 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>Back</span>
@@ -1118,7 +1118,7 @@ export default function OnboardingPage() {
                 <button
                   type="button"
                   onClick={handleSkipToDashboard}
-                  className="text-xs text-slate-400 hover:text-white underline cursor-pointer font-medium"
+                  className="text-xs text-slate-600 hover:text-black underline cursor-pointer font-medium"
                 >
                   Skip setup for now
                 </button>
@@ -1129,7 +1129,7 @@ export default function OnboardingPage() {
                   <button
                     type="button"
                     onClick={handleSkipToDashboard}
-                    className="text-xs text-slate-400 hover:text-white underline cursor-pointer hidden sm:inline-block font-medium"
+                    className="text-xs text-slate-600 hover:text-black underline cursor-pointer hidden sm:inline-block font-medium"
                   >
                     Skip to dashboard
                   </button>
@@ -1164,7 +1164,7 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        <div className="text-center text-xs text-slate-400 flex items-center justify-center gap-2">
+        <div className="text-center text-xs text-slate-600 flex items-center justify-center gap-2">
           <ShieldCheck className="w-4 h-4 text-emerald-400" />
           <span>Your roadmap &amp; daily timetable adapt automatically based on your real performance</span>
         </div>

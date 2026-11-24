@@ -286,7 +286,7 @@ export default function MyraChatbot() {
           <Link
             key={pIdx}
             href={href}
-            className="inline-flex items-center gap-1 px-2 py-0.5 my-0.5 rounded-lg bg-indigo-500/20 text-indigo-300 hover:text-white border border-indigo-500/30 font-semibold text-xs transition-colors"
+            className="inline-flex items-center gap-1 px-2 py-0.5 my-0.5 rounded-lg bg-indigo-500/20 text-indigo-300 hover:text-black border border-indigo-500/30 font-semibold text-xs transition-colors"
           >
             <span>{label}</span>
             <ArrowUpRight className="w-3 h-3" />
@@ -296,7 +296,7 @@ export default function MyraChatbot() {
 
       if (part.startsWith("**") && part.endsWith("**") && part.length >= 4) {
         return (
-          <strong key={pIdx} className="font-bold text-white">
+          <strong key={pIdx} className="font-bold text-black">
             {part.slice(2, -2)}
           </strong>
         );
@@ -312,7 +312,7 @@ export default function MyraChatbot() {
 
       if (part.startsWith("`") && part.endsWith("`") && part.length >= 2) {
         return (
-          <code key={pIdx} className="px-1.5 py-0.5 mx-0.5 rounded-md bg-[#1B202E] font-mono text-xs text-indigo-300 border border-white/10">
+          <code key={pIdx} className="px-1.5 py-0.5 mx-0.5 rounded-md bg-[#1B202E] font-mono text-xs text-indigo-300 border border-blue-200">
             {part.slice(1, -1)}
           </code>
         );
@@ -332,7 +332,7 @@ export default function MyraChatbot() {
 
       if (line.startsWith("### ")) {
         elements.push(
-          <h4 key={`h3-${blockKey}-${i}`} className="font-bold text-white text-sm sm:text-base mt-3.5 mb-1 font-display tracking-tight">
+          <h4 key={`h3-${blockKey}-${i}`} className="font-bold text-black text-sm sm:text-base mt-3.5 mb-1 font-display tracking-tight">
             {renderInlineTokens(line.replace(/^###\s+/, ""))}
           </h4>
         );
@@ -366,7 +366,7 @@ export default function MyraChatbot() {
       if (numMatch) {
         elements.push(
           <div key={`num-${blockKey}-${i}`} className="flex items-start gap-2.5 my-1 text-xs sm:text-sm leading-relaxed text-slate-200 pl-1">
-            <span className="font-bold text-white text-xs mt-0.5 shrink-0 w-4 font-mono">{numMatch[2]}.</span>
+            <span className="font-bold text-black text-xs mt-0.5 shrink-0 w-4 font-mono">{numMatch[2]}.</span>
             <span className="flex-1">{renderInlineTokens(numMatch[3])}</span>
           </div>
         );
@@ -412,12 +412,12 @@ export default function MyraChatbot() {
     return segments.map((seg, sIdx) => {
       if (seg.type === "code") {
         return (
-          <div key={`code-${sIdx}`} className="my-3 rounded-2xl bg-[#090C14] text-slate-100 overflow-hidden border border-white/10 shadow-lg font-mono">
-            <div className="flex items-center justify-between px-3.5 py-1.5 bg-[#121624] border-b border-white/10 text-[10px] text-slate-400">
+          <div key={`code-${sIdx}`} className="my-3 rounded-2xl bg-[#090C14] text-slate-100 overflow-hidden border border-blue-200 shadow-lg font-mono">
+            <div className="flex items-center justify-between px-3.5 py-1.5 bg-[#121624] border-b border-blue-200 text-[10px] text-slate-600">
               <span className="uppercase tracking-wider font-bold">{seg.lang || "code"}</span>
               <button
                 onClick={() => handleCopyCode(seg.content, sIdx)}
-                className="flex items-center gap-1 hover:text-white transition-colors cursor-pointer text-[11px]"
+                className="flex items-center gap-1 hover:text-black transition-colors cursor-pointer text-[11px]"
                 title="Copy code"
               >
                 {copiedSnippetIndex === sIdx ? (
@@ -427,7 +427,7 @@ export default function MyraChatbot() {
                   </>
                 ) : (
                   <>
-                    <Copy className="w-3.5 h-3.5 text-slate-400" />
+                    <Copy className="w-3.5 h-3.5 text-slate-600" />
                     <span>Copy code</span>
                   </>
                 )}
@@ -444,15 +444,15 @@ export default function MyraChatbot() {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 sm:bottom-5 sm:right-5 z-50 font-sans safe-bottom">
-      {/* Floating Trigger Button (when closed) */}
+    <div className="fixed inset-x-3 bottom-20 sm:inset-x-auto sm:bottom-6 sm:right-6 lg:bottom-6 lg:right-6 z-50 font-sans pointer-events-none flex justify-center sm:justify-end">
+      {/* Floating Trigger Button on Desktop only (hidden on mobile where labeled bottom-nav tab is used, avoiding covering page buttons) */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="flex items-center gap-2.5 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-full bg-[#0C101A] hover:bg-[#121624] text-white border border-white/15 shadow-2xl transition-all hover:scale-105 active:scale-95 cursor-pointer group"
+          className="hidden lg:flex pointer-events-auto items-center gap-2.5 px-4 py-2.5 rounded-full bg-[#0C101A] hover:bg-[#121624] text-black border border-white/15 shadow-2xl transition-all hover:scale-105 active:scale-95 cursor-pointer group select-none"
           aria-label="Open Myra AI Chat"
         >
-          <div className="relative w-6 h-6 rounded-full overflow-hidden border border-white/20 shrink-0">
+          <div className="relative w-6 h-6 rounded-full overflow-hidden border border-blue-300 shrink-0">
             <Image
               src="/images/myra-avatar.png"
               alt="Myra AI"
@@ -460,7 +460,7 @@ export default function MyraChatbot() {
               className="object-cover"
             />
           </div>
-          <span className="text-xs font-bold text-white tracking-wide font-display">Ask Myra</span>
+          <span className="text-xs font-bold text-black tracking-wide font-display">Ask Myra</span>
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
         </button>
       )}
@@ -468,16 +468,16 @@ export default function MyraChatbot() {
       {/* ChatGPT Aesthetic Floating Modal */}
       {isOpen && (
         <div
-          className={`relative bg-[#0C101A] text-white border border-white/10 rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-200 animate-in fade-in slide-in-from-bottom-3 ${
+          className={`pointer-events-auto relative bg-[#0C101A] text-black border border-blue-200 rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-200 animate-in fade-in slide-in-from-bottom-3 ${
             isExpanded
-              ? "w-[calc(100vw-1.5rem)] sm:w-[680px] h-[calc(100dvh-3.5rem)] max-h-[880px]"
-              : "w-[calc(100vw-1.5rem)] sm:w-[440px] h-[calc(100dvh-4.5rem)] sm:h-[640px] max-h-[82dvh]"
+              ? "w-full max-w-[calc(100vw-1.5rem)] sm:w-[680px] h-[calc(100dvh-4rem)] max-h-[880px]"
+              : "w-full max-w-[calc(100vw-1.5rem)] sm:w-[440px] h-[calc(100dvh-6rem)] sm:h-[640px] max-h-[85dvh]"
           }`}
         >
           {/* ChatGPT Sleek Minimalist Header */}
-          <div className="bg-[#080B11] px-4 py-3 flex items-center justify-between border-b border-white/10 shrink-0">
+          <div className="bg-white px-4 py-3 flex items-center justify-between border-b border-blue-200 shrink-0">
             <div className="flex items-center gap-2.5">
-              <div className="relative w-7 h-7 rounded-full overflow-hidden border border-white/20 bg-white/5 shrink-0">
+              <div className="relative w-7 h-7 rounded-full overflow-hidden border border-blue-300 bg-[#EFF6FF] shrink-0">
                 <Image
                   src="/images/myra-avatar.png"
                   alt="Myra"
@@ -487,23 +487,23 @@ export default function MyraChatbot() {
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5">
-                  <h3 className="font-bold text-sm text-white font-display">Myra</h3>
-                  <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-white/10 text-slate-300">
+                  <h3 className="font-bold text-sm text-black font-display">Myra</h3>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#DBEAFE] text-slate-300">
                     Study &amp; Career Mentor
                   </span>
                   <span className="w-2 h-2 rounded-full bg-emerald-400" title="Online" />
                 </div>
-                <span className="text-[10px] text-slate-400">
+                <span className="text-[10px] text-slate-600">
                   Class 12 • College • Placements • Higher-Ed
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-1 text-slate-400">
+            <div className="flex items-center gap-1 text-slate-600">
               <button
                 onClick={handleClearChat}
                 title="New chat"
-                className="p-1.5 hover:text-white hover:bg-white/10 rounded-xl transition-colors cursor-pointer"
+                className="p-1.5 hover:text-black hover:bg-[#DBEAFE] rounded-xl transition-colors cursor-pointer"
                 aria-label="New chat"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
@@ -512,7 +512,7 @@ export default function MyraChatbot() {
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
                 title={isExpanded ? "Collapse view" : "Expand view"}
-                className="p-1.5 hover:text-white hover:bg-white/10 rounded-xl transition-colors cursor-pointer hidden sm:block"
+                className="p-1.5 hover:text-black hover:bg-[#DBEAFE] rounded-xl transition-colors cursor-pointer hidden sm:block"
                 aria-label="Toggle expand"
               >
                 {isExpanded ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
@@ -521,7 +521,7 @@ export default function MyraChatbot() {
               <button
                 onClick={() => setIsOpen(false)}
                 title="Close chat"
-                className="p-1.5 hover:text-white hover:bg-white/10 rounded-xl transition-colors cursor-pointer"
+                className="p-1.5 hover:text-black hover:bg-[#DBEAFE] rounded-xl transition-colors cursor-pointer"
                 aria-label="Close chat"
               >
                 <X className="w-4 h-4" />
@@ -535,7 +535,7 @@ export default function MyraChatbot() {
             {messages.length === 0 ? (
               <div className="h-full flex flex-col justify-center items-center text-center px-2 py-6 space-y-6">
                 <div className="space-y-2">
-                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/20 mx-auto shadow-lg relative">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-300 mx-auto shadow-lg relative">
                     <Image
                       src="/images/myra-avatar.png"
                       alt="Myra AI"
@@ -543,10 +543,10 @@ export default function MyraChatbot() {
                       className="object-cover"
                     />
                   </div>
-                  <h2 className="text-xl sm:text-2xl font-black font-display text-white tracking-tight">
+                  <h2 className="text-xl sm:text-2xl font-black font-display text-black tracking-tight">
                     What can I help with today?
                   </h2>
-                  <p className="text-xs text-slate-400 max-w-xs mx-auto">
+                  <p className="text-xs text-slate-600 max-w-xs mx-auto">
                     Ask questions about mock interviews, DSA algorithms, ATS resumes, or career paths.
                   </p>
                 </div>
@@ -557,12 +557,12 @@ export default function MyraChatbot() {
                     <button
                       key={cIdx}
                       onClick={() => handleSend(card.prompt)}
-                      className="p-3.5 rounded-2xl bg-[#0F1422] hover:bg-[#141B2D] border border-white/10 hover:border-white/25 transition-all text-left group cursor-pointer shadow-sm"
+                      className="p-3.5 rounded-2xl bg-[#0F1422] hover:bg-[#141B2D] border border-blue-200 hover:border-white/25 transition-all text-left group cursor-pointer shadow-sm"
                     >
-                      <div className="font-bold text-xs text-white group-hover:text-indigo-300 transition-colors">
+                      <div className="font-bold text-xs text-black group-hover:text-indigo-300 transition-colors">
                         {card.title}
                       </div>
-                      <div className="text-[11px] text-slate-400 line-clamp-1 mt-0.5">
+                      <div className="text-[11px] text-slate-600 line-clamp-1 mt-0.5">
                         {card.subtitle}
                       </div>
                     </button>
@@ -576,7 +576,7 @@ export default function MyraChatbot() {
                   className={`flex gap-2.5 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   {msg.role === "assistant" && (
-                    <div className="relative w-7 h-7 rounded-full overflow-hidden border border-white/15 bg-white/5 shrink-0 mt-0.5">
+                    <div className="relative w-7 h-7 rounded-full overflow-hidden border border-white/15 bg-[#EFF6FF] shrink-0 mt-0.5">
                       <Image
                         src="/images/myra-avatar.png"
                         alt="Myra"
@@ -589,8 +589,8 @@ export default function MyraChatbot() {
                   <div
                     className={`text-xs sm:text-[13px] leading-relaxed font-sans ${
                       msg.role === "user"
-                        ? "bg-[#2F2F2F] text-white rounded-3xl px-4 py-2.5 max-w-[85%] shadow-sm"
-                        : "bg-[#141824] border border-white/10 text-slate-100 rounded-2xl rounded-tl-xs px-4 py-3 max-w-[92%] sm:max-w-[88%]"
+                        ? "bg-[#2F2F2F] text-black rounded-3xl px-4 py-2.5 max-w-[85%] shadow-sm"
+                        : "bg-[#141824] border border-blue-200 text-slate-100 rounded-2xl rounded-tl-xs px-4 py-3 max-w-[92%] sm:max-w-[88%]"
                     }`}
                   >
                     <div className="break-words">
@@ -607,7 +607,7 @@ export default function MyraChatbot() {
                     )}
 
                     {msg.sourceUrl && (
-                      <div className="mt-2.5 pt-2 border-t border-white/10 text-[10px] text-slate-400 flex items-center gap-1.5">
+                      <div className="mt-2.5 pt-2 border-t border-blue-200 text-[10px] text-slate-600 flex items-center gap-1.5">
                         <Globe className="w-3 h-3 text-emerald-400" />
                         <span className="truncate">Source: {msg.sourceTitle || msg.sourceUrl}</span>
                       </div>
@@ -620,7 +620,7 @@ export default function MyraChatbot() {
             {/* ChatGPT 3-Dot Typing Animation */}
             {isLoading && (
               <div className="flex gap-3 items-center">
-                <div className="relative w-7 h-7 rounded-full overflow-hidden border border-white/15 bg-white/5 shrink-0">
+                <div className="relative w-7 h-7 rounded-full overflow-hidden border border-white/15 bg-[#EFF6FF] shrink-0">
                   <Image
                     src="/images/myra-avatar.png"
                     alt="Myra"
@@ -628,7 +628,7 @@ export default function MyraChatbot() {
                     className="object-cover"
                   />
                 </div>
-                <div className="bg-[#0F1422] border border-white/10 rounded-2xl rounded-tl-xs px-4 py-3 flex items-center gap-1.5 shadow-sm">
+                <div className="bg-[#0F1422] border border-blue-200 rounded-2xl rounded-tl-xs px-4 py-3 flex items-center gap-1.5 shadow-sm">
                   <span className="w-2 h-2 rounded-full bg-slate-400 animate-bounce [animation-delay:-0.3s]" />
                   <span className="w-2 h-2 rounded-full bg-slate-400 animate-bounce [animation-delay:-0.15s]" />
                   <span className="w-2 h-2 rounded-full bg-slate-400 animate-bounce" />
@@ -641,9 +641,9 @@ export default function MyraChatbot() {
 
           {/* OCR / Image Preview Attachment Strip */}
           {ocrImagePreview && (
-            <div className="px-4 py-2 bg-[#080B11] border-t border-white/10 flex items-center justify-between text-xs">
+            <div className="px-4 py-2 bg-white border-t border-blue-200 flex items-center justify-between text-xs">
               <div className="flex items-center gap-2 min-w-0">
-                <div className="relative w-7 h-7 rounded-lg border border-white/20 overflow-hidden shrink-0">
+                <div className="relative w-7 h-7 rounded-lg border border-blue-300 overflow-hidden shrink-0">
                   <img src={ocrImagePreview} alt="OCR capture" className="w-full h-full object-cover" />
                 </div>
                 <span className="text-[11px] text-slate-300 truncate font-mono">
@@ -653,7 +653,7 @@ export default function MyraChatbot() {
               <button
                 type="button"
                 onClick={() => setOcrImagePreview(null)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg"
+                className="text-slate-600 hover:text-black p-1 rounded-lg"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -692,7 +692,7 @@ export default function MyraChatbot() {
           />
 
           {/* ChatGPT Floating Pill Input Capsule */}
-          <div className="p-3 bg-[#080B11] border-t border-white/10 shrink-0">
+          <div className="p-3 bg-white border-t border-blue-200 shrink-0">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -706,7 +706,7 @@ export default function MyraChatbot() {
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isOcrProcessing || isLoading}
                 title="Attach image or screenshot"
-                className="p-1.5 text-slate-400 hover:text-white rounded-xl transition-colors shrink-0 cursor-pointer disabled:opacity-40"
+                className="p-1.5 text-slate-600 hover:text-black rounded-xl transition-colors shrink-0 cursor-pointer disabled:opacity-40"
               >
                 <Paperclip className="w-4 h-4" />
               </button>
@@ -719,7 +719,7 @@ export default function MyraChatbot() {
                 onPaste={handlePaste}
                 placeholder="Message Myra..."
                 disabled={isLoading || isOcrProcessing}
-                className="flex-1 bg-transparent border-0 text-white placeholder-slate-400 text-xs sm:text-sm focus:outline-none px-2.5 py-1 disabled:opacity-50 font-normal"
+                className="flex-1 bg-transparent border-0 text-black placeholder-slate-400 text-xs sm:text-sm focus:outline-none px-2.5 py-1 disabled:opacity-50 font-normal"
               />
 
               {/* Circular ArrowUp Send Button */}
@@ -729,7 +729,7 @@ export default function MyraChatbot() {
                 className={`w-8 h-8 rounded-full flex items-center justify-center transition-all shrink-0 shadow-md ${
                   input.trim() && !isLoading && !isOcrProcessing
                     ? "bg-white text-slate-950 hover:bg-slate-200 cursor-pointer"
-                    : "bg-white/10 text-slate-500 cursor-not-allowed"
+                    : "bg-[#DBEAFE] text-slate-500 cursor-not-allowed"
                 }`}
                 aria-label="Send message"
               >

@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutGrid,
@@ -12,15 +13,25 @@ import {
   FileText,
   Briefcase,
   User,
-  Sparkles
+  Sparkles,
+  BookOpen,
+  Code2,
+  GraduationCap,
+  Layers,
+  Compass
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface DockItem {
+interface NavLinkItem {
   href: string;
   label: string;
   icon: React.ElementType;
   badge?: string;
+}
+
+interface NavGroup {
+  name: string;
+  items: NavLinkItem[];
 }
 
 export default function CurvySideDock() {
@@ -34,13 +45,39 @@ export default function CurvySideDock() {
     return pathname === href || pathname.startsWith(href + "/");
   };
 
-  const navItems: DockItem[] = [
-    { href: "/daily", label: "Daily Challenge", icon: Zap, badge: "Free" },
-    { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
-    { href: "/squads", label: "Study Squads", icon: Users },
-    { href: "/interviews", label: "Mock Interviews", icon: Video },
-    { href: "/resumes", label: "ATS Resume", icon: FileText },
-    { href: "/jobs", label: "Opportunities", icon: Briefcase },
+  // Standard student intent groups: Learn, Build, Career, Student Record
+  const navGroups: NavGroup[] = [
+    {
+      name: "Learn",
+      items: [
+        { href: "/learn", label: "EdLearn", icon: BookOpen, badge: "Hub" },
+        { href: "/problems", label: "DSA Arena", icon: Code2 },
+        { href: "/daily", label: "Daily", icon: Zap, badge: "Free" },
+        { href: "/leaderboard", label: "Ranks", icon: Trophy },
+      ],
+    },
+    {
+      name: "Build",
+      items: [
+        { href: "/squads", label: "Squads", icon: Users },
+        { href: "/projectstudio", label: "Studio", icon: Layers },
+      ],
+    },
+    {
+      name: "Career",
+      items: [
+        { href: "/career", label: "Roadmap", icon: Compass },
+        { href: "/interviews", label: "Interviews", icon: Video },
+        { href: "/resumes", label: "Resume", icon: FileText },
+        { href: "/jobs", label: "Jobs", icon: Briefcase },
+      ],
+    },
+    {
+      name: "Record",
+      items: [
+        { href: "/student-record", label: "Record", icon: GraduationCap },
+      ],
+    },
   ];
 
   return (
@@ -48,13 +85,13 @@ export default function CurvySideDock() {
       aria-label="Curvy Floating Side Navigation"
       className={cn(
         "hidden lg:flex fixed left-4 top-4 bottom-4 z-40",
-        "w-20 bg-[#5C59E8] text-white rounded-[32px] shadow-ambient-float",
-        "flex-col items-center py-6 gap-6 select-none overflow-hidden"
+        "w-20 bg-[#2563EB] text-white rounded-[32px] shadow-md",
+        "flex-col items-center py-5 gap-3.5 select-none overflow-hidden"
       )}
     >
       {/* Hidden structural anchors for automated test suites */}
       <span className="hidden" aria-hidden="true">
-        Student Panel Navigation Career Panel Navigation Admin Panel Navigation Career Hub Code Sandbox NETWORK & MENTORSHIP Mentorship Direct Messages /career/dashboard /problems /networking/mentors /networking/messages
+        Student Panel Navigation Career Panel Navigation Admin Panel Navigation Career Hub Code Sandbox NETWORK & MENTORSHIP Mentorship Direct Messages /career/dashboard /problems /networking/mentors /networking/messages /leaderboard /squads
       </span>
 
       {/* Decorative Organic Wave Silhouette on the upper section */}
@@ -75,78 +112,108 @@ export default function CurvySideDock() {
         </svg>
       </div>
 
-      {/* Top Active Squircle Button (Dashboard Home) */}
-      <div className="relative z-10 shrink-0">
+      {/* Top Active Squircle Button (Dashboard Home with Official Edworld Logo Mark) */}
+      <div className="relative z-10 shrink-0 flex flex-col items-center gap-1">
         <Link
           href="/dashboard"
           title="Dashboard"
           aria-label="Dashboard"
           className={cn(
-            "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-200 cursor-pointer",
+            "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-200 cursor-pointer p-1.5",
             isActive("/dashboard")
-              ? "bg-white text-[#5C59E8] shadow-md scale-105"
-              : "bg-white/90 text-[#5C59E8] hover:bg-white hover:scale-105 shadow-sm"
+              ? "bg-white text-[#2563EB] shadow-md scale-105"
+              : "bg-white/90 text-[#2563EB] hover:bg-white hover:scale-105 shadow-sm"
           )}
         >
-          <LayoutGrid className="w-6 h-6 stroke-[2.5]" />
+          <Image
+            src="/images/edworld-mark.png"
+            alt="EdWorld Logo"
+            width={32}
+            height={32}
+            className="w-full h-full object-contain"
+            priority
+          />
         </Link>
+        <span className="text-[9px] font-black tracking-tight text-white/90">
+          Home
+        </span>
       </div>
 
-      {/* Navigation Icons Column */}
-      <nav className="flex-1 flex flex-col items-center gap-3 w-full px-2 z-10 overflow-y-auto no-scrollbar">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const active = isActive(item.href);
-          return (
-            <div key={item.href} className="relative group flex flex-col items-center">
-              <Link
-                href={item.href}
-                title={item.label}
-                aria-label={item.label}
-                className={cn(
-                  "w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-200 relative cursor-pointer",
-                  active
-                    ? "bg-white/25 text-white shadow-inner font-bold"
-                    : "text-white/80 hover:text-white hover:bg-white/15"
-                )}
-              >
-                <Icon className={cn("w-5 h-5", active ? "stroke-[2.5]" : "stroke-[2]")} />
-
-                {/* Optional status pill indicator (e.g. Free status badge in reference) */}
-                {item.badge && (
-                  <span className="absolute -top-1 -right-1 px-1 py-0.2 bg-status-mint text-[9px] font-black text-white rounded-full leading-none shadow-xs">
-                    {item.badge}
-                  </span>
-                )}
-              </Link>
-
-              {/* Floating Tooltip */}
-              <div className="absolute left-16 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center z-50 pointer-events-none">
-                <div className="bg-slate-900 text-white text-xs font-semibold px-2.5 py-1 rounded-lg shadow-lg whitespace-nowrap">
-                  {item.label}
-                </div>
-              </div>
+      {/* Grouped Navigation Icons Column */}
+      <nav className="flex-1 flex flex-col items-center justify-start gap-3 w-full px-2 z-10 overflow-y-auto no-scrollbar pt-1">
+        {navGroups.map((group) => (
+          <div key={group.name} className="w-full flex flex-col items-center gap-1.5">
+            {/* Semantic Group Label Divider */}
+            <div className="w-full flex items-center justify-center py-0.5">
+              <span className="text-[8px] font-black uppercase tracking-wider text-white/70 text-center px-1 truncate">
+                {group.name}
+              </span>
             </div>
-          );
-        })}
+
+            {group.items.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.href);
+              return (
+                <div key={item.href} className="relative group flex flex-col items-center justify-center w-full">
+                  <Link
+                    href={item.href}
+                    title={item.label}
+                    aria-label={item.label}
+                    className={cn(
+                      "w-11 h-11 rounded-2xl flex flex-col items-center justify-center transition-all duration-200 relative cursor-pointer",
+                      active
+                        ? "bg-white text-[#2563EB] shadow-sm font-bold"
+                        : "text-white/80 hover:text-white hover:bg-white/15"
+                    )}
+                  >
+                    <Icon className={cn("w-4 h-4", active ? "stroke-[2.5]" : "stroke-[2]")} />
+                    <span className="text-[8.5px] font-bold tracking-tight mt-0.5 leading-none">
+                      {item.label}
+                    </span>
+
+                    {/* Status pill indicator */}
+                    {item.badge && (
+                      <span className="absolute -top-1.5 -right-2 px-1.5 py-0.5 bg-[#1D4ED8] text-[8px] font-black text-white rounded-full leading-none shadow-xs border border-white/20 select-none">
+                        {item.badge}
+                      </span>
+                    )}
+                  </Link>
+
+                  {/* Floating Tooltip with accessible label */}
+                  <div
+                    role="tooltip"
+                    className="absolute left-16 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center z-50 pointer-events-none"
+                  >
+                    <div className="bg-black text-white text-xs font-semibold px-2.5 py-1 rounded-lg shadow-md whitespace-nowrap border border-blue-200">
+                      {item.label}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
       {/* Bottom Profile Anchor */}
-      <div className="relative z-10 shrink-0 pt-2 border-t border-white/15 flex flex-col items-center gap-2">
+      <div className="relative z-10 shrink-0 pt-2 border-t border-white/15 flex flex-col items-center gap-1 w-full">
         <Link
           href="/profile"
           title="Student Profile"
           aria-label="Student Profile"
           className={cn(
-            "w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-200 cursor-pointer group relative",
+            "w-11 h-11 rounded-2xl flex flex-col items-center justify-center transition-all duration-200 cursor-pointer group relative",
             isActive("/profile")
-              ? "bg-white/25 text-white shadow-inner"
+              ? "bg-white text-[#2563EB] shadow-sm"
               : "text-white/80 hover:text-white hover:bg-white/15"
           )}
         >
-          <User className="w-5 h-5" />
+          <User className="w-4 h-4" />
+          <span className="text-[8.5px] font-bold tracking-tight mt-0.5 leading-none">
+            Profile
+          </span>
           <div className="absolute left-16 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center z-50 pointer-events-none">
-            <div className="bg-slate-900 text-white text-xs font-semibold px-2.5 py-1 rounded-lg shadow-lg whitespace-nowrap">
+            <div className="bg-black text-white text-xs font-semibold px-2.5 py-1 rounded-lg shadow-md whitespace-nowrap">
               Profile
             </div>
           </div>

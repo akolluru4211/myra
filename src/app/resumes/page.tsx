@@ -236,7 +236,7 @@ export default function ResumesDirectEditorPage() {
               <Lock className="w-8 h-8 text-slate-800" />
             </div>
             <div className="space-y-2">
-              <span className="liquid-pill px-3 py-1 bg-white/70 text-slate-600 text-xs font-medium border-slate-200">
+              <span className="liquid-pill px-3 py-1 bg-white/70 text-slate-600 text-xs font-medium border-blue-200">
                 Junior track (13–15)
               </span>
               <h1 className="text-2xl font-bold text-slate-900 tracking-tight font-display">Resume maker is for explorer &amp; career tracks</h1>
@@ -274,13 +274,13 @@ export default function ResumesDirectEditorPage() {
     <AuthGuard>
       <div className="w-full flex flex-col text-slate-900 font-sans space-y-6">
         {/* Top Action Bar */}
-        <header className="bg-white/95 backdrop-blur-md border border-slate-200/80 sticky top-0 z-20 rounded-3xl px-4 sm:px-6 py-3.5 shadow-[0_10px_30px_rgba(80,90,130,0.06)]">
+        <header className="bg-white/95 backdrop-blur-md border border-blue-200/80 sticky top-0 z-20 rounded-3xl px-4 sm:px-6 py-3.5 shadow-[0_10px_30px_rgba(80,90,130,0.06)]">
           <div className="max-w-[1536px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <Link
                 href="/dashboard"
                 title="Back to Dashboard"
-                className="p-2.5 rounded-2xl bg-[#F4F5FA] hover:bg-[#EEF0FD] border border-slate-200/80 text-slate-700 transition-colors shadow-2xs cursor-pointer"
+                className="p-2.5 rounded-2xl bg-white hover:bg-[#EFF6FF] border border-blue-200/80 text-slate-700 transition-colors shadow-2xs cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-slate-700" />
               </Link>
@@ -290,13 +290,13 @@ export default function ResumesDirectEditorPage() {
                     type="text"
                     value={resume.title}
                     onChange={(e) => handleTitleChange(e.target.value)}
-                    className="font-bold text-slate-900 text-base sm:text-lg border-b border-transparent hover:border-slate-300 focus:border-[#5C59E8] focus:outline-none bg-transparent px-1 py-0.5 transition-colors font-display"
+                    className="font-bold text-slate-900 text-base sm:text-lg border-b border-transparent hover:border-slate-300 focus:border-[#2563EB] focus:outline-none bg-transparent px-1 py-0.5 transition-colors font-display"
                     aria-label="Resume Title"
                   />
                 </div>
                 <div className="flex items-center gap-2 text-xs font-medium text-slate-500 pl-1">
                   <span className="flex items-center gap-1">
-                    <Check className="w-3.5 h-3.5 text-emerald-600" />
+                    <Check className="w-3.5 h-3.5 text-[#2563EB]" />
                     {savedStatus}
                   </span>
                 </div>
@@ -305,7 +305,7 @@ export default function ResumesDirectEditorPage() {
 
             <div className="flex items-center flex-wrap gap-2.5 sm:gap-3">
               {/* Template Selector */}
-              <div className="flex items-center bg-slate-100 border border-slate-200/80 p-1 rounded-2xl text-xs font-semibold shadow-2xs">
+              <div className="flex items-center bg-slate-100 border border-blue-200/80 p-1 rounded-2xl text-xs font-semibold shadow-2xs">
                 {(["classic", "modern", "tech"] as ResumeTemplateId[]).map((tmpl) => (
                   <button
                     key={tmpl}
@@ -313,7 +313,7 @@ export default function ResumesDirectEditorPage() {
                     onClick={() => handleTemplateChange(tmpl)}
                     className={`px-3 py-1.5 rounded-xl text-xs capitalize transition-all cursor-pointer ${
                       activeTemplate === tmpl
-                        ? "bg-[#5C59E8] text-white shadow-sm font-bold"
+                        ? "bg-[#2563EB] text-white shadow-sm font-bold"
                         : "bg-transparent text-slate-600 hover:text-slate-900"
                     }`}
                   >
@@ -326,9 +326,9 @@ export default function ResumesDirectEditorPage() {
               <button
                 type="button"
                 onClick={() => setIsMyraJobModalOpen(true)}
-                className="px-3.5 py-2 rounded-2xl bg-[#EEF0FD] hover:bg-[#E0E3FA] text-[#4338CA] border border-indigo-100 font-bold text-xs shadow-2xs flex items-center gap-1.5 cursor-pointer transition-all"
+                className="px-3.5 py-2 rounded-2xl bg-[#EFF6FF] hover:bg-[#E0E3FA] text-[#4338CA] border border-blue-200 font-bold text-xs shadow-2xs flex items-center gap-1.5 cursor-pointer transition-all"
               >
-                <Briefcase className="w-3.5 h-3.5 text-[#5C59E8]" />
+                <Briefcase className="w-3.5 h-3.5 text-[#2563EB]" />
                 <span>Match Jobs</span>
               </button>
 
@@ -336,9 +336,9 @@ export default function ResumesDirectEditorPage() {
               <button
                 type="button"
                 onClick={() => setIsJDModalOpen(true)}
-                className="px-3.5 py-2 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200/80 text-slate-700 font-semibold text-xs flex items-center gap-1.5 cursor-pointer transition-all shadow-2xs"
+                className="px-3.5 py-2 rounded-2xl bg-white hover:bg-slate-50 border border-blue-200/80 text-slate-700 font-semibold text-xs flex items-center gap-1.5 cursor-pointer transition-all shadow-2xs"
               >
-                <Sparkles className="w-3.5 h-3.5 text-[#5C59E8]" />
+                <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
                 <span>JD Match</span>
               </button>
 
@@ -353,14 +353,14 @@ export default function ResumesDirectEditorPage() {
         </header>
 
         {/* User Identity Greeting Context Sub-Bar */}
-        <div className="border border-slate-100/80 bg-white rounded-3xl px-4 sm:px-6 lg:px-8 py-3.5 shadow-[0_10px_30px_rgba(80,90,130,0.06)]">
+        <div className="border border-blue-100/80 bg-white rounded-3xl px-4 sm:px-6 lg:px-8 py-3.5 shadow-[0_10px_30px_rgba(80,90,130,0.06)]">
           <div className="max-w-[1536px] mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-3 py-1 rounded-full text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/60 flex items-center gap-1.5">
+              <span className="px-3 py-1 rounded-full text-xs font-semibold text-[#1E40AF] bg-[#EFF6FF] border border-blue-200/60 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
                 Single-Column ATS Template
               </span>
-              <span className="px-3 py-1 rounded-full text-xs font-semibold text-slate-600 bg-slate-50 border border-slate-200/80">
+              <span className="px-3 py-1 rounded-full text-xs font-semibold text-slate-600 bg-slate-50 border border-blue-200/80">
                 Synced with Profile
               </span>
               <UserGreeting
@@ -370,7 +370,7 @@ export default function ResumesDirectEditorPage() {
               />
             </div>
             <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 shrink-0">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span className="w-2 h-2 rounded-full bg-[#EFF6FF]0" />
               <span>Resume Builder</span>
             </div>
           </div>
@@ -378,9 +378,9 @@ export default function ResumesDirectEditorPage() {
 
         {/* Pre-fill Alert Banner for New Resumes */}
         {showPreFillBanner && (
-          <div className="bg-[#EEF0FD] border border-indigo-100 text-slate-800 rounded-3xl px-4 sm:px-6 lg:px-8 py-3.5 text-xs sm:text-sm flex items-center justify-between shadow-sm">
+          <div className="bg-[#EFF6FF] border border-blue-200 text-slate-800 rounded-3xl px-4 sm:px-6 lg:px-8 py-3.5 text-xs sm:text-sm flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-2.5 max-w-5xl mx-auto flex-1">
-              <Info className="w-4 h-4 sm:w-5 sm:h-5 text-[#5C59E8] shrink-0" />
+              <Info className="w-4 h-4 sm:w-5 sm:h-5 text-[#2563EB] shrink-0" />
               <span className="text-slate-700">
                 We&apos;ve pre-filled your contact info and starting skills from your profile — feel free to edit or add more.
               </span>
@@ -395,12 +395,12 @@ export default function ResumesDirectEditorPage() {
         )}
 
         {/* Mobile & Portrait Tablet Tab Toggle (< 1024px) */}
-        <div className="lg:hidden sticky top-[61px] z-10 flex border-b border-slate-200/80 bg-white rounded-2xl overflow-hidden shadow-xs">
+        <div className="lg:hidden sticky top-[61px] z-10 flex border-b border-blue-200/80 bg-white rounded-2xl overflow-hidden shadow-xs">
           <button
             onClick={() => setMobileTab("edit")}
             className={`flex-1 py-3 min-h-[44px] text-xs font-medium flex items-center justify-center gap-1.5 cursor-pointer transition-colors ${
               mobileTab === "edit"
-                ? "border-b-2 border-[#5C59E8] text-[#5C59E8] bg-[#EEF0FD]/40 font-bold"
+                ? "border-b-2 border-[#2563EB] text-[#2563EB] bg-[#EFF6FF]/40 font-bold"
                 : "text-slate-500 hover:text-slate-900"
             }`}
           >
@@ -411,7 +411,7 @@ export default function ResumesDirectEditorPage() {
             onClick={() => setMobileTab("preview")}
             className={`flex-1 py-3 min-h-[44px] text-xs font-medium flex items-center justify-center gap-1.5 cursor-pointer transition-colors ${
               mobileTab === "preview"
-                ? "border-b-2 border-[#5C59E8] text-[#5C59E8] bg-[#EEF0FD]/40 font-bold"
+                ? "border-b-2 border-[#2563EB] text-[#2563EB] bg-[#EFF6FF]/40 font-bold"
                 : "text-slate-500 hover:text-slate-900"
             }`}
           >
@@ -432,12 +432,12 @@ export default function ResumesDirectEditorPage() {
 
           {/* Live Preview Column */}
           <div className={`lg:col-span-6 w-full lg:sticky lg:top-24 ${mobileTab === "edit" ? "hidden lg:block" : "block"}`}>
-            <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] relative overflow-hidden">
+            <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-3xl border border-blue-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] relative overflow-hidden">
               <div className="flex items-center justify-between mb-3 text-xs text-slate-500 px-1 font-medium">
                 <span className="font-semibold text-slate-900">ATS Preview • {activeTemplate.charAt(0).toUpperCase() + activeTemplate.slice(1)}</span>
-                <span className="px-2 py-0.5 rounded-full bg-slate-100 text-[10px] text-slate-600 border border-slate-200/80">Text Selectable</span>
+                <span className="px-2 py-0.5 rounded-full bg-slate-100 text-[10px] text-slate-600 border border-blue-200/80">Text Selectable</span>
               </div>
-              <div className="shadow-2xl rounded-2xl overflow-hidden bg-white text-slate-900 border border-slate-100">
+              <div className="shadow-2xl rounded-2xl overflow-hidden bg-white text-slate-900 border border-blue-100">
                 <ResumePreview
                   content={resume.content}
                   templateId={activeTemplate}

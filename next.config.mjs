@@ -63,6 +63,10 @@ const nextConfig = {
       // 10. Loose Career & Settings Relocations
       { source: "/offers/compare", destination: "/career/offers/compare", permanent: true },
       { source: "/billing", destination: "/settings/billing", permanent: true },
+
+      // 11. Temporary recovery redirects for legacy /u/ destinations
+      { source: "/u/squads", destination: "/squads", permanent: false },
+      { source: "/u/daily", destination: "/daily", permanent: false },
     ];
   },
   async headers() {

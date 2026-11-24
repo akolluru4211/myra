@@ -369,26 +369,31 @@ describe("Next.js Edge Middleware & WAF Security Engine (src/middleware.ts)", ()
   });
 
   // ---------------------------------------------------------------------------
-  // 4. Route Normalization, Student Handle 301s & Redirect Rules
+  // 4. Route Normalization, Security Boundaries & Recovery Redirects
   // ---------------------------------------------------------------------------
   describe("4. Route Normalization & Redirect Rules", () => {
-    it("301-redirects direct student handle URLs to /u/:username", () => {
+    it("allows real application routes to resolve normally without vanity redirection", () => {
       const mw = createMiddlewareInstance();
-      const usernames = ["adarsh_2026", "sarah_chen", "vikram_dev", "priya-engineer"];
+      const directRoutes = ["daily", "squads", "dsa", "dashboard", "admin", "career", "jobs", "edmail", "student-record"];
 
-      for (const username of usernames) {
-        const req = new NextRequest(new URL(`https://edworldco.in/${username}`));
+      for (const route of directRoutes) {
+        const req = new NextRequest(new URL(`https://edworldco.in/${route}`));
         const res = mw.middleware(req);
 
-        assert.equal(res.status, 301, `Handle /${username} must return 301 redirect`);
-        assert.equal(res.headers.get("location"), `https://edworldco.in/u/${username}`);
-        assert.equal(res.headers.get("X-Sentinel-Shield"), "active");
+        const location = res.headers.get("location");
+        if (location) {
+          assert.notEqual(
+            location,
+            `https://edworldco.in/u/${route}`,
+            `Route /${route} must NEVER redirect to /u/${route}`
+          );
+        }
       }
     });
 
     it("does not treat reserved first-level route segments as student handles", () => {
       const mw = createMiddlewareInstance();
-      const reservedRoutes = ["practice", "dsa", "dashboard", "admin", "career", "jobs", "problems", "projects"];
+      const reservedRoutes = ["daily", "squads", "practice", "dsa", "dashboard", "admin", "career", "jobs", "problems", "projects", "edmail", "student-record"];
 
       for (const segment of reservedRoutes) {
         const req = new NextRequest(new URL(`https://edworldco.in/${segment}`));
@@ -405,18 +410,61 @@ describe("Next.js Edge Middleware & WAF Security Engine (src/middleware.ts)", ()
       }
     });
 
-    it("verifies single-segment paths not in RESERVED_FIRST_LEVEL_ROUTES redirect to /u/:username", () => {
+    it("verifies /squads route never redirects to /u/squads and preserves auth protection", () => {
       const mw = createMiddlewareInstance();
-      // Any first-level single segment path not in RESERVED_FIRST_LEVEL_ROUTES triggers the student handle redirect
-      const candidateHandles = ["showcase", "feedback", "random_student_name"];
+      // 1. Unauthenticated request to /squads must redirect to /login?redirectUrl=/squads (NOT /u/squads)
+      const unauthReq = new NextRequest(new URL("https://edworldco.in/squads"));
+      const unauthRes = mw.middleware(unauthReq);
+      assert.notEqual(unauthRes.headers.get("location"), "https://edworldco.in/u/squads");
+      assert.equal(unauthRes.status, 307);
+      const redirectUrl = new URL(unauthRes.headers.get("location"));
+      assert.equal(redirectUrl.pathname, "/login");
+      assert.equal(redirectUrl.searchParams.get("redirectUrl"), "/squads");
 
-      for (const handle of candidateHandles) {
-        const req = new NextRequest(new URL(`https://edworldco.in/${handle}`));
-        const res = mw.middleware(req);
+      // 2. Authenticated request to /squads must allow access without redirecting to /u/squads
+      const authReq = new NextRequest(new URL("https://edworldco.in/squads"), {
+        headers: {
+          cookie: "edworld_session=test-mock-session-token-valid",
+        },
+      });
+      const authRes = mw.middleware(authReq);
+      assert.notEqual(authRes.headers.get("location"), "https://edworldco.in/u/squads");
+      assert.equal(authRes.status, 200);
+    });
 
-        assert.equal(res.status, 301, `Single-segment route /${handle} must 301 redirect to /u/${handle}`);
-        assert.equal(res.headers.get("location"), `https://edworldco.in/u/${handle}`);
-      }
+    it("verifies /daily route never redirects to /u/daily and preserves auth protection", () => {
+      const mw = createMiddlewareInstance();
+      // 1. Unauthenticated request to /daily must redirect to /login?redirectUrl=/daily (NOT /u/daily)
+      const unauthReq = new NextRequest(new URL("https://edworldco.in/daily"));
+      const unauthRes = mw.middleware(unauthReq);
+      assert.notEqual(unauthRes.headers.get("location"), "https://edworldco.in/u/daily");
+      assert.equal(unauthRes.status, 307);
+      const redirectUrl = new URL(unauthRes.headers.get("location"));
+      assert.equal(redirectUrl.pathname, "/login");
+      assert.equal(redirectUrl.searchParams.get("redirectUrl"), "/daily");
+
+      // 2. Authenticated request to /daily must allow access without redirecting to /u/daily
+      const authReq = new NextRequest(new URL("https://edworldco.in/daily"), {
+        headers: {
+          cookie: "edworld_session=test-mock-session-token-valid",
+        },
+      });
+      const authRes = mw.middleware(authReq);
+      assert.notEqual(authRes.headers.get("location"), "https://edworldco.in/u/daily");
+      assert.equal(authRes.status, 200);
+    });
+
+    it("verifies temporary recovery redirects for /u/squads -> /squads and /u/daily -> /daily", () => {
+      const mw = createMiddlewareInstance();
+      const squadsReq = new NextRequest(new URL("https://edworldco.in/u/squads"));
+      const squadsRes = mw.middleware(squadsReq);
+      assert.equal(squadsRes.status, 307);
+      assert.equal(squadsRes.headers.get("location"), "https://edworldco.in/squads");
+
+      const dailyReq = new NextRequest(new URL("https://edworldco.in/u/daily"));
+      const dailyRes = mw.middleware(dailyReq);
+      assert.equal(dailyRes.status, 307);
+      assert.equal(dailyRes.headers.get("location"), "https://edworldco.in/daily");
     });
 
     it("verifies permanent redirects in next.config.mjs for /practice -> /dsa and /showcase -> /dsa", async () => {

@@ -111,21 +111,21 @@ export default function DailyHabitHeroCard({ userId, className = "" }: DailyHabi
 
   return (
     <div
-      className={`bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 sm:p-7 space-y-6 text-slate-900 ${className}`}
+      className={`bg-white rounded-3xl border border-blue-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 sm:p-7 space-y-6 text-slate-900 ${className}`}
     >
       {/* Top Header Row: Title, Coral Streak Pill & Circular Gauge */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
         <div className="space-y-2">
           <div className="flex items-center gap-2 flex-wrap">
             {/* Coral Streak Pill */}
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#FFE4E6] text-[#F43F5E] shadow-2xs">
-              <Flame className="w-3.5 h-3.5 fill-[#F43F5E]" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#EFF6FF] text-[#2563EB] shadow-2xs">
+              <Flame className="w-3.5 h-3.5 fill-[#2563EB]" />
               <span>{streakDays}-Day Habit Streak</span>
             </span>
 
             {/* Soft Lavender Level Pill */}
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#EEF0FD] text-[#4338CA]">
-              <Trophy className="w-3 h-3 text-[#5C59E8]" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#EFF6FF] text-[#1E40AF]">
+              <Trophy className="w-3 h-3 text-[#2563EB]" />
               <span>Level {level} Explorer</span>
             </span>
           </div>
@@ -139,7 +139,7 @@ export default function DailyHabitHeroCard({ userId, className = "" }: DailyHabi
         </div>
 
         {/* Circular Progress Gauge */}
-        <div className="flex items-center gap-3 shrink-0 self-start sm:self-center bg-[#F8F9FD] p-3 rounded-2xl border border-slate-100">
+        <div className="flex items-center gap-3 shrink-0 self-start sm:self-center bg-[#EFF6FF] p-3 rounded-2xl border border-blue-100">
           <div className="relative w-20 h-20 flex items-center justify-center">
             <svg className="w-20 h-20 -rotate-90 transform" viewBox="0 0 96 96">
               {/* Background ring */}
@@ -187,10 +187,10 @@ export default function DailyHabitHeroCard({ userId, className = "" }: DailyHabi
       </div>
 
       {/* Level XP Progress Bar */}
-      <div className="p-3.5 rounded-2xl bg-[#F8F9FD] border border-slate-100/90 space-y-2">
+      <div className="p-3.5 rounded-2xl bg-[#EFF6FF] border border-blue-100/90 space-y-2">
         <div className="flex items-center justify-between text-xs font-semibold">
           <span className="text-slate-600 flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-[#5C59E8]" />
+            <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
             <span>XP to Level {level + 1}</span>
           </span>
           <span className="text-slate-900 font-bold font-mono">
@@ -221,8 +221,8 @@ export default function DailyHabitHeroCard({ userId, className = "" }: DailyHabi
                 onClick={() => toggleTask(task.id)}
                 className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
                   isDone
-                    ? "bg-emerald-50/60 border-emerald-200/60 text-slate-900"
-                    : "bg-[#F8F9FD] border-slate-100 hover:border-indigo-200/60 hover:bg-[#EEF0FD]/40 text-slate-800"
+                    ? "bg-[#EFF6FF]/60 border-blue-200/60 text-slate-900"
+                    : "bg-[#EFF6FF] border-blue-100 hover:border-blue-200/60 hover:bg-[#EFF6FF]/40 text-slate-800"
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
@@ -232,9 +232,9 @@ export default function DailyHabitHeroCard({ userId, className = "" }: DailyHabi
                     className="shrink-0 transition-transform active:scale-90"
                   >
                     {isDone ? (
-                      <CheckCircle2 className="w-5 h-5 text-emerald-600 fill-emerald-100" />
+                      <CheckCircle2 className="w-5 h-5 text-[#2563EB] fill-emerald-100" />
                     ) : (
-                      <Circle className="w-5 h-5 text-slate-300 hover:text-[#5C59E8]" />
+                      <Circle className="w-5 h-5 text-slate-300 hover:text-[#2563EB]" />
                     )}
                   </button>
 
@@ -243,9 +243,9 @@ export default function DailyHabitHeroCard({ userId, className = "" }: DailyHabi
                       <span
                         className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${
                           task.category === "DSA"
-                            ? "bg-[#EEF0FD] text-[#4338CA]"
+                            ? "bg-[#EFF6FF] text-[#1E40AF]"
                             : task.category === "Aptitude"
-                            ? "bg-amber-50 text-amber-700 border border-amber-200/60"
+                            ? "bg-[#EFF6FF] text-[#1E40AF] border border-blue-200/60"
                             : "bg-rose-50 text-rose-700 border border-rose-200/60"
                         }`}
                       >
@@ -270,7 +270,7 @@ export default function DailyHabitHeroCard({ userId, className = "" }: DailyHabi
                   className={`text-xs font-bold shrink-0 px-2.5 py-1 rounded-xl ${
                     isDone
                       ? "bg-emerald-100 text-emerald-800"
-                      : "bg-[#EEF0FD] text-[#4338CA]"
+                      : "bg-[#EFF6FF] text-[#1E40AF]"
                   }`}
                 >
                   +{task.xp} XP
@@ -288,7 +288,7 @@ export default function DailyHabitHeroCard({ userId, className = "" }: DailyHabi
         </span>
         <Link
           href="/daily"
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-[#5C59E8] hover:bg-[#4E4BC6] text-white text-xs sm:text-sm font-bold transition-all shadow-md shadow-indigo-500/20 active:scale-95 cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs sm:text-sm font-bold transition-all shadow-md shadow-indigo-500/20 active:scale-95 cursor-pointer"
         >
           <span>Launch Full Daily Challenge</span>
           <ArrowRight className="w-4 h-4 text-white" />

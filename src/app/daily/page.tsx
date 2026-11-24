@@ -173,13 +173,13 @@ export default function DailyChallengePage() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-[#F4F5FA] text-slate-900 font-sans pb-16 space-y-8 animate-in fade-in duration-200">
+      <div className="min-h-screen bg-white text-slate-900 font-sans pb-16 space-y-8 animate-in fade-in duration-200">
         
         {/* Top Header & Breadcrumbs */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
           <div>
             <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-              <Link href="/dashboard" className="hover:text-[#5C59E8]">Dashboard</Link>
+              <Link href="/dashboard" className="hover:text-[#2563EB]">Dashboard</Link>
               <span>/</span>
               <span className="text-slate-800 font-semibold">Daily Habit Loop</span>
             </div>
@@ -190,7 +190,7 @@ export default function DailyChallengePage() {
 
           <div className="flex items-center gap-3">
             {/* Coral Streak Flame Pill */}
-            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFE4E6] text-[#F43F5E] text-xs font-bold shadow-2xs">
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EFF6FF] text-[#2563EB] text-xs font-bold shadow-2xs">
               <Flame className="w-4 h-4 fill-[#F43F5E]" />
               <span>4-Day Habit Streak</span>
             </div>
@@ -204,10 +204,10 @@ export default function DailyChallengePage() {
         </div>
 
         {/* HERO CARD: Circular Progress Gauge & Date Summary */}
-        <section className="bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <section className="bg-white rounded-3xl border border-blue-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3 max-w-xl">
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#EEF0FD] text-[#4338CA]">
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#EFF6FF] text-[#4338CA]">
                 {new Date().toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}
               </span>
               <span className="text-xs font-semibold text-slate-400">
@@ -227,22 +227,22 @@ export default function DailyChallengePage() {
 
             <div className="flex items-center gap-4 text-xs font-bold text-slate-700 pt-1">
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-[#2563EB]" />
                 1 DSA Problem (+50 XP)
               </span>
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-[#2563EB]" />
                 3 Aptitude MCQs (+100 XP)
               </span>
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-[#2563EB]" />
                 1 STAR Drill (+50 XP)
               </span>
             </div>
           </div>
 
           {/* Circular Completion Ring */}
-          <div className="flex items-center gap-5 shrink-0 bg-[#F8F9FD] p-5 rounded-3xl border border-slate-100">
+          <div className="flex items-center gap-5 shrink-0 bg-[#EFF6FF] p-5 rounded-3xl border border-blue-100">
             <div className="relative w-24 h-24 flex items-center justify-center">
               <svg className="w-24 h-24 -rotate-90" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r={radius} stroke="#E2E8F0" strokeWidth="8" fill="none" />
@@ -273,7 +273,7 @@ export default function DailyChallengePage() {
               <div className="text-xs font-bold text-slate-900">
                 Total XP Bonus
               </div>
-              <div className="text-lg font-black font-display text-[#5C59E8]">
+              <div className="text-lg font-black font-display text-[#2563EB]">
                 +{completedCount * 40} XP
               </div>
               <div className="text-[10px] text-slate-400">
@@ -287,18 +287,18 @@ export default function DailyChallengePage() {
         <div className="space-y-6">
           
           {/* TASK 1: 1 DSA Problem */}
-          <section className="bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <section className="bg-white rounded-3xl border border-blue-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-100 pb-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#EEF0FD] text-[#5C59E8] flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
                   <Code2 className="w-5 h-5 stroke-[2]" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#EEF0FD] text-[#4338CA]">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#EFF6FF] text-[#4338CA]">
                       Task 1 • DSA Practice
                     </span>
-                    <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                    <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#1E40AF] border border-blue-200/60">
                       Beginner
                     </span>
                   </div>
@@ -309,11 +309,11 @@ export default function DailyChallengePage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <span className="text-xs font-bold text-[#5C59E8] bg-[#EEF0FD] px-3 py-1 rounded-full">
+                <span className="text-xs font-bold text-[#2563EB] bg-[#EFF6FF] px-3 py-1 rounded-full">
                   +50 XP
                 </span>
                 {taskDone.dsa ? (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200/60">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFF6FF] text-[#1E40AF] text-xs font-bold border border-blue-200/60">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     <span>Completed</span>
                   </span>
@@ -332,7 +332,7 @@ export default function DailyChallengePage() {
               Given an input string <code>s</code>, reverse the order of the words. A word is defined as a sequence of non-space characters. The words in <code>s</code> will be separated by at least one space. Return a string of the words in reverse order concatenated by a single space.
             </p>
 
-            <div className="p-3.5 rounded-2xl bg-[#F8F9FD] border border-slate-100/90 font-mono text-xs text-slate-700 space-y-1">
+            <div className="p-3.5 rounded-2xl bg-[#EFF6FF] border border-blue-100/90 font-mono text-xs text-slate-700 space-y-1">
               <div><strong>Input:</strong> s = &quot;the sky is blue&quot;</div>
               <div><strong>Output:</strong> &quot;blue is sky the&quot;</div>
             </div>
@@ -341,7 +341,7 @@ export default function DailyChallengePage() {
               <span className="text-xs text-slate-400">Target Time: 15 minutes</span>
               <Link
                 href="/dsa"
-                className="px-5 py-2.5 rounded-2xl bg-[#5C59E8] hover:bg-[#4E4BC6] text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-indigo-500/20 active:scale-95 transition-all"
+                className="px-5 py-2.5 rounded-2xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-indigo-500/20 active:scale-95 transition-all"
               >
                 <span>Launch DSA Code Studio</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -351,14 +351,14 @@ export default function DailyChallengePage() {
 
           {/* TASK 2: Aptitude Q1 (Quantitative) */}
           {quantQuestion && (
-            <section className="bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+            <section className="bg-white rounded-3xl border border-blue-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-100 pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-700 border border-amber-200/60 flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] text-[#1E40AF] border border-blue-200/60 flex items-center justify-center shrink-0">
                     <Brain className="w-5 h-5 stroke-[2]" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200/60">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#EFF6FF] text-amber-800 border border-blue-200/60">
                       Task 2 • Quantitative Aptitude
                     </span>
                     <h3 className="text-base font-bold text-slate-900 mt-1 font-display">
@@ -366,7 +366,7 @@ export default function DailyChallengePage() {
                     </h3>
                   </div>
                 </div>
-                <span className="text-xs font-bold text-[#5C59E8] bg-[#EEF0FD] px-3 py-1 rounded-full shrink-0">
+                <span className="text-xs font-bold text-[#2563EB] bg-[#EFF6FF] px-3 py-1 rounded-full shrink-0">
                   +35 XP
                 </span>
               </div>
@@ -386,12 +386,12 @@ export default function DailyChallengePage() {
                       className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
                         isSelected
                           ? isCorrect
-                            ? "bg-emerald-50 border-emerald-300 text-emerald-900"
+                            ? "bg-[#EFF6FF] border-emerald-300 text-emerald-900"
                             : "bg-rose-50 border-rose-300 text-rose-900"
-                          : "bg-[#F8F9FD] border-slate-100 hover:border-indigo-200 text-slate-800"
+                          : "bg-[#EFF6FF] border-blue-100 hover:border-blue-200 text-slate-800"
                       }`}
                     >
-                      <span className="w-6 h-6 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-xs font-bold shrink-0">
+                      <span className="w-6 h-6 rounded-lg bg-white border border-blue-200 flex items-center justify-center text-xs font-bold shrink-0">
                         {option.id}
                       </span>
                       <span className="text-xs font-semibold">{option.text}</span>
@@ -401,9 +401,9 @@ export default function DailyChallengePage() {
               </div>
 
               {selectedAnswers["apt_1"] && (
-                <div className="p-3.5 rounded-2xl bg-indigo-50/60 border border-indigo-100 text-xs text-indigo-900 space-y-1">
+                <div className="p-3.5 rounded-2xl bg-[#EFF6FF]/60 border border-blue-200 text-xs text-indigo-900 space-y-1">
                   <div className="font-bold flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-[#5C59E8]" />
+                    <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
                     <span>Explanation:</span>
                   </div>
                   <p>{quantQuestion.explanation}</p>
@@ -414,8 +414,8 @@ export default function DailyChallengePage() {
 
           {/* TASK 3: Aptitude Q2 (Logical Reasoning) */}
           {logicalQuestion && (
-            <section className="bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+            <section className="bg-white rounded-3xl border border-blue-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-100 pb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-cyan-50 text-cyan-700 border border-cyan-200/60 flex items-center justify-center shrink-0">
                     <Brain className="w-5 h-5 stroke-[2]" />
@@ -429,7 +429,7 @@ export default function DailyChallengePage() {
                     </h3>
                   </div>
                 </div>
-                <span className="text-xs font-bold text-[#5C59E8] bg-[#EEF0FD] px-3 py-1 rounded-full shrink-0">
+                <span className="text-xs font-bold text-[#2563EB] bg-[#EFF6FF] px-3 py-1 rounded-full shrink-0">
                   +35 XP
                 </span>
               </div>
@@ -448,12 +448,12 @@ export default function DailyChallengePage() {
                       className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
                         isSelected
                           ? isCorrect
-                            ? "bg-emerald-50 border-emerald-300 text-emerald-900"
+                            ? "bg-[#EFF6FF] border-emerald-300 text-emerald-900"
                             : "bg-rose-50 border-rose-300 text-rose-900"
-                          : "bg-[#F8F9FD] border-slate-100 hover:border-indigo-200 text-slate-800"
+                          : "bg-[#EFF6FF] border-blue-100 hover:border-blue-200 text-slate-800"
                       }`}
                     >
-                      <span className="w-6 h-6 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-xs font-bold shrink-0">
+                      <span className="w-6 h-6 rounded-lg bg-white border border-blue-200 flex items-center justify-center text-xs font-bold shrink-0">
                         {option.id}
                       </span>
                       <span className="text-xs font-semibold">{option.text}</span>
@@ -463,9 +463,9 @@ export default function DailyChallengePage() {
               </div>
 
               {selectedAnswers["apt_2"] && (
-                <div className="p-3.5 rounded-2xl bg-indigo-50/60 border border-indigo-100 text-xs text-indigo-900 space-y-1">
+                <div className="p-3.5 rounded-2xl bg-[#EFF6FF]/60 border border-blue-200 text-xs text-indigo-900 space-y-1">
                   <div className="font-bold flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-[#5C59E8]" />
+                    <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
                     <span>Explanation:</span>
                   </div>
                   <p>{logicalQuestion.explanation}</p>
@@ -476,14 +476,14 @@ export default function DailyChallengePage() {
 
           {/* TASK 4: Aptitude Q3 (Verbal) */}
           {verbalQuestion && (
-            <section className="bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+            <section className="bg-white rounded-3xl border border-blue-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-100 pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-purple-50 text-purple-700 border border-purple-200/60 flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] text-[#1E40AF] border border-blue-200/60 flex items-center justify-center shrink-0">
                     <Brain className="w-5 h-5 stroke-[2]" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-800 border border-purple-200/60">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#EFF6FF] text-purple-800 border border-blue-200/60">
                       Task 4 • Verbal Aptitude
                     </span>
                     <h3 className="text-base font-bold text-slate-900 mt-1 font-display">
@@ -491,7 +491,7 @@ export default function DailyChallengePage() {
                     </h3>
                   </div>
                 </div>
-                <span className="text-xs font-bold text-[#5C59E8] bg-[#EEF0FD] px-3 py-1 rounded-full shrink-0">
+                <span className="text-xs font-bold text-[#2563EB] bg-[#EFF6FF] px-3 py-1 rounded-full shrink-0">
                   +30 XP
                 </span>
               </div>
@@ -510,12 +510,12 @@ export default function DailyChallengePage() {
                       className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
                         isSelected
                           ? isCorrect
-                            ? "bg-emerald-50 border-emerald-300 text-emerald-900"
+                            ? "bg-[#EFF6FF] border-emerald-300 text-emerald-900"
                             : "bg-rose-50 border-rose-300 text-rose-900"
-                          : "bg-[#F8F9FD] border-slate-100 hover:border-indigo-200 text-slate-800"
+                          : "bg-[#EFF6FF] border-blue-100 hover:border-blue-200 text-slate-800"
                       }`}
                     >
-                      <span className="w-6 h-6 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-xs font-bold shrink-0">
+                      <span className="w-6 h-6 rounded-lg bg-white border border-blue-200 flex items-center justify-center text-xs font-bold shrink-0">
                         {option.id}
                       </span>
                       <span className="text-xs font-semibold">{option.text}</span>
@@ -525,9 +525,9 @@ export default function DailyChallengePage() {
               </div>
 
               {selectedAnswers["apt_3"] && (
-                <div className="p-3.5 rounded-2xl bg-indigo-50/60 border border-indigo-100 text-xs text-indigo-900 space-y-1">
+                <div className="p-3.5 rounded-2xl bg-[#EFF6FF]/60 border border-blue-200 text-xs text-indigo-900 space-y-1">
                   <div className="font-bold flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-[#5C59E8]" />
+                    <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
                     <span>Explanation:</span>
                   </div>
                   <p>{verbalQuestion.explanation}</p>
@@ -537,8 +537,8 @@ export default function DailyChallengePage() {
           )}
 
           {/* TASK 5: Daily Interview Drill (STAR Recording) */}
-          <section className="bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <section className="bg-white rounded-3xl border border-blue-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-100 pb-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-rose-50 text-rose-700 border border-rose-200/60 flex items-center justify-center shrink-0">
                   <Mic className="w-5 h-5 stroke-[2]" />
@@ -552,7 +552,7 @@ export default function DailyChallengePage() {
                   </h3>
                 </div>
               </div>
-              <span className="text-xs font-bold text-[#5C59E8] bg-[#EEF0FD] px-3 py-1 rounded-full shrink-0">
+              <span className="text-xs font-bold text-[#2563EB] bg-[#EFF6FF] px-3 py-1 rounded-full shrink-0">
                 +50 XP
               </span>
             </div>
@@ -563,22 +563,22 @@ export default function DailyChallengePage() {
 
             {/* STAR Response Guidelines */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-semibold text-slate-600">
-              <div className="p-2.5 rounded-xl bg-[#F8F9FD] border border-slate-100 text-center">
-                <span className="text-[#5C59E8] font-bold">S</span>ituation (20s)
+              <div className="p-2.5 rounded-xl bg-[#EFF6FF] border border-blue-100 text-center">
+                <span className="text-[#2563EB] font-bold">S</span>ituation (20s)
               </div>
-              <div className="p-2.5 rounded-xl bg-[#F8F9FD] border border-slate-100 text-center">
-                <span className="text-[#5C59E8] font-bold">T</span>ask (15s)
+              <div className="p-2.5 rounded-xl bg-[#EFF6FF] border border-blue-100 text-center">
+                <span className="text-[#2563EB] font-bold">T</span>ask (15s)
               </div>
-              <div className="p-2.5 rounded-xl bg-[#F8F9FD] border border-slate-100 text-center">
-                <span className="text-[#5C59E8] font-bold">A</span>ction (40s)
+              <div className="p-2.5 rounded-xl bg-[#EFF6FF] border border-blue-100 text-center">
+                <span className="text-[#2563EB] font-bold">A</span>ction (40s)
               </div>
-              <div className="p-2.5 rounded-xl bg-[#F8F9FD] border border-slate-100 text-center">
-                <span className="text-[#5C59E8] font-bold">R</span>esult (15s)
+              <div className="p-2.5 rounded-xl bg-[#EFF6FF] border border-blue-100 text-center">
+                <span className="text-[#2563EB] font-bold">R</span>esult (15s)
               </div>
             </div>
 
             {/* Recording Controls */}
-            <div className="p-4 rounded-2xl bg-[#F8F9FD] border border-slate-100/90 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="p-4 rounded-2xl bg-[#EFF6FF] border border-blue-100/90 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <button
                   type="button"
@@ -586,7 +586,7 @@ export default function DailyChallengePage() {
                   className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer shadow-md ${
                     isRecording
                       ? "bg-rose-600 text-white animate-pulse"
-                      : "bg-[#5C59E8] hover:bg-[#4E4BC6] text-white"
+                      : "bg-[#2563EB] hover:bg-[#1D4ED8] text-white"
                   }`}
                 >
                   {isRecording ? <Square className="w-5 h-5 fill-white" /> : <Mic className="w-5 h-5" />}
@@ -602,7 +602,7 @@ export default function DailyChallengePage() {
               </div>
 
               {interviewSubmitted && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200/60">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFF6FF] text-[#1E40AF] text-xs font-bold border border-blue-200/60">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   <span>Drill Verified</span>
                 </span>

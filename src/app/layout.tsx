@@ -27,10 +27,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#000000" },
-  ],
+  themeColor: "#ffffff",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -107,7 +104,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${plusJakartaSans.variable} ${jetbrainsMono.variable} scroll-smooth font-sans`}>
-      <body className="min-h-screen flex flex-col bg-[#F4F5FA] text-slate-900 antialiased selection:bg-[#5C59E8] selection:text-white">
+      <body className="min-h-screen flex flex-col bg-white text-black antialiased selection:bg-[#2563EB] selection:text-white">
         <AuthProvider>
           <ToastProvider>
             <AppShell>{children}</AppShell>

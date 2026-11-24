@@ -38,17 +38,17 @@ export default function ModernEdworldFooter() {
     }, 600);
   };
 
-  const linkClass = "text-slate-500 hover:text-[#5C59E8] transition-colors flex items-center justify-between group";
-  const headerClass = "font-extrabold font-display text-xs uppercase tracking-wider text-slate-900";
+  const linkClass = "text-slate-500 hover:text-[#2563EB] transition-colors flex items-center justify-between group";
+  const headerClass = "font-extrabold font-display text-xs uppercase tracking-wider text-black";
 
   return (
-    <footer className="bg-white border-t border-slate-200/80 text-slate-500 rounded-t-3xl shadow-ambient-card relative font-sans mt-auto overflow-hidden select-none">
+    <footer className="bg-white border-t border-blue-200/80 text-slate-500 rounded-t-3xl shadow-ambient-card relative font-sans mt-auto overflow-hidden select-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-7 pb-20 sm:pt-8 sm:pb-6 relative z-10">
         
         {/* 1. Clean Newsletter Subscribe Strip */}
-        <div className="mb-7 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 bg-[#F8F9FD] shadow-xs flex flex-col md:flex-row items-center justify-between gap-3.5">
+        <div className="mb-7 p-3.5 sm:p-4 rounded-2xl border border-blue-200/80 bg-[#EFF6FF] shadow-xs flex flex-col md:flex-row items-center justify-between gap-3.5">
           <div className="flex items-center gap-2.5 text-center md:text-left flex-wrap justify-center md:justify-start">
-            <span className="text-xs font-bold text-slate-900 font-display">
+            <span className="text-xs font-bold text-black font-display">
               Weekly Technical Dispatch
             </span>
             <span className="hidden sm:inline text-slate-400">•</span>
@@ -73,13 +73,13 @@ export default function ModernEdworldFooter() {
                     placeholder="Enter your email"
                     value={dispatchEmail}
                     onChange={(e) => setDispatchEmail(e.target.value)}
-                    className="w-full pl-9 pr-3 py-1.5 text-xs rounded-full placeholder:text-slate-400 focus:outline-hidden transition-all shadow-2xs border bg-white border-slate-200 text-slate-900 focus:border-[#5C59E8]"
+                    className="w-full pl-9 pr-3 py-1.5 text-xs rounded-full placeholder:text-slate-400 focus:outline-hidden transition-all shadow-2xs border bg-white border-blue-200 text-black focus:border-[#2563EB]"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={dispatchStatus === "loading"}
-                  className="px-4 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 shrink-0 cursor-pointer disabled:opacity-50 bg-[#5C59E8] hover:bg-[#4E4AC8] text-white"
+                  className="px-4 py-1.5 rounded-full text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 shrink-0 cursor-pointer disabled:opacity-50 bg-[#2563EB] hover:bg-[#1D4ED8] text-white"
                 >
                   <span>Subscribe</span>
                   <Send className="w-3 h-3" />
@@ -90,12 +90,12 @@ export default function ModernEdworldFooter() {
         </div>
 
         {/* 2. Structured Clean Navigation Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-7 pb-7 border-b border-slate-200/80">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-7 pb-7 border-b border-blue-200/80">
           
           {/* Column 1: Brand Anchor */}
           <div className="space-y-3 col-span-2 md:col-span-4 lg:col-span-1">
             <Link href="/" className="inline-flex items-center gap-2.5 group">
-              <div className="relative w-8 h-8 rounded-xl overflow-hidden bg-[#5C59E8] shadow-xs !p-0.5 shrink-0 transition-transform group-hover:scale-105 duration-200">
+              <div className="relative w-8 h-8 rounded-xl overflow-hidden bg-[#2563EB] shadow-xs !p-0.5 shrink-0 transition-transform group-hover:scale-105 duration-200">
                 <Image
                   src="/images/edworld-mark.png"
                   alt="EdWorld Co. Official Monogram Logo"
@@ -106,10 +106,10 @@ export default function ModernEdworldFooter() {
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-1 leading-none">
-                  <span className="font-black text-base tracking-tight font-display text-slate-900">
+                  <span className="font-black text-base tracking-tight font-display text-black">
                     EdWorld
                   </span>
-                  <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-[#5C59E8] text-white shadow-xs font-display">
+                  <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-[#2563EB] text-white shadow-xs font-display">
                     Co.
                   </span>
                 </div>
@@ -122,14 +122,14 @@ export default function ModernEdworldFooter() {
             {/* Contact details */}
             <div className="space-y-1 pt-1 text-[11px] text-slate-500">
               <div className="flex items-center gap-1.5">
-                <MapPin className="w-3 h-3 text-[#5C59E8] shrink-0" />
+                <MapPin className="w-3 h-3 text-[#2563EB] shrink-0" />
                 <span>Hyderabad, Telangana, India</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Mail className="w-3 h-3 text-[#5C59E8] shrink-0" />
+                <Mail className="w-3 h-3 text-[#2563EB] shrink-0" />
                 <a
                   href="mailto:edworld.eden@gmail.com"
-                  className="transition-colors font-medium hover:text-[#5C59E8] text-slate-700"
+                  className="transition-colors font-medium hover:text-[#2563EB] text-slate-700"
                 >
                   edworld.eden@gmail.com
                 </a>
@@ -150,7 +150,7 @@ export default function ModernEdworldFooter() {
               <li>
                 <Link href="/learn" className={linkClass}>
                   <span className="group-hover:translate-x-0.5 transition-transform">Interactive Courses</span>
-                  <ArrowRight className="w-2.5 h-2.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#5C59E8]" />
+                  <ArrowRight className="w-2.5 h-2.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#2563EB]" />
                 </Link>
               </li>
               <li>
@@ -248,9 +248,9 @@ export default function ModernEdworldFooter() {
                 <button
                   type="button"
                   onClick={handleOpenCookies}
-                  className="transition-colors text-left flex items-center gap-1 cursor-pointer text-[11.5px] group w-full text-slate-500 hover:text-[#5C59E8]"
+                  className="transition-colors text-left flex items-center gap-1 cursor-pointer text-[11.5px] group w-full text-slate-500 hover:text-[#2563EB]"
                 >
-                  <Sliders className="w-3 h-3 text-slate-400 group-hover:text-[#5C59E8]" />
+                  <Sliders className="w-3 h-3 text-slate-400 group-hover:text-[#2563EB]" />
                   <span className="group-hover:translate-x-0.5 transition-transform">Cookie Preferences</span>
                 </button>
               </li>
@@ -270,11 +270,11 @@ export default function ModernEdworldFooter() {
             &copy; {new Date().getFullYear()} EdWorld Co. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-xs text-slate-500">
-            <Link href="/privacy" className="hover:text-[#5C59E8] transition-colors">Privacy</Link>
+            <Link href="/privacy" className="hover:text-[#2563EB] transition-colors">Privacy</Link>
             <span>•</span>
-            <Link href="/terms" className="hover:text-[#5C59E8] transition-colors">Terms</Link>
+            <Link href="/terms" className="hover:text-[#2563EB] transition-colors">Terms</Link>
             <span>•</span>
-            <Link href="/contact" className="hover:text-[#5C59E8] transition-colors">Contact</Link>
+            <Link href="/contact" className="hover:text-[#2563EB] transition-colors">Contact</Link>
           </div>
         </div>
 

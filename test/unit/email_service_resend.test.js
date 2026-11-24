@@ -94,6 +94,23 @@ function createEmailServiceInstance(options = {}) {
     if (id === "./email-templates" || id === "./email-templates.ts") {
       return emailTemplates;
     }
+    if (id === "./alerts/multi-channel-service.ts" || id === "./alerts/multi-channel-service" || id === "@/lib/alerts/multi-channel-service") {
+      return {
+        getUserAlertPreferences: async (userId) => ({
+          userId,
+          whatsappEnabled: false,
+          whatsappNumber: "",
+          whatsappVerified: false,
+          telegramEnabled: false,
+          selectedRoles: [],
+          selectedCities: [],
+          notifyJobs: true,
+          notifyHackathons: true,
+          notifyDeadlines: true,
+          frequency: "instant"
+        })
+      };
+    }
     if (id === "resend") {
       return { Resend: ActiveResendClass };
     }
@@ -968,8 +985,11 @@ describe("Centralized Email & Notification Routing Service (src/lib/email-servic
         studentName: "Kavya",
       });
       assert.equal(resSignup.success, true);
-      assert.equal(capturedPayloads[0].subject, "🔐 Verify your EdWorld account (Code: 582910)");
+      // Code is kept out of the subject and preheader for privacy
+      assert.equal(capturedPayloads[0].subject, "🔐 Complete your EdWorld account verification");
+      assert.equal(capturedPayloads[0].subject.includes("582910"), false);
       assert.ok(capturedPayloads[0].html.includes("582910"));
+      assert.ok(capturedPayloads[0].text.includes("582910"));
 
       // 2. Login verification OTP
       const resLogin = await svc.sendOtpVerificationEmail({
@@ -979,8 +999,10 @@ describe("Centralized Email & Notification Routing Service (src/lib/email-servic
         expiresMinutes: 10,
       });
       assert.equal(resLogin.success, true);
-      assert.equal(capturedPayloads[1].subject, "🔐 Your EdWorld Sign-In Code: 194820");
+      assert.equal(capturedPayloads[1].subject, "🔐 Your EdWorld Sign-In Verification Code");
+      assert.equal(capturedPayloads[1].subject.includes("194820"), false);
       assert.ok(capturedPayloads[1].html.includes("194820"));
+      assert.ok(capturedPayloads[1].text.includes("194820"));
     });
   });
 

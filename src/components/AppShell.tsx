@@ -71,17 +71,17 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   // Dedicated standalone rendering for Mobile Prototype canvas
   if (isMobilePrototype) {
     return (
-      <div className="min-h-screen bg-slate-900 text-slate-100 font-sans antialiased">
+      <div className="min-h-screen bg-white text-black font-sans antialiased">
         {children}
         <AegisClientShield />
       </div>
     );
   }
 
-  // Standalone 3D Spatial rendering for Authentication Pages
+  // Standalone Clean rendering for Authentication Pages
   if (isAuthPage) {
     return (
-      <div className="min-h-screen w-full bg-[#080B11] text-white font-sans antialiased relative overflow-hidden selection:bg-white selection:text-slate-950">
+      <div className="min-h-screen w-full bg-white text-black font-sans antialiased relative overflow-hidden selection:bg-[#2563EB] selection:text-white">
         <div className="relative z-10 w-full min-h-screen flex flex-col justify-center">
           {children}
         </div>
@@ -94,7 +94,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   // Dedicated standalone rendering for Admin Operations Portal (No student navbar, footer, or chatbot)
   if (isAdminPage) {
     return (
-      <div className="min-h-screen w-full bg-[#080B11] text-white font-sans antialiased selection:bg-[#2563EB] selection:text-white relative">
+      <div className="min-h-screen w-full bg-white text-black font-sans antialiased selection:bg-[#2563EB] selection:text-white relative">
         {children}
         <AegisClientShield />
       </div>
@@ -104,7 +104,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   // Dedicated standalone rendering for Landing Page (Navbar & Footer self-contained on landing)
   if (isLandingPage) {
     return (
-      <div className="min-h-screen w-full bg-[#080B11] text-white font-sans antialiased relative selection:bg-emerald-500 selection:text-slate-950">
+      <div className="min-h-screen w-full bg-white text-black font-sans antialiased relative selection:bg-[#2563EB] selection:text-white">
         {children}
         <CookieConsentBanner />
         <AegisClientShield />
@@ -121,13 +121,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div
       className={cn(
-        "min-h-screen flex flex-col font-sans antialiased selection:bg-[#5C59E8] selection:text-white relative overflow-x-hidden",
-        "bg-[#F4F5FA] text-slate-900"
+        "min-h-screen flex flex-col font-sans antialiased selection:bg-[#2563EB] selection:text-white relative overflow-x-hidden",
+        "bg-white text-black"
       )}
     >
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2.5 focus:bg-[#5C59E8] focus:text-white focus:rounded-xl focus:shadow-xl focus:font-bold focus:text-xs"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2.5 focus:bg-[#2563EB] focus:text-white focus:rounded-xl focus:shadow-md focus:font-bold focus:text-xs"
       >
         Skip to main content
       </a>
@@ -148,14 +148,15 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           "flex-1 outline-none relative z-10",
           isLandingPage
             ? "w-full"
-            : "max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 lg:pl-28"
+            : "max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 lg:pl-28",
+          Boolean(user && !isLandingPage) && "pb-24 lg:pb-6"
         )}
       >
         {children}
       </main>
 
-      {/* Modern Light Footer */}
-      <div className={cn("relative z-20", !isLandingPage && "lg:pl-28")}>
+      {/* Modern Light Footer (Hidden on mobile when user is signed in with the bottom dock) */}
+      <div className={cn("relative z-20", !isLandingPage && "lg:pl-28", Boolean(user && !isLandingPage) && "hidden lg:block")}>
         <ModernEdworldFooter />
       </div>
 
