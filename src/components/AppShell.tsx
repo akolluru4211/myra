@@ -122,7 +122,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     <div
       className={cn(
         "min-h-screen flex flex-col font-sans antialiased selection:bg-[#2563EB] selection:text-white relative overflow-x-hidden",
-        "bg-white text-black"
+        "text-black",
+        pathname === "/dashboard" ? "bg-[#f6f8fc]" : "bg-white"
       )}
     >
       <a

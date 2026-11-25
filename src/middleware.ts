@@ -49,6 +49,7 @@ const EXACT_PUBLIC_PAGES = new Set([
   "/about",
   "/contact",
   "/pricing",
+  "/opportunities",
   "/learn",
   "/colleges",
   "/network",
@@ -93,6 +94,7 @@ const EXACT_PUBLIC_APIS = new Set([
   "/api/security/sentinel",
   "/api/career/paths",
   "/api/events",
+  "/api/opportunities",
   "/api/interview/tts",
   "/api/interview/turn",
   "/api/interview/question-bank",
@@ -161,7 +163,24 @@ function applySecurityHeaders(res: NextResponse, requestId: string): NextRespons
   res.headers.set("X-Permitted-Cross-Domain-Policies", "none");
   res.headers.set("X-Robots-Tag", "noai, noimageai");
   res.headers.set("X-Sentinel-Shield", "active");
-  res.headers.set("Content-Security-Policy", "default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https:;");
+  const contentSecurityPolicy = [
+    "default-src 'self'",
+    "style-src 'self' 'unsafe-inline'",
+    "font-src 'self' data:",
+    "img-src 'self' data: https:",
+  ];
+  if (process.env.NODE_ENV === "development" && process.env.LOCAL_NEXT_PREVIEW === "true") {
+    // Next.js development uses inline hydration scripts and webpack eval-based source maps.
+    contentSecurityPolicy.push("script-src 'self' 'unsafe-inline' 'unsafe-eval'");
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (supabaseUrl && URL.canParse(supabaseUrl)) {
+      const { origin, protocol } = new URL(supabaseUrl);
+      if (protocol === "https:" || protocol === "http:") {
+        contentSecurityPolicy.push(`connect-src 'self' ${origin}`);
+      }
+    }
+  }
+  res.headers.set("Content-Security-Policy", contentSecurityPolicy.join("; ") + ";");
   return res;
 }
 

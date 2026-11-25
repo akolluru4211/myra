@@ -38,3 +38,7 @@ Megatron-LM/
 datatrove/
 dolma/
 nanoGPT/
+
+# Local Myra AI training checkouts
+/myra-ai/training/data_raw/math/
+/myra-ai/training/llama_factory/

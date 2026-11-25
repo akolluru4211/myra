@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import styles from "./dashboard.module.css";
 import {
   Sparkles,
   Mail,
@@ -33,6 +34,7 @@ import ContinueDsaWidget from "@/components/dashboard/ContinueDsaWidget";
 import DailyHabitHeroCard from "@/components/dashboard/DailyHabitHeroCard";
 import PromotionalMotivationCard from "@/components/dashboard/PromotionalMotivationCard";
 import FeaturedEventsCarousel from "@/components/dashboard/FeaturedEventsCarousel";
+import OpportunityBoard from "@/components/dashboard/OpportunityBoard";
 
 export default function DashboardPage() {
   const { user, profile } = useAuth();
@@ -201,7 +203,7 @@ export default function DashboardPage() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-white text-slate-900 font-sans pb-12 space-y-6 sm:space-y-8 animate-in fade-in duration-200">
+      <div className="text-slate-900 pb-8 space-y-8 sm:space-y-10">
         
         {/* Onboarding Incomplete Alert Banner */}
         {!isOnboardingDone && profile?.onboarding_completed === false && (
@@ -229,36 +231,30 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* 1. TOP FRIENDLY HERO HEADLINE & PRIMARY ACTION */}
-        <section className="space-y-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="space-y-1.5">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black font-display text-slate-900 tracking-tight break-words">
-                Hi, {studentName}! 👋
-              </h1>
-              <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal max-w-2xl">
-                Ready to advance today&apos;s goals? Tapping Ask Myra opens your personal AI study copilot.
-              </p>
+        <section className="space-y-5" aria-label="Student workspace">
+          <div className={styles.welcome}>
+            <div>
+              <h1 className={styles.welcomeTitle}>Hi, {studentName}!</h1>
+              <p>Pick up where you left off or ask Myra to help you plan your next study session.</p>
             </div>
 
             {/* Primary Action Button: Ask Myra */}
-            <div className="flex items-center gap-3 shrink-0">
+            <div className={styles.welcomeAction}>
               <button
                 type="button"
                 onClick={handleOpenMyra}
                 aria-label="Ask Myra Copilot"
                 title="Ask Myra Copilot"
-                className="w-full sm:w-auto px-5 py-3 text-sm font-bold rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center gap-2.5 cursor-pointer shadow-lg shadow-emerald-600/20 transition-all hover:scale-[1.02] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+                className={styles.myraButton}
               >
-                <Sparkles className="w-4 h-4 text-white animate-pulse" />
+                <Sparkles size={17} aria-hidden="true" />
                 <span>Ask Myra</span>
-                <span className="sr-only">Ask Myra Copilot</span>
               </button>
             </div>
           </div>
 
           {/* NEXT TASK / UP NEXT HIGHLIGHT CARD */}
-          <div className="rounded-3xl border border-blue-100 bg-[#EFF6FF] p-5 sm:p-6 transition-all shadow-xs">
+          <div className={styles.nextActivity}>
             {loadingTask ? (
               <div className="flex items-center gap-3 py-2 text-slate-500 text-xs font-medium">
                 <div className="w-4 h-4 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin shrink-0" />
@@ -282,7 +278,6 @@ export default function DashboardPage() {
                     <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-white border border-blue-200 text-[#2563EB]">
                       Up Next &bull; {nextTask.category}
                     </span>
-                    <span className="text-xs font-semibold text-slate-500">Recommended Activity</span>
                   </div>
                   <h3 className="text-base sm:text-lg font-bold text-slate-900 font-display">
                     {nextTask.title}
@@ -315,45 +310,45 @@ export default function DashboardPage() {
                   href="/dsa"
                   className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-blue-200 text-slate-800 font-bold shrink-0 self-start sm:self-auto transition-colors"
                 >
-                  Browse Problem Arena →
+                  Browse practice problems
                 </Link>
               </div>
             )}
           </div>
 
           {/* COMPACT TOOL SHORTCUTS (Clear, Non-Duplicative Navigation) */}
-          <div className="flex flex-wrap items-center gap-2 pt-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1 select-none">
-              Shortcuts:
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm font-semibold text-slate-600 mr-1">
+              Shortcuts
             </span>
             <Link
               href="/dsa"
-              className="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-white hover:bg-slate-100 border border-blue-200 text-slate-700 transition-all cursor-pointer shadow-2xs flex items-center gap-1.5"
+              className={styles.quickLink}
             >
               <span>DSA Practice</span>
             </Link>
             <Link
               href="/interviews"
-              className="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-white hover:bg-slate-100 border border-blue-200 text-slate-700 transition-all cursor-pointer shadow-2xs flex items-center gap-1.5"
+              className={styles.quickLink}
             >
               <span>Mock Interviews</span>
             </Link>
             <Link
               href="/daily"
-              className="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-white hover:bg-slate-100 border border-blue-200 text-slate-700 transition-all cursor-pointer shadow-2xs flex items-center gap-1.5"
+              className={styles.quickLink}
             >
               <span>Daily Challenge</span>
             </Link>
             <Link
               href="/edmail"
-              className="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-white hover:bg-slate-100 border border-blue-200 text-slate-700 transition-all cursor-pointer shadow-2xs flex items-center gap-1.5"
+              className={styles.quickLink}
             >
               <Mail className="w-3.5 h-3.5 text-[#2563EB]" />
               <span>EdMail</span>
             </Link>
             <Link
               href="/student-record"
-              className="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-white hover:bg-slate-100 border border-blue-200 text-slate-700 transition-all cursor-pointer shadow-2xs flex items-center gap-1.5"
+              className={styles.quickLink}
             >
               <GraduationCap className="w-3.5 h-3.5 text-[#2563EB]" />
               <span>Student Record</span>
@@ -365,99 +360,29 @@ export default function DashboardPage() {
             <FeaturedEventsCarousel userId={user?.uid} />
           </div>
 
-          {/* TOP ROW OF 4 SQUIRCLE FEATURE CARDS (Equalized Height & Cohesive Cards) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
-            {/* Card 1: Practice Problems / DSA Arena */}
-            <Link
-              href="/dsa"
-              className="bg-white hover:border-indigo-100/80 border border-blue-100 rounded-3xl p-5 transition-all flex flex-col justify-between min-h-[168px] group shadow-xs cursor-pointer"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                  Practice
-                </span>
-                <div className="w-8 h-8 rounded-2xl bg-[#DBEAFE] text-[#2563EB] flex items-center justify-center transition-transform group-hover:scale-110">
-                  <Target className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-base font-black font-display text-slate-900 group-hover:text-[#2563EB] transition-colors">
-                  Problem Arena
-                </h3>
-                <p className="text-xs text-slate-500 line-clamp-2">
-                  1,000+ curated algorithmic problems calibrated for top tech placements.
-                </p>
-              </div>
-            </Link>
+          <OpportunityBoard />
 
-            {/* Card 2: Daily Habit Loop */}
-            <Link
-              href="/daily"
-              className="bg-white hover:border-indigo-100/80 border border-blue-100 rounded-3xl p-5 transition-all flex flex-col justify-between min-h-[168px] group shadow-xs cursor-pointer"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                  Habit Loop
-                </span>
-                <div className="w-8 h-8 rounded-2xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center transition-transform group-hover:scale-110">
-                  <Flame className="w-4 h-4 fill-[#2563EB]" />
-                </div>
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-base font-black font-display text-slate-900 group-hover:text-[#2563EB] transition-colors">
-                  Daily Habit Loop
-                </h3>
-                <p className="text-xs text-slate-500 line-clamp-2">
-                  1 DSA + 3 Aptitude + 1 Interview. 4-day streak active (+250 XP bonus pool).
-                </p>
-              </div>
-            </Link>
-
-            {/* Card 3: Synced Profiles */}
-            <Link
-              href="/profile"
-              className="bg-white hover:border-indigo-100/80 border border-blue-100 rounded-3xl p-5 transition-all flex flex-col justify-between min-h-[168px] group shadow-xs cursor-pointer"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                  Sync &amp; Proof
-                </span>
-                <div className="w-8 h-8 rounded-2xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center border border-emerald-200/60 transition-transform group-hover:scale-110">
-                  <GitBranch className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-base font-black font-display text-slate-900 group-hover:text-[#2563EB] transition-colors">
-                  Synced Profiles
-                </h3>
-                <p className="text-xs text-slate-500 line-clamp-2">
-                  GitHub repos &amp; LeetCode solved problems automatically verified on your digital student card.
-                </p>
-              </div>
-            </Link>
-
-            {/* Card 4: Study Squads */}
-            <Link
-              href="/squads"
-              className="bg-white hover:border-indigo-100/80 border border-blue-100 rounded-3xl p-5 transition-all flex flex-col justify-between min-h-[168px] group shadow-xs cursor-pointer"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                  Peer Velocity
-                </span>
-                <div className="w-8 h-8 rounded-2xl bg-[#DBEAFE] text-[#2563EB] flex items-center justify-center transition-transform group-hover:scale-110">
-                  <Users className="w-4 h-4" />
-                </div>
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-base font-black font-display text-slate-900 group-hover:text-[#2563EB] transition-colors">
-                  Study Squads
-                </h3>
-                <p className="text-xs text-slate-500 line-clamp-2">
-                  Collaborate in 6-student study groups. Group streaks and shared weekly leaderboard ranking.
-                </p>
-              </div>
-            </Link>
+          <div className="space-y-3">
+            <h2 className="text-lg font-bold text-slate-900">Study tools</h2>
+            <div className={styles.toolGrid}>
+              {[
+                { href: "/dsa", title: "Problem Arena", description: "Practice data structures and algorithms with curated problems.", icon: Target },
+                { href: "/daily", title: "Daily Habit Loop", description: "Build a streak with short coding, aptitude, and interview drills.", icon: Flame },
+                { href: "/profile", title: "Synced Profiles", description: "Show verified GitHub and LeetCode activity on your student card.", icon: GitBranch },
+                { href: "/squads", title: "Study Squads", description: "Study with peers and work toward shared weekly goals.", icon: Users },
+              ].map(({ href, title, description, icon: Icon }) => (
+                <Link key={href} href={href} className={styles.toolCard}>
+                  <div className={styles.toolCardTop}>
+                    <span className={styles.toolIcon}><Icon size={18} aria-hidden="true" /></span>
+                    <ArrowRight size={16} aria-hidden="true" className={styles.toolArrow} />
+                  </div>
+                  <div>
+                    <h3>{title}</h3>
+                    <p>{description}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -467,9 +392,6 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2">
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#DBEAFE] text-[#4338CA]">
                 Focus Mode
-              </span>
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold text-slate-400 bg-slate-100">
-                ZERO DISTRACTION
               </span>
             </div>
             <h3 className="text-lg font-bold text-slate-900 font-display">

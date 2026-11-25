@@ -252,6 +252,16 @@ cp .env.example .env.local
 npm run dev
 ```
 
+### Google sign-in in local development
+
+Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (or
+`NEXT_PUBLIC_SUPABASE_ANON_KEY`) in `.env.local` for the same Supabase project.
+Enable Google in that project's Auth providers. In Google Cloud, register the Supabase
+callback shown in the provider settings as an authorized redirect URI. In Supabase
+Auth URL Configuration, allow the app callback for the host and port you open in
+your browser, for example `http://localhost:4317/auth/callback`. Use the same host
+throughout sign-in so the browser can send the PKCE verifier cookie to the callback.
+
 ### 2. Mobile App (Expo)
 ```bash
 cd mobile

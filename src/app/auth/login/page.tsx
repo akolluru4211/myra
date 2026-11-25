@@ -83,8 +83,7 @@ function LoginForm() {
     setIsProfileErrorRetryable(false);
 
     try {
-      const origin = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
-      const callbackUrl = new URL("/auth/callback", origin);
+      const callbackUrl = new URL("/auth/callback", window.location.origin);
       if (validatedRedirect) {
         callbackUrl.searchParams.set("next", validatedRedirect);
       }
@@ -93,6 +92,7 @@ function LoginForm() {
         provider: "google",
         options: {
           redirectTo: callbackUrl.toString(),
+          skipBrowserRedirect: true,
         },
       });
 
@@ -100,9 +100,8 @@ function LoginForm() {
         throw oauthError;
       }
 
-      if (data?.url) {
-        window.location.href = data.url;
-      }
+      if (!data?.url) throw new Error("Could not start Google sign-in. Please try again.");
+      window.location.assign(data.url);
     } catch (err: any) {
       console.error("[Google OAuth Error]:", err);
       setError(translateAuthError(err));

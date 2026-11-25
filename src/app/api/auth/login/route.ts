@@ -159,8 +159,8 @@ export async function POST(req: NextRequest) {
           founderUid = "00000000-0000-4000-a000-000000000001";
           await pool.query(
             `
-            INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, role, aud)
-            VALUES ($1::uuid, $2, crypt($3, gen_salt('bf', 10)), NOW(), 'authenticated', 'authenticated')
+            INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, role, aud, confirmation_token)
+            VALUES ($1::uuid, $2, crypt($3, gen_salt('bf', 10)), NOW(), 'authenticated', 'authenticated', '')
             ON CONFLICT (id) DO NOTHING;
             `,
             [founderUid, cleanEmail, password]

@@ -1,26 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
 import { sendSignupWelcomeEmail } from "@/lib/email-service";
-import { resolvePostSignInDestination } from "@/lib/auth/redirect-validator";
+import { resolvePostSignInDestination, validateRedirectDestination } from "@/lib/auth/redirect-validator";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   const requestUrl = new URL(req.url);
   const code = requestUrl.searchParams.get("code");
-  const nextParam = requestUrl.searchParams.get("next") || requestUrl.searchParams.get("redirectUrl");
+  const nextParam = validateRedirectDestination(
+    requestUrl.searchParams.get("next") || requestUrl.searchParams.get("redirectUrl"),
+  );
   const origin = requestUrl.origin;
+
+  function redirectToLogin(message?: string) {
+    const loginUrl = new URL("/auth/login", origin);
+    if (message) loginUrl.searchParams.set("error", message);
+    if (nextParam) loginUrl.searchParams.set("redirectUrl", nextParam);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  const providerError = requestUrl.searchParams.get("error");
+  if (providerError) {
+    return redirectToLogin(providerError === "access_denied"
+      ? "Google sign-in was canceled."
+      : "Google sign-in failed. Please try again.");
+  }
 
   if (code) {
     try {
-      // 1. Establish & verify the session
+      // The server client reads the PKCE verifier and writes the Supabase session cookies.
+      const supabase = createClient();
       const { data, error } = await supabase.auth.exchangeCodeForSession(code);
       if (error) {
         console.error("[OAuth Callback Exchange Error]:", error.message);
-        const loginUrl = new URL("/auth/login", origin);
-        loginUrl.searchParams.set("error", error.message);
-        if (nextParam) loginUrl.searchParams.set("redirectUrl", nextParam);
-        return NextResponse.redirect(loginUrl);
+        return redirectToLogin("Could not complete sign-in. Please try again.");
       }
 
       if (data?.session && data.user) {
@@ -37,26 +51,22 @@ export async function GET(req: NextRequest) {
 
         if (profileFetchError) {
           console.error("[OAuth Profile Fetch Error]:", profileFetchError.message);
-          // Distinguish profile load error from onboarding state
-          const loginUrl = new URL("/auth/login", origin);
-          loginUrl.searchParams.set("error", "Unable to load student profile. Please retry.");
-          if (nextParam) loginUrl.searchParams.set("redirectUrl", nextParam);
-          return NextResponse.redirect(loginUrl);
+          return redirectToLogin("Unable to load student profile. Please retry.");
         }
 
         let onboardingCompleted = existingProfile?.onboarding_completed;
-        let userRole = existingProfile?.role || "CLIENT";
-        let careerStage = existingProfile?.career_stage || "STUDENT";
+        const userRole = existingProfile?.role || "CLIENT";
+        const careerStage = existingProfile?.career_stage || "STUDENT";
 
         if (!existingProfile) {
           // Initialize new profile for Google user
           try {
-            await supabase.from("profiles").upsert({
+            const { data: newProfile, error: profileError } = await supabase.from("profiles").upsert({
               id: user.id,
+              user_id: user.id,
               name: userName,
               display_name: userName,
               email: user.email,
-              age_band: "18+",
               role: "CLIENT",
               career_stage: "STUDENT",
               onboarding_completed: false,
@@ -65,18 +75,20 @@ export async function GET(req: NextRequest) {
                 { id: "fullstack", name: "Full Stack Development", category: "Engineering", selfLevel: 0, effectiveLevel: 0 },
               ],
               updated_at: new Date().toISOString(),
-            });
+            }, { onConflict: "id", ignoreDuplicates: true }).select("id").maybeSingle();
+            if (profileError) throw profileError;
             onboardingCompleted = false;
 
             // Send custom welcome email for first-time Google sign-up
-            if (user.email) {
+            if (newProfile && user.email) {
               sendSignupWelcomeEmail({
                 email: user.email,
                 name: userName,
               }).catch((e) => console.warn("[OAuth Welcome Email Warning]:", e));
             }
           } catch (profileErr) {
-            console.warn("[OAuth Profile Insert Note]:", profileErr);
+            console.error("[OAuth Profile Insert Error]:", profileErr);
+            return redirectToLogin("Unable to set up your student profile. Please retry.");
           }
         }
 
@@ -118,17 +130,11 @@ export async function GET(req: NextRequest) {
 
         return response;
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error("[OAuth Callback Exception]:", err);
-      const loginUrl = new URL("/auth/login", origin);
-      loginUrl.searchParams.set("error", "Authentication failed. Please try again.");
-      if (nextParam) loginUrl.searchParams.set("redirectUrl", nextParam);
-      return NextResponse.redirect(loginUrl);
+      return redirectToLogin("Authentication failed. Please try again.");
     }
   }
 
-  // Fallback if no code received
-  const fallbackUrl = new URL("/auth/login", origin);
-  if (nextParam) fallbackUrl.searchParams.set("redirectUrl", nextParam);
-  return NextResponse.redirect(fallbackUrl);
+  return redirectToLogin();
 }

@@ -1,0 +1,156 @@
+.welcome {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem 2rem;
+  padding: clamp(1.25rem, 4vw, 2.75rem);
+  border: 1px solid #273e64;
+  border-radius: 1.25rem;
+  background: linear-gradient(115deg, #132442 30%, #203c68);
+  color: #e0eafa;
+}
+
+.welcome > div:first-child {
+  flex: 1 1 22rem;
+  min-width: 0;
+}
+
+.welcomeTitle {
+  color: #fff;
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-weight: 750;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.welcome p {
+  max-width: 50ch;
+  margin-top: 0.65rem;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.myraButton,
+.quickLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 0.625rem;
+  font-size: 0.875rem;
+  font-weight: 650;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.myraButton {
+  min-height: 2.75rem;
+  padding: 0.625rem 1rem;
+  background: #fff;
+  color: #16345f;
+}
+
+.myraButton:hover {
+  background: #e5efff;
+}
+
+.nextActivity {
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid #d5e1f2;
+  border-inline-start: 3px solid #3971cc;
+  border-radius: 0.875rem;
+  background: #fff;
+}
+
+.quickLink {
+  min-height: 2.5rem;
+  padding: 0.4rem 0.75rem;
+  border-color: #dbe3ef;
+  background: #fff;
+  color: #344661;
+}
+
+.quickLink:hover,
+.toolCard:hover {
+  border-color: #8ba8d1;
+  background: #fbfdff;
+}
+
+.toolGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: 0.875rem;
+}
+
+.toolCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  padding: 1rem;
+  border: 1px solid #dbe3ef;
+  border-radius: 0.875rem;
+  background: #fff;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.toolCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.toolIcon {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: 0.625rem;
+  background: #e9f1ff;
+  color: #2255a6;
+}
+
+.toolArrow {
+  flex-shrink: 0;
+  color: #607591;
+}
+
+.toolCard h3 {
+  color: #152742;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.toolCard p {
+  margin-top: 0.25rem;
+  color: #4d5d74;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.myraButton:focus-visible,
+.quickLink:focus-visible,
+.toolCard:focus-visible {
+  outline: 2px solid #2255a6;
+  outline-offset: 3px;
+}
+
+.myraButton:focus-visible {
+  outline-color: #c0d8ff;
+}
+
+@media (max-width: 480px) {
+  .welcomeAction,
+  .myraButton {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .myraButton,
+  .quickLink,
+  .toolCard {
+    transition: none;
+  }
+}
