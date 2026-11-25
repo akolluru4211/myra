@@ -12,6 +12,14 @@
 -- ============================================================================
 
 -- 1. Jobs & Postings (Query path: Active jobs, filtered by source/moderation, ordered by recency)
+ALTER TABLE public.jobs
+  ADD COLUMN IF NOT EXISTS posted_at TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS source_type TEXT DEFAULT 'admin_curated',
+  ADD COLUMN IF NOT EXISTS source_name TEXT;
+
+UPDATE public.jobs SET posted_at = created_at WHERE posted_at IS NULL;
+ALTER TABLE public.jobs ALTER COLUMN posted_at SET DEFAULT now();
+
 CREATE INDEX IF NOT EXISTS idx_jobs_active_posted 
 ON jobs (is_active, moderation_status, posted_at DESC);
 

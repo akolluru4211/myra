@@ -133,8 +133,8 @@ DO $$ BEGIN
     CREATE POLICY "audit_read_founder_admin" ON public.internal_audit_logs
       FOR SELECT USING (
         EXISTS (
-          SELECT 1 FROM public.users u 
-          WHERE u.id = auth.uid() AND (u.is_admin = TRUE OR u.is_founder = TRUE OR u.is_hr = TRUE)
+          SELECT 1 FROM public.profiles p
+          WHERE p.id = auth.uid() AND (p.is_admin = TRUE OR upper(p.role) IN ('ADMIN', 'SUPER_ADMIN', 'FOUNDER', 'HR'))
         )
       );
   END IF;

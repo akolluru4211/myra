@@ -30,8 +30,8 @@ CREATE TABLE IF NOT EXISTS public.ambassador_referrals (
 );
 
 -- Seed Ambassador Badge if not existing
-INSERT INTO public.badges (name, code, description, icon_name, xp_value)
-VALUES ('Edworld Campus Ambassador', 'campus_ambassador', 'Official Edworld Co Campus Representative & Community Leader', 'Award', 250)
+INSERT INTO public.badges (name, code, description, icon)
+VALUES ('Edworld Campus Ambassador', 'campus_ambassador', 'Official Edworld Co Campus Representative & Community Leader', 'Award')
 ON CONFLICT (code) DO NOTHING;
 
 -- Indexes

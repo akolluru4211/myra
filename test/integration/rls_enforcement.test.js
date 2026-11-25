@@ -1,102 +1,99 @@
-const assert = require("assert");
-const { Pool } = require("pg");
-const { requireTestDatabaseUrl } = require('../../scripts/database-url');
+const assert = require("node:assert/strict");
+const { randomUUID } = require("node:crypto");
+const { Client } = require("pg");
+const { requireTestDatabaseUrl } = require("../../scripts/database-url");
 
-const pool = new Pool({
-  connectionString: requireTestDatabaseUrl()
-});
+async function setAuthenticatedUser(client, userId) {
+  await client.query(
+    "SELECT set_config('request.jwt.claim.sub', $1, true), set_config('request.jwt.claims', $2, true)",
+    [userId, JSON.stringify({ sub: userId, role: "authenticated" })]
+  );
+}
 
 async function runRlsEnforcementSuite() {
-  console.log("=== RUNNING POSTGRES RLS ENFORCEMENT & BYPASS ATTEMPT TESTS ===");
-  const client = await pool.connect();
+  const client = new Client({ connectionString: requireTestDatabaseUrl() });
+  await client.connect();
 
   try {
-    // 1. Verify RLS is enabled on critical tables in Postgres schema
-    console.log("--- Check 1: Verify Row Level Security is Enabled on Sensitive Tables ---");
-    const rlsStatusRes = await client.query(`
-      SELECT tablename, rowsecurity
-      FROM pg_tables
-      WHERE schemaname = 'public'
-        AND tablename IN ('profiles', 'job_applications', 'resumes', 'audit_logs', 'jobs');
-    `);
-
-    const rlsMap = {};
-    rlsStatusRes.rows.forEach(r => { rlsMap[r.tablename] = r.rowsecurity; });
-
-    assert.ok(rlsMap.profiles !== undefined, "Table 'profiles' must exist");
-    assert.ok(rlsMap.job_applications !== undefined, "Table 'job_applications' must exist");
-    console.log("[PASS] Sensitive table definitions verified in database catalog");
-
-    // 2. Cross-Tenant Query Isolation Simulation
-    console.log("\n--- Check 2: Cross-Tenant Data Isolation Simulation ---");
-    const userA = "00000000-0000-4000-8000-01a0e819ad7c";
-    const userB = "00000000-0000-4000-8000-01a0e8189695";
-
-    // Create a private record for User A
-    const testApp = await client.query(`
-      INSERT INTO public.job_applications (
-        job_id, user_id, resume_snapshot, cover_note, status, match_score, applied_at, status_updated_at
-      )
-      SELECT id, $1, '{"private": true}'::jsonb, 'Private Note for User A', 'submitted', 90, NOW(), NOW()
-      FROM public.jobs
-      WHERE is_active = true
-      LIMIT 1
-      RETURNING id, job_id, user_id;
-    `, [userA]);
-
-    if (testApp.rowCount > 0) {
-      const createdAppId = testApp.rows[0].id;
-      const createdJobId = testApp.rows[0].job_id;
-
-      // Assert User B querying strictly under tenant filter WHERE user_id = User B gets 0 rows
-      const userBQuery = await client.query(`
-        SELECT * FROM public.job_applications WHERE id = $1 AND user_id = $2;
-      `, [createdAppId, userB]);
-      assert.strictEqual(userBQuery.rowCount, 0, "User B must receive 0 rows when attempting to read User A's application");
-      console.log("[PASS] Cross-user direct access attempt rejected (0 rows returned)");
-
-      // Assert User B cannot mutate User A's application
-      const userBUpdate = await client.query(`
-        UPDATE public.job_applications
-        SET cover_note = 'Tampered by User B'
-        WHERE id = $1 AND user_id = $2
-        RETURNING id;
-      `, [createdAppId, userB]);
-      assert.strictEqual(userBUpdate.rowCount, 0, "User B must not be able to mutate User A's application");
-      console.log("[PASS] Cross-user mutation attempt rejected (0 rows updated)");
-
-      // Assert Employer role isolation: an unrelated employer cannot see User A's application
-      const foreignEmployerQuery = await client.query(`
-        SELECT a.*
-        FROM public.job_applications a
-        JOIN public.jobs j ON j.id = a.job_id
-        WHERE a.id = $1 AND j.posted_by = $2;
-      `, [createdAppId, userB]);
-      assert.strictEqual(foreignEmployerQuery.rowCount, 0, "Unrelated employer must receive 0 rows for another employer's applicants");
-      console.log("[PASS] Employer cross-tenant isolation confirmed");
-
-      // Cleanup test row
-      await client.query("DELETE FROM public.job_applications WHERE id = $1", [createdAppId]);
-      console.log("[PASS] Test application record cleaned up cleanly");
+    await client.query("BEGIN");
+    const expectedTables = ["profiles", "job_applications", "resumes", "audit_logs", "jobs"];
+    const rlsStatus = await client.query(
+      "SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public' AND tablename = ANY($1::text[])",
+      [expectedTables]
+    );
+    const enabledTables = new Set(rlsStatus.rows.filter((row) => row.rowsecurity).map((row) => row.tablename));
+    for (const table of expectedTables) {
+      assert.ok(enabledTables.has(table), "RLS must be enabled for " + table);
     }
 
-    // 3. Assert PII columns are not publicly exposed without auth
-    console.log("\n--- Check 3: DOB & Security Columns Isolation ---");
-    const profileColumns = await client.query(`
-      SELECT column_name 
-      FROM information_schema.columns 
-      WHERE table_name = 'profiles' AND column_name IN ('dob', 'date_of_birth', 'password_hash');
-    `);
-    console.log(`[PASS] Verified ${profileColumns.rowCount} sensitive security column definitions.`);
+    const applicant = randomUUID();
+    const unrelatedUser = randomUUID();
+    const employer = randomUUID();
+    const fixtureName = "RLS Fixture " + randomUUID();
+    await client.query(
+      "INSERT INTO auth.users (id, email, raw_user_meta_data) " +
+      "SELECT id, 'rls-fixture-' || id::text || '@example.invalid', jsonb_build_object('full_name', $2::text || ' ' || id::text) " +
+      "FROM unnest($1::uuid[]) AS users(id)",
+      [[applicant, unrelatedUser, employer], fixtureName]
+    );
+    const job = await client.query(
+      "INSERT INTO public.jobs (posted_by, title, company, location, type, description, application_deadline, is_active, moderation_status) " +
+      "VALUES ($1, 'RLS fixture job', 'Example', 'Remote', 'full_time', 'Temporary CI fixture', now() + interval '1 day', true, 'approved') " +
+      "RETURNING id",
+      [employer]
+    );
+    const application = await client.query(
+      "INSERT INTO public.job_applications (job_id, user_id, resume_snapshot, cover_note) " +
+      "VALUES ($1, $2, '{}'::jsonb, 'Private fixture note') RETURNING id",
+      [job.rows[0].id, applicant]
+    );
+    const id = application.rows[0].id;
 
-    console.log("\nALL RLS ENFORCEMENT & BYPASS PREVENTION TESTS PASSED SUCCESSFULLY!\n");
+    await client.query("SET LOCAL ROLE authenticated");
+    await setAuthenticatedUser(client, applicant);
+    const learnerProfile = await client.query(
+      "UPDATE public.profiles SET role = 'STUDENT' WHERE id = $1 RETURNING role",
+      [applicant]
+    );
+    assert.equal(learnerProfile.rows[0]?.role, "STUDENT", "Learners must retain ordinary profile updates");
+
+    await client.query("SAVEPOINT authorization_fields");
+    await assert.rejects(
+      client.query("UPDATE public.profiles SET is_admin = true WHERE id = $1", [applicant]),
+      { code: "42501" },
+      "Authenticated clients must not change server-managed authorization fields"
+    );
+    await client.query("ROLLBACK TO SAVEPOINT authorization_fields");
+
+    const owner = await client.query("SELECT id FROM public.job_applications WHERE id = $1", [id]);
+    assert.equal(owner.rowCount, 1, "The applicant must see their own application");
+
+    await setAuthenticatedUser(client, unrelatedUser);
+    const otherReader = await client.query("SELECT id FROM public.job_applications WHERE id = $1", [id]);
+    assert.equal(otherReader.rowCount, 0, "An unrelated authenticated user must see no application");
+    const otherWriter = await client.query(
+      "UPDATE public.job_applications SET cover_note = 'Unexpected update' WHERE id = $1 RETURNING id",
+      [id]
+    );
+    assert.equal(otherWriter.rowCount, 0, "An unrelated authenticated user must not update the application");
+
+    await setAuthenticatedUser(client, employer);
+    const employerReader = await client.query("SELECT id FROM public.job_applications WHERE id = $1", [id]);
+    assert.equal(employerReader.rowCount, 1, "The posting employer must see applications for their own job");
+
+    console.log("RLS is enabled on the expected tables and application access is correctly scoped.");
   } finally {
-    client.release();
-    await pool.end();
+    try {
+      await client.query("ROLLBACK");
+    } finally {
+      await client.end();
+    }
   }
 }
 
-runRlsEnforcementSuite().catch((err) => {
-  console.error("RLS Enforcement Suite Failed:", err);
-  process.exit(1);
-});
+if (require.main === module) {
+  runRlsEnforcementSuite().catch((error) => {
+    console.error("RLS Enforcement Suite Failed:", error.message);
+    process.exitCode = 1;
+  });
+}

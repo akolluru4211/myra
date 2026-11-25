@@ -89,6 +89,16 @@ describe("Database Migration Integrity & RLS Policy Verification", () => {
     );
   });
 
+  it("defines profiles.role before creating the interview question admin policy", () => {
+    const file = path.join(migrationsDir, "20260912000000_live_data_and_mcp_schema.sql");
+    const content = fs.readFileSync(file, "utf8");
+    const roleColumn = content.indexOf("ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS role TEXT;");
+    const adminPolicy = content.indexOf('CREATE POLICY "Allow admin manage on interview questions"');
+
+    assert.ok(roleColumn !== -1, "Clean migration replay requires profiles.role");
+    assert.ok(adminPolicy > roleColumn, "The role column must exist before the policy uses it");
+  });
+
   describe("RLS Policy Access Rules Evaluation", () => {
     // Pure logic simulation of profiles_select_public_or_own RLS policy
     function canSelectProfile({ authUid, profileOwnerId, profileUserId, isPublic, ageBand, isAdmin }) {

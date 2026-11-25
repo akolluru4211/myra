@@ -38,18 +38,23 @@ CREATE INDEX IF NOT EXISTS idx_profiles_company ON public.profiles(company);
 CREATE TABLE IF NOT EXISTS public.connections (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   requester_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
-  receiver_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  recipient_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   status TEXT NOT NULL DEFAULT 'PENDING' CHECK (status IN ('PENDING', 'ACCEPTED', 'DECLINED', 'BLOCKED', 'pending', 'accepted', 'declined', 'blocked')),
   request_type TEXT DEFAULT 'connection' CHECK (request_type IN ('connection', 'mentorship', 'study_group')),
   message TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
-  CONSTRAINT connections_no_self_connect CHECK (requester_id <> receiver_id),
-  CONSTRAINT connections_unique_pair UNIQUE (requester_id, receiver_id)
+  CONSTRAINT connections_no_self_connect CHECK (requester_id <> recipient_id),
+  CONSTRAINT connections_unique_pair UNIQUE (requester_id, recipient_id)
 );
 
+ALTER TABLE public.connections
+  ADD COLUMN IF NOT EXISTS type TEXT DEFAULT 'connection',
+  ADD COLUMN IF NOT EXISTS note TEXT,
+  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
+
 CREATE INDEX IF NOT EXISTS idx_connections_requester ON public.connections(requester_id);
-CREATE INDEX IF NOT EXISTS idx_connections_receiver ON public.connections(receiver_id);
+CREATE INDEX IF NOT EXISTS idx_connections_receiver ON public.connections(recipient_id);
 CREATE INDEX IF NOT EXISTS idx_connections_status ON public.connections(status);
 
 -- 3. User Blocks Table
@@ -97,22 +102,22 @@ DROP POLICY IF EXISTS "connections_delete_participants" ON public.connections;
 
 CREATE POLICY "connections_view_participants" ON public.connections
   FOR SELECT USING (
-    auth.uid() = requester_id OR auth.uid() = receiver_id
+    auth.uid() = requester_id OR auth.uid() = recipient_id
   );
 
 CREATE POLICY "connections_insert_requester" ON public.connections
   FOR INSERT WITH CHECK (
-    auth.uid() = requester_id AND requester_id <> receiver_id
+    auth.uid() = requester_id AND requester_id <> recipient_id
   );
 
 CREATE POLICY "connections_update_participants" ON public.connections
   FOR UPDATE USING (
-    auth.uid() = receiver_id OR auth.uid() = requester_id
+    auth.uid() = recipient_id OR auth.uid() = requester_id
   );
 
 CREATE POLICY "connections_delete_participants" ON public.connections
   FOR DELETE USING (
-    auth.uid() = requester_id OR auth.uid() = receiver_id
+    auth.uid() = requester_id OR auth.uid() = recipient_id
   );
 
 -- 7. User Blocks RLS Policies

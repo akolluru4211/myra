@@ -28,12 +28,12 @@ CREATE TABLE IF NOT EXISTS public.communication_profiles (
 CREATE INDEX IF NOT EXISTS idx_comm_profiles_user_id ON public.communication_profiles(user_id);
 ALTER TABLE public.communication_profiles ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS Users manage own communication profile ON public.communication_profiles;
-CREATE POLICY Users manage own communication profile
+DROP POLICY IF EXISTS "Users manage own communication profile" ON public.communication_profiles;
+CREATE POLICY "Users manage own communication profile"
   ON public.communication_profiles FOR ALL
   TO authenticated
-  USING (auth.uid()::text = user_id OR auth.uid() IS NOT NULL)
-  WITH CHECK (auth.uid()::text = user_id OR auth.uid() IS NOT NULL);
+  USING (auth.uid()::text = user_id::text)
+  WITH CHECK (auth.uid()::text = user_id::text);
 
 -- 2. LANGUAGE PATTERNS TABLE (Cross-Interview Learning)
 CREATE TABLE IF NOT EXISTS public.language_patterns (
@@ -54,12 +54,12 @@ CREATE INDEX IF NOT EXISTS idx_lang_patterns_user_id ON public.language_patterns
 CREATE INDEX IF NOT EXISTS idx_lang_patterns_type ON public.language_patterns(pattern_type);
 ALTER TABLE public.language_patterns ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS Users manage own language patterns ON public.language_patterns;
-CREATE POLICY Users manage own language patterns
+DROP POLICY IF EXISTS "Users manage own language patterns" ON public.language_patterns;
+CREATE POLICY "Users manage own language patterns"
   ON public.language_patterns FOR ALL
   TO authenticated
-  USING (auth.uid()::text = user_id OR auth.uid() IS NOT NULL)
-  WITH CHECK (auth.uid()::text = user_id OR auth.uid() IS NOT NULL);
+  USING (auth.uid()::text = user_id::text)
+  WITH CHECK (auth.uid()::text = user_id::text);
 
 -- 3. INTERVIEW LANGUAGE METRICS TABLE (Per-Interview Telemetry)
 CREATE TABLE IF NOT EXISTS public.interview_language_metrics (
@@ -87,12 +87,12 @@ CREATE INDEX IF NOT EXISTS idx_lang_metrics_user_id ON public.interview_language
 CREATE INDEX IF NOT EXISTS idx_lang_metrics_interview_id ON public.interview_language_metrics(interview_id);
 ALTER TABLE public.interview_language_metrics ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS Users manage own interview language metrics ON public.interview_language_metrics;
-CREATE POLICY Users manage own interview language metrics
+DROP POLICY IF EXISTS "Users manage own interview language metrics" ON public.interview_language_metrics;
+CREATE POLICY "Users manage own interview language metrics"
   ON public.interview_language_metrics FOR ALL
   TO authenticated
-  USING (auth.uid()::text = user_id OR auth.uid() IS NOT NULL)
-  WITH CHECK (auth.uid()::text = user_id OR auth.uid() IS NOT NULL);
+  USING (auth.uid()::text = user_id::text)
+  WITH CHECK (auth.uid()::text = user_id::text);
 
 -- 4. LANGUAGE PRACTICE SESSIONS TABLE (Rapid Drills & Try-Again Comparisons)
 CREATE TABLE IF NOT EXISTS public.language_practice_sessions (
@@ -117,9 +117,9 @@ CREATE TABLE IF NOT EXISTS public.language_practice_sessions (
 CREATE INDEX IF NOT EXISTS idx_practice_sessions_user_id ON public.language_practice_sessions(user_id);
 ALTER TABLE public.language_practice_sessions ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS Users manage own practice sessions ON public.language_practice_sessions;
-CREATE POLICY Users manage own practice sessions
+DROP POLICY IF EXISTS "Users manage own practice sessions" ON public.language_practice_sessions;
+CREATE POLICY "Users manage own practice sessions"
   ON public.language_practice_sessions FOR ALL
   TO authenticated
-  USING (auth.uid()::text = user_id OR auth.uid() IS NOT NULL)
-  WITH CHECK (auth.uid()::text = user_id OR auth.uid() IS NOT NULL);
+  USING (auth.uid()::text = user_id::text)
+  WITH CHECK (auth.uid()::text = user_id::text);

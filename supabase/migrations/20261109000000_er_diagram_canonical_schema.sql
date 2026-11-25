@@ -42,6 +42,8 @@ CREATE TABLE IF NOT EXISTS public.colleges (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+ALTER TABLE public.colleges ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE;
+
 CREATE INDEX IF NOT EXISTS idx_colleges_slug ON public.colleges(slug);
 CREATE INDEX IF NOT EXISTS idx_colleges_location ON public.colleges(location);
 
@@ -117,6 +119,11 @@ CREATE TABLE IF NOT EXISTS public.problems (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+ALTER TABLE public.problems
+    ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE,
+    ADD COLUMN IF NOT EXISTS difficulty TEXT CHECK (difficulty IN ('easy', 'medium', 'hard')),
+    ADD COLUMN IF NOT EXISTS is_published BOOLEAN DEFAULT FALSE;
 
 CREATE INDEX IF NOT EXISTS idx_problems_slug ON public.problems(slug);
 CREATE INDEX IF NOT EXISTS idx_problems_difficulty ON public.problems(difficulty);
@@ -567,8 +574,8 @@ BEGIN
 
     -- notifications
     DROP POLICY IF EXISTS "Users view own notifications" ON public.notifications;
-    CREATE POLICY "Users view own notifications" ON public.notifications FOR SELECT TO authenticated USING (user_id = (SELECT auth.uid()));
+    CREATE POLICY "Users view own notifications" ON public.notifications FOR SELECT TO authenticated USING (user_id::text = (SELECT auth.uid())::text);
 
     DROP POLICY IF EXISTS "Users update own notifications" ON public.notifications;
-    CREATE POLICY "Users update own notifications" ON public.notifications FOR UPDATE TO authenticated USING (user_id = (SELECT auth.uid()));
+    CREATE POLICY "Users update own notifications" ON public.notifications FOR UPDATE TO authenticated USING (user_id::text = (SELECT auth.uid())::text);
 END $$;

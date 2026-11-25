@@ -50,6 +50,44 @@ ON public.interview_questions FOR SELECT
 TO anon, authenticated
 USING (is_active = true);
 
+-- The initial profiles schema has is_admin but does not define role.
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS role TEXT;
+
+-- Browser clients can update their learner role. Staff assignments are server-managed.
+CREATE OR REPLACE FUNCTION public.guard_profile_authorization_fields()
+RETURNS trigger
+LANGUAGE plpgsql
+SET search_path = pg_catalog
+AS $$
+BEGIN
+  IF current_user NOT IN ('anon', 'authenticated') THEN
+    RETURN NEW;
+  END IF;
+
+  IF TG_OP = 'INSERT' THEN
+    IF NEW.is_admin IS TRUE OR upper(NEW.role) NOT IN ('CLIENT', 'STUDENT') THEN
+      RAISE EXCEPTION 'Profile authorization fields are server-managed' USING ERRCODE = '42501';
+    END IF;
+  ELSIF (NEW.is_admin IS TRUE) <> (OLD.is_admin IS TRUE)
+    OR (
+      NEW.role IS DISTINCT FROM OLD.role
+      AND (
+        upper(NEW.role) NOT IN ('CLIENT', 'STUDENT')
+        OR upper(OLD.role) NOT IN ('CLIENT', 'STUDENT')
+      )
+    ) THEN
+    RAISE EXCEPTION 'Profile authorization fields are server-managed' USING ERRCODE = '42501';
+  END IF;
+
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS guard_profile_authorization_fields ON public.profiles;
+CREATE TRIGGER guard_profile_authorization_fields
+BEFORE INSERT OR UPDATE OF role, is_admin ON public.profiles
+FOR EACH ROW EXECUTE FUNCTION public.guard_profile_authorization_fields();
+
 DROP POLICY IF EXISTS "Allow admin manage on interview questions" ON public.interview_questions;
 CREATE POLICY "Allow admin manage on interview questions"
 ON public.interview_questions FOR ALL

@@ -149,6 +149,15 @@ CREATE TABLE IF NOT EXISTS public.daily_challenges (
     CONSTRAINT uq_daily_challenges_date_level UNIQUE (challenge_date, level)
 );
 
+ALTER TABLE public.daily_challenges
+    ADD COLUMN IF NOT EXISTS level TEXT NOT NULL DEFAULT 'beginner'
+        CHECK (level IN ('beginner', 'intermediate', 'advanced')),
+    ADD COLUMN IF NOT EXISTS problem_id UUID REFERENCES public.problems(id) ON DELETE SET NULL,
+    ADD COLUMN IF NOT EXISTS aptitude_question_ids INT[] NOT NULL DEFAULT '{}',
+    ADD COLUMN IF NOT EXISTS interview_question_id TEXT;
+
+ALTER TABLE public.daily_challenges DROP CONSTRAINT IF EXISTS daily_challenges_challenge_date_key;
+CREATE UNIQUE INDEX IF NOT EXISTS uq_daily_challenges_date_level ON public.daily_challenges(challenge_date, level);
 CREATE INDEX IF NOT EXISTS idx_daily_challenges_date_level ON public.daily_challenges(challenge_date, level);
 
 CREATE TABLE IF NOT EXISTS public.challenge_progress (
@@ -179,6 +188,13 @@ CREATE TABLE IF NOT EXISTS public.badges (
     tier TEXT NOT NULL DEFAULT 'bronze' CHECK (tier IN ('bronze', 'silver', 'gold', 'platinum', 'legendary')),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE public.badges
+    ADD COLUMN IF NOT EXISTS category TEXT NOT NULL DEFAULT 'special'
+        CHECK (category IN ('streak', 'xp', 'leaderboard', 'squad', 'special')),
+    ADD COLUMN IF NOT EXISTS tier TEXT NOT NULL DEFAULT 'bronze'
+        CHECK (tier IN ('bronze', 'silver', 'gold', 'platinum', 'legendary')),
+    ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
 
 CREATE TABLE IF NOT EXISTS public.user_badges (
     user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
@@ -228,6 +244,14 @@ CREATE TABLE IF NOT EXISTS public.squads (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE public.squads
+    ADD COLUMN IF NOT EXISTS college_id UUID REFERENCES public.colleges(id) ON DELETE SET NULL,
+    ADD COLUMN IF NOT EXISTS goal_type TEXT NOT NULL DEFAULT 'placement'
+        CHECK (goal_type IN ('placement', 'dsa', 'gate', 'core_engineering', 'general')),
+    ADD COLUMN IF NOT EXISTS weekly_target_xp INTEGER NOT NULL DEFAULT 1000,
+    ADD COLUMN IF NOT EXISTS invite_code VARCHAR(6) UNIQUE,
+    ADD COLUMN IF NOT EXISTS squad_streak INTEGER NOT NULL DEFAULT 0;
 
 CREATE INDEX IF NOT EXISTS idx_squads_college ON public.squads(college_id);
 CREATE INDEX IF NOT EXISTS idx_squads_invite_code ON public.squads(invite_code);

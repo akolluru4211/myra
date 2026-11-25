@@ -1,8 +1,8 @@
-﻿-- ==============================================================================
+-- ==============================================================================
 -- Migration: 20260915000000_phase28_feature_data_sync_rls.sql
 -- Description: Phase 28 Complete User Identity + Feature Data Sync with Row Level Security (RLS)
 --              Guarantees auth.users.id (UUID) is the primary user identity across all tables:
---              profiles, resumes, projects, interview_sessions, connected_accounts, 
+--              profiles, resumes, projects, interview_sessions, connected_accounts,
 --              job_applications, saved_jobs, messages, notifications.
 -- ==============================================================================
 
@@ -28,35 +28,35 @@ CREATE INDEX IF NOT EXISTS idx_profiles_display_name ON public.profiles(display_
 
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS Users can view public profiles or own profile ON public.profiles;
-DROP POLICY IF EXISTS Users can insert own profile ON public.profiles;
-DROP POLICY IF EXISTS Users can update own profile ON public.profiles;
-DROP POLICY IF EXISTS Users can delete own profile ON public.profiles;
+DROP POLICY IF EXISTS "Users can view public profiles or own profile" ON public.profiles;
+DROP POLICY IF EXISTS "Users can insert own profile" ON public.profiles;
+DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
+DROP POLICY IF EXISTS "Users can delete own profile" ON public.profiles;
 
-CREATE POLICY Users can view public profiles or own profile
+CREATE POLICY "Users can view public profiles or own profile"
   ON public.profiles FOR SELECT
   USING (
-    is_public = true 
-    OR auth.uid() = user_id 
+    is_public = true
+    OR auth.uid() = user_id
     OR auth.uid()::text = id::text
   );
 
-CREATE POLICY Users can insert own profile
+CREATE POLICY "Users can insert own profile"
   ON public.profiles FOR INSERT
   WITH CHECK (
-    auth.uid() = user_id 
+    auth.uid() = user_id
     OR auth.uid()::text = id::text
-    OR auth.uid() IS NOT NULL
+
   );
 
-CREATE POLICY Users can update own profile
+CREATE POLICY "Users can update own profile"
   ON public.profiles FOR UPDATE
   USING (
-    auth.uid() = user_id 
+    auth.uid() = user_id
     OR auth.uid()::text = id::text
   )
   WITH CHECK (
-    auth.uid() = user_id 
+    auth.uid() = user_id
     OR auth.uid()::text = id::text
   );
 
@@ -75,12 +75,12 @@ CREATE TABLE IF NOT EXISTS public.resumes (
 CREATE INDEX IF NOT EXISTS idx_resumes_user_id ON public.resumes(user_id);
 ALTER TABLE public.resumes ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS Users can manage own resumes ON public.resumes;
-CREATE POLICY Users can manage own resumes
+DROP POLICY IF EXISTS "Users can manage own resumes" ON public.resumes;
+CREATE POLICY "Users can manage own resumes"
   ON public.resumes FOR ALL
   TO authenticated
-  USING (auth.uid()::text = user_id OR auth.uid() IS NOT NULL)
-  WITH CHECK (auth.uid()::text = user_id OR auth.uid() IS NOT NULL);
+  USING (auth.uid()::text = user_id::text)
+  WITH CHECK (auth.uid()::text = user_id::text);
 
 -- 3. PROJECTS TABLE HARDENING
 CREATE TABLE IF NOT EXISTS public.projects (
@@ -102,21 +102,21 @@ CREATE TABLE IF NOT EXISTS public.projects (
 CREATE INDEX IF NOT EXISTS idx_projects_user_id ON public.projects(user_id);
 ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS Users can view public projects or own projects ON public.projects;
-CREATE POLICY Users can view public projects or own projects
+DROP POLICY IF EXISTS "Users can view public projects or own projects" ON public.projects;
+CREATE POLICY "Users can view public projects or own projects"
   ON public.projects FOR SELECT
   USING (
-    is_public = true 
-    OR auth.uid()::text = user_id 
-    OR auth.uid() IS NOT NULL
+    is_public = true
+    OR auth.uid()::text = user_id::text
+
   );
 
-DROP POLICY IF EXISTS Users can manage own projects ON public.projects;
-CREATE POLICY Users can manage own projects
+DROP POLICY IF EXISTS "Users can manage own projects" ON public.projects;
+CREATE POLICY "Users can manage own projects"
   ON public.projects FOR ALL
   TO authenticated
-  USING (auth.uid()::text = user_id OR auth.uid() IS NOT NULL)
-  WITH CHECK (auth.uid()::text = user_id OR auth.uid() IS NOT NULL);
+  USING (auth.uid()::text = user_id::text)
+  WITH CHECK (auth.uid()::text = user_id::text);
 
 -- 4. INTERVIEW SESSIONS TABLE HARDENING
 CREATE TABLE IF NOT EXISTS public.interview_sessions (
@@ -141,12 +141,12 @@ CREATE TABLE IF NOT EXISTS public.interview_sessions (
 CREATE INDEX IF NOT EXISTS idx_interview_sessions_user_id ON public.interview_sessions(user_id);
 ALTER TABLE public.interview_sessions ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS Users can manage own interview sessions ON public.interview_sessions;
-CREATE POLICY Users can manage own interview sessions
+DROP POLICY IF EXISTS "Users can manage own interview sessions" ON public.interview_sessions;
+CREATE POLICY "Users can manage own interview sessions"
   ON public.interview_sessions FOR ALL
   TO authenticated
-  USING (auth.uid()::text = user_id OR auth.uid() IS NOT NULL)
-  WITH CHECK (auth.uid()::text = user_id OR auth.uid() IS NOT NULL);
+  USING (auth.uid()::text = user_id::text)
+  WITH CHECK (auth.uid()::text = user_id::text);
 
 -- 5. CONNECTED ACCOUNTS TABLE HARDENING
 CREATE TABLE IF NOT EXISTS public.connected_accounts (
@@ -167,11 +167,11 @@ CREATE TABLE IF NOT EXISTS public.connected_accounts (
 CREATE INDEX IF NOT EXISTS idx_connected_accounts_user_id ON public.connected_accounts(user_id);
 ALTER TABLE public.connected_accounts ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS Users manage own connected accounts ON public.connected_accounts;
-CREATE POLICY Users manage own connected accounts
+DROP POLICY IF EXISTS "Users manage own connected accounts" ON public.connected_accounts;
+CREATE POLICY "Users manage own connected accounts"
   ON public.connected_accounts FOR ALL
-  USING (auth.uid()::text = user_id OR auth.uid() IS NOT NULL)
-  WITH CHECK (auth.uid()::text = user_id OR auth.uid() IS NOT NULL);
+  USING (auth.uid()::text = user_id::text)
+  WITH CHECK (auth.uid()::text = user_id::text);
 
 -- 6. JOB APPLICATIONS TABLE HARDENING
 CREATE TABLE IF NOT EXISTS public.job_applications (
@@ -192,12 +192,12 @@ CREATE INDEX IF NOT EXISTS idx_job_applications_user_id ON public.job_applicatio
 CREATE INDEX IF NOT EXISTS idx_job_applications_job_id ON public.job_applications(job_id);
 ALTER TABLE public.job_applications ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS Users manage own job applications ON public.job_applications;
-CREATE POLICY Users manage own job applications
+DROP POLICY IF EXISTS "Users manage own job applications" ON public.job_applications;
+CREATE POLICY "Users manage own job applications"
   ON public.job_applications FOR ALL
   TO authenticated
-  USING (auth.uid()::text = user_id OR auth.uid() IS NOT NULL)
-  WITH CHECK (auth.uid()::text = user_id OR auth.uid() IS NOT NULL);
+  USING (auth.uid()::text = user_id::text)
+  WITH CHECK (auth.uid()::text = user_id::text AND public.is_adult());
 
 -- 7. SAVED JOBS TABLE HARDENING
 CREATE TABLE IF NOT EXISTS public.saved_jobs (
@@ -212,12 +212,12 @@ CREATE TABLE IF NOT EXISTS public.saved_jobs (
 CREATE INDEX IF NOT EXISTS idx_saved_jobs_user_id ON public.saved_jobs(user_id);
 ALTER TABLE public.saved_jobs ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS Users manage own saved jobs ON public.saved_jobs;
-CREATE POLICY Users manage own saved jobs
+DROP POLICY IF EXISTS "Users manage own saved jobs" ON public.saved_jobs;
+CREATE POLICY "Users manage own saved jobs"
   ON public.saved_jobs FOR ALL
   TO authenticated
-  USING (auth.uid()::text = user_id OR auth.uid() IS NOT NULL)
-  WITH CHECK (auth.uid()::text = user_id OR auth.uid() IS NOT NULL);
+  USING (auth.uid()::text = user_id::text)
+  WITH CHECK (auth.uid()::text = user_id::text);
 
 -- 8. DIRECT MESSAGES TABLE HARDENING
 CREATE TABLE IF NOT EXISTS public.messages (
@@ -230,24 +230,28 @@ CREATE TABLE IF NOT EXISTS public.messages (
   created_at timestamptz DEFAULT now()
 );
 
+ALTER TABLE public.messages ADD COLUMN IF NOT EXISTS receiver_id uuid;
+
 CREATE INDEX IF NOT EXISTS idx_messages_sender_id ON public.messages(sender_id);
 CREATE INDEX IF NOT EXISTS idx_messages_receiver_id ON public.messages(receiver_id);
 CREATE INDEX IF NOT EXISTS idx_messages_conversation_id ON public.messages(conversation_id);
 ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS Users can read and send own messages ON public.messages;
-CREATE POLICY Users can read and send own messages
-  ON public.messages FOR ALL
+DROP POLICY IF EXISTS "Users can read and send own messages" ON public.messages;
+DROP POLICY IF EXISTS "Users can read own direct messages" ON public.messages;
+CREATE POLICY "Users can read own direct messages"
+  ON public.messages FOR SELECT
   TO authenticated
   USING (
-    auth.uid()::text = sender_id 
-    OR auth.uid()::text = receiver_id 
-    OR auth.uid() IS NOT NULL
-  )
-  WITH CHECK (
-    auth.uid()::text = sender_id 
-    OR auth.uid() IS NOT NULL
+    public.is_adult()
+    AND (auth.uid()::text = sender_id::text OR auth.uid()::text = receiver_id::text)
   );
+
+DROP POLICY IF EXISTS "Users can send own direct messages" ON public.messages;
+CREATE POLICY "Users can send own direct messages"
+  ON public.messages FOR INSERT
+  TO authenticated
+  WITH CHECK (public.is_adult() AND auth.uid()::text = sender_id::text);
 
 -- 9. NOTIFICATIONS TABLE HARDENING
 CREATE TABLE IF NOT EXISTS public.notifications (
@@ -264,9 +268,9 @@ CREATE TABLE IF NOT EXISTS public.notifications (
 CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON public.notifications(user_id);
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 
-DROP POLICY IF EXISTS Users manage own notifications ON public.notifications;
-CREATE POLICY Users manage own notifications
+DROP POLICY IF EXISTS "Users manage own notifications" ON public.notifications;
+CREATE POLICY "Users manage own notifications"
   ON public.notifications FOR ALL
   TO authenticated
-  USING (auth.uid()::text = user_id OR auth.uid() IS NOT NULL)
-  WITH CHECK (auth.uid()::text = user_id OR auth.uid() IS NOT NULL);
+  USING (auth.uid()::text = user_id::text)
+  WITH CHECK (auth.uid()::text = user_id::text);

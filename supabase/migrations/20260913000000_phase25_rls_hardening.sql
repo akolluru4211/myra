@@ -19,6 +19,7 @@ ALTER TABLE IF EXISTS public.user_interests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE IF EXISTS public.consents ENABLE ROW LEVEL SECURITY;
 
 -- 2. Create index on firebase_uid for fast lookup and identity synchronization
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS firebase_uid text;
 CREATE INDEX IF NOT EXISTS idx_users_firebase_uid ON public.users (firebase_uid);
 CREATE INDEX IF NOT EXISTS idx_profiles_user_id ON public.profiles (user_id);
 CREATE INDEX IF NOT EXISTS idx_resumes_user_id ON public.resumes (user_id);
@@ -26,6 +27,20 @@ CREATE INDEX IF NOT EXISTS idx_interview_sessions_user_id ON public.interview_se
 CREATE INDEX IF NOT EXISTS idx_applications_user_id ON public.applications (user_id);
 
 -- 3. PROFILES RLS POLICIES
+CREATE OR REPLACE FUNCTION public.current_user_is_profile_staff()
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.profiles p
+    WHERE p.id = (SELECT auth.uid())
+      AND (p.is_admin = true OR p.role IN ('ADMIN', 'SUPER_ADMIN', 'HR', 'FOUNDER'))
+  );
+$$;
+
 DROP POLICY IF EXISTS "Users can read own profile" ON public.profiles;
 CREATE POLICY "Users can read own profile"
 ON public.profiles FOR SELECT
@@ -33,11 +48,7 @@ TO authenticated, anon
 USING (
   id = (SELECT auth.uid()) OR
   is_public = true OR
-  EXISTS (
-    SELECT 1 FROM public.profiles p
-    WHERE p.id = (SELECT auth.uid())
-    AND (p.is_admin = true OR p.role IN ('ADMIN', 'SUPER_ADMIN', 'HR', 'FOUNDER'))
-  )
+  (SELECT public.current_user_is_profile_staff())
 );
 
 DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;

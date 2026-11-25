@@ -43,6 +43,8 @@ DO $$ BEGIN
     CREATE TABLE public.profiles (
       id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
       user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL UNIQUE,
       username TEXT UNIQUE,
       headline TEXT,
       bio TEXT,
@@ -434,10 +436,12 @@ BEGIN
   )
   ON CONFLICT (id) DO NOTHING;
 
-  INSERT INTO public.profiles (id, user_id, username, primary_goal)
+  INSERT INTO public.profiles (id, user_id, name, email, username, primary_goal)
   VALUES (
     new.id,
     new.id,
+    COALESCE(new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'name', 'Candidate'),
+    new.email,
     LOWER(REPLACE(COALESCE(new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'name', 'candidate'), ' ', '_')) || '_' || SUBSTRING(new.id::text, 1, 4),
     'Master technical interviews and build ATS-ready portfolio'
   )
