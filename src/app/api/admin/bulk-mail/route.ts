@@ -210,46 +210,28 @@ export async function POST(req: NextRequest) {
     const cleanMessage = escapeHtml(message);
     const cleanCtaLabel = ctaLabel ? escapeHtml(ctaLabel) : "";
 
-    // Format clean HTML body
+    // Format clean HTML body for inclusion in shared branded layout
+    // Message supports paragraphs separated by newlines
+    const paragraphs = cleanMessage
+      .split(/\n\s*\n/)
+      .map(p => p.trim())
+      .filter(Boolean)
+      .map(p => `<p style="margin: 0 0 16px; font-size: 15px; line-height: 1.65; color: #334155;">${p.replace(/\n/g, "<br/>")}</p>`)
+      .join("\n");
+
     const formattedBodyHtml = `
-      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #111111;">
-        <div style="padding: 24px 0 16px 0; border-bottom: 2px solid #000000;">
-          <span style="font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; background: #000000; color: #ffffff; padding: 4px 10px; border-radius: 4px;">
-            COMMUNITY ANNOUNCEMENT
-          </span>
-          <h1 style="font-size: 26px; font-weight: 900; margin: 16px 0 8px 0; letter-spacing: -0.02em; color: #000000;">
-            ${cleanHeadline}
-          </h1>
-        </div>
-
-        <div style="padding: 24px 0; font-size: 15px; line-height: 1.7; color: #222222; white-space: pre-wrap;">
-${cleanMessage}
-        </div>
-
-        ${cleanCtaLabel && safeCtaUrl ? `
-        <div style="text-align: center; margin: 28px 0;">
-          <a href="${safeCtaUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: #000000; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 800; padding: 14px 28px; border-radius: 8px; letter-spacing: 0.02em;">
-            ${cleanCtaLabel} &rarr;
-          </a>
-        </div>
-        ` : ""}
-
-        <div style="margin-top: 36px; padding-top: 20px; border-top: 1px solid #eeeeee; font-size: 12px; color: #888888; text-align: center;">
-          <p style="margin: 0 0 4px 0; font-weight: 600;">EdWorld Co. • Skills &amp; Career OS</p>
-          <p style="margin: 0 0 8px 0;">Hyderabad, Telangana, India</p>
-          <p style="margin: 0; font-size: 11px; color: #aaaaaa;">
-            You received this email as a registered student member. To manage email preferences, visit your account settings.
-          </p>
-        </div>
+      <div style="color: #334155;">
+        ${paragraphs}
       </div>
     `;
 
     const fullBrandedEmail = renderBrandedEmailHtml({
       previewText: subject,
-      title: headline || subject,
+      title: cleanHeadline,
       contentHtml: formattedBodyHtml,
-      ctaText: ctaLabel || undefined,
-      ctaUrl: ctaUrl || undefined,
+      ctaText: cleanCtaLabel || undefined,
+      ctaUrl: safeCtaUrl || undefined,
+      footerNote: "You received this official community broadcast as a registered member of EdWorld Co.",
     });
 
     // 2. Batch dispatch via Resend SDK

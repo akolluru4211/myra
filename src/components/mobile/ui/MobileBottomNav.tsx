@@ -35,6 +35,7 @@ export function MobileBottomNav({
 }: MobileBottomNavProps) {
   const pathname = usePathname();
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   // If onTabChange is provided, we are in prototype / simulator mode
   if (onTabChange) {
@@ -97,22 +98,30 @@ export function MobileBottomNav({
     );
   }
 
-  // Detect virtual keyboard on mobile to avoid covering input elements
+  // Detect virtual keyboard and chat panel state on mobile
   useEffect(() => {
-    if (typeof window === "undefined" || !window.visualViewport) return;
+    const handleOpenChat = () => setIsChatOpen(true);
+    const handleCloseChat = () => setIsChatOpen(false);
 
-    const handleViewportResize = () => {
-      const vv = window.visualViewport;
-      if (!vv) return;
-      // If visual viewport height is substantially smaller than window.innerHeight, keyboard is active
-      const keyboardOpen = window.innerHeight - vv.height > 150;
-      setIsKeyboardVisible(keyboardOpen);
-    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("open-myra-copilot", handleOpenChat);
+      window.addEventListener("close-myra-copilot", handleCloseChat);
 
-    window.visualViewport.addEventListener("resize", handleViewportResize);
-    return () => {
-      window.visualViewport?.removeEventListener("resize", handleViewportResize);
-    };
+      const handleViewportResize = () => {
+        const vv = window.visualViewport;
+        if (!vv) return;
+        const keyboardOpen = window.innerHeight - vv.height > 150;
+        setIsKeyboardVisible(keyboardOpen);
+      };
+
+      window.visualViewport?.addEventListener("resize", handleViewportResize);
+
+      return () => {
+        window.removeEventListener("open-myra-copilot", handleOpenChat);
+        window.removeEventListener("close-myra-copilot", handleCloseChat);
+        window.visualViewport?.removeEventListener("resize", handleViewportResize);
+      };
+    }
   }, []);
 
   const handleOpenMyra = (e: React.MouseEvent) => {
@@ -163,8 +172,8 @@ export function MobileBottomNav({
     },
   ];
 
-  if (isKeyboardVisible) {
-    return null; // hide dock cleanly when virtual keyboard is raised
+  if (isKeyboardVisible || isChatOpen) {
+    return null; // hide dock cleanly when virtual keyboard is raised or chat is active
   }
 
   return (

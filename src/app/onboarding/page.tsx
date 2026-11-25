@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
+import { validateRedirectDestination } from "@/lib/auth/redirect-validator";
 import { SkillLevel, UserInterest, CareerStage, UserDomainPriority, Resume, ResumeContent } from "@/lib/types";
 import { DOMAIN_CATALOG } from "@/lib/services/career-learning-os";
 import { 
@@ -44,6 +45,7 @@ interface DomainSelectionState {
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, profile, updateUserProfile } = useAuth();
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -59,12 +61,13 @@ export default function OnboardingPage() {
   const [phone, setPhone] = useState(profile?.phone || user?.phone || "");
 
   // Step 2: Education & Academic Specialization (Class 12th & Higher Education)
+  // NOTE: Left blank unless real profile values exist. Never pre-fill example/dummy values.
   const [institution, setInstitution] = useState(profile?.institution || "");
-  const [degree, setDegree] = useState(profile?.degree || "B.Tech / B.E.");
-  const [fieldOfStudy, setFieldOfStudy] = useState(profile?.field_of_study || "Computer Science & Engineering");
-  const [graduationYear, setGraduationYear] = useState(profile?.graduation_year || "2026");
-  const [cgpa, setCgpa] = useState((profile as any)?.cgpa ? String((profile as any).cgpa) : "8.5");
-  const [targetRole, setTargetRole] = useState(profile?.targetRole || "Full Stack Developer");
+  const [degree, setDegree] = useState(profile?.degree || "");
+  const [fieldOfStudy, setFieldOfStudy] = useState(profile?.field_of_study || "");
+  const [graduationYear, setGraduationYear] = useState(profile?.graduation_year || "");
+  const [cgpa, setCgpa] = useState((profile as any)?.cgpa ? String((profile as any).cgpa) : "");
+  const [targetRole, setTargetRole] = useState(profile?.targetRole || "");
 
   // Step 3: Multi-Domain & Career Path Selection
   const [careerPathIds, setCareerPathIds] = useState<string[]>(["swe_fullstack"]);
@@ -81,7 +84,7 @@ export default function OnboardingPage() {
 
   // Step 4: Goals & Links
   const [primaryGoal, setPrimaryGoal] = useState(
-    profile?.primaryGoal || "Prepare for technical interviews and build a high-signal ATS resume."
+    profile?.primaryGoal || ""
   );
   const [githubUrl, setGithubUrl] = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
@@ -91,50 +94,159 @@ export default function OnboardingPage() {
   const [saving, setSaving] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [resumeNotice, setResumeNotice] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [showMyraCopilot, setShowMyraCopilot] = useState(false);
 
-  // Instant escape hatch to dashboard (marks onboarding done so AuthGuard won't intercept)
-  const handleSkipToDashboard = async () => {
-    try {
-      if (typeof window !== "undefined") {
-        const stored = JSON.parse(localStorage.getItem("edworld_user_profile") || "{}");
-        localStorage.setItem(
-          "edworld_user_profile",
-          JSON.stringify({ 
-            ...stored, 
-            onboarding_completed: true,
-            name: displayName || stored.name || "Student",
-            targetRole: targetRole.trim() || stored.targetRole || "Software Engineer",
-            degree: degree || stored.degree || "B.Tech / B.E."
-          })
-        );
-        localStorage.setItem("edworld_study_hours", dailyHours.toString());
-        localStorage.setItem("edworld_target_role", targetRole.trim() || "Software Engineer");
-      }
-      await updateUserProfile({ onboarding_completed: true });
-    } catch (e) {
-      console.warn("[Onboarding skip note]:", e);
-    }
+  // Account-scoped draft key
+  const draftKey = user?.uid ? `edworld_onboarding_draft_${user.uid}` : null;
+
+  // Resolve target post-onboarding redirect destination safely
+  const getDestinationUrl = () => {
+    const rawRedirect = searchParams?.get("redirectUrl") || searchParams?.get("next");
+    const validated = validateRedirectDestination(rawRedirect);
+    return validated || "/dashboard";
+  };
+
+  // Skip action: skips optional steps or returns to dashboard WITHOUT marking required onboarding completed
+  const handleSkipToDashboard = () => {
+    // If on an optional step (e.g. step 4) or user wishes to leave onboarding:
+    // Do NOT set onboarding_completed to true.
+    // The student remains in incomplete state until all required fields are validated and saved.
     router.push("/dashboard");
   };
 
-  // Sync initial values from profile/user once loaded
+  // Sync draft or profile values once user is loaded
   useEffect(() => {
-    if (user?.name && !displayName) {
+    if (!user?.uid) return;
+
+    // First check if an account-scoped draft exists
+    try {
+      if (typeof window !== "undefined" && draftKey) {
+        const savedDraft = localStorage.getItem(draftKey);
+        if (savedDraft) {
+          const draft = JSON.parse(savedDraft);
+          if (draft.displayName) setDisplayName(draft.displayName);
+          if (draft.username) setUsername(draft.username);
+          if (draft.headline) setHeadline(draft.headline);
+          if (draft.bio) setBio(draft.bio);
+          if (draft.phone) setPhone(draft.phone);
+          if (draft.institution) setInstitution(draft.institution);
+          if (draft.degree) setDegree(draft.degree);
+          if (draft.fieldOfStudy) setFieldOfStudy(draft.fieldOfStudy);
+          if (draft.graduationYear) setGraduationYear(draft.graduationYear);
+          if (draft.cgpa !== undefined) setCgpa(draft.cgpa);
+          if (draft.targetRole) setTargetRole(draft.targetRole);
+          if (draft.careerPathIds) setCareerPathIds(draft.careerPathIds);
+          if (draft.primaryCareerPathId) setPrimaryCareerPathId(draft.primaryCareerPathId);
+          if (draft.selectedDomains) setSelectedDomains(draft.selectedDomains);
+          if (draft.targetTimeframe) setTargetTimeframe(draft.targetTimeframe);
+          if (draft.dailyHours) setDailyHours(draft.dailyHours);
+          if (draft.primaryGoal) setPrimaryGoal(draft.primaryGoal);
+          if (draft.githubUrl) setGithubUrl(draft.githubUrl);
+          if (draft.linkedinUrl) setLinkedinUrl(draft.linkedinUrl);
+          if (draft.portfolioUrl) setPortfolioUrl(draft.portfolioUrl);
+          if (draft.currentStep && draft.currentStep >= 1 && draft.currentStep <= totalSteps) {
+            setCurrentStep(draft.currentStep);
+          }
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn("[Onboarding draft restore error]:", e);
+    }
+
+    // Otherwise sync from profile/user
+    if (user.name && !displayName) {
       setDisplayName(user.name);
     }
-    if (user?.name && !username) {
+    if (user.name && !username) {
       const suggested = user.name
         .toLowerCase()
         .replace(/[^a-z0-9]/g, "_")
         .slice(0, 18);
       setUsername(suggested || "student");
     }
-    if (user?.phone && !phone) {
+    if (user.phone && !phone) {
       setPhone(user.phone);
     }
-  }, [user, profile]);
+    if (profile?.institution && !institution) {
+      setInstitution(profile.institution);
+    }
+    if (profile?.degree && !degree) {
+      setDegree(profile.degree);
+    }
+    if (profile?.field_of_study && !fieldOfStudy) {
+      setFieldOfStudy(profile.field_of_study);
+    }
+    if (profile?.graduation_year && !graduationYear) {
+      setGraduationYear(profile.graduation_year);
+    }
+    if ((profile as any)?.cgpa && !cgpa) {
+      setCgpa(String((profile as any).cgpa));
+    }
+    if (profile?.targetRole && !targetRole) {
+      setTargetRole(profile.targetRole);
+    }
+  }, [user?.uid, profile]);
+
+  // Persist form inputs into account-scoped draft on change
+  useEffect(() => {
+    if (!draftKey || isCompleted) return;
+    try {
+      if (typeof window !== "undefined") {
+        const draftData = {
+          displayName,
+          username,
+          headline,
+          bio,
+          phone,
+          institution,
+          degree,
+          fieldOfStudy,
+          graduationYear,
+          cgpa,
+          targetRole,
+          careerPathIds,
+          primaryCareerPathId,
+          selectedDomains,
+          targetTimeframe,
+          dailyHours,
+          primaryGoal,
+          githubUrl,
+          linkedinUrl,
+          portfolioUrl,
+          currentStep,
+          updatedAt: Date.now(),
+        };
+        localStorage.setItem(draftKey, JSON.stringify(draftData));
+      }
+    } catch (e) {}
+  }, [
+    draftKey,
+    displayName,
+    username,
+    headline,
+    bio,
+    phone,
+    institution,
+    degree,
+    fieldOfStudy,
+    graduationYear,
+    cgpa,
+    targetRole,
+    careerPathIds,
+    primaryCareerPathId,
+    selectedDomains,
+    targetTimeframe,
+    dailyHours,
+    primaryGoal,
+    githubUrl,
+    linkedinUrl,
+    portfolioUrl,
+    currentStep,
+    isCompleted,
+  ]);
 
   // Debounced check for username availability
   useEffect(() => {
@@ -278,8 +390,33 @@ export default function OnboardingPage() {
   };
 
   const handleFinalSubmit = async () => {
+    if (saving) return; // Prevent double submission
     setSaving(true);
     setError(null);
+    setResumeNotice(null);
+
+    // Validate required fields before submitting
+    const newErrors: Record<string, string> = {};
+    if (!displayName.trim()) {
+      newErrors.displayName = "Please enter your full name.";
+    }
+    if (!username.trim()) {
+      newErrors.username = "Please choose a username.";
+    }
+    if (!institution.trim()) {
+      newErrors.institution = "Please enter your institution name.";
+    }
+    if (!fieldOfStudy.trim()) {
+      newErrors.fieldOfStudy = "Please enter your branch or stream of study.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setFieldErrors(newErrors);
+      setError("Please fill in the required fields before saving.");
+      setSaving(false);
+      return;
+    }
+
     try {
       const careerStage: CareerStage = "STUDENT";
 
@@ -294,44 +431,35 @@ export default function OnboardingPage() {
       const profilePayload = {
         name: displayName.trim(),
         username: username.trim() || undefined,
-        headline: headline.trim() || `${degree} in ${fieldOfStudy} | Aspiring ${targetRole}`,
+        headline: headline.trim() || (degree || fieldOfStudy ? `${degree || "Student"} in ${fieldOfStudy || "Engineering"} | Aspiring ${targetRole || "Software Engineer"}` : undefined),
         bio: bio.trim() || undefined,
         phone: phone.trim() || undefined,
         careerStage,
         institution: institution.trim(),
-        degree,
+        degree: degree.trim() || undefined,
         field_of_study: fieldOfStudy.trim(),
-        graduation_year: graduationYear,
+        graduation_year: graduationYear.trim() || undefined,
         cgpa: cgpa.trim() || undefined,
-        targetRole: targetRole.trim() || "Full Stack Software Engineer",
-        primaryGoal: primaryGoal.trim(),
+        targetRole: targetRole.trim() || undefined,
+        primaryGoal: primaryGoal.trim() || undefined,
         interests: interestsArray,
         onboarding_completed: true,
         github_url: githubUrl.trim() || undefined,
         linkedin_url: linkedinUrl.trim() || undefined,
       };
 
-      try {
-        await updateUserProfile(profilePayload);
-      } catch (profileErr: any) {
-        console.warn("[Onboarding profile update note]:", profileErr);
+      // Server-side authoritative update is MANDATORY for completion.
+      // If server save fails, we throw and DO NOT mark onboarding complete.
+      await updateUserProfile(profilePayload);
+
+      // Clean up account-scoped onboarding draft upon authoritative success
+      if (typeof window !== "undefined" && draftKey) {
+        try {
+          localStorage.removeItem(draftKey);
+        } catch (e) {}
       }
 
-      // Always save to localStorage immediately to unblock client-side AuthGuard and hydrate dashboard
-      if (typeof window !== "undefined") {
-        const stored = JSON.parse(localStorage.getItem("edworld_user_profile") || "{}");
-        localStorage.setItem(
-          "edworld_user_profile",
-          JSON.stringify({ ...stored, ...profilePayload, onboarding_completed: true })
-        );
-        localStorage.setItem("edworld_study_hours", dailyHours.toString());
-        localStorage.setItem("edworld_target_role", targetRole.trim() || "Software Engineer");
-        if (primaryCareerPathId) {
-          localStorage.setItem("edworld_primary_career_path", primaryCareerPathId);
-        }
-      }
-
-      // Save to Career Learning OS API & Career Paths API
+      // Save to Career Learning OS API & Career Paths API (best-effort)
       if (user?.uid) {
         try {
           await fetch("/api/user/career-paths", {
@@ -374,87 +502,89 @@ export default function OnboardingPage() {
           console.warn("Failed to generate career OS roadmap:", cosErr);
         }
 
-        // Auto-generate student's Harvard ATS master resume directly from onboarding
-        const skillsList = Object.values(selectedDomains).map((d) => d.domainName);
-        const technicalSkills = Array.from(
-          new Set([
-            ...skillsList,
-            fieldOfStudy.includes("Computer") ? "Data Structures & Algorithms" : fieldOfStudy,
-            "Git & GitHub",
-            "System Architecture"
-          ])
-        );
-
-        const initialResumeContent: ResumeContent = {
-          contact: {
-            fullName: displayName.trim(),
-            email: user?.email || "",
-            phone: phone.trim() || "+91 98765 43210",
-            location: "India",
-            linkedin: linkedinUrl.trim() || undefined,
-            github: githubUrl.trim() || undefined,
-            portfolio: portfolioUrl.trim() || undefined,
-          },
-          summary: `Motivated and analytical ${targetRole.trim()} with strong competencies in ${technicalSkills.slice(0, 3).join(", ")}. Pursuing ${degree} in ${fieldOfStudy.trim()} at ${institution.trim()} (CGPA: ${cgpa || "8.5"}, Class of ${graduationYear}). Focused on building robust, high-performance software systems and mastering technical interviews.`,
-          experience: [],
-          education: [
-            {
-              id: "edu-1",
-              school: institution.trim() || "University Institute of Technology",
-              degree: degree || "B.Tech / B.E.",
-              fieldOfStudy: fieldOfStudy.trim() || "Computer Science",
-              graduationDate: graduationYear || "2026",
-              gpa: cgpa.trim() || "8.5",
-              coursework: [
-                "Data Structures & Algorithms",
-                "Database Management Systems",
-                "Operating Systems",
-                "Computer Networks"
-              ]
-            }
-          ],
-          skills: {
-            technical: technicalSkills,
-            soft: ["STAR Communication", "Structured Problem Solving", "Peer Collaboration", "Analytical Thinking"],
-            tools: ["VS Code", "Git", "GitHub", "Postman", "Linux"]
-          },
-          projects: [
-            {
-              id: "proj-1",
-              title: `${targetRole.trim()} Verified Capstone`,
-              description: `Engineered an end-to-end full-stack application implementing modular API routing, database schema modeling, and responsive interface workflows.`,
-              technologies: technicalSkills.slice(0, 4),
-              bullets: [
-                `Architected clean, decoupled application services using ${technicalSkills[0] || "TypeScript"} and industry-standard design principles.`,
-                `Optimized client-side rendering latency and state persistence across active session modules.`,
-                `Implemented robust error boundary handling and automated integration verification.`
-              ]
-            }
-          ],
-          certifications: []
-        };
-
-        const initialResume: Resume = {
-          id: `resume-${user.uid}-master`,
-          userId: user.uid,
-          title: "ATS Master Resume",
-          templateId: "classic",
-          content: initialResumeContent,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-
-        if (typeof window !== "undefined") {
-          try {
-            localStorage.setItem(`edworld_${user.uid}_resumes`, JSON.stringify([initialResume]));
-            localStorage.setItem("edworld_resumes", JSON.stringify([initialResume]));
-          } catch (storageErr) {
-            console.warn("[Local storage resume cache note]:", storageErr);
-          }
-        }
-
+        // Resume Seed: Optional feature.
+        // If resume generation fails, onboarding remains complete.
+        // We report a specific notice directing student to /resumes.
         try {
-          await supabase.from("resumes").upsert({
+          const skillsList = Object.values(selectedDomains).map((d) => d.domainName);
+          const technicalSkills = Array.from(
+            new Set([
+              ...skillsList,
+              fieldOfStudy.includes("Computer") ? "Data Structures & Algorithms" : fieldOfStudy,
+              "Git & GitHub",
+              "System Architecture"
+            ])
+          );
+
+          const initialResumeContent: ResumeContent = {
+            contact: {
+              fullName: displayName.trim(),
+              email: user?.email || "",
+              phone: phone.trim() || "",
+              location: "India",
+              linkedin: linkedinUrl.trim() || undefined,
+              github: githubUrl.trim() || undefined,
+              portfolio: portfolioUrl.trim() || undefined,
+            },
+            summary: `Motivated and analytical ${targetRole.trim() || "Software Engineer"} with strong competencies in ${technicalSkills.slice(0, 3).join(", ")}. Pursuing ${degree || "Degree"} in ${fieldOfStudy.trim()} at ${institution.trim()}${cgpa ? ` (CGPA: ${cgpa})` : ""}${graduationYear ? `, Class of ${graduationYear}` : ""}. Focused on building robust software systems.`,
+            experience: [],
+            education: [
+              {
+                id: "edu-1",
+                school: institution.trim() || "University Institute of Technology",
+                degree: degree || "B.Tech / B.E.",
+                fieldOfStudy: fieldOfStudy.trim() || "Computer Science",
+                graduationDate: graduationYear || "2026",
+                gpa: cgpa.trim() || "",
+                coursework: [
+                  "Data Structures & Algorithms",
+                  "Database Management Systems",
+                  "Operating Systems",
+                  "Computer Networks"
+                ]
+              }
+            ],
+            skills: {
+              technical: technicalSkills,
+              soft: ["STAR Communication", "Structured Problem Solving", "Peer Collaboration", "Analytical Thinking"],
+              tools: ["VS Code", "Git", "GitHub", "Postman", "Linux"]
+            },
+            projects: [
+              {
+                id: "proj-1",
+                title: `${targetRole.trim() || "Software Engineering"} Verified Capstone`,
+                description: `Engineered an end-to-end application implementing modular API routing, database schema modeling, and responsive interface workflows.`,
+                technologies: technicalSkills.slice(0, 4),
+                bullets: [
+                  `Architected clean, decoupled application services using ${technicalSkills[0] || "TypeScript"} and industry-standard design principles.`,
+                  `Optimized client-side rendering latency and state persistence across active session modules.`,
+                  `Implemented robust error boundary handling and automated integration verification.`
+                ]
+              }
+            ],
+            certifications: []
+          };
+
+          const initialResume: Resume = {
+            id: `resume-${user.uid}-master`,
+            userId: user.uid,
+            title: "ATS Master Resume",
+            templateId: "classic",
+            content: initialResumeContent,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+
+          if (typeof window !== "undefined") {
+            try {
+              localStorage.setItem(`edworld_${user.uid}_resumes`, JSON.stringify([initialResume]));
+              localStorage.setItem("edworld_resumes", JSON.stringify([initialResume]));
+            } catch (storageErr) {
+              console.warn("[Local storage resume cache note]:", storageErr);
+            }
+          }
+
+          const { error: resumeErr } = await supabase.from("resumes").upsert({
             id: initialResume.id,
             user_id: user.uid,
             title: initialResume.title,
@@ -462,20 +592,28 @@ export default function OnboardingPage() {
             content: initialResume.content,
             updated_at: new Date().toISOString(),
           });
-        } catch (supabaseResumeErr) {
-          console.warn("[Supabase resume upsert note]:", supabaseResumeErr);
+
+          if (resumeErr) {
+            console.warn("[Supabase resume upsert warning]:", resumeErr.message);
+            setResumeNotice("Profile saved successfully! However, your ATS resume template could not be auto-generated at this time. You can generate or customize it anytime in /resumes.");
+          }
+        } catch (resErr: any) {
+          console.warn("[Resume generation non-fatal error]:", resErr);
+          setResumeNotice("Profile saved successfully! Resume seeding encountered an issue, but you can create your resume directly from /resumes.");
         }
       }
 
       setIsCompleted(true);
+      const targetUrl = getDestinationUrl();
       setTimeout(() => {
-        router.push("/dashboard");
+        router.push(targetUrl);
       }, 1200);
     } catch (err: any) {
       console.error("[Onboarding submission error]:", err);
+      // Stay on the current step and retain all form values!
       setError(
         err?.message || 
-        "A connection issue occurred while syncing with the server. Your information has been cached locally so you won't lose progress. You can retry or skip to your dashboard."
+        "Failed to save your profile to the server. Your inputs have been kept safe. Please check your connection and click Retry."
       );
     } finally {
       setSaving(false);
@@ -839,6 +977,7 @@ export default function OnboardingPage() {
                         onChange={(e) => setDegree(e.target.value)}
                         className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-blue-200 text-xs sm:text-sm text-black focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all [&>option]:bg-[#0C101A] [&>option]:text-black cursor-pointer"
                       >
+                        <option value="">Select Degree Program...</option>
                         <option value="B.Tech / B.E.">B.Tech / B.E.</option>
                         <option value="B.Sc / BCA">B.Sc / BCA</option>
                         <option value="M.Tech / M.E.">M.Tech / M.E.</option>
@@ -858,10 +997,12 @@ export default function OnboardingPage() {
                         onChange={(e) => setGraduationYear(e.target.value)}
                         className="w-full px-4 py-2.5 sm:py-3 rounded-xl bg-[#0F1422] border border-blue-200 text-xs sm:text-sm text-black focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all [&>option]:bg-[#0C101A] [&>option]:text-black cursor-pointer"
                       >
+                        <option value="">Select Graduation Year...</option>
                         <option value="2025">2025 (Final Year / Graduating)</option>
                         <option value="2026">2026</option>
                         <option value="2027">2027</option>
                         <option value="2028">2028</option>
+                        <option value="2029">2029</option>
                         <option value="Graduated">Graduated (Alumni / Working)</option>
                       </select>
                     </div>
@@ -1086,6 +1227,21 @@ export default function OnboardingPage() {
             )}
 
             {/* Bottom Error Notification & Escape Hatch */}
+            {resumeNotice && (
+              <div className="p-4 rounded-xl bg-amber-950/60 border border-amber-500/40 flex items-start justify-between gap-3 text-xs text-amber-200 font-medium">
+                <div className="flex items-start gap-2.5">
+                  <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <span>{resumeNotice}</span>
+                </div>
+                <Link
+                  href="/resumes"
+                  className="text-xs font-bold text-amber-300 underline hover:text-white shrink-0 cursor-pointer"
+                >
+                  Go to Resumes →
+                </Link>
+              </div>
+            )}
+
             {error && (
               <div className="p-4 rounded-xl bg-rose-950/60 border border-rose-500/40 flex items-start justify-between gap-3 text-xs text-rose-200 font-medium">
                 <div className="flex items-start gap-2.5">
@@ -1094,10 +1250,11 @@ export default function OnboardingPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={handleSkipToDashboard}
-                  className="text-xs font-bold text-black underline hover:text-slate-200 shrink-0 cursor-pointer"
+                  onClick={currentStep === totalSteps ? handleFinalSubmit : handleNext}
+                  disabled={saving}
+                  className="px-3 py-1 rounded-lg bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs shrink-0 cursor-pointer transition-colors"
                 >
-                  Skip to Dashboard
+                  Retry
                 </button>
               </div>
             )}

@@ -16,17 +16,43 @@ import {
 } from "@/lib/ai/myra-learning-engine";
 import { formatToolRegistrySystemPrompt, isActionOffLimits } from "@/lib/ai/myra-tools";
 import { proposeToolAction, executeConfirmedToolAction } from "@/lib/ai/myra-tool-executor";
+import { reserveEntitlement, rollbackEntitlementReservation } from "@/lib/entitlement-service";
+import { validateChatLink } from "@/lib/ai/link-validator";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
-  const body = await req.json().catch(() => null);
+  // Check payload size limit (max 64KB)
+  const contentLength = req.headers.get("content-length");
+  if (contentLength && parseInt(contentLength, 10) > 65536) {
+    return NextResponse.json(
+      { error: "Payload too large. Request body exceeds maximum allowed size (64KB)." },
+      { status: 413 }
+    );
+  }
+
+  const rawBodyText = await req.text().catch(() => null);
+  if (rawBodyText && rawBodyText.length > 65536) {
+    return NextResponse.json(
+      { error: "Payload too large. Request body exceeds maximum allowed size (64KB)." },
+      { status: 413 }
+    );
+  }
+
+  let body: any = null;
+  try {
+    body = rawBodyText ? JSON.parse(rawBodyText) : null;
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON in request body." }, { status: 400 });
+  }
+
   if (!body || typeof body !== "object" || Array.isArray(body) ||
       (body.message != null && typeof body.message !== "string")) {
     return NextResponse.json({ error: "Invalid Myra request." }, { status: 400 });
   }
 
   try {
+    const requestStartTime = Date.now();
     const { 
       message, 
       userId: requestedUserId, 
@@ -38,8 +64,25 @@ export async function POST(req: NextRequest) {
       interviewContext,
       onboardingContext,
       writingContext,
-      mode
+      mode,
+      webSearch = false
     } = body || {};
+
+    // Validate message length (max 4000 characters)
+    if (message && typeof message === "string" && message.length > 4000) {
+      return NextResponse.json(
+        { error: "Message too long. Message length cannot exceed 4000 characters." },
+        { status: 400 }
+      );
+    }
+
+    // Validate history length (max 50 messages)
+    if (history && Array.isArray(history) && history.length > 50) {
+      return NextResponse.json(
+        { error: "Conversation history too long. Maximum of 50 history messages permitted." },
+        { status: 400 }
+      );
+    }
 
     // 0. Handle Onboarding Fast-Path Initial Greeting
     if (mode === "onboarding" && (!message || message.trim().toLowerCase() === "start" || message.trim().toLowerCase() === "init")) {
@@ -67,10 +110,20 @@ export async function POST(req: NextRequest) {
     }
 
     const userId = await resolveMyraUser(req);
+    if (!userId) {
+      return NextResponse.json(
+        {
+          error: "AUTH_REQUIRED",
+          message: "Please sign in to chat with Myra."
+        },
+        { status: 401 }
+      );
+    }
+
     if (requestedUserId && requestedUserId !== userId) {
       return NextResponse.json(
-        { error: userId ? "Student identity does not match the session." : "Please sign in to use personalized Myra features." },
-        { status: userId ? 403 : 401 }
+        { error: "Student identity does not match the session." },
+        { status: 403 }
       );
     }
 
@@ -141,172 +194,249 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 1. Fetch user's existing cognitive memory & database profile if userId is available
-    let existingMemory: MyraCognitiveMemory | null = null;
-    let dbProfile: any = null;
-    if (userId) {
-      try {
-        existingMemory = await getUserLearningProfile(userId);
-      } catch (e) {
-        console.warn("Could not retrieve user learning profile:", e);
-      }
-      try {
-        const { queryDb } = await import("@/lib/db-server");
-        const { rows } = await queryDb(
-          `SELECT id, name, display_name, target_role, career_stage, headline, institution, degree, field_of_study, graduation_year, cgpa, interests, primary_goal 
-           FROM public.profiles 
-           WHERE id = $1 LIMIT 1`,
-          [userId]
+    // Entitlement Reservation & Quota Check: MUST occur before Web Reach and LLM model call
+    const reservation = await reserveEntitlement(userId, "ask_myra");
+    if (!reservation.allowed) {
+      if (reservation.unavailable) {
+        return NextResponse.json(
+          {
+            error: "SERVICE_UNAVAILABLE",
+            message: reservation.reason || "Entitlement service is temporarily unavailable. Please try again shortly.",
+            retryable: true,
+          },
+          { status: 503 }
         );
-        if (rows && rows.length > 0) {
-          dbProfile = rows[0];
-        }
-      } catch (pErr) {
-        console.warn("Could not retrieve user db profile:", pErr);
       }
-    }
-
-    // Merge memory, database records, and request profile into authoritative profile context
-    const enrichedProfile: StudentProfileContext = {
-      name: profile?.name || dbProfile?.display_name || dbProfile?.name || undefined,
-      institution: profile?.institution || dbProfile?.institution || undefined,
-      degree: profile?.degree || dbProfile?.degree || undefined,
-      field_of_study: profile?.field_of_study || dbProfile?.field_of_study || undefined,
-      graduation_year: profile?.graduation_year || dbProfile?.graduation_year || undefined,
-      cgpa: profile?.cgpa || dbProfile?.cgpa || undefined,
-      targetRole: profile?.targetRole || dbProfile?.target_role || "Software Engineer",
-      primaryGoal: profile?.primaryGoal || dbProfile?.primary_goal || undefined,
-      interests: profile?.interests || (Array.isArray(dbProfile?.interests) ? dbProfile.interests : []),
-      dailyStudyHours: profile?.dailyStudyHours || 2,
-      careerStage: profile?.careerStage || dbProfile?.career_stage || "STUDENT",
-      frequentTopics: existingMemory?.frequentTopics?.slice(0, 5) || profile?.frequentTopics,
-      searchedTechnologies: existingMemory?.searchedTechnologies?.slice(0, 5) || profile?.searchedTechnologies,
-      strugglePoints: existingMemory?.strugglePoints?.slice(-5) || profile?.strugglePoints,
-      learningStylePreference: existingMemory?.learningStylePreference || profile?.learningStylePreference,
-      interviewContext: interviewContext || profile?.interviewContext,
-      onboardingContext: onboardingContext || (mode === "onboarding" ? { stage: 1 } : profile?.onboardingContext),
-      writingContext: writingContext || (mode === "career_writing" ? { module: "Professional Summary" } : profile?.writingContext),
-    };
-
-    // Dynamically separate explicit [CONTEXT: ...] prefix from actual student query if present
-    let rawStudentQuery = (message || "").trim();
-    let detectedScreenContext = body?.screenContext || "";
-    if (rawStudentQuery.startsWith("[CONTEXT:")) {
-      const newlineIdx = rawStudentQuery.indexOf("\n");
-      if (newlineIdx !== -1) {
-        if (!detectedScreenContext) {
-          detectedScreenContext = rawStudentQuery.slice(0, newlineIdx).trim();
-        }
-        rawStudentQuery = rawStudentQuery.slice(newlineIdx + 1).trim();
-      }
-    }
-    const finalStudentQuery = rawStudentQuery || detectedScreenContext || "Hello Myra";
-
-    // 2. Dynamically resolve live GitHub repository or web URL / search reach
-    let webReachContext = null;
-    try {
-      webReachContext = await resolveWebReach(finalStudentQuery);
-    } catch (e) {
-      console.warn("Web reach resolution skipped:", e);
-    }
-
-    // 3. Build adaptive prompt with learned memory, web data and strict tool registry
-    const { systemPrompt, prompt } = buildMyraContextPrompt(
-      finalStudentQuery,
-      enrichedProfile,
-      history,
-      webReachContext
-    );
-
-    const toolPrompt = formatToolRegistrySystemPrompt();
-    const combinedSystemPrompt = `${systemPrompt}\n\n${toolPrompt}`;
-
-    // 4. Generate AI response through centralized Myra Orchestration Service
-    const orchestrationResult = await MyraOrchestrator.execute({
-      userId: userId ?? undefined,
-      featureContext: "ask_myra",
-      prompt,
-      rawQuery: finalStudentQuery,
-      systemPromptOverride: combinedSystemPrompt,
-      clientProfile: enrichedProfile,
-      temperature: 0.6,
-      maxTokens: 1000,
-      metadata: { hasWebReach: Boolean(webReachContext) },
-    });
-
-    if (orchestrationResult.rateLimited) {
       return NextResponse.json(
-        { 
-          error: orchestrationResult.error || "Rate limit reached.", 
-          reply: orchestrationResult.text,
-          rateLimited: true 
+        {
+          error: "QUOTA_EXCEEDED",
+          message: reservation.reason || "You have reached your daily limit of queries with Myra.",
+          limit: reservation.limit,
+          currentCount: reservation.currentCount,
+          resetTime: reservation.resetTime,
+          rateLimited: true,
         },
         { status: 429 }
       );
     }
 
-    // 4B. Detect & process any tool action blocks generated by the model
-    let actionProposal = null;
-    let rawText = orchestrationResult.text || "";
+    const reservationId = reservation.reservationId;
 
-    const actionMatch = rawText.match(/```(?:myra_action|json)?\s*(\{\s*"tool"[\s\S]*?\})\s*```/);
-    if (actionMatch && actionMatch[1]) {
-      try {
-        const parsedAction = JSON.parse(actionMatch[1]);
-        if (userId && parsedAction?.tool) {
-          const propRes = await proposeToolAction(
-            userId,
-            parsedAction.tool,
-            parsedAction.parameters || {},
-            message.trim()
-          );
-          if (propRes.proposal) {
-            actionProposal = propRes.proposal;
-          }
+    try {
+      // 1. Fetch user's existing cognitive memory & database profile if userId is available
+      let existingMemory: MyraCognitiveMemory | null = null;
+      let dbProfile: any = null;
+      if (userId) {
+        try {
+          existingMemory = await getUserLearningProfile(userId);
+        } catch (e) {
+          console.warn("Could not retrieve user learning profile:", e);
         }
-      } catch (parseErr) {
-        console.warn("[Myra Action Block Parse Note]:", parseErr);
+        try {
+          const { queryDb } = await import("@/lib/db-server");
+          const { rows } = await queryDb(
+            `SELECT id, name, display_name, target_role, career_stage, headline, institution, degree, field_of_study, graduation_year, cgpa, interests, primary_goal 
+             FROM public.profiles 
+             WHERE id = $1 LIMIT 1`,
+            [userId]
+          );
+          if (rows && rows.length > 0) {
+            dbProfile = rows[0];
+          }
+        } catch (pErr) {
+          console.warn("Could not retrieve user db profile:", pErr);
+        }
       }
-      // Strip action block from conversational text
-      rawText = rawText.replace(/```(?:myra_action|json)?\s*\{\s*"tool"[\s\S]*?\}\s*```/, "").trim();
-    }
 
-    // Clean and sanitize text to ensure zero asterisks and high readability
-    const replyText = sanitizeMyraText(rawText);
-    const modelName = orchestrationResult.modelUsed;
+      // Merge memory, database records, and request profile into authoritative profile context
+      const enrichedProfile: StudentProfileContext = {
+        name: profile?.name || dbProfile?.display_name || dbProfile?.name || undefined,
+        institution: profile?.institution || dbProfile?.institution || undefined,
+        degree: profile?.degree || dbProfile?.degree || undefined,
+        field_of_study: profile?.field_of_study || dbProfile?.field_of_study || undefined,
+        graduation_year: profile?.graduation_year || dbProfile?.graduation_year || undefined,
+        cgpa: profile?.cgpa || dbProfile?.cgpa || undefined,
+        targetRole: profile?.targetRole || dbProfile?.target_role || "Software Engineer",
+        primaryGoal: profile?.primaryGoal || dbProfile?.primary_goal || undefined,
+        interests: profile?.interests || (Array.isArray(dbProfile?.interests) ? dbProfile.interests : []),
+        dailyStudyHours: profile?.dailyStudyHours || 2,
+        careerStage: profile?.careerStage || dbProfile?.career_stage || "STUDENT",
+        frequentTopics: existingMemory?.frequentTopics?.slice(0, 5) || profile?.frequentTopics,
+        searchedTechnologies: existingMemory?.searchedTechnologies?.slice(0, 5) || profile?.searchedTechnologies,
+        strugglePoints: existingMemory?.strugglePoints?.slice(-5) || profile?.strugglePoints,
+        learningStylePreference: existingMemory?.learningStylePreference || profile?.learningStylePreference,
+        interviewContext: interviewContext || profile?.interviewContext,
+        onboardingContext: onboardingContext || (mode === "onboarding" ? { stage: 1 } : profile?.onboardingContext),
+        writingContext: writingContext || (mode === "career_writing" ? { module: "Professional Summary" } : profile?.writingContext),
+      };
 
-    // 5. Asynchronously teach Myra and update student cognitive memory
-    let updatedMemory: MyraCognitiveMemory | null = null;
-    if (userId) {
-      try {
-        updatedMemory = await syncUserLearningProfile(
-          userId,
-          message.trim(),
-          replyText,
-          Boolean(webReachContext)
+      // Dynamically separate explicit [CONTEXT: ...] prefix from actual student query if present
+      let rawStudentQuery = (message || "").trim();
+      let detectedScreenContext = body?.screenContext || "";
+      if (rawStudentQuery.startsWith("[CONTEXT:")) {
+        const newlineIdx = rawStudentQuery.indexOf("\n");
+        if (newlineIdx !== -1) {
+          if (!detectedScreenContext) {
+            detectedScreenContext = rawStudentQuery.slice(0, newlineIdx).trim();
+          }
+          rawStudentQuery = rawStudentQuery.slice(newlineIdx + 1).trim();
+        }
+      }
+      const finalStudentQuery = rawStudentQuery || detectedScreenContext || "Hello Myra";
+
+      // 2. Dynamically resolve live GitHub repository or web URL / search reach ONLY if explicitly enabled
+      const isSearchOptedIn = Boolean(webSearch);
+      let webReachContext = null;
+      let webSearchAttempted = isSearchOptedIn;
+      let webSearchFailed = false;
+
+      if (isSearchOptedIn) {
+        try {
+          webReachContext = await resolveWebReach(finalStudentQuery, { enabled: true });
+          if (!webReachContext) {
+            webSearchFailed = true;
+          }
+        } catch (e) {
+          console.warn("Web reach resolution skipped:", e);
+          webSearchFailed = true;
+        }
+      }
+
+      // 3. Build adaptive prompt with learned memory, web data and strict tool registry
+      const { systemPrompt, prompt } = buildMyraContextPrompt(
+        finalStudentQuery,
+        enrichedProfile,
+        history,
+        webReachContext
+      );
+
+      const toolPrompt = formatToolRegistrySystemPrompt();
+      const combinedSystemPrompt = `${systemPrompt}\n\n${toolPrompt}`;
+
+      // 4. Generate AI response through centralized Myra Orchestration Service
+      const orchestrationResult = await MyraOrchestrator.execute({
+        userId: userId ?? undefined,
+        featureContext: "ask_myra",
+        prompt,
+        rawQuery: finalStudentQuery,
+        systemPromptOverride: combinedSystemPrompt,
+        clientProfile: enrichedProfile,
+        temperature: 0.6,
+        maxTokens: 1000,
+        metadata: { hasWebReach: Boolean(webReachContext), webSearchRequested: isSearchOptedIn },
+        bypassEntitlementCheck: true, // Already reserved atomically above
+        reservationId,
+      });
+
+      if (orchestrationResult.rateLimited) {
+        return NextResponse.json(
+          { 
+            error: orchestrationResult.error || "Rate limit reached.", 
+            reply: orchestrationResult.text,
+            rateLimited: true 
+          },
+          { status: 429 }
         );
-      } catch (learnErr) {
-        console.warn("[Myra Learning Sync Note]:", learnErr);
       }
-    }
 
-    return NextResponse.json({
-      reply: replyText,
-      model: modelName,
-      actionProposal,
-      webReach: webReachContext ? { url: webReachContext.url, title: webReachContext.title, sourceType: webReachContext.sourceType } : null,
-      memory: updatedMemory ? {
-        totalInteractions: updatedMemory.totalInteractions,
-        frequentTopics: updatedMemory.frequentTopics.slice(0, 6),
-        searchedTechnologies: updatedMemory.searchedTechnologies.slice(0, 6),
-        strugglePoints: updatedMemory.strugglePoints.slice(-4),
-      } : null,
-      timestamp: new Date().toISOString(),
-    });
+      if (!orchestrationResult.success) {
+        // Rollback reservation if model execution failed
+        await rollbackEntitlementReservation(reservationId);
+        return NextResponse.json(
+          { error: orchestrationResult.error || "Failed to generate AI response.", retryable: true },
+          { status: 500 }
+        );
+      }
+
+      // 4B. Detect & process any tool action blocks generated by the model
+      let actionProposal = null;
+      let rawText = orchestrationResult.text || "";
+
+      const actionMatch = rawText.match(/```(?:myra_action|json)?\s*(\{\s*"tool"[\s\S]*?\})\s*```/);
+      if (actionMatch && actionMatch[1]) {
+        try {
+          const parsedAction = JSON.parse(actionMatch[1]);
+          if (userId && parsedAction?.tool) {
+            const propRes = await proposeToolAction(
+              userId,
+              parsedAction.tool,
+              parsedAction.parameters || {},
+              message.trim()
+            );
+            if (propRes.proposal) {
+              actionProposal = propRes.proposal;
+            }
+          }
+        } catch (parseErr) {
+          console.warn("[Myra Action Block Parse Note]:", parseErr);
+        }
+        // Strip action block from conversational text
+        rawText = rawText.replace(/```(?:myra_action|json)?\s*\{\s*"tool"[\s\S]*?\}\s*```/, "").trim();
+      }
+
+      // Clean and sanitize text to ensure zero asterisks and high readability
+      const replyText = sanitizeMyraText(rawText);
+      const modelName = orchestrationResult.modelUsed;
+
+      // 5. Asynchronously teach Myra and update student cognitive memory
+      let updatedMemory: MyraCognitiveMemory | null = null;
+      if (userId) {
+        try {
+          updatedMemory = await syncUserLearningProfile(
+            userId,
+            message.trim(),
+            replyText,
+            Boolean(webReachContext),
+            requestStartTime
+          );
+        } catch (learnErr) {
+          console.warn("[Myra Learning Sync Note]:", learnErr);
+        }
+      }
+
+      // Validate citation URL if returned by search provider
+      let validatedWebReach = null;
+      if (webReachContext?.url) {
+        const check = validateChatLink(webReachContext.url);
+        if (check.isValid && check.sanitizedUrl) {
+          validatedWebReach = {
+            url: check.sanitizedUrl,
+            title: webReachContext.title || check.sanitizedUrl,
+            sourceType: webReachContext.sourceType,
+            snippet: webReachContext.snippet,
+          };
+        }
+      }
+
+      return NextResponse.json({
+        reply: replyText,
+        model: modelName,
+        actionProposal,
+        webReach: validatedWebReach,
+        webSearchStatus: isSearchOptedIn
+          ? validatedWebReach
+            ? "completed"
+            : "no_results"
+          : "disabled",
+        sourceUrl: validatedWebReach?.url || null,
+        sourceTitle: validatedWebReach?.title || null,
+        memory: updatedMemory ? {
+          totalInteractions: updatedMemory.totalInteractions,
+          frequentTopics: updatedMemory.frequentTopics.slice(0, 6),
+          searchedTechnologies: updatedMemory.searchedTechnologies.slice(0, 6),
+          strugglePoints: updatedMemory.strugglePoints.slice(-4),
+        } : null,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (innerErr) {
+      // Rollback reservation on unexpected failure during processing
+      await rollbackEntitlementReservation(reservationId);
+      throw innerErr;
+    }
   } catch (error: any) {
     console.error("Myra AI route outer error:", error);
     
-    return NextResponse.json({ error: "Myra could not complete the request. Please try again." }, { status: 500 });
+    return NextResponse.json({ error: "Myra could not complete the request. Please try again.", retryable: true }, { status: 500 });
   }
 }
 

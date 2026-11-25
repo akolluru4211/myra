@@ -43,8 +43,8 @@ export default function NetworkingScreen() {
         ) : (
           <FlatList
             data={mentors}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
+            keyExtractor={(item: any) => item.id}
+            renderItem={({ item }: { item: any }) => (
               <View style={styles.mentorCard}>
                 <View style={styles.avatar}>
                   <Text style={styles.avatarText}>{item.name?.charAt(0) || "M"}</Text>

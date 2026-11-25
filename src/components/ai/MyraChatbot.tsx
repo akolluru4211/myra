@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import MyraActionCard from "@/components/ai/MyraActionCard";
+import { validateChatLink } from "@/lib/ai/link-validator";
 
 interface ChatMessage {
   id: string;
@@ -36,6 +37,24 @@ interface ChatMessage {
   sourceUrl?: string;
   sourceTitle?: string;
   actionProposal?: any;
+  webSearchStatus?: "completed" | "no_results" | "disabled";
+  status?: "sent" | "error" | "auth_required" | "quota_exceeded";
+  errorData?: {
+    limit?: number;
+    currentCount?: number;
+    resetTime?: string;
+    canRetry?: boolean;
+    failedPrompt?: string;
+  };
+}
+
+// Global page session ID to distinguish browser page reloads from same-session modal close/reopen
+let pageLoadSessionId = "";
+if (typeof window !== "undefined") {
+  if (!(window as any).__myra_page_session_id) {
+    (window as any).__myra_page_session_id = `sess-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  }
+  pageLoadSessionId = (window as any).__myra_page_session_id;
 }
 
 const CHATGPT_SUGGESTIONS = [
@@ -72,6 +91,7 @@ export default function MyraChatbot() {
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [copiedSnippetIndex, setCopiedSnippetIndex] = useState<number | null>(null);
+  const [webSearchEnabled, setWebSearchEnabled] = useState(false);
 
   // Image / OCR state
   const [ocrImagePreview, setOcrImagePreview] = useState<string | null>(null);
@@ -82,6 +102,22 @@ export default function MyraChatbot() {
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const currentChatSessionIdRef = useRef<number>(1);
+  const previousUserIdRef = useRef<string | undefined>(user?.uid);
+
+  // Helper to get session storage key for current user
+  const getTranscriptStorageKey = (uid?: string) => `myra_session_transcript_${uid || "guest"}`;
+
+  // Helper to generate the default welcome message
+  const getDefaultGreeting = (): ChatMessage => ({
+    id: "initial-welcome",
+    role: "assistant",
+    content: profile?.name
+      ? `Hello ${profile.name}! I am Myra, your AI study companion on EdWorld. Tell me your goal (for example JEE, NEET, CUET, boards, semester exams, GATE, CAT, placements), how many months you have, and how many hours a day you can study. I'll build your timetable and roadmap.`
+      : "Hello! I am Myra, your AI study companion on EdWorld. Tell me your goal (for example JEE, NEET, CUET, boards, semester exams, GATE, CAT, placements), how many months you have, and how many hours a day you can study. I'll build your timetable and roadmap.",
+    timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+  });
 
   // Auto-scroll on new messages
   useEffect(() => {
@@ -97,18 +133,63 @@ export default function MyraChatbot() {
     }
   }, [isOpen]);
 
-  // Initialize greeting with context awareness
+  // Manage transcript lifecycle across page load, account switch, and panel close/reopen
   useEffect(() => {
-    const initialGreeting: ChatMessage = {
-      id: "initial-welcome",
-      role: "assistant",
-      content: profile?.name
-        ? `Hello ${profile.name}! I am Myra, your AI study companion on EdWorld. Tell me your goal (for example JEE, NEET, CUET, boards, semester exams, GATE, CAT, placements), how many months you have, and how many hours a day you can study. I'll build your timetable and roadmap.`
-        : "Hello! I am Myra, your AI study companion on EdWorld. Tell me your goal (for example JEE, NEET, CUET, boards, semester exams, GATE, CAT, placements), how many months you have, and how many hours a day you can study. I'll build your timetable and roadmap.",
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    };
-    setMessages([initialGreeting]);
-  }, [profile?.name]);
+    if (typeof window === "undefined") return;
+
+    const currentUid = user?.uid;
+    const sessionTokenKey = `myra_page_load_token_${currentUid || "guest"}`;
+    const transcriptKey = getTranscriptStorageKey(currentUid);
+
+    // If account switched, abort pending requests and clear previous account's temporary transcript
+    if (previousUserIdRef.current !== currentUid) {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
+      currentChatSessionIdRef.current += 1;
+      setIsLoading(false);
+      try {
+        sessionStorage.removeItem(getTranscriptStorageKey(previousUserIdRef.current));
+        sessionStorage.removeItem(`myra_page_load_token_${previousUserIdRef.current || "guest"}`);
+      } catch {}
+      previousUserIdRef.current = currentUid;
+    }
+
+    // Check if this is a fresh page refresh / new browser load
+    const storedPageSession = sessionStorage.getItem(sessionTokenKey);
+    if (!storedPageSession || storedPageSession !== pageLoadSessionId) {
+      // Fresh page refresh -> clear transcript for this session
+      try {
+        sessionStorage.setItem(sessionTokenKey, pageLoadSessionId);
+        sessionStorage.removeItem(transcriptKey);
+      } catch {}
+      setMessages([getDefaultGreeting()]);
+    } else {
+      // Same browser tab / session -> restore preserved transcript across close/reopen
+      try {
+        const saved = sessionStorage.getItem(transcriptKey);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setMessages(parsed);
+            return;
+          }
+        }
+      } catch {}
+      setMessages([getDefaultGreeting()]);
+    }
+  }, [user?.uid, profile?.name]);
+
+  // Persist messages to sessionStorage for same-tab panel close/reopen
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (messages.length > 0) {
+      try {
+        sessionStorage.setItem(getTranscriptStorageKey(user?.uid), JSON.stringify(messages));
+      } catch {}
+    }
+  }, [messages, user?.uid]);
 
   // Listen for open-myra-copilot / close-myra-copilot triggers from header or navigation
   useEffect(() => {
@@ -130,15 +211,29 @@ export default function MyraChatbot() {
   }, []);
 
   const handleClearChat = () => {
-    const initialGreeting: ChatMessage = {
-      id: "initial-welcome",
-      role: "assistant",
-      content: profile?.name
-        ? `Hello ${profile.name}! I am Myra, your AI study companion on EdWorld. Tell me your goal (for example JEE, NEET, CUET, boards, semester exams, GATE, CAT, placements), how many months you have, and how many hours a day you can study. I'll build your timetable and roadmap.`
-        : "Hello! I am Myra, your AI study companion on EdWorld. Tell me your goal (for example JEE, NEET, CUET, boards, semester exams, GATE, CAT, placements), how many months you have, and how many hours a day you can study. I'll build your timetable and roadmap.",
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    };
+    // Abort any in-flight reply
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    // Invalidate conversation session so any late promises are discarded
+    currentChatSessionIdRef.current += 1;
+    setIsLoading(false);
+    setOcrError(null);
+    setOcrImagePreview(null);
+    setInput("");
+
+    const initialGreeting = getDefaultGreeting();
     setMessages([initialGreeting]);
+
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem(
+          getTranscriptStorageKey(user?.uid),
+          JSON.stringify([initialGreeting])
+        );
+      } catch {}
+    }
   };
 
   const handleCopyCode = (code: string, idx: number) => {
@@ -202,6 +297,15 @@ export default function MyraChatbot() {
     const textToSend = customPrompt || input;
     if (!textToSend.trim() || isLoading) return;
 
+    // Abort any existing in-flight request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    const requestSessionId = currentChatSessionIdRef.current;
+    const requestUserId = user?.uid;
+
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}`,
       role: "user",
@@ -209,7 +313,10 @@ export default function MyraChatbot() {
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages((prev) => {
+      // If this is a retry of a previous failed prompt, we can remove the previous failed assistant error or keep it
+      return [...prev, userMessage];
+    });
     if (!customPrompt) setInput("");
     setOcrImagePreview(null);
     setIsLoading(true);
@@ -223,6 +330,7 @@ export default function MyraChatbot() {
       const res = await fetch("/api/ai/myra", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
         body: JSON.stringify({
           message: textToSend.trim(),
           userId: user?.uid,
@@ -234,37 +342,128 @@ export default function MyraChatbot() {
           },
           history: historyPayload,
           pathname,
+          webSearch: webSearchEnabled,
         }),
       });
 
-      const data = await res.json();
-      const reply = res.ok ? data.reply || data.response : data.reply || data.error;
+      // Ignore late response if user started a New Chat or switched accounts
+      if (
+        requestSessionId !== currentChatSessionIdRef.current ||
+        requestUserId !== user?.uid
+      ) {
+        return;
+      }
+
+      const data = await res.json().catch(() => ({}));
+
+      // 1. Handle Unauthenticated / Session Expired (401)
+      if (res.status === 401) {
+        // Restore user's draft input so nothing is lost
+        setInput(textToSend.trim());
+        const assistantMessage: ChatMessage = {
+          id: `assistant-auth-${Date.now()}`,
+          role: "assistant",
+          content: data.message || "Please sign in to chat with Myra. Your draft has been saved.",
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          status: "auth_required",
+          errorData: {
+            failedPrompt: textToSend.trim(),
+          },
+        };
+        setMessages((prev) => [...prev, assistantMessage]);
+        return;
+      }
+
+      // 2. Handle Quota / Rate Limit Exceeded (429)
+      if (res.status === 429) {
+        const assistantMessage: ChatMessage = {
+          id: `assistant-quota-${Date.now()}`,
+          role: "assistant",
+          content: data.message || "You've reached your daily limit of queries with Myra on the Free plan. Upgrade to Pro for unlimited AI guidance.",
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          status: "quota_exceeded",
+          errorData: {
+            limit: data.limit || 25,
+            currentCount: data.currentCount || 25,
+            resetTime: data.resetTime,
+            failedPrompt: textToSend.trim(),
+          },
+        };
+        setMessages((prev) => [...prev, assistantMessage]);
+        return;
+      }
+
+      // 3. Handle Service Unavailable / Temporary Errors (503 / 500 / other errors)
+      if (!res.ok) {
+        // Restore user draft on recoverable error
+        setInput(textToSend.trim());
+        const errorMessage = data.message || data.error || "Temporary service error. Please try again.";
+        const assistantMessage: ChatMessage = {
+          id: `assistant-err-${Date.now()}`,
+          role: "assistant",
+          content: errorMessage,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          status: "error",
+          errorData: {
+            canRetry: true,
+            failedPrompt: textToSend.trim(),
+          },
+        };
+        setMessages((prev) => [...prev, assistantMessage]);
+        return;
+      }
+
+      const reply = data.reply || data.response;
       if (typeof reply !== "string" || !reply.trim()) {
         throw new Error("Myra returned an empty response.");
       }
+
       const assistantMessage: ChatMessage = {
         id: `assistant-${Date.now()}`,
         role: "assistant",
         content: reply,
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        actionProposal: res.ok ? data.actionProposal || null : null,
+        status: "sent",
+        actionProposal: data.actionProposal || null,
         sourceUrl: data.sourceUrl || null,
         sourceTitle: data.sourceTitle || null,
+        webSearchStatus: data.webSearchStatus || (webSearchEnabled ? "no_results" : "disabled"),
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
-    } catch (err) {
+    } catch (err: any) {
+      if (err?.name === "AbortError") {
+        // Aborted cleanly by user action (New Chat or session change)
+        return;
+      }
+      // Check if session was reset while request was in-flight
+      if (
+        requestSessionId !== currentChatSessionIdRef.current ||
+        requestUserId !== user?.uid
+      ) {
+        return;
+      }
+
+      // Restore user draft so nothing is lost
+      setInput(textToSend.trim());
       setMessages((prev) => [
         ...prev,
         {
           id: `assistant-err-${Date.now()}`,
           role: "assistant",
-          content: "Sorry, I ran into a network error. Please try asking again in a moment.",
+          content: "Sorry, I ran into a network error. Your message draft has been preserved — click Retry below or resend.",
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          status: "error",
+          errorData: {
+            canRetry: true,
+            failedPrompt: textToSend.trim(),
+          },
         },
       ]);
     } finally {
-      setIsLoading(false);
+      if (currentChatSessionIdRef.current === requestSessionId) {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -281,15 +480,45 @@ export default function MyraChatbot() {
 
       const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
       if (linkMatch) {
-        const [, label, href] = linkMatch;
+        const [, rawLabel, rawHref] = linkMatch;
+        const validation = validateChatLink(rawHref, rawLabel);
+
+        // If link is invalid or disallowed, render as plain text
+        if (!validation.isValid || !validation.sanitizedUrl) {
+          return (
+            <span key={pIdx} className="text-slate-300 font-mono text-xs">
+              {rawLabel || rawHref}
+            </span>
+          );
+        }
+
+        // Validated External HTTPS URL
+        if (validation.isExternal) {
+          return (
+            <a
+              key={pIdx}
+              href={validation.sanitizedUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 px-2 py-0.5 my-0.5 rounded-lg bg-blue-50 text-blue-700 hover:text-blue-900 border border-blue-200 font-semibold text-xs transition-colors"
+              title={`External link: ${validation.sanitizedUrl}`}
+            >
+              <span>{validation.displayLabel}</span>
+              <span className="text-[10px] text-blue-500 font-normal">[ext]</span>
+              <ArrowUpRight className="w-3 h-3 text-blue-600" />
+            </a>
+          );
+        }
+
+        // Validated Internal App Path
         return (
           <Link
             key={pIdx}
-            href={href}
-            className="inline-flex items-center gap-1 px-2 py-0.5 my-0.5 rounded-lg bg-indigo-500/20 text-indigo-300 hover:text-black border border-indigo-500/30 font-semibold text-xs transition-colors"
+            href={validation.sanitizedUrl}
+            className="inline-flex items-center gap-1 px-2 py-0.5 my-0.5 rounded-lg bg-blue-50 text-blue-700 hover:text-blue-900 border border-blue-200 font-semibold text-xs transition-colors"
           >
-            <span>{label}</span>
-            <ArrowUpRight className="w-3 h-3" />
+            <span>{validation.displayLabel}</span>
+            <ArrowUpRight className="w-3 h-3 text-blue-600" />
           </Link>
         );
       }
@@ -444,7 +673,7 @@ export default function MyraChatbot() {
   };
 
   return (
-    <div className="fixed inset-x-3 bottom-20 sm:inset-x-auto sm:bottom-6 sm:right-6 lg:bottom-6 lg:right-6 z-50 font-sans pointer-events-none flex justify-center sm:justify-end">
+    <div className="fixed inset-x-2 bottom-3 sm:inset-x-auto sm:bottom-6 sm:right-6 lg:bottom-6 lg:right-6 z-50 font-sans pointer-events-none flex justify-center sm:justify-end pb-[env(safe-area-inset-bottom,0px)]">
       {/* Floating Trigger Button on Desktop only (hidden on mobile where labeled bottom-nav tab is used, avoiding covering page buttons) */}
       {!isOpen && (
         <button
@@ -470,8 +699,8 @@ export default function MyraChatbot() {
         <div
           className={`pointer-events-auto relative bg-[#0C101A] text-black border border-blue-200 rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-all duration-200 animate-in fade-in slide-in-from-bottom-3 ${
             isExpanded
-              ? "w-full max-w-[calc(100vw-1.5rem)] sm:w-[680px] h-[calc(100dvh-4rem)] max-h-[880px]"
-              : "w-full max-w-[calc(100vw-1.5rem)] sm:w-[440px] h-[calc(100dvh-6rem)] sm:h-[640px] max-h-[85dvh]"
+              ? "w-full max-w-[calc(100vw-1rem)] sm:w-[680px] h-[calc(100dvh-2rem)] max-h-[880px]"
+              : "w-full max-w-[calc(100vw-1rem)] sm:w-[440px] h-[calc(100dvh-4rem)] sm:h-[640px] max-h-[88dvh]"
           }`}
         >
           {/* ChatGPT Sleek Minimalist Header */}
@@ -590,12 +819,73 @@ export default function MyraChatbot() {
                     className={`text-xs sm:text-[13px] leading-relaxed font-sans ${
                       msg.role === "user"
                         ? "bg-[#2F2F2F] text-black rounded-3xl px-4 py-2.5 max-w-[85%] shadow-sm"
+                        : msg.status === "auth_required"
+                        ? "bg-[#EFF6FF] border border-blue-300 text-black rounded-2xl rounded-tl-xs px-4 py-3 max-w-[92%] sm:max-w-[88%]"
+                        : msg.status === "quota_exceeded"
+                        ? "bg-[#EFF6FF] border border-blue-300 text-black rounded-2xl rounded-tl-xs px-4 py-3 max-w-[92%] sm:max-w-[88%]"
+                        : msg.status === "error"
+                        ? "bg-[#EFF6FF] border border-blue-300 text-black rounded-2xl rounded-tl-xs px-4 py-3 max-w-[92%] sm:max-w-[88%]"
                         : "bg-[#141824] border border-blue-200 text-slate-100 rounded-2xl rounded-tl-xs px-4 py-3 max-w-[92%] sm:max-w-[88%]"
                     }`}
                   >
                     <div className="break-words">
                       {renderFormattedContent(msg.content)}
                     </div>
+
+                    {/* Auth Required State */}
+                    {msg.status === "auth_required" && (
+                      <div className="mt-3 pt-3 border-t border-blue-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                        <span className="text-[11px] text-slate-700">
+                          Sign in to save your progress and continue chatting.
+                        </span>
+                        <Link
+                          href={`/login?redirectUrl=${encodeURIComponent(pathname || "/dashboard")}`}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-medium text-xs transition-colors shadow-sm"
+                        >
+                          <span>Sign in</span>
+                          <ArrowUpRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                    )}
+
+                    {/* Quota Exceeded State */}
+                    {msg.status === "quota_exceeded" && (
+                      <div className="mt-3 pt-3 border-t border-blue-200 flex flex-col gap-2">
+                        <div className="flex items-center justify-between text-[11px] text-slate-700">
+                          <span>Daily Free Limit: {msg.errorData?.limit || 25} queries</span>
+                          {msg.errorData?.resetTime && (
+                            <span className="text-slate-500">
+                              Resets: {new Date(msg.errorData.resetTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 pt-1">
+                          <Link
+                            href="/pricing"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-medium text-xs transition-colors shadow-sm"
+                          >
+                            <span>Upgrade to Pro</span>
+                            <ArrowUpRight className="w-3.5 h-3.5" />
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Temporary Error with Retry State */}
+                    {msg.status === "error" && msg.errorData?.canRetry && msg.errorData.failedPrompt && (
+                      <div className="mt-3 pt-3 border-t border-blue-200 flex items-center justify-between gap-2">
+                        <span className="text-[11px] text-slate-700">Temporary network or service issue</span>
+                        <button
+                          type="button"
+                          onClick={() => handleSend(msg.errorData?.failedPrompt)}
+                          disabled={isLoading}
+                          className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-[#DBEAFE] hover:bg-[#BFDBFE] text-black font-medium text-xs transition-colors cursor-pointer border border-blue-200"
+                        >
+                          <RotateCcw className="w-3 h-3" />
+                          <span>Retry</span>
+                        </button>
+                      </div>
+                    )}
 
                     {msg.actionProposal && (
                       <div className="mt-3">
@@ -606,10 +896,47 @@ export default function MyraChatbot() {
                       </div>
                     )}
 
-                    {msg.sourceUrl && (
-                      <div className="mt-2.5 pt-2 border-t border-blue-200 text-[10px] text-slate-600 flex items-center gap-1.5">
-                        <Globe className="w-3 h-3 text-emerald-400" />
-                        <span className="truncate">Source: {msg.sourceTitle || msg.sourceUrl}</span>
+                    {/* Web Search Citation / Source Link */}
+                    {msg.sourceUrl && (() => {
+                      const linkCheck = validateChatLink(msg.sourceUrl, msg.sourceTitle || msg.sourceUrl);
+                      if (!linkCheck.isValid || !linkCheck.sanitizedUrl) {
+                        return (
+                          <div className="mt-2.5 pt-2 border-t border-blue-200 text-[10px] text-slate-500 flex items-center gap-1.5 font-mono">
+                            <Globe className="w-3 h-3 text-slate-400" />
+                            <span className="truncate">Source (unverified link): {linkCheck.displayLabel}</span>
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div className="mt-2.5 pt-2 border-t border-blue-200 text-[10px] text-slate-700 flex items-center justify-between gap-1.5">
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <Globe className="w-3 h-3 text-blue-600 shrink-0" />
+                            <span className="text-slate-500 shrink-0 font-medium">Source:</span>
+                            <a
+                              href={linkCheck.sanitizedUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-800 underline truncate font-medium inline-flex items-center gap-0.5"
+                              title={linkCheck.sanitizedUrl}
+                            >
+                              <span>{linkCheck.displayLabel}</span>
+                              <span className="text-[9px] text-slate-400 no-underline">[ext]</span>
+                              <ArrowUpRight className="w-2.5 h-2.5" />
+                            </a>
+                          </div>
+                          <span className="text-[9px] bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-medium shrink-0">
+                            Verified Citation
+                          </span>
+                        </div>
+                      );
+                    })()}
+
+                    {/* Web Search Completed with No Results */}
+                    {msg.webSearchStatus === "no_results" && !msg.sourceUrl && (
+                      <div className="mt-2 pt-2 border-t border-blue-200 text-[10px] text-amber-700 bg-amber-50/60 px-2 py-1 rounded-md flex items-center gap-1.5">
+                        <Globe className="w-3 h-3 text-amber-600 shrink-0" />
+                        <span>Web search executed, but no external sources were found. Answer provided from internal knowledge.</span>
                       </div>
                     )}
                   </div>
@@ -692,7 +1019,35 @@ export default function MyraChatbot() {
           />
 
           {/* ChatGPT Floating Pill Input Capsule */}
-          <div className="p-3 bg-white border-t border-blue-200 shrink-0">
+          <div className="p-3 bg-white border-t border-blue-200 shrink-0 space-y-2">
+            {/* Search the Web Toggle & Privacy Note */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 px-1 text-[11px]">
+              <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={webSearchEnabled}
+                  onChange={(e) => setWebSearchEnabled(e.target.checked)}
+                  disabled={isLoading}
+                  className="sr-only peer"
+                />
+                <div className="w-8 h-4.5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-blue-600 relative"></div>
+                <span className="flex items-center gap-1 font-medium text-slate-700">
+                  <Globe className={`w-3.5 h-3.5 ${webSearchEnabled ? "text-blue-600" : "text-slate-400"}`} />
+                  Search the web
+                </span>
+              </label>
+
+              {webSearchEnabled ? (
+                <span className="text-[10px] text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full font-medium">
+                  Search terms or public URLs will be sent to external provider.
+                </span>
+              ) : (
+                <span className="text-[10px] text-slate-400">
+                  Off by default. Answers generated from Myra knowledge.
+                </span>
+              )}
+            </div>
+
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -706,9 +1061,13 @@ export default function MyraChatbot() {
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isOcrProcessing || isLoading}
                 title="Attach image or screenshot"
-                className="p-1.5 text-slate-600 hover:text-black rounded-xl transition-colors shrink-0 cursor-pointer disabled:opacity-40"
+                className="p-1.5 text-slate-400 hover:text-white rounded-xl transition-colors shrink-0 cursor-pointer disabled:opacity-40"
               >
-                <Paperclip className="w-4 h-4" />
+                {isOcrProcessing ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
+                ) : (
+                  <Paperclip className="w-4 h-4" />
+                )}
               </button>
 
               <input
@@ -717,9 +1076,9 @@ export default function MyraChatbot() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onPaste={handlePaste}
-                placeholder="Message Myra..."
+                placeholder={isOcrProcessing ? "Extracting text from image..." : "Message Myra..."}
                 disabled={isLoading || isOcrProcessing}
-                className="flex-1 bg-transparent border-0 text-black placeholder-slate-400 text-xs sm:text-sm focus:outline-none px-2.5 py-1 disabled:opacity-50 font-normal"
+                className="flex-1 bg-transparent border-0 text-white placeholder-slate-400 text-xs sm:text-sm focus:outline-none px-2.5 py-1 disabled:opacity-50 font-normal"
               />
 
               {/* Circular ArrowUp Send Button */}
@@ -733,13 +1092,29 @@ export default function MyraChatbot() {
                 }`}
                 aria-label="Send message"
               >
-                <ArrowUp className="w-4 h-4 stroke-[2.5]" />
+                {isLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-slate-700" />
+                ) : (
+                  <ArrowUp className="w-4 h-4 stroke-[2.5]" />
+                )}
               </button>
             </form>
 
-            <p className="text-[10px] text-center text-slate-500 mt-2 font-normal">
-              Myra is an AI assistant. Uploaded images and text are processed securely in memory and never retained for model training.
-            </p>
+            <div className="flex flex-col gap-1 text-[10px] text-center text-slate-500 mt-2 font-normal">
+              <p className="text-slate-600 font-medium">
+                This chat clears when you refresh. Myra may remember learning preferences separately.
+              </p>
+              <div className="flex items-center justify-center gap-2 text-slate-400 text-[10px]">
+                <span>Manage learning data:</span>
+                <Link
+                  href="/settings/memory"
+                  onClick={() => setIsOpen(false)}
+                  className="text-blue-600 hover:underline font-semibold"
+                >
+                  Myra memory settings →
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       )}

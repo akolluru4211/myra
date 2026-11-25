@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { evaluateFirewall } from "@/lib/firewall/waf";
+import { verifyPreviewToken } from "@/lib/auth/preview-token";
+import { validateSession } from "@/lib/auth/session-validator";
 
 // Subdomain to Sector Map (Main App handles Career track; Junior/Explorer deployed standalone)
 const SUBDOMAIN_SECTOR_MAP: Record<string, string> = {
@@ -34,21 +36,11 @@ const MAILS_SUBDOMAINS = [
   "mail.localhost",
 ];
 
-// Public page paths accessible without authentication
-const PUBLIC_PAGE_PREFIXES = [
+// Exact public pages (only match exact path)
+const EXACT_PUBLIC_PAGES = new Set([
+  "/",
   "/login",
   "/signup",
-  "/auth/login",
-  "/auth/signup",
-  "/auth/forgot-password",
-  "/auth/reset-password",
-  "/auth/verify-email",
-  "/for",
-  "/for-career",
-  "/for-college",
-  "/for-professionals",
-  "/sector",
-  "/sector-landing",
   "/privacy",
   "/terms",
   "/cookies",
@@ -57,85 +49,33 @@ const PUBLIC_PAGE_PREFIXES = [
   "/about",
   "/contact",
   "/pricing",
-  "/consent/verify",
   "/learn",
-  "/verify",
-  "/certificate",
-  "/u",
-  "/portfolio",
   "/colleges",
   "/network",
   "/newsletter",
-];
-
-// Reserved first-level route segments that belong to authenticated or app-internal sections
-const RESERVED_FIRST_LEVEL_ROUTES = new Set([
-  "about",
-  "admin",
-  "ambassador",
-  "api",
-  "aptitude",
-  "auth",
-  "billing",
-  "career",
-  "colleges",
-  "college",
-  "companies",
-  "consent",
-  "contact",
-  "cookies",
-  "daily",
-  "dashboard",
-  "dsa",
-  "edbuild",
-  "edmail",
-  "employee",
-  "employer",
-  "focus",
-  "for",
-  "for-career",
-  "for-college",
-  "for-professionals",
-  "founder",
-  "hr",
-  "interview-experiences",
-  "interviews",
-  "jobs",
-  "leadership-assessment",
-  "learn",
-  "login",
-  "mails",
-  "messages",
-  "mobile",
-  "network",
-  "networking",
-  "newsletter",
-  "offers",
-  "onboarding",
-  "portfolio",
-  "practice",
-  "pricing",
-  "privacy",
-  "problems",
-  "profile",
-  "projects",
-  "projectstudio",
-  "refund",
-  "resumes",
-  "sector",
-  "sector-landing",
-  "settings",
-  "signup",
-  "squads",
-  "student-record",
-  "styleguide",
-  "terms",
-  "u",
-  "verify",
+  "/consent/verify",
+  "/for/students",
+  "/for/colleges",
+  "/for/professionals",
+  "/for-career",
+  "/for-college",
+  "/for-professionals",
 ]);
 
-// Public API endpoints accessible without authentication
-const PUBLIC_API_PREFIXES = [
+// Segment-aware public page prefixes (must match exact segment boundary, e.g. /auth/..., /u/...)
+const SEGMENT_PUBLIC_PREFIXES = [
+  "/auth/",
+  "/for/",
+  "/sector/",
+  "/sector-landing/",
+  "/verify/",
+  "/certificate/",
+  "/u/",
+  "/portfolio/",
+];
+
+// Exact public API endpoints
+const EXACT_PUBLIC_APIS = new Set([
   "/api/auth/login",
   "/api/auth/signup",
   "/api/auth/otp/send",
@@ -164,7 +104,50 @@ const PUBLIC_API_PREFIXES = [
   "/api/edmail/check-username",
   "/api/edmail/inbound-webhook",
   "/api/edmail/health",
+  "/api/consent/verify",
+  "/api/audit/log",
+]);
+
+// Segment-aware public API prefixes
+const SEGMENT_PUBLIC_API_PREFIXES = [
+  "/api/auth/",
+  "/api/profile/public/",
+  "/api/interview/turn/",
+  "/api/interview/question-bank/",
+  "/api/learn/",
+  "/api/certificates/",
 ];
+
+/**
+ * Checks if a given pathname is an authorized public page.
+ * Uses exact matching for standalone pages and strict segment-boundary matching for page families.
+ */
+function isPublicPagePath(path: string): boolean {
+  if (EXACT_PUBLIC_PAGES.has(path)) {
+    return true;
+  }
+  for (const prefix of SEGMENT_PUBLIC_PREFIXES) {
+    if (path === prefix.slice(0, -1) || path.startsWith(prefix)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Checks if a given pathname is a public API route.
+ */
+function isPublicApiPath(path: string): boolean {
+  if (EXACT_PUBLIC_APIS.has(path)) {
+    return true;
+  }
+  for (const prefix of SEGMENT_PUBLIC_API_PREFIXES) {
+    if (path === prefix.slice(0, -1) || path.startsWith(prefix)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 // Apply hardened security, anti-AI-scraping & data protection headers to responses
 function applySecurityHeaders(res: NextResponse, requestId: string): NextResponse {
@@ -178,33 +161,47 @@ function applySecurityHeaders(res: NextResponse, requestId: string): NextRespons
   res.headers.set("X-Permitted-Cross-Domain-Policies", "none");
   res.headers.set("X-Robots-Tag", "noai, noimageai");
   res.headers.set("X-Sentinel-Shield", "active");
-  res.headers.set("X-Content-Security-Policy", "default-src 'self'");
+  res.headers.set("Content-Security-Policy", "default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https:;");
   return res;
 }
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 export function middleware(req: NextRequest) {
-  const pathname = req.nextUrl.pathname;
-  let requestId = req.headers.get("x-request-id");
-  if (!requestId) {
-    try {
-      requestId = typeof crypto !== "undefined" && typeof crypto.randomUUID === "function" 
-        ? crypto.randomUUID() 
-        : `req-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-    } catch {
-      requestId = `req-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-    }
+  const originalPathname = req.nextUrl.pathname;
+
+  // Generate standardized request ID via crypto.randomUUID()
+  const trustedUpstreamHeader = req.headers.get("x-trusted-trace-id");
+  let requestId: string;
+  if (trustedUpstreamHeader && /^[a-zA-Z0-9_\-.]{8,64}$/.test(trustedUpstreamHeader)) {
+    requestId = trustedUpstreamHeader;
+  } else {
+    requestId = typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : `req-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
   }
 
   // 1. Always allow static files, internal Next.js assets, and favicon
   if (
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/images") ||
-    pathname.startsWith("/extensions") ||
-    pathname.startsWith("/favicon.ico") ||
-    pathname.startsWith("/sitemap.xml") ||
-    pathname.startsWith("/robots.txt")
+    originalPathname.startsWith("/_next") ||
+    originalPathname.startsWith("/images") ||
+    originalPathname.startsWith("/extensions") ||
+    originalPathname.startsWith("/favicon.ico") ||
+    originalPathname.startsWith("/sitemap.xml") ||
+    originalPathname.startsWith("/robots.txt")
   ) {
-    const res = NextResponse.next();
+    const res = NextResponse.next({
+      request: {
+        headers: new Headers(req.headers),
+      },
+    });
     res.headers.set("x-request-id", requestId);
     return res;
   }
@@ -212,14 +209,16 @@ export function middleware(req: NextRequest) {
   // 2. Web Application Firewall (WAF) Request Inspection
   const wafResult = evaluateFirewall(req);
   if (wafResult.blocked) {
-    const isApi = pathname.startsWith("/api");
+    console.warn(`[WAF Blocked] Request ID: ${requestId} | Method: ${req.method} | Path: ${originalPathname} | Threat: ${wafResult.threatType} | Reason: ${wafResult.reason}`);
+
+    const isApi = originalPathname.startsWith("/api");
     if (isApi) {
       const blockedRes = NextResponse.json(
         {
           success: false,
           error: {
             code: "FIREWALL_BLOCKED",
-            message: wafResult.reason || "Access blocked by Aegis Sentinel AI security firewall.",
+            message: "Request blocked by security firewall.",
             threat_type: wafResult.threatType,
             risk_score: wafResult.riskScore || 90,
             request_id: requestId,
@@ -229,7 +228,9 @@ export function middleware(req: NextRequest) {
       );
       return applySecurityHeaders(blockedRes, requestId);
     } else {
-      const blockedHtml = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>403 Request Blocked | Edworld Co</title><meta name="viewport" content="width=device-width, initial-scale=1"><style>body{background:#0a0a0a;color:#ededed;font-family:-apple-system,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;padding:20px}.box{max-width:480px;background:#141414;border:1px solid #262626;border-radius:16px;padding:32px;text-align:center}h1{font-size:20px;color:#f43f5e;margin:0 0 12px}p{font-size:14px;color:#a3a3a3;line-height:1.5;margin:0 0 24px}.badge{display:inline-block;padding:4px 12px;border-radius:999px;background:#262626;font-size:12px;font-family:monospace;color:#d4d4d4}</style></head><body><div class="box"><h1>403 Request Blocked by Firewall</h1><p>${wafResult.reason || "Malicious injection syntax was detected in this request."}</p><div class="badge">Reference ID: ${requestId}</div></div></body></html>`;
+      const escapedRequestId = escapeHtml(requestId);
+      const blockedHtml = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Request Blocked | Edworld Co</title><meta name="viewport" content="width=device-width, initial-scale=1"><style>body{background:#ffffff;color:#0f172a;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;padding:24px}.box{max-width:480px;width:100%;background:#f8fafc;border:1px solid #e2e8f0;border-radius:24px;padding:32px;text-align:center;box-shadow:0 10px 25px -5px rgba(0,0,0,0.05)}h1{font-size:20px;font-weight:800;color:#0f172a;margin:0 0 8px;letter-spacing:-0.02em}p{font-size:13px;color:#475569;line-height:1.6;margin:0 0 20px}.card{background:#ffffff;border:1px solid #cbd5e1;border-radius:14px;padding:12px;margin-bottom:20px;font-size:12px;color:#334155;word-break:break-all}.label{font-weight:700;color:#64748b;font-size:10px;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:11px;color:#2563eb;font-weight:600}.btn{display:inline-block;padding:10px 20px;border-radius:12px;background:#2563eb;color:#ffffff;text-decoration:none;font-size:12px;font-weight:700;transition:background 0.15s ease}.btn:hover{background:#1d4ed8}</style></head><body><div class="box"><h1>Request Blocked</h1><p>Our security system paused this request to protect your student account. If you believe this is a mistake, please share this reference ID with support.</p><div class="card"><div class="label">Reference ID</div><code>${escapedRequestId}</code></div><div><a href="/" class="btn">Return Home</a></div></div></body></html>`;
+
       const blockedRes = new NextResponse(blockedHtml, {
         status: wafResult.statusCode || 403,
         headers: { "Content-Type": "text/html" },
@@ -238,94 +239,130 @@ export function middleware(req: NextRequest) {
     }
   }
 
-  // 3. Subdomain Routing: Check Host header
+  // ---------------------------------------------------------------------------
+  // 3. Resolve Recognized Subdomain & Effective Destination
+  // ---------------------------------------------------------------------------
   const rawHost = req.headers.get("x-forwarded-host") || req.headers.get("host") || "";
   const host = rawHost.toLowerCase().split(":")[0];
   const matchedSector = SUBDOMAIN_SECTOR_MAP[host];
 
-  if (matchedSector) {
-    // If visitor visits root on subdomain, rewrite internally to /sector-landing/[sector]
-    if (pathname === "/" || pathname === "") {
-      const rewriteUrl = new URL(`/sector-landing/${matchedSector}`, req.url);
-      const res = NextResponse.rewrite(rewriteUrl);
-      return applySecurityHeaders(res, requestId);
-    }
+  let effectivePathname = originalPathname;
+  let subdomainRewriteTarget: string | null = null;
+  let subdomainRedirectUrl: string | null = null;
 
-    // If visitor attempts to access auth from a subdomain, redirect to main app domain
-    if (pathname === "/login" || pathname === "/signup" || pathname.startsWith("/auth")) {
+  if (matchedSector) {
+    if (originalPathname === "/" || originalPathname === "") {
+      effectivePathname = `/sector-landing/${matchedSector}`;
+      subdomainRewriteTarget = effectivePathname;
+    } else if (originalPathname === "/login" || originalPathname === "/signup" || originalPathname.startsWith("/auth")) {
       const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN || "edworldco.in";
       const isLocal = host.endsWith(".localhost");
       if (!isLocal) {
-        return NextResponse.redirect(`https://${appDomain}${pathname}${req.nextUrl.search}`);
+        subdomainRedirectUrl = `https://${appDomain}${originalPathname}${req.nextUrl.search}`;
       }
     }
-  }
-
-  // 3B. Subdomain Routing: Learn Academy (learn.edworld.co.in, learn.localhost)
-  if (LEARN_SUBDOMAINS.includes(host)) {
-    // If visitor visits root on learn subdomain, rewrite internally to /learn
-    if (pathname === "/" || pathname === "") {
-      const rewriteUrl = new URL("/learn", req.url);
-      const res = NextResponse.rewrite(rewriteUrl);
-      return applySecurityHeaders(res, requestId);
+  } else if (LEARN_SUBDOMAINS.includes(host)) {
+    if (originalPathname === "/" || originalPathname === "") {
+      effectivePathname = "/learn";
+      subdomainRewriteTarget = "/learn";
+    } else if (
+      !originalPathname.startsWith("/learn") &&
+      !originalPathname.startsWith("/api") &&
+      !originalPathname.startsWith("/verify") &&
+      !originalPathname.startsWith("/certificate")
+    ) {
+      effectivePathname = `/learn${originalPathname}`;
+      subdomainRewriteTarget = effectivePathname;
     }
-    // If visitor accesses nested paths on learn subdomain (e.g. /dsa-mastery), rewrite to /learn/dsa-mastery
-    if (!pathname.startsWith("/learn") && !pathname.startsWith("/api") && !pathname.startsWith("/verify") && !pathname.startsWith("/certificate") && !pathname.startsWith("/_next")) {
-      const rewriteUrl = new URL(`/learn${pathname}`, req.url);
-      const res = NextResponse.rewrite(rewriteUrl);
-      return applySecurityHeaders(res, requestId);
-    }
-  }
-
-  // 3C. Subdomain Routing: EdMail Webmail (mails.edworld.co.in, mails.localhost)
-  if (MAILS_SUBDOMAINS.includes(host)) {
-    // If visitor visits root on mails subdomain, rewrite internally to /edmail
-    if (pathname === "/" || pathname === "") {
-      const rewriteUrl = new URL("/edmail", req.url);
-      const res = NextResponse.rewrite(rewriteUrl);
-      return applySecurityHeaders(res, requestId);
-    }
-    // If visitor accesses nested paths on mails subdomain, rewrite to /edmail or keep api/assets
-    if (!pathname.startsWith("/edmail") && !pathname.startsWith("/api") && !pathname.startsWith("/_next")) {
-      const rewriteUrl = new URL(`/edmail${pathname}`, req.url);
-      const res = NextResponse.rewrite(rewriteUrl);
-      return applySecurityHeaders(res, requestId);
+  } else if (MAILS_SUBDOMAINS.includes(host)) {
+    if (originalPathname === "/" || originalPathname === "") {
+      effectivePathname = "/edmail";
+      subdomainRewriteTarget = "/edmail";
+    } else if (
+      !originalPathname.startsWith("/edmail") &&
+      !originalPathname.startsWith("/api")
+    ) {
+      effectivePathname = `/edmail${originalPathname}`;
+      subdomainRewriteTarget = effectivePathname;
     }
   }
 
-  // 3. Dev-Only Routes: Hide in production
+  // If subdomain auth requires cross-domain redirect, dispatch before gating
+  if (subdomainRedirectUrl) {
+    return NextResponse.redirect(subdomainRedirectUrl);
+  }
+
+  // 4. Dev-Only Routes: Hide in production
   if (
     process.env.NODE_ENV === "production" &&
-    (pathname === "/mobile" ||
-      pathname.startsWith("/mobile/") ||
-      pathname === "/styleguide" ||
-      pathname.startsWith("/styleguide/"))
+    (effectivePathname === "/mobile" ||
+      effectivePathname.startsWith("/mobile/") ||
+      effectivePathname === "/styleguide" ||
+      effectivePathname.startsWith("/styleguide/"))
   ) {
     const notFoundRes = new NextResponse("Not Found", { status: 404 });
     return applySecurityHeaders(notFoundRes, requestId);
   }
 
-  // --- UNIFIED COMING SOON GATE ---
-  // A single middleware flag gating the entire site
+  // ---------------------------------------------------------------------------
+  // 5. Coming Soon Launch Gating & Secure Staff Preview
+  // ---------------------------------------------------------------------------
   const isComingSoonActive =
     process.env.COMING_SOON_MODE === "true" ||
     process.env.NEXT_PUBLIC_COMING_SOON === "true";
 
-  const hasPreviewQuery = req.nextUrl.searchParams.get("preview") === "true";
-  const hasPreviewCookie = req.cookies.get("edw_preview")?.value === "true";
-  const hasPreviewBypass = hasPreviewQuery || hasPreviewCookie;
+  // Check verified staff preview access:
+  // 1. Signed-in staff session with authorized role (SUPPORT, REVIEWER, ADMIN, SUPER_ADMIN, FOUNDER)
+  // 2. Server-validated, signed, non-expired preview token (passed via cookie or ?preview_token=)
+  let isAuthorizedPreview = false;
 
+  const sessionToken =
+    req.cookies.get("edworld_session")?.value ||
+    req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+
+  if (sessionToken) {
+    try {
+      const sess = validateSession(sessionToken);
+      if (sess.valid && sess.role) {
+        const staffRoles = ["SUPPORT", "REVIEWER", "ADMIN", "SUPER_ADMIN", "FOUNDER", "EXECUTIVE"];
+        if (staffRoles.includes(sess.role.toUpperCase())) {
+          isAuthorizedPreview = true;
+        }
+      }
+    } catch {}
+  }
+
+  // If not verified via staff session, verify signed preview token
+  if (!isAuthorizedPreview) {
+    const previewQueryToken = req.nextUrl.searchParams.get("preview_token") || req.nextUrl.searchParams.get("preview");
+    const previewCookieToken = req.cookies.get("edw_preview_token")?.value || req.cookies.get("edw_preview")?.value;
+    const tokenToVerify = previewQueryToken || previewCookieToken;
+
+    if (tokenToVerify) {
+      // Check if signed token
+      const tokenVerification = verifyPreviewToken(tokenToVerify);
+      if (tokenVerification.valid) {
+        isAuthorizedPreview = true;
+      } else if (process.env.ALLOW_UNSIGNED_PREVIEWS === "true" && (tokenToVerify === "true" || tokenToVerify === "1")) {
+        // Backwards compatibility for dev/staging environments with explicit flag
+        isAuthorizedPreview = true;
+      }
+    }
+  }
+
+  // Determine if effective destination is an intentionally exempt route
   const isGateExemptRoute =
-    pathname === "/admin" ||
-    pathname.startsWith("/admin/") ||
-    pathname === "/login" ||
-    pathname === "/signup" ||
-    pathname.startsWith("/auth/") ||
-    pathname.startsWith("/api/auth/") ||
-    pathname === "/api/feature-flags";
+    effectivePathname === "/admin" ||
+    effectivePathname.startsWith("/admin/") ||
+    effectivePathname === "/login" ||
+    effectivePathname === "/signup" ||
+    effectivePathname.startsWith("/auth/") ||
+    effectivePathname.startsWith("/api/auth/") ||
+    effectivePathname === "/api/feature-flags" ||
+    effectivePathname === "/api/health";
 
-  if (isComingSoonActive && !hasPreviewBypass && !isGateExemptRoute) {
-    if (pathname === "/") {
+  if (isComingSoonActive && !isAuthorizedPreview && !isGateExemptRoute) {
+    if (originalPathname === "/" && !subdomainRewriteTarget) {
       const reqHeaders = new Headers(req.headers);
       reqHeaders.set("x-coming-soon-gated", "true");
       const res = NextResponse.next({ request: { headers: reqHeaders } });
@@ -337,47 +374,52 @@ export function middleware(req: NextRequest) {
     return applySecurityHeaders(gateRes, requestId);
   }
 
-  // Helper to persist preview cookie if preview query is provided
-  const setPreviewCookieIfPresent = (res: NextResponse) => {
-    if (hasPreviewQuery) {
-      res.cookies.set("edw_preview", "true", {
-        path: "/",
-        maxAge: 86400,
-        sameSite: "lax",
-      });
-    }
-    return res;
-  };
+  // ---------------------------------------------------------------------------
+  // 6. Subdomain Rewrite Execution (Applies only AFTER Coming Soon checks pass)
+  // ---------------------------------------------------------------------------
+  if (subdomainRewriteTarget) {
+    // Preserve query parameters on rewrites
+    const rewriteUrl = new URL(subdomainRewriteTarget, req.url);
+    rewriteUrl.search = req.nextUrl.search;
+    const res = NextResponse.rewrite(rewriteUrl);
+    return applySecurityHeaders(res, requestId);
+  }
 
-  // 4. Allow root landing page
-  if (pathname === "/") {
+  // ---------------------------------------------------------------------------
+  // 7. Route Normalization & Legacy Recovery Redirects
+  // ---------------------------------------------------------------------------
+  if (originalPathname === "/") {
     const res = NextResponse.next();
-    setPreviewCookieIfPresent(res);
     return applySecurityHeaders(res, requestId);
   }
 
-  // 4B. Temporary recovery redirects for legacy /u/ destinations
-  if (pathname === "/u/squads") {
+  // Temporary recovery redirects for legacy /u/ destinations (preserve query string)
+  if (originalPathname === "/u/squads") {
     const recoveryUrl = new URL("/squads", req.url);
+    recoveryUrl.search = req.nextUrl.search;
     const res = NextResponse.redirect(recoveryUrl, 307);
     return applySecurityHeaders(res, requestId);
   }
-  if (pathname === "/u/daily") {
+  if (originalPathname === "/u/daily") {
     const recoveryUrl = new URL("/daily", req.url);
+    recoveryUrl.search = req.nextUrl.search;
     const res = NextResponse.redirect(recoveryUrl, 307);
     return applySecurityHeaders(res, requestId);
   }
 
-  const isPublicPage = PUBLIC_PAGE_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  // ---------------------------------------------------------------------------
+  // 8. Public vs. Protected Destination Matching
+  // ---------------------------------------------------------------------------
+  const isPublicPage = isPublicPagePath(effectivePathname);
 
   if (isPublicPage) {
     const res = NextResponse.next();
     return applySecurityHeaders(res, requestId);
   }
 
-  // 5. Check API endpoints
-  if (pathname.startsWith("/api")) {
-    const isPublicApi = PUBLIC_API_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  // 9. API Routes Check
+  if (effectivePathname.startsWith("/api")) {
+    const isPublicApi = isPublicApiPath(effectivePathname);
     if (isPublicApi) {
       const res = NextResponse.next();
       return applySecurityHeaders(res, requestId);
@@ -390,7 +432,6 @@ export function middleware(req: NextRequest) {
       req.cookies.has("edworld_auth");
 
     const internalSecret = process.env.INTERNAL_SERVICE_SECRET;
-    // Only grant internal auth when the secret is explicitly configured — never use a fallback string
     const hasInternalAuth =
       !!internalSecret && req.headers.get("x-internal-secret") === internalSecret;
     const hasBearerToken = req.headers.has("authorization");
@@ -402,41 +443,40 @@ export function middleware(req: NextRequest) {
           error: {
             code: "AUTH_REQUIRED",
             message: "Unauthorized: Valid authentication session required to access this resource.",
-            request_id: requestId
-          }
+            request_id: requestId,
+          },
         },
         {
           status: 401,
           headers: {
             "x-request-id": requestId,
-            "Cache-Control": "no-store"
-          }
+            "Cache-Control": "no-store",
+          },
         }
       );
       return applySecurityHeaders(errRes, requestId);
     }
 
-    // Forward the correlation ID into the request so route handlers can read it
     const reqHeaders = new Headers(req.headers);
     reqHeaders.set("x-request-id", requestId);
     const res = NextResponse.next({ request: { headers: reqHeaders } });
     return applySecurityHeaders(res, requestId);
   }
 
-  // 6. Protected Page Routes (/dashboard, /employee, /hr, /founder, /admin, /profile, etc.)
-  const sessionToken =
+  // 10. Protected Page Routes (/dashboard, /employee, /hr, /founder, /admin, /profile, etc.)
+  const clientAuthSession =
     req.cookies.get("edworld_session")?.value ||
     req.cookies.get("sb-access-token")?.value ||
     req.cookies.get("edworld_auth")?.value;
 
-  if (!sessionToken) {
-    // Unauthenticated user attempting protected route: Redirect immediately to /login
+  if (!clientAuthSession) {
+    // Unauthenticated user attempting protected route: Redirect immediately to /login preserving query
     const loginUrl = new URL("/login", req.url);
-    loginUrl.searchParams.set("redirectUrl", pathname);
+    const fullOriginalDestination = `${originalPathname}${req.nextUrl.search}`;
+    loginUrl.searchParams.set("redirectUrl", fullOriginalDestination);
     return NextResponse.redirect(loginUrl);
   }
 
-  // Add strict security and data protection firewall headers
   const response = NextResponse.next();
   return applySecurityHeaders(response, requestId);
 }

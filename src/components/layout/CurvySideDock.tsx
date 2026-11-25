@@ -51,7 +51,7 @@ export default function CurvySideDock() {
       name: "Learn",
       items: [
         { href: "/learn", label: "EdLearn", icon: BookOpen, badge: "Hub" },
-        { href: "/problems", label: "DSA Arena", icon: Code2 },
+        { href: "/dsa", label: "DSA Arena", icon: Code2 },
         { href: "/daily", label: "Daily", icon: Zap, badge: "Free" },
         { href: "/leaderboard", label: "Ranks", icon: Trophy },
       ],
@@ -60,7 +60,7 @@ export default function CurvySideDock() {
       name: "Build",
       items: [
         { href: "/squads", label: "Squads", icon: Users },
-        { href: "/projectstudio", label: "Studio", icon: Layers },
+        { href: "/projects", label: "Studio", icon: Layers },
       ],
     },
     {

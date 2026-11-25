@@ -41,23 +41,25 @@ export default function ApplyModal({
   const [showUpgradeModal, setShowUpgradeModal] = useState<boolean>(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("edworld_resumes");
+    // Check user-scoped resume storage first, then global fallback
+    const userKey = user?.uid ? `edworld_${user.uid}_resumes` : "edworld_resumes";
+    const saved = localStorage.getItem(userKey) || localStorage.getItem("edworld_resumes");
     if (saved) {
       try {
         const list: Resume[] = JSON.parse(saved);
-        setResumes(list);
-        if (list.length > 0) {
+        if (Array.isArray(list) && list.length > 0) {
+          setResumes(list);
           setSelectedResumeId(list[0].id);
+          return;
         }
-        return;
       } catch (e) {}
     }
 
     // Default fallback
     const fallback: Resume = {
-      id: "resume-default-1",
+      id: user?.uid ? `resume-${user.uid}-master` : "resume-default-1",
       userId: user?.uid || "user-1",
-      title: "Full-Stack Software Engineer — Target: Tech Tier 1",
+      title: "ATS Master Resume",
       templateId: "classic",
       content: DEFAULT_RESUME_CONTENT,
       createdAt: new Date().toISOString(),
@@ -85,7 +87,8 @@ export default function ApplyModal({
     }
 
     // 2. Check Duplicate
-    const savedApps = localStorage.getItem("edworld_applications");
+    const userAppKey = user?.uid ? `edworld_${user.uid}_applications` : "edworld_applications";
+    const savedApps = localStorage.getItem(userAppKey) || localStorage.getItem("edworld_applications");
     const list: JobApplication[] = savedApps ? JSON.parse(savedApps) : [];
     const isDuplicate = list.some((a) => a.jobId === job.id && a.userId === user?.uid);
     if (isDuplicate) {
@@ -139,8 +142,11 @@ export default function ApplyModal({
         console.warn("[ApplyModal API Fallback to LocalStorage]:", apiErr);
       }
 
-      // Save to localStorage as well for offline persistence
+      // Save to localStorage as well for offline persistence (both user-scoped and legacy key for test compatibility)
       localStorage.setItem("edworld_applications", JSON.stringify([newApp, ...list]));
+      if (userAppKey !== "edworld_applications") {
+        localStorage.setItem(userAppKey, JSON.stringify([newApp, ...list]));
+      }
 
       if (onApplicationSubmitted) {
         onApplicationSubmitted(newApp);

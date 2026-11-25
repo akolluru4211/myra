@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {
+  renderBrandedEmailHtml,
   renderOtpVerificationEmail,
   renderOtpVerificationText,
   renderConnectionRequestReceivedEmail,
@@ -28,6 +29,7 @@ const otpData = {
 };
 fs.writeFileSync(path.join(outDir, '1-otp-verification.html'), renderOtpVerificationEmail(otpData));
 fs.writeFileSync(path.join(outDir, '1-otp-verification.txt'), renderOtpVerificationText(otpData));
+fs.writeFileSync(path.join(outDir, 'verification-email.html'), renderOtpVerificationEmail(otpData));
 
 // 2. Connection Request
 const connReqData = {
@@ -81,4 +83,27 @@ const eventData = {
 fs.writeFileSync(path.join(outDir, '5-event-invitation.html'), renderEventInvitationEmail(eventData));
 fs.writeFileSync(path.join(outDir, '5-event-invitation.txt'), renderEventInvitationText(eventData));
 
-console.log('All 5 HTML and TXT email previews successfully generated in public/email-previews/');
+// 6. Community Announcement
+const announcementHtml = renderBrandedEmailHtml({
+  previewText: 'Announcing EdWorld Co. Winter Mentorship Cohort 2026',
+  title: 'Winter Mentorship Cohort 2026 is Live',
+  contentHtml: `
+    <div style="color: #334155;">
+      <p style="margin: 0 0 16px; font-size: 15px; line-height: 1.65; color: #334155;">
+        We are thrilled to announce the opening of applications for our 2026 Winter Mentorship Cohort.
+      </p>
+      <p style="margin: 0 0 16px; font-size: 15px; line-height: 1.65; color: #334155;">
+        Selected students will be paired with industry mentors from top engineering organizations, participate in weekly mock interviews, and collaborate on open-source projects.
+      </p>
+      <p style="margin: 0 0 16px; font-size: 15px; line-height: 1.65; color: #334155;">
+        Spots are limited to ensure high-touch guidance. Review the curriculum and apply through your dashboard today.
+      </p>
+    </div>
+  `,
+  ctaText: 'Apply for Cohort',
+  ctaUrl: 'https://edworld.co.in/dashboard',
+  footerNote: 'You received this official community broadcast as a registered member of EdWorld Co.'
+});
+fs.writeFileSync(path.join(outDir, 'community-announcement.html'), announcementHtml);
+
+console.log('All HTML and TXT email previews successfully generated in public/email-previews/');

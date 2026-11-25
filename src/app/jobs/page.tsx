@@ -254,7 +254,7 @@ export default function JobBoardPage() {
 
             <div className="flex items-center flex-wrap gap-2.5 sm:gap-3">
               <Link
-                href="/jobs/applications"
+                href="/student-record?tab=applications"
                 className="px-4 py-2.5 rounded-xl bg-[#EFF6FF] hover:bg-[#E0E3FA] border border-blue-200 text-[#4338CA] text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs"
               >
                 <FileCheck className="w-4 h-4 text-[#2563EB]" />

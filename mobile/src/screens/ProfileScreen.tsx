@@ -17,12 +17,12 @@ export default function ProfileScreen() {
         <View style={styles.card}>
           <View style={styles.avatarRow}>
             <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{user.name.charAt(0)}</Text>
+              <Text style={styles.avatarText}>{user?.name?.charAt(0) || "S"}</Text>
             </View>
             <View style={styles.userMeta}>
-              <Text style={styles.name}>{user.name}</Text>
-              <Text style={styles.email}>{user.email}</Text>
-              <Text style={styles.grade}>{profile.gradeLevel || user.gradeLevel}</Text>
+              <Text style={styles.name}>{user?.name || "Student"}</Text>
+              <Text style={styles.email}>{user?.email || ""}</Text>
+              <Text style={styles.grade}>{profile?.gradeLevel || user?.gradeLevel || "Student"}</Text>
             </View>
           </View>
 
@@ -30,7 +30,7 @@ export default function ProfileScreen() {
 
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Age Band:</Text>
-            <Text style={styles.infoVal}>{user.ageBand}</Text>
+            <Text style={styles.infoVal}>{user?.ageBand || "18+"}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Safety Status:</Text>
@@ -40,14 +40,14 @@ export default function ProfileScreen() {
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Public Visibility:</Text>
-            <Text style={styles.infoVal}>{isMinor ? "Locked (Private)" : profile.isPublic ? "Public" : "Private"}</Text>
+            <Text style={styles.infoVal}>{isMinor ? "Locked (Private)" : profile?.isPublic ? "Public" : "Private"}</Text>
           </View>
         </View>
 
         {/* Goal Card */}
         <View style={styles.card}>
           <Text style={styles.cardHeading}>Primary Objective</Text>
-          <Text style={styles.goalText}>{profile.primaryGoal}</Text>
+          <Text style={styles.goalText}>{profile?.primaryGoal || profile?.targetRole || "Learn and grow skills"}</Text>
         </View>
 
         {/* Fast Switch Persona for Testing */}

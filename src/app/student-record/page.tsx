@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import AuthGuard from "@/components/auth/AuthGuard";
 import {
@@ -36,7 +37,9 @@ type RecordTab = "marks" | "events" | "study_notes" | "certificates" | "projects
 
 export default function StudentRecordPage() {
   const { user, profile } = useAuth();
-  const [activeTab, setActiveTab] = useState<RecordTab>("marks");
+  const searchParams = useSearchParams();
+  const initialTab = (searchParams.get("tab") as RecordTab) || "marks";
+  const [activeTab, setActiveTab] = useState<RecordTab>(initialTab);
   const [searchQuery, setSearchQuery] = useState("");
 
   // Data states

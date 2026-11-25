@@ -14,7 +14,7 @@ import { MobileInterviewQuestion } from "../types";
 
 export default function InterviewScreen() {
   const { profile, updateEffectiveLevel } = useMobileAuth();
-  const sweInterest = profile.interests.find((i) => i.id === "swe");
+  const sweInterest = profile?.interests?.find((i: any) => i.id === "swe");
   const userLevel = sweInterest ? sweInterest.effectiveLevel : 0;
 
   // Filter question matching user's effective level

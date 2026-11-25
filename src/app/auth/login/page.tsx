@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth, translateAuthError } from "@/lib/auth-context";
+import { supabase } from "@/lib/supabase";
+import { resolvePostSignInDestination, validateRedirectDestination } from "@/lib/auth/redirect-validator";
 import { 
   ArrowRight, 
   AlertCircle, 
@@ -13,7 +15,8 @@ import {
   Mail,
   Loader2,
   Smartphone,
-  RotateCw
+  RotateCw,
+  RefreshCw
 } from "lucide-react";
 import FigmaAuthLayout from "@/components/auth/figma/FigmaAuthLayout";
 
@@ -42,7 +45,14 @@ function LoginForm() {
 
   // Common state
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [error, setError] = useState<string | null>(searchParams?.get("error") || null);
+  const [isProfileErrorRetryable, setIsProfileErrorRetryable] = useState(false);
+
+  // Retrieve sanitized explicit redirect parameter (preserves query & fragment)
+  const explicitRedirect = searchParams?.get("redirectUrl") || searchParams?.get("next");
+  const validatedRedirect = validateRedirectDestination(explicitRedirect);
 
   // Countdown timer effect
   useEffect(() => {
@@ -65,9 +75,46 @@ function LoginForm() {
     }
   }, [otpStep]);
 
+  // Handle Google OAuth Sign-in
+  const handleGoogleSignIn = async () => {
+    if (loading || googleLoading) return;
+    setGoogleLoading(true);
+    setError(null);
+    setIsProfileErrorRetryable(false);
+
+    try {
+      const origin = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
+      const callbackUrl = new URL("/auth/callback", origin);
+      if (validatedRedirect) {
+        callbackUrl.searchParams.set("next", validatedRedirect);
+      }
+
+      const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: callbackUrl.toString(),
+        },
+      });
+
+      if (oauthError) {
+        throw oauthError;
+      }
+
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (err: any) {
+      console.error("[Google OAuth Error]:", err);
+      setError(translateAuthError(err));
+      setGoogleLoading(false);
+    }
+  };
+
   // Handle send OTP
   const handleSendOtp = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    if (loading || googleLoading) return;
+
     const cleanId = identifier.trim();
     if (!cleanId) {
       setError("Please enter your Email or Mobile Number.");
@@ -76,6 +123,8 @@ function LoginForm() {
 
     setLoading(true);
     setError(null);
+    setIsProfileErrorRetryable(false);
+
     try {
       const res = await sendOtp(cleanId, "login");
       setMaskedIdentifier(res.maskedIdentifier || cleanId);
@@ -143,6 +192,8 @@ function LoginForm() {
   // Handle verify OTP
   const handleVerifyOtp = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    if (loading || googleLoading) return;
+
     const fullOtp = otpDigits.join("");
     if (fullOtp.length !== 6) {
       setError("Please enter the complete 6-digit verification code.");
@@ -150,56 +201,73 @@ function LoginForm() {
     }
 
     setLoading(true);
+    setProfileLoading(true);
     setError(null);
+    setIsProfileErrorRetryable(false);
+
     try {
       const res = await verifyOtp(identifier.trim(), fullOtp, "login");
-      const explicitRedirect = searchParams?.get("redirectUrl");
-      if (explicitRedirect && !explicitRedirect.startsWith("/auth") && !explicitRedirect.startsWith("/login")) {
-        router.push(explicitRedirect);
-        return;
-      }
-      router.push(res.redirectUrl || "/dashboard");
+      
+      // Centralized post-sign-in resolution
+      const { destination } = resolvePostSignInDestination({
+        role: res.role || "CLIENT",
+        requestedDestination: validatedRedirect,
+      });
+
+      router.push(destination);
     } catch (err: any) {
-      setError(err?.message || "Invalid or expired verification code.");
+      const msg = err?.message || "Invalid or expired verification code.";
+      setError(msg);
+      if (msg.toLowerCase().includes("profile") || msg.toLowerCase().includes("network") || msg.toLowerCase().includes("retry")) {
+        setIsProfileErrorRetryable(true);
+      }
     } finally {
       setLoading(false);
+      setProfileLoading(false);
     }
   };
 
   // Handle Resend OTP
   const handleResendOtp = async () => {
-    if (!canResend || loading) return;
+    if (!canResend || loading || googleLoading) return;
     await handleSendOtp();
   };
 
   // Handle password login
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading || googleLoading) return;
+
     if (!email || !password) {
       setError("Please enter both your email address and password.");
       return;
     }
-    setLoading(true);
-    setError(null);
-    try {
-      const { role, redirectUrl, onboardingCompleted } = await loginWithEmail(email, password);
-      
-      const explicitRedirect = searchParams?.get("redirectUrl");
-      if (explicitRedirect && !explicitRedirect.startsWith("/auth") && !explicitRedirect.startsWith("/login")) {
-        router.push(explicitRedirect);
-        return;
-      }
 
-      if (role && role !== "CLIENT") {
-        router.push(redirectUrl);
-      } else if (onboardingCompleted === false) {
-        router.push("/onboarding");
-      } else {
-        router.push(redirectUrl || "/dashboard");
-      }
+    setLoading(true);
+    setProfileLoading(true);
+    setError(null);
+    setIsProfileErrorRetryable(false);
+
+    try {
+      const { role, careerStage, onboardingCompleted } = await loginWithEmail(email, password);
+
+      // Centralized post-sign-in resolution
+      const { destination } = resolvePostSignInDestination({
+        role: role || "CLIENT",
+        onboardingCompleted,
+        requestedDestination: validatedRedirect,
+        careerStage,
+      });
+
+      router.push(destination);
     } catch (err: any) {
       const friendlyMsg = translateAuthError(err);
       setError(friendlyMsg);
+
+      if (friendlyMsg.toLowerCase().includes("profile") || friendlyMsg.toLowerCase().includes("connection") || friendlyMsg.toLowerCase().includes("status")) {
+        setIsProfileErrorRetryable(true);
+      }
+
       if (friendlyMsg.includes("verify your email")) {
         setTimeout(() => {
           router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
@@ -207,6 +275,7 @@ function LoginForm() {
       }
     } finally {
       setLoading(false);
+      setProfileLoading(false);
     }
   };
 
@@ -218,11 +287,54 @@ function LoginForm() {
     >
       <div className="space-y-5">
         
+        {/* Google OAuth Button */}
+        <button
+          type="button"
+          onClick={handleGoogleSignIn}
+          disabled={loading || googleLoading}
+          className="w-full py-2.5 px-4 rounded-xl font-semibold text-xs sm:text-sm text-slate-800 bg-white border border-blue-200 hover:bg-slate-50 active:bg-slate-100 transition-all flex items-center justify-center gap-3 shadow-xs disabled:opacity-60 cursor-pointer"
+        >
+          {googleLoading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
+              <span>Connecting to Google...</span>
+            </>
+          ) : (
+            <>
+              <svg className="w-4 h-4" viewBox="0 0 24 24">
+                <path
+                  fill="#4285F4"
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                />
+                <path
+                  fill="#EA4335"
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                />
+              </svg>
+              <span>Continue with Google</span>
+            </>
+          )}
+        </button>
+
+        <div className="relative flex py-1 items-center">
+          <div className="flex-grow border-t border-blue-200"></div>
+          <span className="flex-shrink mx-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">or sign in with</span>
+          <div className="flex-grow border-t border-blue-200"></div>
+        </div>
+
         {/* Method Switcher Tabs: Email OTP (Student default) vs Password */}
         <div className="grid grid-cols-2 p-1 rounded-2xl bg-[#DBEAFE] border border-blue-200/80 text-xs font-semibold">
           <button
             type="button"
-            onClick={() => { setAuthMethod("otp"); setError(null); }}
+            onClick={() => { setAuthMethod("otp"); setError(null); setIsProfileErrorRetryable(false); }}
             className={`py-2 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
               authMethod === "otp"
                 ? "bg-white text-slate-900 font-bold shadow-xs border border-blue-200/70"
@@ -234,7 +346,7 @@ function LoginForm() {
           </button>
           <button
             type="button"
-            onClick={() => { setAuthMethod("password"); setError(null); }}
+            onClick={() => { setAuthMethod("password"); setError(null); setIsProfileErrorRetryable(false); }}
             className={`py-2 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
               authMethod === "password"
                 ? "bg-white text-slate-900 font-bold shadow-xs border border-blue-200/70"
@@ -246,12 +358,27 @@ function LoginForm() {
           </button>
         </div>
 
-        {/* Error Alert Box */}
+        {/* Error Alert Box with Retry Action */}
         {error && (
           <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium flex items-start gap-2.5 animate-in fade-in shadow-2xs">
             <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
             <div className="space-y-1.5 flex-1">
               <div>{error}</div>
+              
+              {isProfileErrorRetryable && (
+                <div className="pt-1">
+                  <button
+                    type="button"
+                    onClick={authMethod === "password" ? handlePasswordSubmit : handleVerifyOtp}
+                    disabled={loading}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-900 font-bold text-[11px] transition-colors cursor-pointer"
+                  >
+                    <RefreshCw className="w-3 h-3" />
+                    <span>Retry Profile Loading</span>
+                  </button>
+                </div>
+              )}
+
               {error.includes("No account found") && (
                 <div className="pt-0.5">
                   <Link
@@ -293,14 +420,15 @@ function LoginForm() {
                       value={identifier}
                       onChange={(e) => setIdentifier(e.target.value)}
                       placeholder="student@university.edu or +91 9876543210"
-                      className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-blue-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
+                      disabled={loading || googleLoading}
+                      className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-blue-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all disabled:opacity-60"
                     />
                   </div>
                 </div>
 
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || googleLoading}
                   className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-[#2563EB] hover:bg-[#1D4ED8] transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer"
                 >
                   {loading ? (
@@ -341,9 +469,9 @@ function LoginForm() {
                       onChange={(e) => handleOtpChange(idx, e)}
                       onKeyDown={(e) => handleKeyDown(idx, e)}
                       onPaste={handlePaste}
-                      disabled={loading}
+                      disabled={loading || profileLoading}
                       aria-label={`Digit ${idx + 1} of 6`}
-                      className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold font-mono rounded-xl bg-white border border-blue-300 text-slate-900 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all shadow-2xs"
+                      className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold font-mono rounded-xl bg-white border border-blue-300 text-slate-900 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all shadow-2xs disabled:opacity-60"
                     />
                   ))}
                 </div>
@@ -354,8 +482,10 @@ function LoginForm() {
                     onClick={() => {
                       setOtpStep("request");
                       setError(null);
+                      setIsProfileErrorRetryable(false);
                     }}
-                    className="font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+                    disabled={loading || profileLoading}
+                    className="font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer disabled:opacity-60"
                   >
                     Change email/number
                   </button>
@@ -368,8 +498,8 @@ function LoginForm() {
                     <button
                       type="button"
                       onClick={handleResendOtp}
-                      disabled={loading}
-                      className="font-bold text-[#2563EB] hover:text-[#4E4BC6] transition-colors flex items-center gap-1 cursor-pointer"
+                      disabled={loading || profileLoading}
+                      className="font-bold text-[#2563EB] hover:text-[#4E4BC6] transition-colors flex items-center gap-1 cursor-pointer disabled:opacity-60"
                     >
                       <RotateCw className="w-3 h-3" />
                       <span>Resend OTP</span>
@@ -379,13 +509,13 @@ function LoginForm() {
 
                 <button
                   type="submit"
-                  disabled={loading || otpDigits.join("").length !== 6}
+                  disabled={loading || profileLoading || otpDigits.join("").length !== 6}
                   className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-[#2563EB] hover:bg-[#1D4ED8] transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer"
                 >
-                  {loading ? (
+                  {loading || profileLoading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin text-white" />
-                      <span>Verifying...</span>
+                      <span>{profileLoading ? "Loading Profile..." : "Verifying Code..."}</span>
                     </>
                   ) : (
                     <>
@@ -416,7 +546,8 @@ function LoginForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="student@university.edu"
-                  className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-blue-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
+                  disabled={loading || profileLoading}
+                  className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-blue-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all disabled:opacity-60"
                 />
               </div>
             </div>
@@ -429,7 +560,7 @@ function LoginForm() {
                 </label>
                 <Link
                   href={`/auth/forgot-password?email=${encodeURIComponent(email)}`}
-                  className="text-xs font-semibold text-[#2563EB] hover:text-[#4E4BC6] transition-colors"
+                  className="text-xs font-bold text-[#2563EB] hover:text-[#4E4BC6] hover:underline"
                 >
                   Forgot password?
                 </Link>
@@ -442,7 +573,8 @@ function LoginForm() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full pl-10 pr-11 py-2.5 sm:py-3 text-sm bg-white border border-blue-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
+                  disabled={loading || profileLoading}
+                  className="w-full pl-10 pr-11 py-2.5 sm:py-3 text-sm bg-white border border-blue-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all disabled:opacity-60"
                 />
                 <button
                   type="button"
@@ -462,6 +594,7 @@ function LoginForm() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
+                  disabled={loading || profileLoading}
                   className="w-4 h-4 rounded border-blue-300 text-[#2563EB] focus:ring-[#5C59E8] cursor-pointer"
                 />
                 <span className="text-xs text-slate-600 font-medium">Keep me signed in for 30 days</span>
@@ -471,13 +604,13 @@ function LoginForm() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || profileLoading}
               className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-[#2563EB] hover:bg-[#1D4ED8] transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer"
             >
-              {loading ? (
+              {loading || profileLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin text-white" />
-                  <span>Signing In...</span>
+                  <span>{profileLoading ? "Loading Profile..." : "Signing In..."}</span>
                 </>
               ) : (
                 <>
@@ -494,7 +627,7 @@ function LoginForm() {
           <p className="text-xs text-slate-600">
             Don&apos;t have an account yet?{" "}
             <Link
-              href="/auth/signup"
+              href={validatedRedirect ? `/auth/signup?redirectUrl=${encodeURIComponent(validatedRedirect)}` : "/auth/signup"}
               className="font-bold text-[#2563EB] hover:text-[#4E4BC6] underline underline-offset-3"
             >
               Create free student account

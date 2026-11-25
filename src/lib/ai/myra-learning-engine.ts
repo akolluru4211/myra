@@ -35,6 +35,7 @@ export interface MyraCognitiveMemory {
   strugglePoints: StrugglePointItem[];
   learningStylePreference: "concise_bulleted" | "deep_architectural" | "analogy_driven" | "code_heavy";
   lastInteractionAt: string;
+  lastResetAt?: string;
 }
 
 // Common tech keywords & concepts taxonomy for rapid client/server detection
@@ -110,17 +111,37 @@ export function extractLearningSignals(
 
 /**
  * Persists and merges new learning signals into the student's cognitive memory profile.
+ * If requestTimestamp is provided, checks whether memory was reset after the request started.
+ * If memory was reset, skips resurrecting stale learned items.
  */
 export async function syncUserLearningProfile(
   userId: string,
   query: string,
   reply: string,
-  isWebSearch: boolean = false
-): Promise<MyraCognitiveMemory> {
-  const signals = extractLearningSignals(query, reply, isWebSearch);
+  isWebSearch: boolean = false,
+  requestTimestamp?: number
+): Promise<MyraCognitiveMemory | null> {
   const now = new Date().toISOString();
 
   // 1. Fetch existing profile from Supabase
+  const savedMemory = await getUserLearningProfile(userId);
+
+  // If a reset occurred after this request was initiated, skip writing back stale learning signals
+  if (savedMemory?.lastResetAt && requestTimestamp) {
+    const resetTime = new Date(savedMemory.lastResetAt).getTime();
+    if (resetTime > requestTimestamp) {
+      return savedMemory;
+    }
+  }
+
+  // If memory was completely deleted during the request and existed previously
+  if (!savedMemory && requestTimestamp) {
+    // Check if the user deliberately reset/deleted memory recently
+    // If savedMemory is null, we start a fresh minimal memory unless requested otherwise
+  }
+
+  const signals = extractLearningSignals(query, reply, isWebSearch);
+
   let currentMemory: MyraCognitiveMemory = {
     userId,
     totalInteractions: 0,
@@ -131,7 +152,6 @@ export async function syncUserLearningProfile(
     lastInteractionAt: now,
   };
 
-  const savedMemory = await getUserLearningProfile(userId);
   if (savedMemory) currentMemory = savedMemory;
 
   // 2. Merge interaction counter
@@ -240,11 +260,33 @@ export async function resetUserLearningProfile(userId: string): Promise<boolean>
   if (!userId) return false;
 
   try {
+    const now = new Date().toISOString();
+    // Delete existing learned rows or record a reset marker to prevent race condition with in-flight responses
     const { error } = await createClient()
       .from("user_ai_learning_profiles")
       .delete()
       .eq("user_id", userId);
     if (error) throw error;
+
+    // Optional: write an empty profile with lastResetAt timestamp to prevent late writes
+    await createClient().from("user_ai_learning_profiles").insert({
+      user_id: userId,
+      cognitive_memory: {
+        userId,
+        totalInteractions: 0,
+        frequentTopics: [],
+        searchedTechnologies: [],
+        strugglePoints: [],
+        learningStylePreference: "deep_architectural",
+        lastInteractionAt: now,
+        lastResetAt: now,
+      },
+      total_interactions: 0,
+      top_topics: [],
+      top_technologies: [],
+      updated_at: now,
+    });
+
     return true;
   } catch (e) {
     console.warn("Failed to reset learning profile:", e);

@@ -131,6 +131,24 @@ function createMiddlewareInstance(options = {}) {
     if (id === "@/lib/firewall/waf" || id === "./src/lib/firewall/waf") {
       return { evaluateFirewall: activeWafEvaluator };
     }
+    if (id === "@/lib/auth/preview-token" || id === "./src/lib/auth/preview-token") {
+      const previewTokenSource = fs.readFileSync(path.join(rootDir, "src/lib/auth/preview-token.ts"), "utf8");
+      const transpiledPreview = ts.transpileModule(previewTokenSource, {
+        compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true },
+      }).outputText;
+      const previewMod = { exports: {} };
+      new Function("require", "module", "exports", transpiledPreview)(require, previewMod, previewMod.exports);
+      return previewMod.exports;
+    }
+    if (id === "@/lib/otp-service" || id === "./src/lib/otp-service") {
+      return {
+        validateSession: (token) => {
+          if (token && token.startsWith("sess_staff")) return { valid: true, userId: "u-1", role: "ADMIN" };
+          if (token && token.startsWith("sess_")) return { valid: true, userId: "u-2", role: "STUDENT" };
+          return { valid: false };
+        },
+      };
+    }
     return require(id);
   };
 
@@ -230,12 +248,12 @@ describe("Next.js Edge Middleware & WAF Security Engine (src/middleware.ts)", ()
       const res = mw.middleware(req);
 
       assert.equal(res.status, 403);
-      assert.equal(res.headers.get("content-type"), "text/html");
+      assert.ok(res.headers.get("content-type").includes("text/html"));
       assert.equal(res.headers.get("X-Frame-Options"), "DENY");
 
       const html = await res.text();
-      assert.ok(html.includes("403 Request Blocked by Firewall"));
-      assert.ok(html.includes("Reference ID:"));
+      assert.ok(html.includes("Request Blocked"));
+      assert.ok(html.includes("Reference ID"));
     });
 
     it("blocks Path Traversal (../) exploitation attempts", async () => {
@@ -261,7 +279,7 @@ describe("Next.js Edge Middleware & WAF Security Engine (src/middleware.ts)", ()
 
         assert.equal(res.status, 403, `Honeypot trap ${trapPath} must return 403`);
         const html = await res.text();
-        assert.ok(html.includes("Honeypot trap triggered") || html.includes("403 Request Blocked"));
+        assert.ok(html.includes("Honeypot trap triggered") || html.includes("Request Blocked"));
       }
     });
 
@@ -689,8 +707,88 @@ describe("Next.js Edge Middleware & WAF Security Engine (src/middleware.ts)", ()
       assert.equal(res.headers.get("X-Permitted-Cross-Domain-Policies"), "none");
       assert.equal(res.headers.get("X-Robots-Tag"), "noai, noimageai");
       assert.equal(res.headers.get("X-Sentinel-Shield"), "active");
-      assert.equal(res.headers.get("X-Content-Security-Policy"), "default-src 'self'");
+      assert.ok(res.headers.get("Content-Security-Policy"), "Must set Content-Security-Policy");
       assert.ok(res.headers.get("x-request-id"));
+    });
+
+    it("generates and uses crypto.randomUUID for request IDs consistently across responses", () => {
+      const mw = createMiddlewareInstance();
+      const req = new NextRequest(new URL("https://edworldco.in/"));
+      const res = mw.middleware(req);
+
+      const reqId = res.headers.get("x-request-id");
+      assert.ok(reqId, "Response must include x-request-id header");
+      // Check standard UUID format (8-4-4-4-12)
+      assert.match(
+        reqId,
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+        "Request ID must be a valid crypto.randomUUID()"
+      );
+    });
+
+    it("renders fixed title, student-friendly copy, escaped reference ID, and CSP on blocked page", async () => {
+      const mw = createMiddlewareInstance({
+        evaluateFirewall: (req) => ({
+          blocked: true,
+          reason: "SQL Injection payload detected: ' OR '1'='1",
+          threatType: "SQL_INJECTION",
+          riskScore: 99,
+          statusCode: 403,
+        }),
+      });
+
+      // User payload containing malicious script or injection attempt
+      const maliciousUrl = "https://edworldco.in/dsa?query=%3Cscript%3Ealert('evil')%3C/script%3E";
+      const req = new NextRequest(new URL(maliciousUrl));
+      const res = mw.middleware(req);
+
+      assert.equal(res.status, 403);
+      assert.ok(res.headers.get("Content-Security-Policy"));
+      assert.ok(res.headers.get("x-request-id"));
+
+      const html = await res.text();
+      // 1. Fixed title
+      assert.ok(html.includes("<title>Request Blocked | Edworld Co</title>"));
+      assert.ok(html.includes("<h1>Request Blocked</h1>"));
+
+      // 2. Student-friendly message
+      assert.ok(
+        html.includes("Our security system paused this request to protect your student account")
+      );
+
+      // 3. Sensitive internal reason is kept out of client HTML
+      assert.ok(!html.includes("SQL Injection payload detected"));
+
+      // 4. Caller provided values never reflected unsanitized
+      assert.ok(!html.includes("<script>alert('evil')</script>"));
+
+      // 5. Generated reference ID appears escaped
+      const id = res.headers.get("x-request-id");
+      assert.ok(html.includes(`<code>${id}</code>`));
+    });
+
+    it("preserves JSON response and request ID for blocked API requests", async () => {
+      const mw = createMiddlewareInstance({
+        customWafEvaluator: (req) => ({
+          blocked: true,
+          reason: "Automated scraper agent blocked",
+          threatType: "AI_CRAWLER",
+          riskScore: 85,
+          statusCode: 403,
+        }),
+      });
+
+      const req = new NextRequest(new URL("https://edworldco.in/api/learning/catalog"));
+      const res = mw.middleware(req);
+
+      assert.equal(res.status, 403);
+      const reqId = res.headers.get("x-request-id");
+      assert.ok(reqId);
+
+      const json = await res.json();
+      assert.equal(json.success, false);
+      assert.equal(json.error.code, "FIREWALL_BLOCKED");
+      assert.equal(json.error.request_id, reqId);
     });
   });
 
@@ -712,7 +810,7 @@ describe("Next.js Edge Middleware & WAF Security Engine (src/middleware.ts)", ()
 
     it("allows coming-soon preview bypass via ?preview=true query parameter or cookie", () => {
       const mw = createMiddlewareInstance({
-        env: { COMING_SOON_MODE: "true" },
+        env: { COMING_SOON_MODE: "true", ALLOW_UNSIGNED_PREVIEWS: "true" },
       });
 
       // 1. Query parameter bypass

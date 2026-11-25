@@ -43,7 +43,8 @@ export default function JobDetailsPage() {
   // Load saved resume
   useEffect(() => {
     try {
-      const savedResumes = localStorage.getItem("edworld_resumes");
+      const userKey = user?.uid ? `edworld_${user.uid}_resumes` : "edworld_resumes";
+      const savedResumes = localStorage.getItem(userKey) || localStorage.getItem("edworld_resumes");
       if (savedResumes) {
         const parsed = JSON.parse(savedResumes);
         if (Array.isArray(parsed) && parsed.length > 0) {

@@ -43,8 +43,8 @@ export default function JobBoardScreen() {
         ) : (
           <FlatList
             data={jobs}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
+            keyExtractor={(item: any) => item.id}
+            renderItem={({ item }: { item: any }) => (
               <View style={styles.jobCard}>
                 <Text style={styles.jobTitle}>{item.title}</Text>
                 <Text style={styles.companyName}>{item.company} &bull; {item.location}</Text>

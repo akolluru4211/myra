@@ -23,6 +23,7 @@ export interface MyraExecutionRequest {
   metadata?: Record<string, any>;
   clientProfile?: any;
   bypassEntitlementCheck?: boolean;
+  reservationId?: string;
 }
 
 export interface MyraExecutionResponse {
@@ -240,6 +241,7 @@ export class MyraOrchestrator {
       outputSummary,
       modelVersion: actualModel,
       status,
+      reservationId: request.reservationId,
       metadata: {
         latencyMs,
         responseFormat: request.responseFormat || "text",
@@ -267,10 +269,26 @@ export class MyraOrchestrator {
     outputSummary: string;
     modelVersion: string;
     status: string;
+    reservationId?: string;
     metadata?: Record<string, any>;
   }): Promise<void> {
     try {
       if (params.userId && params.userId !== "anonymous" && params.userId !== "guest" && params.userId !== "learner-user") {
+        if (params.reservationId) {
+          // Update the already-reserved quota slot
+          const { error: updateErr } = await supabase
+            .from("myra_interactions")
+            .update({
+              input_summary: params.inputSummary,
+              output_summary: params.outputSummary,
+              model_version: params.modelVersion,
+              status: params.status,
+              metadata: params.metadata || {},
+            })
+            .eq("id", params.reservationId);
+          if (!updateErr) return;
+        }
+
         await supabase.from("myra_interactions").insert({
           user_id: params.userId,
           feature_context: params.featureContext,

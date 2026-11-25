@@ -44,23 +44,38 @@ export async function recordAuditLog(params: {
     }
   }
 
-  // Background write to Supabase table
-  try {
-    supabase.from("audit_logs").insert({
-      actor_id: String(logEntry.actorId || "system"),
-      actor_role: String(logEntry.actorRole || "SYSTEM"),
-      action: String(logEntry.action),
-      target_type: String(logEntry.resource || "system"),
-      target_id: String(logEntry.resourceId || logEntry.actorId || "unknown"),
-      metadata: {
-        actor_name: logEntry.actorName,
+  // Dispatch to trusted server audit logging endpoint
+  if (typeof window !== "undefined") {
+    fetch("/api/audit/log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: logEntry.action,
+        resource: logEntry.resource,
+        resourceId: logEntry.resourceId,
         result: logEntry.result,
-        ...(logEntry.metadata || {}),
-      },
-      created_at: logEntry.timestamp,
-    }).then(() => {}, (e) => console.warn("[Audit Logger Supabase Note]:", e?.message));
-  } catch (err) {
-    console.warn("[Audit Logger Supabase Sync Note]:", err);
+        metadata: logEntry.metadata,
+      }),
+    }).catch((e) => console.warn("[Audit Logger Server Dispatch Note]:", e?.message));
+  } else {
+    // Background write to Supabase table for server contexts
+    try {
+      supabase.from("audit_logs").insert({
+        actor_id: String(logEntry.actorId || "system"),
+        actor_role: String(logEntry.actorRole || "SYSTEM"),
+        action: String(logEntry.action),
+        target_type: String(logEntry.resource || "system"),
+        target_id: String(logEntry.resourceId || logEntry.actorId || "unknown"),
+        metadata: {
+          actor_name: logEntry.actorName,
+          result: logEntry.result,
+          ...(logEntry.metadata || {}),
+        },
+        created_at: logEntry.timestamp,
+      }).then(() => {}, (e) => console.warn("[Audit Logger Supabase Note]:", e?.message));
+    } catch (err) {
+      console.warn("[Audit Logger Supabase Sync Note]:", err);
+    }
   }
 
   return logEntry;

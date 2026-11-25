@@ -1,6 +1,25 @@
 {
-  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
-  }
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["esnext"],
+    "allowJs": true,
+    "jsx": "react",
+    "noEmit": true,
+    "isolatedModules": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "baseUrl": "..",
+    "paths": {
+      "react": ["node_modules/@types/react"],
+      "react/jsx-runtime": ["node_modules/@types/react/jsx-runtime"]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "App.tsx"
+  ]
 }

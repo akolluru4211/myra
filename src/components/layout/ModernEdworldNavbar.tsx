@@ -177,9 +177,9 @@ export default function ModernEdworldNavbar() {
   const learningItems = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, desc: "Overview, streaks & progress" },
     { href: "/learn", label: "Interactive Courses", icon: BookOpen, desc: "CS tracks & verified certs" },
-    { href: "/problems", label: "Practice & DSA Arena", icon: Code2, desc: "1,000+ algorithmic challenges" },
+    { href: "/dsa", label: "Practice & DSA Arena", icon: Code2, desc: "1,000+ algorithmic challenges" },
     { href: "/focus", label: "Focus Lock Studio", icon: Lock, desc: "Distraction blocker & timer" },
-    { href: "/projectstudio", label: "Project Studio", icon: Layers, desc: "Engineering problem briefs" },
+    { href: "/projects", label: "Project Studio", icon: Layers, desc: "Engineering problem briefs" },
   ];
 
   const careerItems = [

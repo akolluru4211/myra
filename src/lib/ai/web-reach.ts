@@ -1,15 +1,23 @@
+import { validateExternalLookupUrl } from "./link-validator.ts";
+
 /**
  * Web & Repository Reach Engine for Myra AI
- * Dynamically resolves URLs, GitHub repositories (e.g. Panniantong/Agent-Reach),
- * and live Google / Web Search to provide grounded, real-time answers.
+ * Resolves URLs and live web search ONLY when explicitly opted-in by the user.
+ * Sends only the search terms or validated public URL needed for the lookup.
+ * Conversation history, student profiles, and cognitive memory are strictly excluded.
  */
 
 export interface WebReachResult {
   url: string;
   sourceType: "github_repo" | "web_article" | "documentation" | "web_search";
   title?: string;
+  snippet?: string;
   content: string;
   isExtracted: boolean;
+}
+
+export interface WebReachOptions {
+  enabled?: boolean;
 }
 
 /**
@@ -50,7 +58,6 @@ async function fetchGitHubRepoDetails(owner: string, repo: string): Promise<stri
       if (res.ok) {
         const text = await res.text();
         if (text && text.trim().length > 20) {
-          // If the readme has an English translation link, try to check if docs/README_en.md exists
           if (text.includes("README_en.md")) {
             try {
               const enRes = await fetch(
@@ -75,10 +82,14 @@ async function fetchGitHubRepoDetails(owner: string, repo: string): Promise<stri
 
 /**
  * Fetch live content using Jina Reader (https://r.jina.ai/{url})
+ * Only sends validated HTTPS external URLs.
  */
 async function fetchViaJinaReader(url: string): Promise<string | null> {
+  const validated = validateExternalLookupUrl(url);
+  if (!validated) return null;
+
   try {
-    const jinaUrl = `https://r.jina.ai/${url}`;
+    const jinaUrl = `https://r.jina.ai/${validated}`;
     const res = await fetch(jinaUrl, {
       headers: {
         "User-Agent": "EdworldCo-Myra-Tutor",
@@ -99,12 +110,17 @@ async function fetchViaJinaReader(url: string): Promise<string | null> {
 
 /**
  * Execute live web search using Jina Search API (https://s.jina.ai/{query})
+ * Sends ONLY sanitized query search terms, no profile, history, or memory.
  */
 async function searchWebQuery(query: string): Promise<string | null> {
   try {
     const cleanQuery = query
       .replace(/^(search|lookup|find|browse|google|tell me about|what is|how to)\s+/i, "")
-      .trim();
+      .trim()
+      .slice(0, 300); // Limit query length
+
+    if (!cleanQuery) return null;
+
     const searchUrl = `https://s.jina.ai/${encodeURIComponent(cleanQuery)}`;
     const res = await fetch(searchUrl, {
       headers: {
@@ -127,66 +143,70 @@ async function searchWebQuery(query: string): Promise<string | null> {
 }
 
 /**
- * Main Web Reach resolver: Extracts live content for any URL or executes live web search.
+ * Main Web Reach resolver:
+ * Requires explicit opt-in (enabled: true).
+ * When enabled is false or omitted (default), returns null immediately.
+ * Pasted URLs or words like "latest" / "news" do NOT trigger external lookup unless enabled=true.
  */
-export async function resolveWebReach(query: string): Promise<WebReachResult | null> {
+export async function resolveWebReach(
+  query: string,
+  options: WebReachOptions = {}
+): Promise<WebReachResult | null> {
+  // Explicit opt-in gate: Off by default
+  if (!options.enabled) {
+    return null;
+  }
+
   // 1. Check if user provided direct URLs
   const urls = extractUrlsFromText(query);
   if (urls.length > 0) {
-    const targetUrl = urls[0];
-    const github = parseGitHubUrl(targetUrl);
+    const rawTarget = urls[0];
+    const validatedTarget = validateExternalLookupUrl(rawTarget);
 
-    if (github) {
-      const repoContent = await fetchGitHubRepoDetails(github.owner, github.repo);
-      if (repoContent) {
+    if (validatedTarget) {
+      const github = parseGitHubUrl(validatedTarget);
+
+      if (github) {
+        const repoContent = await fetchGitHubRepoDetails(github.owner, github.repo);
+        if (repoContent) {
+          return {
+            url: validatedTarget,
+            sourceType: "github_repo",
+            title: `${github.owner}/${github.repo} (GitHub)`,
+            snippet: repoContent.slice(0, 200).replace(/\n+/g, " "),
+            content: repoContent,
+            isExtracted: true,
+          };
+        }
+      }
+
+      // Fetch general HTTPS URLs via reader
+      const jinaContent = await fetchViaJinaReader(validatedTarget);
+      if (jinaContent) {
         return {
-          url: targetUrl,
-          sourceType: "github_repo",
-          title: `${github.owner}/${github.repo} (GitHub)`,
-          content: repoContent,
+          url: validatedTarget,
+          sourceType: "web_article",
+          title: validatedTarget,
+          snippet: jinaContent.slice(0, 200).replace(/\n+/g, " "),
+          content: jinaContent,
           isExtracted: true,
         };
       }
     }
-
-    // Fallback to Jina Reader for general URLs
-    const jinaContent = await fetchViaJinaReader(targetUrl);
-    if (jinaContent) {
-      return {
-        url: targetUrl,
-        sourceType: "web_article",
-        title: targetUrl,
-        content: jinaContent,
-        isExtracted: true,
-      };
-    }
   }
 
-  // 2. Check if the query is an explicit search or technical inquiry needing live knowledge
-  const lower = query.toLowerCase();
-  const isSearchIntent =
-    lower.startsWith("search") ||
-    lower.startsWith("lookup") ||
-    lower.startsWith("browse") ||
-    lower.startsWith("google") ||
-    lower.includes("latest") ||
-    lower.includes("news") ||
-    lower.includes("documentation") ||
-    lower.includes("trend") ||
-    lower.includes("hiring for") ||
-    lower.includes("salary for");
-
-  if (isSearchIntent) {
-    const searchResults = await searchWebQuery(query);
-    if (searchResults) {
-      return {
-        url: "https://google.com/search?q=" + encodeURIComponent(query),
-        sourceType: "web_search",
-        title: `Live Search: "${query.slice(0, 40)}"`,
-        content: searchResults,
-        isExtracted: true,
-      };
-    }
+  // 2. Perform live web search for clean query terms
+  const searchResults = await searchWebQuery(query);
+  if (searchResults) {
+    const searchCitationUrl = "https://google.com/search?q=" + encodeURIComponent(query.slice(0, 100));
+    return {
+      url: searchCitationUrl,
+      sourceType: "web_search",
+      title: `Live Search: "${query.slice(0, 40)}"`,
+      snippet: searchResults.slice(0, 200).replace(/\n+/g, " "),
+      content: searchResults,
+      isExtracted: true,
+    };
   }
 
   return null;

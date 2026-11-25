@@ -132,6 +132,11 @@ exports.requestGuardianConsent = (0, https_1.onCall)({
 });
 /**
  * Validates a guardian consent verification token and confirms consent in Firestore.
+ *
+ * Security Enhancements:
+ * 1. Checks 7-day token expiry.
+ * 2. Enforces atomic single-use consumption in a Firestore transaction.
+ * 3. Keeps student and guardian PII out of response payloads.
  */
 exports.verifyGuardianConsentToken = (0, https_1.onCall)(async (request) => {
     const { token, action } = request.data;
@@ -140,38 +145,54 @@ exports.verifyGuardianConsentToken = (0, https_1.onCall)(async (request) => {
     }
     const db = admin.firestore();
     const consentRef = db.collection("guardianConsents").doc(token);
-    const consentDoc = await consentRef.get();
-    if (!consentDoc.exists) {
-        throw new https_1.HttpsError("not-found", "Invalid or expired guardian verification token.");
-    }
-    const consentData = consentDoc.data();
+    const TOKEN_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000;
     const newStatus = action === "revoke" ? "revoked" : "verified";
     const timestamp = new Date().toISOString();
-    // Update guardianConsents doc
-    await consentRef.update({
-        status: newStatus,
-        verifiedAt: timestamp,
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    // Atomically consume token in transaction
+    return await db.runTransaction(async (transaction) => {
+        const consentDoc = await transaction.get(consentRef);
+        if (!consentDoc.exists) {
+            throw new https_1.HttpsError("not-found", "Invalid verification token. Token not found.");
+        }
+        const consentData = consentDoc.data();
+        // Check expiry
+        const sentTime = consentData.sentAt || (consentData.createdAt?.toDate ? consentData.createdAt.toDate().toISOString() : null);
+        if (sentTime) {
+            const createdMs = new Date(sentTime).getTime();
+            if (!isNaN(createdMs) && Date.now() - createdMs > TOKEN_EXPIRY_MS) {
+                throw new https_1.HttpsError("deadline-exceeded", "This guardian verification link has expired.");
+            }
+        }
+        // Check single-use
+        if (consentData.status && consentData.status !== "pending") {
+            throw new https_1.HttpsError("failed-precondition", `This verification link has already been used (status: ${consentData.status}).`);
+        }
+        // Update guardianConsents doc atomically
+        transaction.update(consentRef, {
+            status: newStatus,
+            verifiedAt: timestamp,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        // Update student's user doc
+        if (consentData.userId) {
+            const userRef = db.collection("users").doc(consentData.userId);
+            transaction.set(userRef, {
+                guardianConsent: {
+                    guardianName: consentData.guardianName,
+                    guardianEmail: consentData.guardianEmail,
+                    relationship: consentData.relationship,
+                    status: newStatus,
+                    token,
+                    verifiedAt: timestamp,
+                },
+            }, { merge: true });
+        }
+        // Strict PII hygiene: Never return student or guardian name in response
+        return {
+            success: true,
+            status: newStatus,
+            verifiedAt: timestamp,
+        };
     });
-    // Update student's user doc
-    if (consentData.userId) {
-        await db.collection("users").doc(consentData.userId).set({
-            guardianConsent: {
-                guardianName: consentData.guardianName,
-                guardianEmail: consentData.guardianEmail,
-                relationship: consentData.relationship,
-                status: newStatus,
-                token,
-                verifiedAt: timestamp,
-            },
-        }, { merge: true });
-    }
-    return {
-        success: true,
-        status: newStatus,
-        studentName: consentData.studentName,
-        guardianName: consentData.guardianName,
-        verifiedAt: timestamp,
-    };
 });
 //# sourceMappingURL=guardianConsent.js.map

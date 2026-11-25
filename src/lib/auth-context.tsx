@@ -782,6 +782,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setProfile(null);
     setSubscription(null);
     if (typeof window !== "undefined") {
+      // Clear user-scoped onboarding drafts
+      if (user?.uid) {
+        localStorage.removeItem(`edworld_onboarding_draft_${user.uid}`);
+      }
       localStorage.removeItem("edworld_auth_session");
       localStorage.removeItem("edworld_user_profile");
       sessionStorage.clear();

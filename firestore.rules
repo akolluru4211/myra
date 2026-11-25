@@ -60,15 +60,9 @@ service cloud.firestore {
       allow read, write: if isOwner(userId);
     }
 
-    // Guardian Consents collection (publicly accessible by secure token)
+    // Guardian Consents collection (Server-side Cloud Functions / API only; direct client access strictly denied)
     match /guardianConsents/{tokenId} {
-      allow read, write: if true;
-    }
-
-    // Audit logs
-    match /auditLogs/{logId} {
-      allow create: if isAuthenticated();
-      allow read: if isAuthenticated() && request.auth.token.isAdmin == true;
+      allow read, write: if false;
     }
 
     // Projects collection

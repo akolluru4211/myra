@@ -57,6 +57,24 @@ function createMiddlewareInstance(options = {}) {
       if (mod === "@/lib/firewall/waf" || mod.includes("waf")) {
         return { evaluateFirewall: defaultWafEvaluator };
       }
+      if (mod === "@/lib/auth/preview-token" || mod.includes("preview-token")) {
+        const previewTokenSource = fs.readFileSync(path.join(rootDir, "src/lib/auth/preview-token.ts"), "utf8");
+        const transpiledPreview = ts.transpileModule(previewTokenSource, {
+          compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true },
+        }).outputText;
+        const previewMod = { exports: {} };
+        new Function("require", "module", "exports", transpiledPreview)(require, previewMod, previewMod.exports);
+        return previewMod.exports;
+      }
+      if (mod === "@/lib/otp-service" || mod.includes("otp-service")) {
+        return {
+          validateSession: (token) => {
+            if (token && token.startsWith("sess_staff")) return { valid: true, userId: "u-1", role: "ADMIN" };
+            if (token && token.startsWith("sess_")) return { valid: true, userId: "u-2", role: "STUDENT" };
+            return { valid: false };
+          },
+        };
+      }
       return require(mod);
     },
     process: {

@@ -29,8 +29,8 @@ export default function ResumeScreen() {
 
         {/* ATS Resume Sheet */}
         <View style={styles.resumeSheet}>
-          <Text style={styles.applicantName}>{user.name}</Text>
-          <Text style={styles.contactRow}>{user.email} &bull; San Francisco, CA &bull; github.com/alexrivera</Text>
+          <Text style={styles.applicantName}>{user?.name || "Candidate"}</Text>
+          <Text style={styles.contactRow}>{user?.email || "candidate@example.com"} &bull; San Francisco, CA &bull; github.com/student</Text>
 
           {/* Section: Summary */}
           <View style={styles.resumeSection}>

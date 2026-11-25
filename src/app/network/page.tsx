@@ -526,7 +526,7 @@ export default function NetworkPage() {
                       <button
                         onClick={() => handleAcceptConnection(member.connectionId || "", member.name)}
                         disabled={actionInProgress === member.connectionId}
-                        className="py-2 px-3.5 rounded-xl bg-emerald-600 hover:bg-[#EFF6FF]0 text-white text-xs font-bold transition-all flex items-center gap-1 cursor-pointer shadow-md"
+                        className="py-2 px-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all flex items-center gap-1 cursor-pointer shadow-md"
                       >
                         <Check className="w-3.5 h-3.5" />
                         <span>Accept</span>

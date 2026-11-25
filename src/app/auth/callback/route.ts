@@ -1,23 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { sendSignupWelcomeEmail } from "@/lib/email-service";
+import { resolvePostSignInDestination } from "@/lib/auth/redirect-validator";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   const requestUrl = new URL(req.url);
   const code = requestUrl.searchParams.get("code");
-  const next = requestUrl.searchParams.get("next") || "/dashboard";
+  const nextParam = requestUrl.searchParams.get("next") || requestUrl.searchParams.get("redirectUrl");
   const origin = requestUrl.origin;
 
   if (code) {
     try {
+      // 1. Establish & verify the session
       const { data, error } = await supabase.auth.exchangeCodeForSession(code);
       if (error) {
         console.error("[OAuth Callback Exchange Error]:", error.message);
-        return NextResponse.redirect(
-          new URL(`/auth/login?error=${encodeURIComponent(error.message)}`, origin)
-        );
+        const loginUrl = new URL("/auth/login", origin);
+        loginUrl.searchParams.set("error", error.message);
+        if (nextParam) loginUrl.searchParams.set("redirectUrl", nextParam);
+        return NextResponse.redirect(loginUrl);
       }
 
       if (data?.session && data.user) {
@@ -25,14 +28,25 @@ export async function GET(req: NextRequest) {
         const meta = user.user_metadata || {};
         const userName = meta.full_name || meta.name || user.email?.split("@")[0] || "Learner";
 
-        // Check if profile exists in Supabase
-        const { data: existingProfile } = await supabase
+        // 2. Fetch or initialize profile
+        const { data: existingProfile, error: profileFetchError } = await supabase
           .from("profiles")
-          .select("id, onboarding_completed, role")
+          .select("id, onboarding_completed, role, career_stage")
           .eq("id", user.id)
           .maybeSingle();
 
+        if (profileFetchError) {
+          console.error("[OAuth Profile Fetch Error]:", profileFetchError.message);
+          // Distinguish profile load error from onboarding state
+          const loginUrl = new URL("/auth/login", origin);
+          loginUrl.searchParams.set("error", "Unable to load student profile. Please retry.");
+          if (nextParam) loginUrl.searchParams.set("redirectUrl", nextParam);
+          return NextResponse.redirect(loginUrl);
+        }
+
         let onboardingCompleted = existingProfile?.onboarding_completed;
+        let userRole = existingProfile?.role || "CLIENT";
+        let careerStage = existingProfile?.career_stage || "STUDENT";
 
         if (!existingProfile) {
           // Initialize new profile for Google user
@@ -40,9 +54,11 @@ export async function GET(req: NextRequest) {
             await supabase.from("profiles").upsert({
               id: user.id,
               name: userName,
+              display_name: userName,
               email: user.email,
               age_band: "18+",
               role: "CLIENT",
+              career_stage: "STUDENT",
               onboarding_completed: false,
               interests: [
                 { id: "swe", name: "Software Engineering", category: "Engineering", selfLevel: 0, effectiveLevel: 0 },
@@ -52,7 +68,7 @@ export async function GET(req: NextRequest) {
             });
             onboardingCompleted = false;
 
-            // Send custom branded welcome email for first-time Google sign-up
+            // Send custom welcome email for first-time Google sign-up
             if (user.email) {
               sendSignupWelcomeEmail({
                 email: user.email,
@@ -64,11 +80,17 @@ export async function GET(req: NextRequest) {
           }
         }
 
-        // Determine destination
-        const destination = onboardingCompleted === false ? "/onboarding" : next.startsWith("/auth") ? "/dashboard" : next;
+        // 3. Centralized Landing Decision
+        const { destination } = resolvePostSignInDestination({
+          role: userRole,
+          onboardingCompleted: onboardingCompleted ?? false,
+          requestedDestination: nextParam,
+          careerStage,
+        });
+
         const response = NextResponse.redirect(new URL(destination, origin));
 
-        // Set session cookies
+        // 4. Set session cookies
         const maxAge = 60 * 60 * 24 * 7; // 7 days
         response.cookies.set("edworld_session", data.session.access_token, {
           path: "/",
@@ -98,12 +120,15 @@ export async function GET(req: NextRequest) {
       }
     } catch (err: any) {
       console.error("[OAuth Callback Exception]:", err);
-      return NextResponse.redirect(
-        new URL(`/auth/login?error=${encodeURIComponent("Authentication failed. Please try again.")}`, origin)
-      );
+      const loginUrl = new URL("/auth/login", origin);
+      loginUrl.searchParams.set("error", "Authentication failed. Please try again.");
+      if (nextParam) loginUrl.searchParams.set("redirectUrl", nextParam);
+      return NextResponse.redirect(loginUrl);
     }
   }
 
   // Fallback if no code received
-  return NextResponse.redirect(new URL("/auth/login", origin));
+  const fallbackUrl = new URL("/auth/login", origin);
+  if (nextParam) fallbackUrl.searchParams.set("redirectUrl", nextParam);
+  return NextResponse.redirect(fallbackUrl);
 }

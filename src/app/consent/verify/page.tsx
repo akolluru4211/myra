@@ -1,43 +1,64 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ShieldCheck, Lock, CheckCircle2, AlertTriangle, ArrowRight, Loader2, XCircle } from "lucide-react";
+import { ShieldCheck, Lock, CheckCircle2, AlertTriangle, ArrowRight, Loader2, XCircle, Clock } from "lucide-react";
 import EdworldLogo from "@/components/ui/EdworldLogo";
+
+type ConsentState = "ready" | "verified" | "revoked" | "expired" | "used" | "error";
 
 export default function GuardianConsentVerifyPage() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState<"ready" | "verified" | "revoked" | "error">(token ? "ready" : "error");
-  const [errorMessage, setErrorMessage] = useState(token ? "" : "Missing or invalid verification token link.");
-  const [studentName, setStudentName] = useState("Your Student");
+  const [status, setStatus] = useState<ConsentState>(token ? "ready" : "error");
+  const [errorMessage, setErrorMessage] = useState(
+    token ? "" : "Missing verification token. Please use the link sent in your verification email."
+  );
 
   const handleAction = async (action: "approve" | "revoke") => {
     if (!token) return;
     setLoading(true);
+    setErrorMessage("");
+
     try {
-      // If Firebase callable is available, invoke it; otherwise simulate state
       const response = await fetch("/api/consent/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, action }),
-      }).catch(() => null);
+      });
 
-      if (action === "approve") {
-        setStatus("verified");
+      const data = await response.json().catch(() => ({}));
+
+      if (response.ok && data.success) {
+        if (action === "approve") {
+          setStatus("verified");
+        } else {
+          setStatus("revoked");
+        }
       } else {
-        setStatus("revoked");
+        // Distinguish specific failure states
+        if (response.status === 410 || data.error === "TOKEN_EXPIRED") {
+          setStatus("expired");
+          setErrorMessage(data.message || "This verification link has expired. Verification links are valid for 7 days.");
+        } else if (response.status === 409 || data.error === "TOKEN_ALREADY_USED") {
+          setStatus("used");
+          setErrorMessage(data.message || "This verification link has already been used. Each link can only be consumed once.");
+        } else if (response.status === 404 || data.error === "TOKEN_NOT_FOUND") {
+          setStatus("error");
+          setErrorMessage("Invalid verification link. This token was not found in our records.");
+        } else {
+          // Temporary failure state (500, network error)
+          setStatus("error");
+          setErrorMessage(data.message || "A temporary verification failure occurred. Please check your connection and retry.");
+        }
       }
     } catch (err: any) {
-      // Local graceful fallback
-      if (action === "approve") {
-        setStatus("verified");
-      } else {
-        setStatus("revoked");
-      }
+      console.error("[Consent Verify Client Error]:", err);
+      setStatus("error");
+      setErrorMessage("Unable to connect to the verification service. Please verify your internet connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -55,6 +76,7 @@ export default function GuardianConsentVerifyPage() {
           <p className="text-xs text-slate-500">Under-18 Data Protection &amp; Safety Verification</p>
         </div>
 
+        {/* Ready State: Review & Submit */}
         {status === "ready" && (
           <div className="space-y-6">
             <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-2">
@@ -102,7 +124,7 @@ export default function GuardianConsentVerifyPage() {
                 type="button"
                 disabled={loading}
                 onClick={() => handleAction("revoke")}
-                className="w-full sm:w-1/3 py-3.5 px-4 rounded-xl border border-rose-200 text-rose-700 hover:bg-rose-50 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5"
+                className="w-full sm:w-1/3 py-3.5 px-4 rounded-xl border border-rose-200 text-rose-700 hover:bg-rose-50 text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 disabled:opacity-60"
               >
                 <span>Decline</span>
               </button>
@@ -110,6 +132,7 @@ export default function GuardianConsentVerifyPage() {
           </div>
         )}
 
+        {/* Verified State */}
         {status === "verified" && (
           <div className="text-center space-y-4 py-4">
             <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto shadow-md shadow-emerald-500/10">
@@ -133,6 +156,7 @@ export default function GuardianConsentVerifyPage() {
           </div>
         )}
 
+        {/* Revoked State */}
         {status === "revoked" && (
           <div className="text-center space-y-4 py-4">
             <div className="w-16 h-16 rounded-2xl bg-slate-100 text-slate-700 border border-slate-200 flex items-center justify-center mx-auto">
@@ -141,23 +165,68 @@ export default function GuardianConsentVerifyPage() {
             <div className="space-y-1">
               <h2 className="text-xl font-black text-slate-900 tracking-tight">Consent Declined</h2>
               <p className="text-xs text-slate-600 max-w-sm mx-auto leading-relaxed">
-                You have chosen not to authorize this account. The student&apos;s profile access has been restricted. You can contact edworld.eden@gmail.com if you have questions.
+                You have chosen not to authorize this account. The student&apos;s profile access has been restricted. You can contact support at privacy@edworld.co if you have questions.
               </p>
             </div>
           </div>
         )}
 
+        {/* Expired Token State */}
+        {status === "expired" && (
+          <div className="text-center space-y-4 py-4">
+            <div className="w-16 h-16 rounded-2xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center mx-auto">
+              <Clock className="w-8 h-8" />
+            </div>
+            <div className="space-y-1">
+              <h2 className="text-xl font-black text-slate-900 tracking-tight">Verification Link Expired</h2>
+              <p className="text-xs text-slate-600 max-w-sm mx-auto leading-relaxed">
+                {errorMessage}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Already Used Token State */}
+        {status === "used" && (
+          <div className="text-center space-y-4 py-4">
+            <div className="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center mx-auto">
+              <ShieldCheck className="w-8 h-8" />
+            </div>
+            <div className="space-y-1">
+              <h2 className="text-xl font-black text-slate-900 tracking-tight">Link Already Consumed</h2>
+              <p className="text-xs text-slate-600 max-w-sm mx-auto leading-relaxed">
+                {errorMessage}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Temporary Failure / Invalid Error State */}
         {status === "error" && (
           <div className="text-center space-y-4 py-4">
             <div className="w-16 h-16 rounded-2xl bg-rose-50 text-rose-600 border border-rose-200 flex items-center justify-center mx-auto">
               <AlertTriangle className="w-8 h-8" />
             </div>
             <div className="space-y-1">
-              <h2 className="text-xl font-black text-slate-900 tracking-tight">Invalid Verification Link</h2>
+              <h2 className="text-xl font-black text-slate-900 tracking-tight">Verification Issue</h2>
               <p className="text-xs text-slate-600 max-w-sm mx-auto leading-relaxed">
                 {errorMessage}
               </p>
             </div>
+            {token && (
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStatus("ready");
+                    setErrorMessage("");
+                  }}
+                  className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold transition-colors"
+                >
+                  Retry Action
+                </button>
+              </div>
+            )}
           </div>
         )}
 
