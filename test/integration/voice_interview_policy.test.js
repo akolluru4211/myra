@@ -1,8 +1,9 @@
 const assert = require("assert");
 const { Client } = require("pg");
+const { requireTestDatabaseUrl } = require('../../scripts/database-url');
 
 const BASE_URL = process.env.TEST_BASE_URL || "http://localhost:3000";
-const DB_URL = "postgresql://postgres.wgyscapdywroefsjenno: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@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres";
+const DB_URL = requireTestDatabaseUrl();
 
 async function runTests() {
   console.log("=================================================");

@@ -16,6 +16,7 @@
  */
 
 const { Client } = require('pg');
+const { requireDatabaseUrl } = require('./database-url');
 const fs = require('fs');
 const path = require('path');
 
@@ -42,7 +43,7 @@ function loadEnv() {
 
 loadEnv();
 
-const dbUrl = process.env.DATABASE_URL || "postgresql://postgres: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@db.wgyscapdywroefsjenno.supabase.co:5432/postgres";
+const dbUrl = requireDatabaseUrl();
 
 let passCount = 0;
 let failCount = 0;

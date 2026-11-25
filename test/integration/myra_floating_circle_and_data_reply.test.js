@@ -1,8 +1,9 @@
 const assert = require("assert");
 const { Client } = require("pg");
+const { requireTestDatabaseUrl } = require('../../scripts/database-url');
 
 const BASE_URL = process.env.TEST_BASE_URL || "http://localhost:3000";
-const DB_URL = "postgresql://postgres.wgyscapdywroefsjenno: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@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres";
+const DB_URL = requireTestDatabaseUrl();
 const TEST_USER_ID = "00000000-0000-4000-8000-01a0e819ad7c"; // Standard test profile in DB
 
 async function runTests() {
@@ -28,7 +29,7 @@ async function runTests() {
   // 1. Verify Database Connection and Context Records
   let dbClient;
   await check("Verify database records exist for test user context", async () => {
-    dbClient = new Client({ connectionString: DB_URL, ssl: { rejectUnauthorized: false } });
+    dbClient = new Client({ connectionString: DB_URL });
     await dbClient.connect();
 
     const profileRes = await dbClient.query("SELECT id, name, target_role FROM profiles WHERE id = $1 LIMIT 1", [TEST_USER_ID]);

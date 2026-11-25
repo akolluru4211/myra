@@ -66,7 +66,7 @@ function createMiddlewareInstance(options = {}) {
         new Function("require", "module", "exports", transpiledPreview)(require, previewMod, previewMod.exports);
         return previewMod.exports;
       }
-      if (mod === "@/lib/otp-service" || mod.includes("otp-service")) {
+      if (mod === "@/lib/auth/session-validator" || mod.includes("session-validator")) {
         return {
           validateSession: (token) => {
             if (token && token.startsWith("sess_staff")) return { valid: true, userId: "u-1", role: "ADMIN" };
@@ -141,10 +141,10 @@ describe("Shared Routing & Top-Level Route Regression Suite", () => {
     "verify",
   ];
 
-  it("1. Verifies EVERY top-level static app route NEVER redirects to /u/<route>", () => {
+  it("1. Verifies EVERY top-level static app route NEVER redirects to /u/<route>", async () => {
     for (const route of TOP_LEVEL_APP_ROUTES) {
       const req = new NextRequest(new URL(`https://edworldco.in/${route}`));
-      const res = mw.middleware(req);
+      const res = await mw.middleware(req);
 
       const location = res.headers.get("location");
       if (location) {
@@ -157,7 +157,7 @@ describe("Shared Routing & Top-Level Route Regression Suite", () => {
     }
   });
 
-  it("2. Verifies unknown single-segment routes are NOT blindly redirected to /u/<path>", () => {
+  it("2. Verifies unknown single-segment routes are NOT blindly redirected to /u/<path>", async () => {
     const unknownPaths = [
       "some_unregistered_feature",
       "nonexistent_page_123",
@@ -167,7 +167,7 @@ describe("Shared Routing & Top-Level Route Regression Suite", () => {
 
     for (const p of unknownPaths) {
       const req = new NextRequest(new URL(`https://edworldco.in/${p}`));
-      const res = mw.middleware(req);
+      const res = await mw.middleware(req);
 
       const location = res.headers.get("location");
       if (location) {
@@ -180,7 +180,7 @@ describe("Shared Routing & Top-Level Route Regression Suite", () => {
     }
   });
 
-  it("3. Verifies signed-out access to protected routes redirects to /login?redirectUrl=...", () => {
+  it("3. Verifies signed-out access to protected routes redirects to /login?redirectUrl=...", async () => {
     const protectedRoutes = [
       "/dashboard",
       "/squads",
@@ -195,7 +195,7 @@ describe("Shared Routing & Top-Level Route Regression Suite", () => {
 
     for (const route of protectedRoutes) {
       const req = new NextRequest(new URL(`https://edworldco.in${route}`));
-      const res = mw.middleware(req);
+      const res = await mw.middleware(req);
 
       assert.equal(res.status, 307, `${route} must require authentication when signed out`);
       const location = res.headers.get("location");
@@ -206,7 +206,7 @@ describe("Shared Routing & Top-Level Route Regression Suite", () => {
     }
   });
 
-  it("4. Verifies signed-in access to protected routes resolves normally (status 200)", () => {
+  it("4. Verifies signed-in access to protected routes resolves normally (status 200)", async () => {
     const protectedRoutes = [
       "/dashboard",
       "/squads",
@@ -224,26 +224,26 @@ describe("Shared Routing & Top-Level Route Regression Suite", () => {
           cookie: "edworld_session=test-mock-valid-jwt-token",
         },
       });
-      const res = mw.middleware(req);
+      const res = await mw.middleware(req);
 
       assert.equal(res.status, 200, `Authenticated user visiting ${route} must receive 200 OK`);
       assert.equal(res.headers.get("location"), null, `Authenticated user should not be redirected`);
     }
   });
 
-  it("5. Verifies temporary recovery redirects for /u/squads and /u/daily", () => {
+  it("5. Verifies temporary recovery redirects for /u/squads and /u/daily", async () => {
     const reqSquads = new NextRequest(new URL("https://edworldco.in/u/squads"));
-    const resSquads = mw.middleware(reqSquads);
+    const resSquads = await mw.middleware(reqSquads);
     assert.equal(resSquads.status, 307);
     assert.equal(resSquads.headers.get("location"), "https://edworldco.in/squads");
 
     const reqDaily = new NextRequest(new URL("https://edworldco.in/u/daily"));
-    const resDaily = mw.middleware(reqDaily);
+    const resDaily = await mw.middleware(reqDaily);
     assert.equal(resDaily.status, 307);
     assert.equal(resDaily.headers.get("location"), "https://edworldco.in/daily");
   });
 
-  it("6. Verifies public profile routes (/u/:username) remain directly accessible to visitors", () => {
+  it("6. Verifies public profile routes (/u/:username) remain directly accessible to visitors", async () => {
     const publicProfilePaths = [
       "/u/adarsh",
       "/u/sarah_chen",
@@ -253,7 +253,7 @@ describe("Shared Routing & Top-Level Route Regression Suite", () => {
 
     for (const p of publicProfilePaths) {
       const req = new NextRequest(new URL(`https://edworldco.in${p}`));
-      const res = mw.middleware(req);
+      const res = await mw.middleware(req);
 
       assert.equal(res.status, 200, `Public profile ${p} should be allowed through without redirect`);
     }

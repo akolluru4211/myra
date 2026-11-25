@@ -174,7 +174,7 @@ function escapeHtml(str: string): string {
     .replace(/'/g, "&#039;");
 }
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const originalPathname = req.nextUrl.pathname;
 
   // Generate standardized request ID via crypto.randomUUID()
@@ -340,10 +340,10 @@ export function middleware(req: NextRequest) {
 
     if (tokenToVerify) {
       // Check if signed token
-      const tokenVerification = verifyPreviewToken(tokenToVerify);
+      const tokenVerification = await verifyPreviewToken(tokenToVerify);
       if (tokenVerification.valid) {
         isAuthorizedPreview = true;
-      } else if (process.env.ALLOW_UNSIGNED_PREVIEWS === "true" && (tokenToVerify === "true" || tokenToVerify === "1")) {
+      } else if (process.env.NODE_ENV !== "production" && process.env.ALLOW_UNSIGNED_PREVIEWS === "true" && (tokenToVerify === "true" || tokenToVerify === "1")) {
         // Backwards compatibility for dev/staging environments with explicit flag
         isAuthorizedPreview = true;
       }

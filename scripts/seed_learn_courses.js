@@ -2,21 +2,21 @@ const fs = require('fs');
 const path = require('path');
 const { Pool } = require('pg');
 
-let dbUrl = '';
+let dbUrl = process.env.DATABASE_URL;
 try {
   const envText = fs.readFileSync(path.join(__dirname, '..', '.env.local'), 'utf8');
   for (const line of envText.split('\n')) {
     const trimmed = line.trim();
-    if (trimmed.startsWith('DATABASE_URL=')) {
+    if (!dbUrl && trimmed.startsWith('DATABASE_URL=')) {
       dbUrl = trimmed.substring('DATABASE_URL='.length).trim().replace(/^["']|["']$/g, '');
     }
   }
-} catch (e) {
-  console.log('Could not read .env.local, using fallback');
+} catch (error) {
+  if (error.code !== 'ENOENT') throw error;
 }
 
 if (!dbUrl) {
-  dbUrl = 'postgres://postgres.wgyscapdywroefsjenno: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@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres';
+  throw new Error('DATABASE_URL is required');
 }
 
 console.log('Pooler configured:', dbUrl.split('@')[1]);

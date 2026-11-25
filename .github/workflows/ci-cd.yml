@@ -21,10 +21,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
 
       - name: Install Dependencies
@@ -52,10 +52,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
 
       - name: Install Dependencies
@@ -69,6 +69,7 @@ jobs:
         run: |
           supabase start
           supabase db reset --local
+          echo "TEST_DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres" >> "$GITHUB_ENV"
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
 
@@ -97,7 +98,7 @@ jobs:
         run: node test/e2e/critical_user_journeys.test.js
 
       - name: 6. Database Query & Performance Scan
-        run: node scripts/verify_db_query_performance.js
+        run: DATABASE_URL="$TEST_DATABASE_URL" node scripts/verify_db_query_performance.js
 
       - name: 7. Production Next.js Build Verification
         run: npm run build

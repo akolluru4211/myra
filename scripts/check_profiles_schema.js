@@ -1,15 +1,19 @@
 const { Client } = require('pg');
 const fs = require('fs');
 
-let connStr = 'postgresql://postgres.cjhplbhyhhfvsvapgczz:Edworld_2026_Secure%21@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres';
+let connStr = process.env.DATABASE_URL;
 try {
   const envContent = fs.readFileSync('.env.local', 'utf8');
   for (const line of envContent.split('\n')) {
-    if (line.startsWith('DATABASE_URL=')) {
-      connStr = line.split('=')[1].trim().replace(/^["']|["']$/g, '');
+    if (!connStr && line.startsWith('DATABASE_URL=')) {
+      connStr = line.slice('DATABASE_URL='.length).trim().replace(/^["']|["']$/g, '');
     }
   }
-} catch (e) {}
+} catch (error) {
+  if (error.code !== 'ENOENT') throw error;
+}
+
+if (!connStr) throw new Error('DATABASE_URL is required');
 
 async function main() {
   const client = new Client({ connectionString: connStr, ssl: { rejectUnauthorized: false } });

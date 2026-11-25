@@ -7,8 +7,9 @@
  */
 
 const { Client } = require("pg");
+const { requireDatabaseUrl } = require('./database-url');
 
-const CONNECTION_STRING = process.env.DATABASE_URL || "postgresql://postgres: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@db.wgyscapdywroefsjenno.supabase.co:5432/postgres";
+const CONNECTION_STRING = requireDatabaseUrl();
 
 const REQUIRED_INDEXES = [
   { table: "jobs", indexName: "idx_jobs_active_posted", purpose: "Active job search ordered by recency" },

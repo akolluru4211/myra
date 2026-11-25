@@ -580,6 +580,7 @@ export default function NetworkPage() {
 
       {/* Direct Messaging Modal */}
       <DirectMessageModal
+        key={`${user?.uid ?? ""}:${selectedDmPeer?.userId ?? ""}`}
         peer={selectedDmPeer}
         isOpen={Boolean(selectedDmPeer)}
         onClose={() => setSelectedDmPeer(null)}

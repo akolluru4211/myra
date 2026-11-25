@@ -1,14 +1,14 @@
 const assert = require("assert");
 const http = require("http");
 const { Pool } = require("pg");
+const { requireTestDatabaseUrl } = require('../../scripts/database-url');
 
 const BASE_URL = "http://localhost:3000";
 const INTERNAL_SECRET = "edworld-internal-k8s-secret-2026";
 const TEST_USER_ID = "00000000-0000-4000-8000-01a0e819ad7c"; // Known test profile in database
 
 const pool = new Pool({
-  connectionString: "postgres://postgres.wgyscapdywroefsjenno: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@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres",
-  ssl: { rejectUnauthorized: false },
+  connectionString: requireTestDatabaseUrl(),
 });
 
 function request(method, path, body = null) {

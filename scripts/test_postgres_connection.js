@@ -3,17 +3,13 @@
  */
 
 const { Client } = require('pg');
+const { requireDatabaseUrl } = require('./database-url');
 
-const connectionString = "postgresql://postgres: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@db.wgyscapdywroefsjenno.supabase.co:5432/postgres";
+const connectionString = requireDatabaseUrl();
 
 console.log('\n======================================================');
 console.log('       DIRECT SUPABASE POSTGRESQL CONNECTION TEST');
 console.log('======================================================\n');
-
-console.log(`[Target Host]     : db.wgyscapdywroefsjenno.supabase.co`);
-console.log(`[Target Port]     : 5432`);
-console.log(`[Database]        : postgres`);
-console.log(`[User]            : postgres`);
 
 async function testConnection() {
   const client = new Client({

@@ -33,32 +33,41 @@ export default function DirectMessageModal({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Load conversation messages
-  const fetchMessages = async () => {
-    if (!user || !peer) return;
-    try {
-      const res = await fetch(`/api/network/messages?userId=${user.uid}&peerId=${peer.userId}`, {
-        headers: { "x-user-id": user.uid },
-      });
-      const data = await res.json();
-      if (data.success && Array.isArray(data.messages)) {
-        setMessages(data.messages);
-      }
-    } catch (err) {
-      console.warn("Fetch direct messages error:", err);
-    }
-  };
+  const userId = user?.uid;
+  const peerId = peer?.userId;
 
   useEffect(() => {
-    if (isOpen && peer && user) {
-      setIsLoading(true);
-      fetchMessages().finally(() => setIsLoading(false));
-      setTimeout(() => {
-        inputRef.current?.focus();
-        scrollToBottom();
-      }, 200);
+    if (!isOpen || !peerId || !userId) return;
+
+    const controller = new AbortController();
+    const query = new URLSearchParams({ userId, peerId });
+    const headers = { "x-user-id": userId };
+    setIsLoading(true);
+
+    async function loadMessages() {
+      try {
+        const res = await fetch(`/api/network/messages?${query}`, {
+          headers,
+          signal: controller.signal,
+        });
+        const data = await res.json();
+        if (!controller.signal.aborted && data.success && Array.isArray(data.messages)) {
+          setMessages(data.messages);
+        }
+      } catch (err) {
+        if (!controller.signal.aborted) console.warn("Fetch direct messages error:", err);
+      } finally {
+        if (!controller.signal.aborted) setIsLoading(false);
+      }
     }
-  }, [isOpen, peer?.userId, user?.uid]);
+
+    void loadMessages();
+    const focusTimer = setTimeout(() => inputRef.current?.focus(), 200);
+    return () => {
+      controller.abort();
+      clearTimeout(focusTimer);
+    };
+  }, [isOpen, peerId, userId]);
 
   useEffect(() => {
     scrollToBottom();
@@ -70,7 +79,7 @@ export default function DirectMessageModal({
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || !user || !peer || isSending) return;
+    if (!input.trim() || !user || !peer || isSending || isLoading) return;
 
     const messageText = input.trim();
     const tempId = `temp-${Date.now()}`;
