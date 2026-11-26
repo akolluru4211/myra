@@ -809,7 +809,7 @@ describe("Page Logic Preservation & Functional Flow Test Suite (Tiers 1 - 4)", (
   // ---------------------------------------------------------------------------
 
   describe("Tier 1 - Area 9: Landing Page", () => {
-    const landingSource = readProjectFile("src/app/page.tsx");
+    const landingSource = readProjectFile("src/app/HomeContent.tsx");
     const modernLandingSource = readProjectFile("src/components/landing/ModernEdworldLanding.tsx");
 
     it("T1.A9.1: Preview feature flag override (?preview=true) bypasses coming soon lock", () => {
