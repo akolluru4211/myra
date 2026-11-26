@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 import { ArrowUpRight, BriefcaseBusiness, Code2, Search } from "lucide-react";
 import { getOpenHackathons, hackathonDirectories, type Opportunity } from "@/lib/data/opportunities";
@@ -19,7 +20,12 @@ interface JobFeed {
   sourcesTotal: number;
 }
 
-export default function OpportunityBoard({ initialHackathons = [] }: { initialHackathons?: Opportunity[] }) {
+interface OpportunityBoardProps {
+  initialHackathons?: Opportunity[];
+  hackathonsOnly?: boolean;
+}
+
+export default function OpportunityBoard({ initialHackathons = [], hackathonsOnly = false }: OpportunityBoardProps) {
   const headingId = useId();
   const [category, setCategory] = useState<"hackathons" | "jobs">("hackathons");
   const [query, setQuery] = useState("");
@@ -50,6 +56,7 @@ export default function OpportunityBoard({ initialHackathons = [] }: { initialHa
   }, [category, jobFeed, retry]);
 
   const isJobs = category === "jobs";
+  const Heading = hackathonsOnly ? "h1" : "h2";
   const searchTerms = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
   const matches = (isJobs ? jobFeed?.jobs ?? [] : hackathons).filter(opportunity => {
     const text = [
@@ -61,13 +68,24 @@ export default function OpportunityBoard({ initialHackathons = [] }: { initialHa
 
   return (
     <section aria-labelledby={headingId} className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
-      <h2 id={headingId} className="text-xl font-bold text-slate-900 sm:text-2xl">Global opportunities</h2>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <Heading id={headingId} className="text-xl font-bold text-slate-900 sm:text-2xl">
+          {hackathonsOnly ? "Hackathons" : "Global opportunities"}
+        </Heading>
+        {!hackathonsOnly && (
+          <Link href="/hackathons" className="rounded-md py-1 text-sm font-semibold text-blue-800 hover:underline">
+            View all hackathons
+          </Link>
+        )}
+      </div>
       <p className="mt-1 max-w-prose text-sm text-slate-600">
-        Find hackathons and jobs by role, organization, or location. Apply on the employer or organizer’s site.
+        {hackathonsOnly
+          ? "Find open online and in-person hackathons. Register directly with the organizer."
+          : "Find hackathons and jobs by role, organization, or location. Apply on the employer or organizer’s site."}
       </p>
 
       <div className="mt-5 flex flex-wrap items-center gap-3">
-        <div role="group" aria-label="Opportunity type" className="inline-flex gap-1 rounded-lg bg-slate-100 p-1">
+        {!hackathonsOnly && <div role="group" aria-label="Opportunity type" className="inline-flex gap-1 rounded-lg bg-slate-100 p-1">
           <button
             type="button"
             aria-pressed={!isJobs}
@@ -84,7 +102,7 @@ export default function OpportunityBoard({ initialHackathons = [] }: { initialHa
           >
             <BriefcaseBusiness size={16} aria-hidden="true" /> Jobs
           </button>
-        </div>
+        </div>}
         <label className="relative min-w-0 flex-auto sm:max-w-sm">
           <span className="sr-only">Search opportunities by title, organization, or location</span>
           <Search size={16} aria-hidden="true" className="pointer-events-none absolute left-3 top-3.5 text-slate-500" />
@@ -119,7 +137,7 @@ export default function OpportunityBoard({ initialHackathons = [] }: { initialHa
             </p>
           )}
           <ul className="mt-2 divide-y divide-slate-200">
-            {matches.slice(0, limit).map(item => (
+            {(hackathonsOnly ? matches : matches.slice(0, limit)).map(item => (
               <li key={item.id} className="flex flex-wrap items-center justify-between gap-3 py-3.5">
                 <div className="min-w-0 flex-auto basis-52">
                   <h3 className="break-words text-sm font-bold text-slate-900">{item.title}</h3>
@@ -147,7 +165,7 @@ export default function OpportunityBoard({ initialHackathons = [] }: { initialHa
               </li>
             ))}
           </ul>
-          {matches.length > limit && (
+          {!hackathonsOnly && matches.length > limit && (
             <button type="button" className="btn btn-blue-secondary mt-3" onClick={() => setLimit(limit + pageSize)}>
               Show more
             </button>

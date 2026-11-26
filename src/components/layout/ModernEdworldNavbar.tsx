@@ -187,6 +187,7 @@ export default function ModernEdworldNavbar() {
     { href: "/career/roadmap", label: "Smart Career Roadmap", icon: Compass, desc: "1, 3, & 5-year trajectories" },
     { href: "/interviews", label: "Interactive Mock Interviews", icon: Video, desc: "46-sector simulated rounds" },
     { href: "/resumes", label: "ATS Resume Architect", icon: FileText, desc: "Single-column Harvard format" },
+    { href: "/hackathons", label: "Hackathons", icon: Code2, desc: "Open online and in-person events" },
     { href: "/jobs", label: "Opportunities & Jobs", icon: Briefcase, desc: "Curated internships & roles" },
   ];
 

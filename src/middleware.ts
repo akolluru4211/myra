@@ -50,6 +50,7 @@ const EXACT_PUBLIC_PAGES = new Set([
   "/contact",
   "/pricing",
   "/opportunities",
+  "/hackathons",
   "/learn",
   "/colleges",
   "/network",
@@ -195,7 +196,7 @@ function applySecurityHeaders(res: NextResponse, requestId: string, nonce?: stri
 function renderPage(req: NextRequest, requestId: string, headers?: Headers): NextResponse {
   const path = req.nextUrl.pathname;
   const needsNonce = process.env.NODE_ENV === "production" &&
-    ["/", "/login", "/auth/login", "/onboarding", "/dashboard", "/opportunities"].includes(path);
+    ["/", "/login", "/auth/login", "/onboarding", "/dashboard", "/opportunities", "/hackathons"].includes(path);
   if (!needsNonce) return applySecurityHeaders(NextResponse.next(headers ? { request: { headers } } : undefined), requestId);
 
   headers ??= new Headers(req.headers);
