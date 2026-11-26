@@ -1,103 +1,67 @@
-"use client";
-
-import React from "react";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
 interface FigmaAuthLayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
   title: string;
   subtitle: string;
   activeTab: "login" | "signup" | "reset";
 }
 
-export default function FigmaAuthLayout({
-  children,
-  title,
-  subtitle,
-  activeTab,
-}: FigmaAuthLayoutProps) {
+const tabs = [
+  { id: "signup", label: "Sign up", href: "/signup" },
+  { id: "login", label: "Sign in", href: "/login" },
+] as const;
+
+export default function FigmaAuthLayout({ children, title, subtitle, activeTab }: FigmaAuthLayoutProps) {
   return (
-    <div className="min-h-screen w-full bg-white text-black flex flex-col justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8 font-sans selection:bg-[#2563EB] selection:text-white relative">
-      
-      {/* Centered Structured Student Dashboard-Themed Card */}
-      <div className="w-full max-w-xl mx-auto bg-white border border-blue-200/90 rounded-3xl shadow-[0_10px_35px_rgba(80,90,130,0.08)] overflow-hidden animate-in fade-in duration-200">
-        
-        {/* Top Header / Branding & Toggle Bar */}
-        <div className="px-6 sm:px-8 pt-6 pb-4 flex items-center justify-between border-b border-blue-100 bg-[#EFF6FF]">
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="relative w-8 h-8 rounded-xl overflow-hidden bg-black flex items-center justify-center shadow-xs border border-slate-300 group-hover:scale-105 transition-transform shrink-0">
-              <Image
-                src="/images/edworld-mark.png"
-                alt="Edworld Logo"
-                width={32}
-                height={32}
-                className="w-full h-full object-cover"
-                priority
-              />
-            </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1.5 leading-none">
-                <span className="font-extrabold text-base text-black font-display">
-                  Edworld
-                </span>
-                <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md bg-white border border-blue-200 text-slate-700">
-                  Co.
-                </span>
-              </div>
-              <span className="font-semibold text-[10px] uppercase tracking-wider text-slate-500 mt-1">
-                Student Career OS
-              </span>
-            </div>
-          </Link>
-
-          {/* Quick Switcher Pills */}
-          <div className="flex items-center gap-1 p-1 rounded-2xl bg-slate-200/70 border border-blue-200 text-xs font-semibold">
-            <Link
-              href="/auth/login"
-              className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer ${
-                activeTab === "login"
-                  ? "bg-white text-black font-bold shadow-xs border border-blue-200/60"
-                  : "bg-transparent text-slate-600 hover:text-black"
-              }`}
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/auth/signup"
-              className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer ${
-                activeTab === "signup"
-                  ? "bg-[#2563EB] text-white font-bold shadow-xs"
-                  : "bg-transparent text-slate-600 hover:text-black"
-              }`}
-            >
-              Sign Up
-            </Link>
+    <main className="grid min-h-svh w-full bg-white text-neutral-950 selection:bg-neutral-900 selection:text-white lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <aside className="relative flex min-w-0 items-center justify-center overflow-hidden bg-[#f0efed] px-5 pt-5 lg:sticky lg:top-0 lg:h-svh lg:px-10 lg:pt-0">
+        <div className="relative aspect-[8/9] w-36 overflow-hidden sm:w-44 lg:w-[min(86%,65svh,30rem)]">
+          <div className="relative h-full w-[200%]">
+            <Image
+              src="/images/myra-auth.png"
+              alt="Myra, the EdWorld bear, wearing a green hat and black hoodie"
+              fill
+              sizes="(min-width: 1024px) 840px, 360px"
+              className="object-contain"
+              priority
+            />
           </div>
         </div>
+      </aside>
 
-        {/* Card Body: Form Canvas */}
-        <div className="p-6 sm:p-8 space-y-6">
-          
-          {/* Form Header */}
-          <div className="space-y-1.5 text-center sm:text-left">
-            <h1 className="font-display font-black text-2xl sm:text-3xl text-black tracking-tight">
-              {title}
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-              {subtitle}
-            </p>
+      <div className="flex min-w-0 flex-col justify-center px-5 py-8 sm:px-10 sm:py-12 lg:px-12">
+        <div className="mx-auto w-full max-w-md">
+          <div className="mb-7 flex items-center gap-3 sm:mb-9">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-black">
+              <Image src="/images/edworld-mark.png" alt="" width={29} height={29} />
+            </span>
+            <span className="font-display text-lg font-extrabold tracking-tight">EdWorld Co.</span>
           </div>
 
-          {/* Form Slot */}
-          <div className="w-full">
-            {children}
-          </div>
+          <nav aria-label="Account access" className="mb-7 grid grid-cols-2 gap-1 rounded-xl border border-neutral-200 bg-neutral-100 p-1">
+            {tabs.map(({ id, label, href }) => (
+              <Link
+                key={id}
+                href={href}
+                aria-current={activeTab === id ? "page" : undefined}
+                className="flex min-h-11 items-center justify-center rounded-lg px-3 text-sm font-semibold text-neutral-700 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-800 aria-[current=page]:bg-black aria-[current=page]:text-white"
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
 
+          <header className="mb-6 space-y-2">
+            <h1 className="font-display text-[clamp(1.75rem,4vw,2.5rem)] font-extrabold leading-tight tracking-tight text-neutral-950">{title}</h1>
+            <p className="max-w-prose text-sm leading-relaxed text-neutral-600">{subtitle}</p>
+          </header>
+
+          {children}
         </div>
-
       </div>
-
-    </div>
+    </main>
   );
 }

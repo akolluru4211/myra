@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Join EdWorld",
   description: "Create your free EdWorld Co. account and accelerate your career readiness.",

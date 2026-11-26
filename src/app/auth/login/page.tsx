@@ -280,8 +280,8 @@ function LoginForm() {
 
   return (
     <FigmaAuthLayout
-      title="Sign in to Edworld"
-      subtitle="Access your student dashboard, daily study timetable, and career roadmap."
+      title="Sign in to EdWorld Co."
+      subtitle="Pick up where you left off in your EdWorld workspace."
       activeTab="login"
     >
       <div className="space-y-5">
@@ -428,7 +428,7 @@ function LoginForm() {
                 <button
                   type="submit"
                   disabled={loading || googleLoading}
-                  className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-[#2563EB] hover:bg-[#1D4ED8] transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer"
+                  className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-black hover:bg-neutral-800 transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer"
                 >
                   {loading ? (
                     <>
@@ -509,7 +509,7 @@ function LoginForm() {
                 <button
                   type="submit"
                   disabled={loading || profileLoading || otpDigits.join("").length !== 6}
-                  className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-[#2563EB] hover:bg-[#1D4ED8] transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer"
+                  className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-black hover:bg-neutral-800 transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer"
                 >
                   {loading || profileLoading ? (
                     <>
@@ -604,7 +604,7 @@ function LoginForm() {
             <button
               type="submit"
               disabled={loading || profileLoading}
-              className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-[#2563EB] hover:bg-[#1D4ED8] transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer"
+              className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-black hover:bg-neutral-800 transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer"
             >
               {loading || profileLoading ? (
                 <>

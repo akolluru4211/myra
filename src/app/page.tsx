@@ -1,7 +1,5 @@
-import HomeContent from "./HomeContent";
-
-export const dynamic = "force-dynamic";
+import { redirect } from "next/navigation";
 
 export default function HomePage() {
-  return <HomeContent />;
+  redirect("/signup");
 }

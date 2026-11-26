@@ -312,8 +312,8 @@ function SignupForm() {
 
   return (
     <FigmaAuthLayout
-      title="Create Student Account"
-      subtitle="Set up your profile to access your timetable, roadmap, and learning tools."
+      title="Create your account"
+      subtitle="Join EdWorld Co. to start building skills and find your next opportunity."
       activeTab="signup"
     >
       <div className="space-y-4">
@@ -638,7 +638,7 @@ function SignupForm() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer bg-[#2563EB] hover:bg-[#1D4ED8]"
+                  className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer bg-black hover:bg-neutral-800"
                 >
                   {loading ? (
                     <>
@@ -719,7 +719,7 @@ function SignupForm() {
                 <button
                   type="submit"
                   disabled={loading || otpDigits.join("").length !== 6}
-                  className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer bg-[#2563EB] hover:bg-[#1D4ED8]"
+                  className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer bg-black hover:bg-neutral-800"
                 >
                   {loading ? (
                     <>
