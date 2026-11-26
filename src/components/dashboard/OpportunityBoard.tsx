@@ -41,6 +41,7 @@ export default function OpportunityBoard({ initialHackathons = [], hackathonsOnl
   const [jobFeed, setJobFeed] = useState<JobFeed | null>(null);
   const [jobError, setJobError] = useState(false);
   const [retry, setRetry] = useState(0);
+  const [tracking, setTracking] = useState<Record<string, "pending" | "saved" | "signin" | "error">>({});
 
   useEffect(() => setHackathons(getOpenHackathons()), []);
   useEffect(() => {
@@ -61,6 +62,27 @@ export default function OpportunityBoard({ initialHackathons = [], hackathonsOnl
     void loadJobs();
     return () => controller.abort();
   }, [category, jobFeed, retry]);
+
+  async function trackApplication(item: Opportunity) {
+    setTracking(previous => ({ ...previous, [item.id]: "pending" }));
+    try {
+      const response = await fetch("/api/career/applications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "trackExternal",
+          kind: category === "hackathons" ? "hackathon" : category === "internships" ? "internship" : "job",
+          title: item.title, organization: item.organization, location: item.location, url: item.url,
+        }),
+      });
+      setTracking(previous => ({
+        ...previous,
+        [item.id]: response.ok ? "saved" : response.status === 401 ? "signin" : "error",
+      }));
+    } catch {
+      setTracking(previous => ({ ...previous, [item.id]: "error" }));
+    }
+  }
 
   const isCareerListing = category !== "hackathons";
   const Heading = hackathonsOnly ? "h1" : "h2";
@@ -165,6 +187,7 @@ export default function OpportunityBoard({ initialHackathons = [], hackathonsOnl
                     <p className="mt-1 text-sm text-slate-600">{[item.teamSize, item.prize].filter(Boolean).join(" · ")}</p>
                   )}
                 </div>
+                <div className="flex shrink-0 flex-wrap items-center gap-2">
                 <a
                   href={item.url}
                   target="_blank"
@@ -174,6 +197,25 @@ export default function OpportunityBoard({ initialHackathons = [], hackathonsOnl
                 >
                   {isCareerListing ? "Apply" : "Register"} <ArrowUpRight size={15} aria-hidden="true" />
                 </a>
+                {tracking[item.id] === "saved" ? (
+                  <Link href="/profile/applied" className="text-sm font-semibold text-emerald-800 hover:underline">View in Applied</Link>
+                ) : tracking[item.id] === "signin" ? (
+                  <Link href={hackathonsOnly ? "/login?redirectUrl=%2Fhackathons" : `/login?redirectUrl=${encodeURIComponent(`/opportunities?type=${category}`)}`} className="text-sm font-semibold text-blue-800 hover:underline">
+                    Sign in to track
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => void trackApplication(item)}
+                    disabled={tracking[item.id] === "pending"}
+                    aria-label={`Mark ${item.title} as ${isCareerListing ? "applied" : "registered"}`}
+                    className="min-h-10 rounded-lg px-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-60"
+                  >
+                    {tracking[item.id] === "pending" ? "Saving…" : isCareerListing ? "Mark applied" : "Mark registered"}
+                  </button>
+                )}
+                {tracking[item.id] === "error" && <span role="status" className="text-xs text-rose-700">Could not save. Try again.</span>}
+                </div>
               </li>
             ))}
           </ul>

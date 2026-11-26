@@ -416,6 +416,7 @@ export default function ProfilePage() {
                   <ShieldCheck className="w-3.5 h-3.5 text-[#5C59E8]" />
                   <span>Verified Member</span>
                 </span>
+                <Link href="/profile/applied" className="text-sm font-semibold text-blue-800 hover:underline">Applied</Link>
               </div>
 
               <p className="text-xs sm:text-sm text-slate-600 font-medium">

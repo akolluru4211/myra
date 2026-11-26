@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
@@ -38,6 +39,39 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
+    if (body?.action === "trackExternal") {
+      const { kind, title, organization, location, url } = body;
+      const validKind = kind === "hackathon" || kind === "internship" || kind === "job";
+      if (!validKind || typeof title !== "string" || !title.trim() || title.length > 300 ||
+          typeof organization !== "string" || !organization.trim() || organization.length > 250 ||
+          typeof location !== "string" || location.length > 500 ||
+          typeof url !== "string" || url.length > 2048 || !URL.canParse(url)) {
+        return NextResponse.json({ error: "Invalid opportunity details" }, { status: 400 });
+      }
+      const link = new URL(url);
+      if (link.protocol !== "https:" || link.username || link.password) {
+        return NextResponse.json({ error: "Invalid application link" }, { status: 400 });
+      }
+      link.hash = "";
+      const fingerprint = createHash("sha256").update(user.id).update("\0").update(link.href).digest("hex");
+      const id = [
+        fingerprint.slice(0, 8), fingerprint.slice(8, 12), "8" + fingerprint.slice(13, 16),
+        "8" + fingerprint.slice(17, 20), fingerprint.slice(20, 32),
+      ].join("-");
+      const { error } = await supabase.from("job_applications_pipeline").upsert({
+        id,
+        user_id: user.id,
+        company_name: organization.trim(),
+        job_title: title.trim(),
+        job_location: location.trim(),
+        job_url: link.href,
+        source: `external_${kind}`,
+        status: "applied",
+        applied_at: new Date().toISOString(),
+      }, { onConflict: "id", ignoreDuplicates: true });
+      if (error) throw error;
+      return NextResponse.json({ success: true });
+    }
     const {
       companyName,
       jobTitle,
