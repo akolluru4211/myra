@@ -192,14 +192,14 @@ function applySecurityHeaders(res: NextResponse, requestId: string, nonce?: stri
   return res;
 }
 
-function renderPage(req: NextRequest, requestId: string): NextResponse {
+function renderPage(req: NextRequest, requestId: string, headers?: Headers): NextResponse {
   const path = req.nextUrl.pathname;
   const needsNonce = process.env.NODE_ENV === "production" &&
-    ["/login", "/auth/login", "/onboarding", "/dashboard"].includes(path);
-  if (!needsNonce) return applySecurityHeaders(NextResponse.next(), requestId);
+    ["/", "/login", "/auth/login", "/onboarding", "/dashboard"].includes(path);
+  if (!needsNonce) return applySecurityHeaders(NextResponse.next(headers ? { request: { headers } } : undefined), requestId);
 
+  headers ??= new Headers(req.headers);
   const nonce = btoa(crypto.randomUUID());
-  const headers = new Headers(req.headers);
   const response = applySecurityHeaders(NextResponse.next(), requestId, nonce);
   const policy = response.headers.get("Content-Security-Policy")!;
   headers.set("Content-Security-Policy", policy);
@@ -406,8 +406,7 @@ export async function middleware(req: NextRequest) {
     if (originalPathname === "/" && !subdomainRewriteTarget) {
       const reqHeaders = new Headers(req.headers);
       reqHeaders.set("x-coming-soon-gated", "true");
-      const res = NextResponse.next({ request: { headers: reqHeaders } });
-      return applySecurityHeaders(res, requestId);
+      return renderPage(req, requestId, reqHeaders);
     }
 
     const gateRedirectUrl = new URL("/?coming_soon=true", req.url);

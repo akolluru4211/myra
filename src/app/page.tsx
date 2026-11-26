@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -114,7 +116,7 @@ function HomeContent() {
 
 export default function HomePage() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<p role="status" className="p-6 text-slate-700">Loading EdWorld…</p>}>
       <HomeContent />
     </Suspense>
   );
