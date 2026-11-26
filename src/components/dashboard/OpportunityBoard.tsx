@@ -9,18 +9,22 @@ const dateFormat = new Intl.DateTimeFormat("en", {
   month: "short", day: "numeric", year: "numeric", timeZone: "UTC",
 });
 
+const indiaDateFormat = new Intl.DateTimeFormat("en-IN", {
+  dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
+});
+
 interface JobFeed {
   jobs: Opportunity[];
   sourcesAvailable: number;
   sourcesTotal: number;
 }
 
-export default function OpportunityBoard() {
+export default function OpportunityBoard({ initialHackathons = [] }: { initialHackathons?: Opportunity[] }) {
   const headingId = useId();
   const [category, setCategory] = useState<"hackathons" | "jobs">("hackathons");
   const [query, setQuery] = useState("");
   const [limit, setLimit] = useState(pageSize);
-  const [hackathons, setHackathons] = useState<Opportunity[]>([]);
+  const [hackathons, setHackathons] = useState<Opportunity[]>(initialHackathons);
   const [jobFeed, setJobFeed] = useState<JobFeed | null>(null);
   const [jobError, setJobError] = useState(false);
   const [retry, setRetry] = useState(0);
@@ -48,7 +52,10 @@ export default function OpportunityBoard() {
   const isJobs = category === "jobs";
   const searchTerms = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
   const matches = (isJobs ? jobFeed?.jobs ?? [] : hackathons).filter(opportunity => {
-    const text = `${opportunity.title} ${opportunity.organization} ${opportunity.location}`.toLowerCase();
+    const text = [
+      opportunity.title, opportunity.organization, opportunity.location,
+      opportunity.source, opportunity.summary, opportunity.eligibility,
+    ].join(" ").toLowerCase();
     return searchTerms.every(term => text.includes(term));
   });
 
@@ -85,7 +92,7 @@ export default function OpportunityBoard() {
             type="search"
             value={query}
             onChange={event => { setQuery(event.target.value); setLimit(pageSize); }}
-            placeholder={isJobs ? "Try internship, London, or remote" : "Try online or Atlassian"}
+            placeholder={isJobs ? "Try internship, London, or remote" : "Try Unstop, online, or Bengaluru"}
             className="min-h-11 w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 text-sm text-slate-900"
           />
         </label>
@@ -117,9 +124,16 @@ export default function OpportunityBoard() {
                 <div className="min-w-0 flex-auto basis-52">
                   <h3 className="break-words text-sm font-bold text-slate-900">{item.title}</h3>
                   <p className="mt-0.5 text-sm text-slate-600">
-                    {item.organization} · {item.location}
-                    {item.deadline && <> · Closes {dateFormat.format(new Date(item.deadline))}{item.deadline.includes("T") ? " UTC" : ""}</>}
+                    {item.organization} · {item.location}{item.source && ` · via ${item.source}`}
+                    {item.deadline && <> · Closes {item.source === "Unstop"
+                      ? indiaDateFormat.format(new Date(item.deadline)) + " IST"
+                      : dateFormat.format(new Date(item.deadline)) + (item.deadline.includes("T") ? " UTC" : "")}</>}
                   </p>
+                  {item.summary && <p className="mt-1 text-sm text-slate-700">{item.summary}</p>}
+                  {item.eligibility && <p className="mt-1 text-sm text-slate-600">Eligibility: {item.eligibility}</p>}
+                  {(item.teamSize || item.prize) && (
+                    <p className="mt-1 text-sm text-slate-600">{[item.teamSize, item.prize].filter(Boolean).join(" · ")}</p>
+                  )}
                 </div>
                 <a
                   href={item.url}
