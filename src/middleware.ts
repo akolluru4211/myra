@@ -152,7 +152,7 @@ function isPublicApiPath(path: string): boolean {
 }
 
 // Apply hardened security, anti-AI-scraping & data protection headers to responses
-function applySecurityHeaders(res: NextResponse, requestId: string): NextResponse {
+function applySecurityHeaders(res: NextResponse, requestId: string, nonce?: string): NextResponse {
   res.headers.set("x-request-id", requestId);
   res.headers.set("X-Frame-Options", "DENY");
   res.headers.set("X-Content-Type-Options", "nosniff");
@@ -180,8 +180,30 @@ function applySecurityHeaders(res: NextResponse, requestId: string): NextRespons
       }
     }
   }
+  if (nonce) {
+    contentSecurityPolicy.push(`script-src 'self' 'nonce-${nonce}'`);
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (supabaseUrl && URL.canParse(supabaseUrl)) {
+      const { origin, protocol } = new URL(supabaseUrl);
+      if (protocol === "https:") contentSecurityPolicy.push(`connect-src 'self' ${origin}`);
+    }
+  }
   res.headers.set("Content-Security-Policy", contentSecurityPolicy.join("; ") + ";");
   return res;
+}
+
+function renderPage(req: NextRequest, requestId: string): NextResponse {
+  const path = req.nextUrl.pathname;
+  const needsNonce = process.env.NODE_ENV === "production" &&
+    ["/login", "/auth/login", "/onboarding", "/dashboard"].includes(path);
+  if (!needsNonce) return applySecurityHeaders(NextResponse.next(), requestId);
+
+  const nonce = btoa(crypto.randomUUID());
+  const headers = new Headers(req.headers);
+  const response = applySecurityHeaders(NextResponse.next(), requestId, nonce);
+  const policy = response.headers.get("Content-Security-Policy")!;
+  headers.set("Content-Security-Policy", policy);
+  return applySecurityHeaders(NextResponse.next({ request: { headers } }), requestId, nonce);
 }
 
 function escapeHtml(str: string): string {
@@ -431,10 +453,7 @@ export async function middleware(req: NextRequest) {
   // ---------------------------------------------------------------------------
   const isPublicPage = isPublicPagePath(effectivePathname);
 
-  if (isPublicPage) {
-    const res = NextResponse.next();
-    return applySecurityHeaders(res, requestId);
-  }
+  if (isPublicPage) return renderPage(req, requestId);
 
   // 9. API Routes Check
   if (effectivePathname.startsWith("/api")) {
@@ -496,8 +515,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  const response = NextResponse.next();
-  return applySecurityHeaders(response, requestId);
+  return renderPage(req, requestId);
 }
 
 export const config = {
