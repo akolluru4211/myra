@@ -1,3 +1,5 @@
+export type OpportunityCategory = "hackathons" | "internships" | "jobs";
+
 export interface Opportunity {
   id: string;
   title: string;
@@ -5,7 +7,8 @@ export interface Opportunity {
   location: string;
   url: string;
   deadline?: string;
-  source?: "Unstop";
+  source?: "Unstop" | "Greenhouse" | "Ashby";
+  employmentType?: "internship" | "job";
   summary?: string;
   eligibility?: string;
   teamSize?: string;
@@ -20,6 +23,30 @@ export const hackathonDirectories = [
 ];
 
 const hackathons: (Opportunity & { deadline: string })[] = [
+  {
+    id: "unstop-1818968",
+    title: "Campus to Cloud Hackathon",
+    organization: "IIT Bombay Techfest and AWS",
+    location: "Hybrid · Mumbai, India",
+    url: "https://unstop.com/hackathons/campus-to-cloud-hackathon-iit-bombay-1818968",
+    deadline: "2026-11-30T00:00:00+05:30",
+    source: "Unstop",
+    summary: "Build and deploy a solution on AWS. Shortlisted teams present at IIT Bombay.",
+    eligibility: "Students aged 18+ enrolled in Indian institutions",
+    teamSize: "1–4 participants",
+    prize: "₹1,50,000 prize pool",
+  },
+  {
+    id: "unstop-1826867",
+    title: "UNIVION: CHRONOS DE NOVO",
+    organization: "SIEEDS Foundation",
+    location: "Hybrid · New Delhi, India",
+    url: "https://unstop.com/hackathons/univion-chronos-de-novo-sieeds-1826867",
+    deadline: "2026-12-26T00:00:00+05:30",
+    source: "Unstop",
+    summary: "Submit an idea online for a chance to attend the January 15–16 finale at IIT Delhi.",
+    eligibility: "Undergraduate and postgraduate students in India",
+  },
   {
     id: "unstop-1773675",
     title: "StarForge",
@@ -131,6 +158,91 @@ const hackathons: (Opportunity & { deadline: string })[] = [
     deadline: "2027-01-10",
   },
 ];
+
+const listedRoles: (Opportunity & { deadline: string })[] = [
+  {
+    id: "unstop-1818776",
+    title: "Software Intern",
+    organization: "The Entrepreneurship Network",
+    location: "Remote",
+    url: "https://unstop.com/internships/software-internship-the-entrepreneurship-network-1818776",
+    deadline: "2026-12-03T00:00:00+05:30",
+    source: "Unstop",
+    summary: "Three-month, part-time software internship for freshers.",
+    employmentType: "internship",
+  },
+  {
+    id: "unstop-1822585",
+    title: "Full Stack Developer Intern",
+    organization: "Vortizo AI",
+    location: "Remote",
+    url: "https://unstop.com/internships/full-stack-developer-internship-vortizo-ai-1822585",
+    deadline: "2026-12-05T00:00:00+05:30",
+    source: "Unstop",
+    summary: "Full-time web development internship open to students and freshers with relevant skills.",
+    employmentType: "internship",
+  },
+  {
+    id: "unstop-1825287",
+    title: "React Native App Development Intern",
+    organization: "Digital Dictionary",
+    location: "Remote",
+    url: "https://unstop.com/internships/react-native-app-development-internship-digital-dictionary-1825287",
+    deadline: "2026-12-07T00:00:00+05:30",
+    source: "Unstop",
+    summary: "Three-month, full-time internship with a published fixed stipend of ₹5,000 per month.",
+    employmentType: "internship",
+  },
+  {
+    id: "unstop-1828400",
+    title: "Full Stack Developer Intern",
+    organization: "Aeromedia",
+    location: "Remote",
+    url: "https://unstop.com/internships/full-stack-developer-internship-aeromedia-1828400",
+    deadline: "2026-12-09T00:00:00+05:30",
+    source: "Unstop",
+    summary: "Three-month, full-time unpaid internship for students graduating in 2028 or later.",
+    employmentType: "internship",
+  },
+  {
+    id: "unstop-1803899",
+    title: "Web Development Intern",
+    organization: "Codeatrix",
+    location: "Remote",
+    url: "https://unstop.com/internships/web-development-internship-codeatrix-1803899",
+    deadline: "2026-12-10T12:43:00+05:30",
+    source: "Unstop",
+    summary: "Full-time web development internship for students and recent graduates.",
+    employmentType: "internship",
+  },
+  {
+    id: "unstop-1823006",
+    title: "Associate Software Engineer",
+    organization: "Hevo Data",
+    location: "Bengaluru, India",
+    url: "https://unstop.com/jobs/associate-software-engineer-hevo-data-1823006",
+    deadline: "2026-12-06T00:00:00+05:30",
+    source: "Unstop",
+    summary: "Full-time, in-office software role involving API development and testing.",
+    employmentType: "job",
+  },
+  {
+    id: "unstop-1826300",
+    title: "Software Engineer, Digital Applications",
+    organization: "Emerson",
+    location: "Chennai, India · Hybrid",
+    url: "https://unstop.com/jobs/software-engineer-digital-applications-emerson-1826300",
+    deadline: "2026-12-08T00:00:00+05:30",
+    source: "Unstop",
+    summary: "Full-time software development role on Emerson’s digital applications team.",
+    employmentType: "job",
+  },
+];
+
+export function getOpenUnstopRoles() {
+  const now = Date.now();
+  return listedRoles.filter(({ deadline }) => Date.parse(deadline) > now);
+}
 
 export function getOpenHackathons() {
   const now = Date.now();

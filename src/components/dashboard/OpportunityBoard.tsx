@@ -2,10 +2,16 @@
 
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
-import { ArrowUpRight, BriefcaseBusiness, Code2, Search } from "lucide-react";
-import { getOpenHackathons, hackathonDirectories, type Opportunity } from "@/lib/data/opportunities";
+import { ArrowUpRight, BriefcaseBusiness, Code2, GraduationCap, Search } from "lucide-react";
+import { getOpenHackathons, hackathonDirectories, type Opportunity, type OpportunityCategory } from "@/lib/data/opportunities";
 
 const pageSize = 12;
+
+const categories = [
+  { id: "hackathons", label: "Hackathons", icon: Code2 },
+  { id: "internships", label: "Internships", icon: GraduationCap },
+  { id: "jobs", label: "Jobs", icon: BriefcaseBusiness },
+] as const;
 const dateFormat = new Intl.DateTimeFormat("en", {
   month: "short", day: "numeric", year: "numeric", timeZone: "UTC",
 });
@@ -23,11 +29,12 @@ interface JobFeed {
 interface OpportunityBoardProps {
   initialHackathons?: Opportunity[];
   hackathonsOnly?: boolean;
+  initialCategory?: OpportunityCategory;
 }
 
-export default function OpportunityBoard({ initialHackathons = [], hackathonsOnly = false }: OpportunityBoardProps) {
+export default function OpportunityBoard({ initialHackathons = [], hackathonsOnly = false, initialCategory = "hackathons" }: OpportunityBoardProps) {
   const headingId = useId();
-  const [category, setCategory] = useState<"hackathons" | "jobs">("hackathons");
+  const [category, setCategory] = useState<OpportunityCategory>(hackathonsOnly ? "hackathons" : initialCategory);
   const [query, setQuery] = useState("");
   const [limit, setLimit] = useState(pageSize);
   const [hackathons, setHackathons] = useState<Opportunity[]>(initialHackathons);
@@ -37,7 +44,7 @@ export default function OpportunityBoard({ initialHackathons = [], hackathonsOnl
 
   useEffect(() => setHackathons(getOpenHackathons()), []);
   useEffect(() => {
-    if (category !== "jobs" || jobFeed) return;
+    if (category === "hackathons" || jobFeed) return;
     const controller = new AbortController();
     setJobError(false);
     async function loadJobs() {
@@ -55,10 +62,13 @@ export default function OpportunityBoard({ initialHackathons = [], hackathonsOnl
     return () => controller.abort();
   }, [category, jobFeed, retry]);
 
-  const isJobs = category === "jobs";
+  const isCareerListing = category !== "hackathons";
   const Heading = hackathonsOnly ? "h1" : "h2";
   const searchTerms = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-  const matches = (isJobs ? jobFeed?.jobs ?? [] : hackathons).filter(opportunity => {
+  const careerListings = jobFeed?.jobs.filter(job =>
+    category === "internships" ? job.employmentType === "internship" : job.employmentType !== "internship",
+  ) ?? [];
+  const matches = (isCareerListing ? careerListings : hackathons).filter(opportunity => {
     const text = [
       opportunity.title, opportunity.organization, opportunity.location,
       opportunity.source, opportunity.summary, opportunity.eligibility,
@@ -81,28 +91,30 @@ export default function OpportunityBoard({ initialHackathons = [], hackathonsOnl
       <p className="mt-1 max-w-prose text-sm text-slate-600">
         {hackathonsOnly
           ? "Find open online and in-person hackathons. Register directly with the organizer."
-          : "Find hackathons and jobs by role, organization, or location. Apply on the employer or organizer’s site."}
+          : "Find hackathons, internships, and jobs. Apply directly on the original listing."}
       </p>
 
       <div className="mt-5 flex flex-wrap items-center gap-3">
-        {!hackathonsOnly && <div role="group" aria-label="Opportunity type" className="inline-flex gap-1 rounded-lg bg-slate-100 p-1">
-          <button
-            type="button"
-            aria-pressed={!isJobs}
-            onClick={() => { setCategory("hackathons"); setLimit(pageSize); }}
-            className="inline-flex min-h-10 items-center gap-2 rounded-md px-3 text-sm font-semibold text-slate-700 aria-pressed:bg-white aria-pressed:text-blue-800 aria-pressed:shadow-sm"
-          >
-            <Code2 size={16} aria-hidden="true" /> Hackathons
-          </button>
-          <button
-            type="button"
-            aria-pressed={isJobs}
-            onClick={() => { setCategory("jobs"); setLimit(pageSize); }}
-            className="inline-flex min-h-10 items-center gap-2 rounded-md px-3 text-sm font-semibold text-slate-700 aria-pressed:bg-white aria-pressed:text-blue-800 aria-pressed:shadow-sm"
-          >
-            <BriefcaseBusiness size={16} aria-hidden="true" /> Jobs
-          </button>
-        </div>}
+        {hackathonsOnly ? (
+          <nav aria-label="Other opportunities" className="flex gap-4 text-sm font-semibold text-blue-800">
+            <Link href="/opportunities?type=internships" className="hover:underline">Internships</Link>
+            <Link href="/opportunities?type=jobs" className="hover:underline">Jobs</Link>
+          </nav>
+        ) : (
+          <div role="group" aria-label="Opportunity type" className="flex flex-wrap gap-1 rounded-lg bg-slate-100 p-1">
+            {categories.map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                type="button"
+                aria-pressed={category === id}
+                onClick={() => { setCategory(id); setLimit(pageSize); }}
+                className="inline-flex min-h-10 items-center gap-2 rounded-md px-3 text-sm font-semibold text-slate-700 aria-pressed:bg-white aria-pressed:text-blue-800 aria-pressed:shadow-sm"
+              >
+                <Icon size={16} aria-hidden="true" /> {label}
+              </button>
+            ))}
+          </div>
+        )}
         <label className="relative min-w-0 flex-auto sm:max-w-sm">
           <span className="sr-only">Search opportunities by title, organization, or location</span>
           <Search size={16} aria-hidden="true" className="pointer-events-none absolute left-3 top-3.5 text-slate-500" />
@@ -110,13 +122,13 @@ export default function OpportunityBoard({ initialHackathons = [], hackathonsOnl
             type="search"
             value={query}
             onChange={event => { setQuery(event.target.value); setLimit(pageSize); }}
-            placeholder={isJobs ? "Try internship, London, or remote" : "Try Unstop, online, or Bengaluru"}
+            placeholder={isCareerListing ? "Try Unstop, software, or remote" : "Try Unstop, online, or Bengaluru"}
             className="min-h-11 w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 text-sm text-slate-900"
           />
         </label>
       </div>
 
-      {isJobs && !jobFeed ? (
+      {isCareerListing && !jobFeed ? (
         <div className="mt-4 text-sm text-slate-600" role="status">
           {jobError ? (
             <>
@@ -128,8 +140,8 @@ export default function OpportunityBoard({ initialHackathons = [], hackathonsOnl
       ) : (
         <>
           <p className="mt-4 text-sm text-slate-600" role="status">
-            {matches.length} {isJobs ? "jobs" : "hackathons"} found
-            {isJobs && jobFeed && ` · ${jobFeed.sourcesAvailable} of ${jobFeed.sourcesTotal} employer boards available`}
+            {matches.length} {category} found
+            {isCareerListing && jobFeed && ` · ${jobFeed.sourcesAvailable} of ${jobFeed.sourcesTotal} employer boards available`}
           </p>
           {matches.length === 0 && (
             <p className="mt-2 text-sm text-slate-700">
@@ -157,10 +169,10 @@ export default function OpportunityBoard({ initialHackathons = [], hackathonsOnl
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={`${isJobs ? "Apply for" : "Register for"} ${item.title} (opens in a new tab)`}
+                  aria-label={`${isCareerListing ? "Apply for" : "Register for"} ${item.title} (opens in a new tab)`}
                   className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-blue-200 px-3 text-sm font-semibold text-blue-800 hover:bg-blue-50"
                 >
-                  {isJobs ? "Apply" : "Register"} <ArrowUpRight size={15} aria-hidden="true" />
+                  {isCareerListing ? "Apply" : "Register"} <ArrowUpRight size={15} aria-hidden="true" />
                 </a>
               </li>
             ))}
@@ -173,7 +185,14 @@ export default function OpportunityBoard({ initialHackathons = [], hackathonsOnl
         </>
       )}
 
-      {!isJobs && (
+      {isCareerListing ? (
+        <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 border-t border-slate-200 pt-4 text-sm">
+          <span className="text-slate-600">More {category}</span>
+          <a href={`https://unstop.com/${category}`} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-800 hover:underline">
+            Unstop <ArrowUpRight size={14} aria-hidden="true" className="inline" />
+          </a>
+        </div>
+      ) : (
         <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 border-t border-slate-200 pt-4 text-sm">
           <span className="text-slate-600">More hackathons</span>
           {hackathonDirectories.map(source => (
