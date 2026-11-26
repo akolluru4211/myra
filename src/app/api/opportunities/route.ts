@@ -85,14 +85,14 @@ async function getAshbyJobs([token, name]: string[]): Promise<FeedOpportunity[]>
     const url = applicationUrl(job.applyUrl);
     if (!job.isListed || !job.title || !url) return [];
     const locations = [job.location, ...(job.secondaryLocations ?? []).map(item => item.location)]
-      .filter(Boolean);
-    if (job.isRemote && !locations.some(location => /remote/i.test(location!))) locations.push("Remote");
+      .filter((location): location is string => Boolean(location));
+    if (job.isRemote && !locations.some(location => /remote/i.test(location))) locations.push("Remote");
 
     return [{
       id: job.jobUrl || url,
       title: job.title,
       organization: name,
-      location: [...new Set(locations)].join(" · ") || "See listing for location",
+      location: Array.from(new Set(locations)).join(" · ") || "See listing for location",
       url,
       source: "Ashby",
       employmentType: job.employmentType === "Intern" ? "internship" : "job",
@@ -112,7 +112,7 @@ export async function GET() {
 
   const feed = available.flat().sort((a, b) => b.updatedAt - a.updatedAt);
   const listings = [...curated, ...feed.map(({ updatedAt: _updatedAt, ...job }) => job)];
-  const uniqueJobs = [...new Map(listings.map(job => [job.url, job])).values()];
+  const uniqueJobs = Array.from(new Map(listings.map(job => [job.url, job])).values());
   return NextResponse.json(
     { jobs: uniqueJobs, sourcesAvailable: available.length, sourcesTotal: sources.length },
     { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=300" } },
