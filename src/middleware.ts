@@ -428,11 +428,6 @@ export async function middleware(req: NextRequest) {
   // ---------------------------------------------------------------------------
   // 7. Route Normalization & Legacy Recovery Redirects
   // ---------------------------------------------------------------------------
-  if (originalPathname === "/") {
-    const res = NextResponse.next();
-    return applySecurityHeaders(res, requestId);
-  }
-
   // Temporary recovery redirects for legacy /u/ destinations (preserve query string)
   if (originalPathname === "/u/squads") {
     const recoveryUrl = new URL("/squads", req.url);
