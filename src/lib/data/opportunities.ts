@@ -24,6 +24,17 @@ export const hackathonDirectories = [
 
 const hackathons: (Opportunity & { deadline: string })[] = [
   {
+    id: "unstop-1799091",
+    title: "Hacksmart 2.0",
+    organization: "Battery Smart and Geek Room",
+    location: "Gurugram, India",
+    url: "https://unstop.com/hackathons/hacksmart-20-geek-room-1799091",
+    deadline: "2026-12-15T18:29:00Z",
+    source: "Unstop",
+    summary: "Build solutions for electric mobility and battery swapping. Finale dates are to be announced.",
+    teamSize: "1–4 participants",
+  },
+  {
     id: "unstop-1818968",
     title: "Campus to Cloud Hackathon",
     organization: "IIT Bombay Techfest and AWS",
