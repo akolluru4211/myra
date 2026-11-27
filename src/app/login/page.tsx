@@ -4,7 +4,7 @@ import { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Sign In | EdWorld Co.",
+  title: "Sign In",
   description: "Sign in to your verified EdWorld Co. account.",
 };
 

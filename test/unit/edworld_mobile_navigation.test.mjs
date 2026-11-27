@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 
-describe("Edworld Mobile Navigation & Purple Dock Unit & Regression Suite", () => {
+describe("Edworld Mobile Navigation Unit & Regression Suite", () => {
   const mobileNavPath = path.resolve(process.cwd(), "src/components/mobile/ui/MobileBottomNav.tsx");
   const navbarPath = path.resolve(process.cwd(), "src/components/layout/ModernEdworldNavbar.tsx");
   const appShellPath = path.resolve(process.cwd(), "src/components/AppShell.tsx");
@@ -35,7 +35,7 @@ describe("Edworld Mobile Navigation & Purple Dock Unit & Regression Suite", () =
     assert.ok(content.includes("min-h-[48px]"), "Dock touch targets must be at least 44px (48px provided)");
     assert.ok(content.includes("min-w-[48px]"), "Dock touch targets must be at least 44px wide");
     assert.ok(content.includes("safe-area-inset-bottom"), "Dock must handle safe-area-inset-bottom");
-    assert.ok(content.includes("bg-[#5C59E8]"), "Dock must use Edworld dashboard purple (#5C59E8)");
+    assert.ok(content.includes('aria-current={active ? "page" : undefined}'), "Current destination must be announced to assistive technology");
   });
 
   test("4. Navigation drawer includes required destinations, focus trap, and background scroll lock", () => {
@@ -58,15 +58,18 @@ describe("Edworld Mobile Navigation & Purple Dock Unit & Regression Suite", () =
     assert.ok(navbarContent.includes('Boolean(user) && "hidden lg:flex"'), "Top menu button must be hidden on mobile when user is signed in");
   });
 
-  test("6. AppShell cleans up footer on mobile when user is signed in with dock and adds bottom padding", () => {
+  test("6. AppShell cleans up footer when user is signed in and adds bottom padding", () => {
     const appShellContent = fs.readFileSync(appShellPath, "utf8");
-    assert.ok(appShellContent.includes('Boolean(user && !isLandingPage) && "hidden lg:block"'), "Footer must be hidden on mobile for signed-in users");
-    assert.ok(appShellContent.includes('Boolean(user && !isLandingPage) && "pb-24 lg:pb-6"'), "Main workspace must include bottom padding to clear the dock");
+    assert.match(appShellContent, /\{!user && \([\s\S]*?<ModernEdworldFooter \/>/);
+    assert.ok(appShellContent.includes('Boolean(user && !isLandingPage) && "pb-[calc(8rem+env(safe-area-inset-bottom))] lg:pb-6"'), "Main workspace must include bottom padding to clear the dock");
   });
 
-  test("7. MyraChatbot hides redundant desktop floating trigger on mobile and supports viewport resizing", () => {
+  test("7. MyraChatbot restores the mobile dock when chat closes", () => {
     const chatbotContent = fs.readFileSync(chatbotPath, "utf8");
     assert.ok(chatbotContent.includes("hidden lg:flex"), "Floating Ask Myra trigger button must be hidden on mobile");
-    assert.ok(chatbotContent.includes("bottom-20"), "Chat modal on mobile must clear the dock");
+    const navContent = fs.readFileSync(mobileNavPath, "utf8");
+    assert.ok(chatbotContent.includes('dispatchEvent(new CustomEvent("close-myra-copilot"))'), "Closing chat must notify the dock");
+    assert.ok(navContent.includes('addEventListener("close-myra-copilot", handleCloseChat)'), "Dock must listen for the close event");
+    assert.ok(navContent.includes("if (isKeyboardVisible || isChatOpen)"), "Dock is hidden while chat or the keyboard is open");
   });
 });

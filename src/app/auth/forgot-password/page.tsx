@@ -87,7 +87,7 @@ function ForgotPasswordContent() {
               <div className="space-y-2 pt-2">
                 <Link
                   href={`/auth/signup?email=${encodeURIComponent(submittedEmail || email)}`}
-                  className="w-full py-2.5 rounded-xl font-bold text-xs text-white bg-[#5C59E8] hover:bg-[#4E4BC6] transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                  className="w-full py-2.5 rounded-xl font-bold text-xs text-white bg-[#57534e] hover:bg-[#44403c] transition-colors flex items-center justify-center gap-2 shadow-xs cursor-pointer"
                 >
                   <span>Create Free Account</span>
                   <ArrowRight className="w-4 h-4" />
@@ -123,7 +123,7 @@ function ForgotPasswordContent() {
                   </div>
                   <Link
                     href={devResetUrl}
-                    className="text-xs font-mono text-[#5C59E8] hover:underline break-all block"
+                    className="text-xs font-mono text-[#57534e] hover:underline break-all block"
                   >
                     {devResetUrl}
                   </Link>
@@ -140,7 +140,7 @@ function ForgotPasswordContent() {
                     type="button"
                     onClick={handleSubmit}
                     disabled={loading}
-                    className="font-bold text-[#5C59E8] hover:text-[#4E4BC6] flex items-center gap-1 cursor-pointer"
+                    className="font-bold text-[#57534e] hover:text-[#44403c] flex items-center gap-1 cursor-pointer"
                   >
                     <RotateCw className="w-3.5 h-3.5" />
                     <span>Resend instructions</span>
@@ -170,7 +170,7 @@ function ForgotPasswordContent() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="student@university.edu"
-                  className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#57534e] focus:ring-2 focus:ring-[#57534e]/20 transition-all"
                 />
               </div>
             </div>
@@ -178,7 +178,7 @@ function ForgotPasswordContent() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-[#5C59E8] hover:bg-[#4E4BC6] transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer"
+              className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-[#57534e] hover:bg-[#44403c] transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 cursor-pointer"
             >
               {loading ? (
                 <>
@@ -216,7 +216,7 @@ export default function ForgotPasswordPage() {
       fallback={
         <div className="min-h-screen bg-[#F4F5FA] flex items-center justify-center">
           <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center gap-3">
-            <Loader2 className="w-5 h-5 animate-spin text-[#5C59E8]" />
+            <Loader2 className="w-5 h-5 animate-spin text-[#57534e]" />
             <span className="text-sm font-semibold text-slate-800">Loading recovery...</span>
           </div>
         </div>

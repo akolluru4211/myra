@@ -398,22 +398,11 @@ describe("Tier 2: Global Shell Architecture", () => {
       );
     });
 
-    it("T2.3.2: styles dock with periwinkle background #5C59E8 / bg-periwinkle and organic radius rounded-[32px]", () => {
-      assert(
-        sideDockSource.includes("bg-[#5C59E8]") || sideDockSource.includes("bg-periwinkle") || sideDockSource.includes("bg-[#2563EB]"),
-        "CurvySideDock must use periwinkle background bg-[#5C59E8] or semantic token bg-periwinkle"
-      );
-      assert(
-        sideDockSource.includes("rounded-[32px]"),
-        "CurvySideDock must use organic radius rounded-[32px]"
-      );
-      assert(
-        sideDockSource.includes("shadow-ambient-float") || sideDockSource.includes("shadow-md"),
-        "CurvySideDock must apply shadow-ambient-float drop shadow"
-      );
+    it("T2.3.2: uses a light, bordered desktop navigation surface", () => {
+      assert(sideDockSource.includes("bg-white text-neutral-900 rounded-2xl border border-neutral-200"));
     });
 
-    it("T2.3.3: implements active squircle dashboard button (w-12 h-12 rounded-2xl bg-white text-[#5C59E8])", () => {
+    it("T2.3.3: provides a 48px Dashboard link and exposes its active state", () => {
       assert(
         sideDockSource.includes('href="/dashboard"'),
         "CurvySideDock must include Link to /dashboard"
@@ -427,8 +416,8 @@ describe("Tier 2: Global Shell Architecture", () => {
         "Dashboard squircle button must use rounded-2xl border radius"
       );
       assert(
-        sideDockSource.includes("bg-white text-[#5C59E8]") || sideDockSource.includes("bg-white text-[#2563EB]"),
-        "Dashboard squircle button active state must be bg-white text-[#5C59E8]"
+        sideDockSource.includes('aria-current={isActive("/dashboard") ? "page" : undefined}'),
+        "Dashboard must expose its active state"
       );
     });
 
@@ -480,8 +469,8 @@ describe("Tier 2: Global Shell Architecture", () => {
         "ModernEdworldNavbar must use light background bg-[#F4F5FA] or bg-canvas"
       );
       assert(
-        navbarSource.includes("border-slate-200") || navbarSource.includes("border-blue-200"),
-        "ModernEdworldNavbar must use subtle border border-slate-200"
+        navbarSource.includes("border-neutral-200"),
+        "ModernEdworldNavbar must use a neutral border"
       );
     });
 
@@ -519,22 +508,14 @@ describe("Tier 2: Global Shell Architecture", () => {
       );
     });
 
-    it("T2.4.4: includes soft lavender action pill (bg-[#EEF0FD] text-[#3730A3])", () => {
-      assert(
-        (navbarSource.includes("bg-[#EEF0FD]") || navbarSource.includes("bg-[#DBEAFE]")) &&
-          (navbarSource.includes("text-[#3730A3]") || navbarSource.includes("text-[#1E40AF]")),
-        "Navbar must render soft lavender secondary pill button with bg-[#EEF0FD] and text-[#3730A3]"
-      );
+    it("T2.4.4: provides a secondary Focus Studio action", () => {
+      assert.match(navbarSource, /href="\/focus"[\s\S]*?<span>Focus Studio<\/span>/);
     });
 
-    it("T2.4.5: solid periwinkle action button dispatches open-myra-copilot CustomEvent", () => {
+    it("T2.4.5: Ask Myra dispatches open-myra-copilot CustomEvent", () => {
       assert(
         navbarSource.includes("Ask Myra"),
         "Navbar must render 'Ask Myra' primary action button"
-      );
-      assert(
-        navbarSource.includes("bg-[#5C59E8]") || navbarSource.includes("bg-periwinkle") || navbarSource.includes("bg-[#2563EB]"),
-        "Ask Myra button must use solid periwinkle background bg-[#5C59E8] or bg-periwinkle"
       );
       assert(
         navbarSource.includes('new CustomEvent("open-myra-copilot")'),
@@ -652,14 +633,7 @@ describe("Tier 3: Cross-Feature Boundary & Layout Clearances", () => {
         "Ask Myra action button must declare min-h-[44px] or touch-target"
       );
 
-      // Tab switcher links
-      const tabNavIdx = navbarSource.indexOf('aria-label="Primary sections"');
-      assert(tabNavIdx !== -1, "Navbar must contain primary sections tab switcher nav");
-      const tabSlice = navbarSource.slice(tabNavIdx, tabNavIdx + 500);
-      assert(
-        tabSlice.includes("min-h-[44px]") || tabSlice.includes("touch-target"),
-        "Primary tab switchers must declare min-h-[44px] or touch-target"
-      );
+
     });
 
     it("T3.1.4: proves responsive dock cleanly collapses on viewports below 1024px (< lg)", () => {
@@ -695,14 +669,14 @@ describe("Tier 3: Cross-Feature Boundary & Layout Clearances", () => {
       );
     });
 
-    it("T3.2.2: enforces rounded-3xl or 24-32px border radius for elevated containers", () => {
+    it("T3.2.2: uses rounded corners on footer and desktop navigation", () => {
       assert(
         footerSource.includes("rounded-t-3xl"),
         "ModernEdworldFooter must use rounded-t-3xl"
       );
       assert(
-        sideDockSource.includes("rounded-[32px]"),
-        "CurvySideDock must use 32px organic border radius rounded-[32px]"
+        sideDockSource.includes("rounded-2xl"),
+        "Desktop navigation uses rounded corners"
       );
     });
 
@@ -809,25 +783,10 @@ describe("Tier 4: Visual Design Consistency Sweep", () => {
     );
   });
 
-  it("T4.1.4: audits button color taxonomy across scoped shell components", () => {
+  it("T4.1.4: differentiates primary and secondary navbar actions", () => {
     const navbar = readProjectFile("src/components/layout/ModernEdworldNavbar.tsx");
-    const footer = readProjectFile("src/components/layout/ModernEdworldFooter.tsx");
-
-    // Primary action button uses solid periwinkle #5C59E8 or blue #2563EB or bg-periwinkle
-    assert(
-      navbar.includes("bg-[#5C59E8]") || navbar.includes("bg-periwinkle") || navbar.includes("bg-[#2563EB]"),
-      "Navbar primary action must use periwinkle bg-[#5C59E8] or semantic token bg-periwinkle or blue bg-[#2563EB]"
-    );
-    assert(
-      footer.includes("bg-[#5C59E8]") || footer.includes("bg-periwinkle") || footer.includes("bg-[#2563EB]"),
-      "Footer primary action must use periwinkle bg-[#5C59E8] or semantic token bg-periwinkle or blue bg-[#2563EB]"
-    );
-
-    // Secondary action button uses soft lavender #EEF0FD or blue #DBEAFE
-    assert(
-      navbar.includes("bg-[#EEF0FD]") || navbar.includes("bg-periwinkle-light") || navbar.includes("bg-lavender") || navbar.includes("bg-[#DBEAFE]"),
-      "Navbar secondary action must use lavender bg-[#EEF0FD], bg-[#DBEAFE], or semantic lavender token"
-    );
+    assert.match(navbar, /bg-\[#292825\][^\n]+\s+aria-label="Ask Myra AI Companion"/);
+    assert.match(navbar, /href="\/focus"\s+className="[^"]*bg-\[#efeeeb\]/);
   });
 
   it("T4.1.5: audits high-contrast text typography pairing across light canvas containers", () => {

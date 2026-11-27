@@ -1256,14 +1256,10 @@ describe("Page Logic Preservation & Functional Flow Test Suite (Tiers 1 - 4)", (
         "AppShell.tsx must enforce light canvas background"
       );
 
-      // 3. CurvySideDock styling adheres to dock background and rounded-[32px] tokens
-      assert(
-        (curvyDockSource.includes("bg-[#5C59E8]") || curvyDockSource.includes("bg-[#2563EB]")) &&
-        curvyDockSource.includes("rounded-[32px]"),
-        "CurvySideDock.tsx must apply dock color and rounded-[32px]"
-      );
+      // Desktop navigation identifies the current destination.
+      assert(curvyDockSource.includes('aria-current={active ? "page" : undefined}'));
 
-      // 4. Navbar adheres to design system pill switchers and search bar
+      // 4. The shared workspace uses the modern navbar
       assert(
         navbarSource.includes("ModernEdworldNavbar") ||
         navbarSource.includes("bg-white/80"),

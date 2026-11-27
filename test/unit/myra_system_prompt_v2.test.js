@@ -31,8 +31,7 @@ const chatbotPath = path.join(__dirname, '../../src/components/ai/MyraChatbot.ts
 const chatbotContent = fs.readFileSync(chatbotPath, 'utf8');
 console.log('Testing src/components/ai/MyraChatbot.tsx...');
 assert(chatbotContent.includes('Tell me your goal (for example JEE, NEET, CUET, boards, semester exams, GATE, CAT, placements)'), 'Initial greeting in UI should match canonical text');
-assert(chatbotContent.includes('Study &amp; Career Mentor'), 'Badge in UI should be Study & Career Mentor');
-assert(chatbotContent.includes('Class 12 • College • Placements • Higher-Ed'), 'Subtitle in UI should reflect Class 12 to Higher-Ed');
+assert(chatbotContent.includes('aria-labelledby="myra-chat-title"'), "Chat panel should use Myra’s title as its accessible name");
 console.log('✔ MyraChatbot.tsx verified');
 
 // 4. Verify Dataset JSONL

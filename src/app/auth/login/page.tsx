@@ -281,8 +281,9 @@ function LoginForm() {
   return (
     <FigmaAuthLayout
       title="Sign in to EdWorld Co."
-      subtitle="Pick up where you left off in your EdWorld workspace."
+      subtitle="Continue with Google, a code, or your password."
       activeTab="login"
+      signupHref={validatedRedirect ? `/auth/signup?redirectUrl=${encodeURIComponent(validatedRedirect)}` : undefined}
     >
       <div className="space-y-5">
         
@@ -291,7 +292,7 @@ function LoginForm() {
           type="button"
           onClick={handleGoogleSignIn}
           disabled={loading || googleLoading}
-          className="w-full py-2.5 px-4 rounded-xl font-semibold text-xs sm:text-sm text-slate-800 bg-white border border-blue-200 hover:bg-slate-50 active:bg-slate-100 transition-all flex items-center justify-center gap-3 shadow-xs disabled:opacity-60 cursor-pointer"
+          className="w-full py-2.5 px-4 rounded-xl font-semibold text-xs sm:text-sm text-slate-800 bg-white border border-neutral-200 hover:bg-slate-50 active:bg-slate-100 transition-all flex items-center justify-center gap-3 shadow-xs disabled:opacity-60 cursor-pointer"
         >
           {googleLoading ? (
             <>
@@ -324,19 +325,19 @@ function LoginForm() {
         </button>
 
         <div className="relative flex py-1 items-center">
-          <div className="flex-grow border-t border-blue-200"></div>
+          <div className="flex-grow border-t border-neutral-200"></div>
           <span className="flex-shrink mx-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">or sign in with</span>
-          <div className="flex-grow border-t border-blue-200"></div>
+          <div className="flex-grow border-t border-neutral-200"></div>
         </div>
 
         {/* Method Switcher Tabs: Email OTP (Student default) vs Password */}
-        <div className="grid grid-cols-2 p-1 rounded-2xl bg-[#DBEAFE] border border-blue-200/80 text-xs font-semibold">
+        <div className="grid grid-cols-2 p-1 rounded-2xl bg-[#efeeeb] border border-neutral-200/80 text-xs font-semibold">
           <button
             type="button"
             onClick={() => { setAuthMethod("otp"); setError(null); setIsProfileErrorRetryable(false); }}
             className={`py-2 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
               authMethod === "otp"
-                ? "bg-white text-slate-900 font-bold shadow-xs border border-blue-200/70"
+                ? "bg-white text-slate-900 font-bold shadow-xs border border-neutral-200/70"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
@@ -348,7 +349,7 @@ function LoginForm() {
             onClick={() => { setAuthMethod("password"); setError(null); setIsProfileErrorRetryable(false); }}
             className={`py-2 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
               authMethod === "password"
-                ? "bg-white text-slate-900 font-bold shadow-xs border border-blue-200/70"
+                ? "bg-white text-slate-900 font-bold shadow-xs border border-neutral-200/70"
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
@@ -392,7 +393,7 @@ function LoginForm() {
                 <div className="pt-0.5">
                   <Link
                     href={`/auth/forgot-password?email=${encodeURIComponent(email)}`}
-                    className="inline-flex items-center gap-1 font-bold text-[#2563EB] hover:text-[#4E4BC6] hover:underline"
+                    className="inline-flex items-center gap-1 font-bold text-[#292825] hover:text-[#44403c] hover:underline"
                   >
                     Forgot your password? Reset it here <ArrowRight className="w-3 h-3" />
                   </Link>
@@ -420,7 +421,7 @@ function LoginForm() {
                       onChange={(e) => setIdentifier(e.target.value)}
                       placeholder="student@university.edu or +91 9876543210"
                       disabled={loading || googleLoading}
-                      className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-blue-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all disabled:opacity-60"
+                      className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-neutral-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#57534e] focus:ring-2 focus:ring-[#57534e]/20 transition-all disabled:opacity-60"
                     />
                   </div>
                 </div>
@@ -470,7 +471,7 @@ function LoginForm() {
                       onPaste={handlePaste}
                       disabled={loading || profileLoading}
                       aria-label={`Digit ${idx + 1} of 6`}
-                      className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold font-mono rounded-xl bg-white border border-blue-300 text-slate-900 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all shadow-2xs disabled:opacity-60"
+                      className="w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold font-mono rounded-xl bg-white border border-neutral-300 text-slate-900 focus:outline-none focus:border-[#57534e] focus:ring-2 focus:ring-[#57534e]/20 transition-all shadow-2xs disabled:opacity-60"
                     />
                   ))}
                 </div>
@@ -498,7 +499,7 @@ function LoginForm() {
                       type="button"
                       onClick={handleResendOtp}
                       disabled={loading || profileLoading}
-                      className="font-bold text-[#2563EB] hover:text-[#4E4BC6] transition-colors flex items-center gap-1 cursor-pointer disabled:opacity-60"
+                      className="font-bold text-[#292825] hover:text-[#44403c] transition-colors flex items-center gap-1 cursor-pointer disabled:opacity-60"
                     >
                       <RotateCw className="w-3 h-3" />
                       <span>Resend OTP</span>
@@ -546,7 +547,7 @@ function LoginForm() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="student@university.edu"
                   disabled={loading || profileLoading}
-                  className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-blue-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all disabled:opacity-60"
+                  className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-neutral-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#57534e] focus:ring-2 focus:ring-[#57534e]/20 transition-all disabled:opacity-60"
                 />
               </div>
             </div>
@@ -559,7 +560,7 @@ function LoginForm() {
                 </label>
                 <Link
                   href={`/auth/forgot-password?email=${encodeURIComponent(email)}`}
-                  className="text-xs font-bold text-[#2563EB] hover:text-[#4E4BC6] hover:underline"
+                  className="text-xs font-bold text-[#292825] hover:text-[#44403c] hover:underline"
                 >
                   Forgot password?
                 </Link>
@@ -573,7 +574,7 @@ function LoginForm() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
                   disabled={loading || profileLoading}
-                  className="w-full pl-10 pr-11 py-2.5 sm:py-3 text-sm bg-white border border-blue-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all disabled:opacity-60"
+                  className="w-full pl-10 pr-11 py-2.5 sm:py-3 text-sm bg-white border border-neutral-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#57534e] focus:ring-2 focus:ring-[#57534e]/20 transition-all disabled:opacity-60"
                 />
                 <button
                   type="button"
@@ -594,7 +595,7 @@ function LoginForm() {
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
                   disabled={loading || profileLoading}
-                  className="w-4 h-4 rounded border-blue-300 text-[#2563EB] focus:ring-[#5C59E8] cursor-pointer"
+                  className="w-4 h-4 rounded border-neutral-300 text-[#292825] focus:ring-[#57534e] cursor-pointer"
                 />
                 <span className="text-xs text-slate-600 font-medium">Keep me signed in for 30 days</span>
               </label>
@@ -622,17 +623,6 @@ function LoginForm() {
         )}
 
         {/* Bottom Switcher */}
-        <div className="pt-4 border-t border-blue-200 text-center">
-          <p className="text-xs text-slate-600">
-            Don&apos;t have an account yet?{" "}
-            <Link
-              href={validatedRedirect ? `/auth/signup?redirectUrl=${encodeURIComponent(validatedRedirect)}` : "/auth/signup"}
-              className="font-bold text-[#2563EB] hover:text-[#4E4BC6] underline underline-offset-3"
-            >
-              Create free student account
-            </Link>
-          </p>
-        </div>
 
       </div>
     </FigmaAuthLayout>
@@ -644,8 +634,8 @@ export default function LoginPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-[#F4F5FA] flex items-center justify-center">
-          <div className="p-6 rounded-2xl bg-white border border-blue-200 shadow-sm flex items-center gap-3">
-            <Loader2 className="w-5 h-5 animate-spin text-[#2563EB]" />
+          <div className="p-6 rounded-2xl bg-white border border-neutral-200 shadow-sm flex items-center gap-3">
+            <Loader2 className="w-5 h-5 animate-spin text-[#292825]" />
             <span className="text-sm font-semibold text-slate-800">Loading sign in...</span>
           </div>
         </div>

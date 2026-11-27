@@ -123,7 +123,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       className={cn(
         "min-h-screen flex flex-col font-sans antialiased selection:bg-[#2563EB] selection:text-white relative overflow-x-hidden",
         "text-black",
-        pathname === "/dashboard" ? "bg-[#f6f8fc]" : "bg-white"
+        "bg-[#f8f7f5]"
       )}
     >
       <a
@@ -150,16 +150,17 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           isLandingPage
             ? "w-full"
             : "max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 lg:pl-28",
-          Boolean(user && !isLandingPage) && "pb-24 lg:pb-6"
+          Boolean(user && !isLandingPage) && "pb-[calc(8rem+env(safe-area-inset-bottom))] lg:pb-6"
         )}
       >
         {children}
       </main>
 
-      {/* Modern Light Footer (Hidden on mobile when user is signed in with the bottom dock) */}
-      <div className={cn("relative z-20", !isLandingPage && "lg:pl-28", Boolean(user && !isLandingPage) && "hidden lg:block")}>
-        <ModernEdworldFooter />
-      </div>
+      {!user && (
+        <div className="relative z-20 lg:pl-28">
+          <ModernEdworldFooter />
+        </div>
+      )}
 
       {/* Mobile Bottom Navigation for Authenticated Users */}
       {user && !isLandingPage && <MobileBottomNav />}
@@ -170,7 +171,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       />
 
       {/* Floating Smart Career & Study Mentor */}
-      <MyraChatbot />
+      <MyraChatbot showLauncher={false} />
 
       {/* Global Privacy & Cookie Consent */}
       <CookieConsentBanner />

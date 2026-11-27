@@ -13,12 +13,7 @@ describe("Student Dashboard & Mobile Myra Integration Suite", () => {
   const chatbotPath = path.join(process.cwd(), "src", "components", "ai", "MyraChatbot.tsx");
   const chatbotSrc = fs.readFileSync(chatbotPath, "utf8");
 
-  it("1. Dashboard primary action uses green Ask Myra button wired to open-myra-copilot", () => {
-    // Assert Ask Myra primary green button styling and text
-    assert(
-      dashboardSrc.includes("bg-emerald-600") && dashboardSrc.includes("hover:bg-emerald-700"),
-      "Dashboard primary button must be green (bg-emerald-600 hover:bg-emerald-700)"
-    );
+  it("1. Dashboard primary action wires Ask Myra to open-myra-copilot", () => {
     assert(
       dashboardSrc.includes("<span>Ask Myra</span>"),
       "Dashboard primary action button must say 'Ask Myra'"
@@ -51,14 +46,14 @@ describe("Student Dashboard & Mobile Myra Integration Suite", () => {
       "Dashboard must provide Retry button when task resolution fails"
     );
     assert(
-      dashboardSrc.includes("Shortcuts:"),
+      />\s*Shortcuts\s*<\//.test(dashboardSrc),
       "Dashboard must provide compact shortcuts section"
     );
   });
 
   it("3. Mobile bottom navigation coordinates with chat panel and handles safe areas", () => {
     assert(
-      mobileNavSrc.includes("pb-[env(safe-area-inset-bottom,12px)]"),
+      mobileNavSrc.includes("env(safe-area-inset-bottom)"),
       "Mobile bottom navigation must support device safe area insets"
     );
     assert(

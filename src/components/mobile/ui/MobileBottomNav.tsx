@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, BookOpen, Users, Menu, Sparkles } from "lucide-react";
+import { LayoutDashboard, BookOpen, Users, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type MobileTab =
@@ -37,6 +37,34 @@ export function MobileBottomNav({
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
 
+  // Detect virtual keyboard and chat panel state on mobile
+  const isPrototype = Boolean(onTabChange);
+  useEffect(() => {
+    if (isPrototype) return;
+    const handleOpenChat = () => setIsChatOpen(true);
+    const handleCloseChat = () => setIsChatOpen(false);
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("open-myra-copilot", handleOpenChat);
+      window.addEventListener("close-myra-copilot", handleCloseChat);
+
+      const handleViewportResize = () => {
+        const vv = window.visualViewport;
+        if (!vv) return;
+        const keyboardOpen = vv.scale === 1 && window.innerHeight - vv.height > 150;
+        setIsKeyboardVisible(keyboardOpen);
+      };
+
+      window.visualViewport?.addEventListener("resize", handleViewportResize);
+
+      return () => {
+        window.removeEventListener("open-myra-copilot", handleOpenChat);
+        window.removeEventListener("close-myra-copilot", handleCloseChat);
+        window.visualViewport?.removeEventListener("resize", handleViewportResize);
+      };
+    }
+  }, [isPrototype]);
+
   // If onTabChange is provided, we are in prototype / simulator mode
   if (onTabChange) {
     const protoTabs: { id: MobileTab; label: string; icon: any; badge?: number }[] = [
@@ -66,7 +94,7 @@ export function MobileBottomNav({
               onClick={() => onTabChange(tab.id)}
               className={cn(
                 "relative flex flex-col items-center justify-center flex-1 min-h-[48px] py-1 px-1 rounded-lg transition-colors duration-150 outline-none",
-                isActive ? "text-[#2563EB]" : "text-[#6B7280] hover:text-[#111827]"
+                isActive ? "text-[#292825]" : "text-[#6B7280] hover:text-[#111827]"
               )}
               aria-label={tab.label}
             >
@@ -78,7 +106,7 @@ export function MobileBottomNav({
                   )}
                 />
                 {Boolean(tab.badge && tab.badge > 0) && (
-                  <span className="absolute -top-1 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[#2563EB] text-white text-[9px] font-bold flex items-center justify-center">
+                  <span className="absolute -top-1 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[#292825] text-white text-[9px] font-bold flex items-center justify-center">
                     {tab.badge}
                   </span>
                 )}
@@ -86,7 +114,7 @@ export function MobileBottomNav({
               <span
                 className={cn(
                   "text-[10px] mt-1 font-medium",
-                  isActive ? "font-bold text-[#2563EB]" : "text-[#6B7280]"
+                  isActive ? "font-bold text-[#292825]" : "text-[#6B7280]"
                 )}
               >
                 {tab.label}
@@ -97,32 +125,6 @@ export function MobileBottomNav({
       </nav>
     );
   }
-
-  // Detect virtual keyboard and chat panel state on mobile
-  useEffect(() => {
-    const handleOpenChat = () => setIsChatOpen(true);
-    const handleCloseChat = () => setIsChatOpen(false);
-
-    if (typeof window !== "undefined") {
-      window.addEventListener("open-myra-copilot", handleOpenChat);
-      window.addEventListener("close-myra-copilot", handleCloseChat);
-
-      const handleViewportResize = () => {
-        const vv = window.visualViewport;
-        if (!vv) return;
-        const keyboardOpen = window.innerHeight - vv.height > 150;
-        setIsKeyboardVisible(keyboardOpen);
-      };
-
-      window.visualViewport?.addEventListener("resize", handleViewportResize);
-
-      return () => {
-        window.removeEventListener("open-myra-copilot", handleOpenChat);
-        window.removeEventListener("close-myra-copilot", handleCloseChat);
-        window.visualViewport?.removeEventListener("resize", handleViewportResize);
-      };
-    }
-  }, []);
 
   const handleOpenMyra = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -179,23 +181,23 @@ export function MobileBottomNav({
   return (
     <div
       className={cn(
-        "lg:hidden fixed bottom-0 left-0 right-0 z-40 px-3 pb-[env(safe-area-inset-bottom,12px)] pt-1 select-none pointer-events-none flex justify-center",
+        "lg:hidden fixed bottom-0 left-0 right-0 z-40 px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1 select-none pointer-events-none flex justify-center",
         className
       )}
     >
-      {/* Container holding Floating Mascot & Purple Dock */}
+
       <div className="relative w-full max-w-md pointer-events-auto">
-        
-        {/* Floating Myra Mascot placed above the Menu tab end */}
+
+
         <div className="absolute -top-14 right-3 z-50 flex flex-col items-center group">
           <button
             type="button"
             onClick={handleOpenMyra}
             aria-label="Ask Myra AI Copilot"
-            className="relative flex items-center justify-center cursor-pointer transition-transform duration-200 active:scale-95 hover:scale-105"
+            className="relative inline-flex min-h-[48px] items-center gap-2 rounded-full border border-slate-200 bg-white py-1 pl-1 pr-3 text-sm font-semibold text-slate-800 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-700"
           >
             {/* Mascot Avatar Container */}
-            <div className="relative w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-[#2563EB] to-blue-400 shadow-lg border-2 border-white flex items-center justify-center">
+            <div className="relative size-9 rounded-full bg-slate-100">
               <div className="relative w-full h-full rounded-full overflow-hidden bg-white">
                 <Image
                   src="/images/myra-avatar.png"
@@ -205,22 +207,16 @@ export function MobileBottomNav({
                   priority
                 />
               </div>
-              {/* Online Pulse Indicator */}
-              <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-400 border-2 border-white shadow-xs" />
             </div>
 
-            {/* Pill Label "Myra" */}
-            <span className="absolute -bottom-2 px-2 py-0.5 rounded-full bg-[#2563EB] text-white text-[10px] font-extrabold tracking-tight shadow-md border border-white/60 flex items-center gap-0.5">
-              <Sparkles className="w-2.5 h-2.5 text-white stroke-[2.5]" />
-              <span>Myra</span>
-            </span>
+            <span>Myra</span>
           </button>
         </div>
 
-        {/* The Four-Tab Purple Dock */}
+
         <nav
           aria-label="Edworld Mobile Bottom Dock"
-          className="bg-[#2563EB] text-white rounded-2xl shadow-xl shadow-blue-900/15 border border-blue-300 px-2 py-1.5 flex items-center justify-between backdrop-blur-md"
+          className="grid grid-cols-4 gap-1 rounded-2xl border border-slate-200 bg-white p-1.5 text-slate-700 shadow-[0_8px_24px_#0f172a14]"
         >
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -234,10 +230,10 @@ export function MobileBottomNav({
                   type="button"
                   onClick={tab.onClick}
                   aria-label={tab.label}
-                  className="relative flex flex-col items-center justify-center flex-1 min-h-[48px] min-w-[48px] py-1 px-1 rounded-xl transition-all duration-150 outline-none text-white/80 hover:text-white hover:bg-white/10 active:scale-95 cursor-pointer touch-target focus-visible:ring-2 focus-visible:ring-white"
+                  className="flex min-h-[48px] min-w-[48px] flex-col items-center justify-center gap-1 rounded-xl px-1 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:ring-2 focus-visible:ring-neutral-700"
                 >
                   <Icon className="w-5 h-5 stroke-[2] transition-transform" />
-                  <span className="text-[11px] mt-0.5 font-bold tracking-tight text-white/90">
+                  <span className="text-xs font-medium">
                     {tab.label}
                   </span>
                 </button>
@@ -251,17 +247,17 @@ export function MobileBottomNav({
                 aria-label={tab.label}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "relative flex flex-col items-center justify-center flex-1 min-h-[48px] min-w-[48px] py-1 px-1 rounded-xl transition-all duration-150 outline-none touch-target focus-visible:ring-2 focus-visible:ring-white",
+                  "flex min-h-[48px] min-w-[48px] flex-col items-center justify-center gap-1 rounded-xl px-1 transition-colors focus-visible:ring-2 focus-visible:ring-neutral-700",
                   active
-                    ? "bg-white text-[#2563EB] shadow-sm font-extrabold"
-                    : "text-white/80 hover:text-white hover:bg-white/10 active:scale-95"
+                    ? "bg-[#edede9] text-neutral-950"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                 )}
               >
                 <Icon className={cn("w-5 h-5 transition-transform", active ? "stroke-[2.4]" : "stroke-[2]")} />
                 <span
                   className={cn(
-                    "text-[11px] mt-0.5 tracking-tight",
-                    active ? "font-extrabold text-[#2563EB]" : "font-bold text-white/90"
+                    "text-xs",
+                    active ? "font-semibold" : "font-medium"
                   )}
                 >
                   {tab.label}

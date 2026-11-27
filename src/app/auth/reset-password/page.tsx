@@ -110,7 +110,7 @@ function ResetPasswordContent() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full pl-10 pr-11 py-2.5 sm:py-3 text-sm bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
+                  className="w-full pl-10 pr-11 py-2.5 sm:py-3 text-sm bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#57534e] focus:ring-2 focus:ring-[#57534e]/20 transition-all"
                 />
                 <button
                   type="button"
@@ -136,7 +136,7 @@ function ResetPasswordContent() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#5C59E8] focus:ring-2 focus:ring-[#5C59E8]/20 transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#57534e] focus:ring-2 focus:ring-[#57534e]/20 transition-all"
                 />
               </div>
             </div>
@@ -167,7 +167,7 @@ function ResetPasswordContent() {
             <button
               type="submit"
               disabled={loading || !isPasswordValid || !passwordsMatch}
-              className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-[#5C59E8] hover:bg-[#4E4BC6] transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 cursor-pointer"
+              className="w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-[#57534e] hover:bg-[#44403c] transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 cursor-pointer"
             >
               {loading ? (
                 <>
@@ -203,7 +203,7 @@ export default function ResetPasswordPage() {
       fallback={
         <div className="min-h-screen bg-[#F4F5FA] flex items-center justify-center">
           <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center gap-3">
-            <Loader2 className="w-5 h-5 animate-spin text-[#5C59E8]" />
+            <Loader2 className="w-5 h-5 animate-spin text-[#57534e]" />
             <span className="text-sm font-semibold text-slate-800">Loading reset...</span>
           </div>
         </div>

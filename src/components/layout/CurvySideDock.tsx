@@ -26,7 +26,6 @@ interface NavLinkItem {
   href: string;
   label: string;
   icon: React.ElementType;
-  badge?: string;
 }
 
 interface NavGroup {
@@ -50,9 +49,9 @@ export default function CurvySideDock() {
     {
       name: "Learn",
       items: [
-        { href: "/learn", label: "EdLearn", icon: BookOpen, badge: "Hub" },
+        { href: "/learn", label: "EdLearn", icon: BookOpen },
         { href: "/dsa", label: "DSA Arena", icon: Code2 },
-        { href: "/daily", label: "Daily", icon: Zap, badge: "Free" },
+        { href: "/daily", label: "Daily", icon: Zap },
         { href: "/leaderboard", label: "Ranks", icon: Trophy },
       ],
     },
@@ -85,7 +84,7 @@ export default function CurvySideDock() {
       aria-label="Curvy Floating Side Navigation"
       className={cn(
         "hidden lg:flex fixed left-4 top-4 bottom-4 z-40",
-        "w-20 bg-[#2563EB] text-white rounded-[32px] shadow-md",
+        "w-20 bg-white text-neutral-900 rounded-2xl border border-neutral-200 shadow-xs",
         "flex-col items-center py-5 gap-3.5 select-none overflow-hidden"
       )}
     >
@@ -118,11 +117,12 @@ export default function CurvySideDock() {
           href="/dashboard"
           title="Dashboard"
           aria-label="Dashboard"
+          aria-current={isActive("/dashboard") ? "page" : undefined}
           className={cn(
             "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-200 cursor-pointer p-1.5",
             isActive("/dashboard")
-              ? "bg-white text-[#2563EB] shadow-md scale-105"
-              : "bg-white/90 text-[#2563EB] hover:bg-white hover:scale-105 shadow-sm"
+              ? "bg-neutral-900 text-white"
+              : "bg-neutral-100 text-neutral-950 hover:bg-neutral-200"
           )}
         >
           <Image
@@ -134,7 +134,7 @@ export default function CurvySideDock() {
             priority
           />
         </Link>
-        <span className="text-[9px] font-black tracking-tight text-white/90">
+        <span className="text-[9px] font-black tracking-tight text-neutral-800">
           Home
         </span>
       </div>
@@ -145,7 +145,7 @@ export default function CurvySideDock() {
           <div key={group.name} className="w-full flex flex-col items-center gap-1.5">
             {/* Semantic Group Label Divider */}
             <div className="w-full flex items-center justify-center py-0.5">
-              <span className="text-[8px] font-black uppercase tracking-wider text-white/70 text-center px-1 truncate">
+              <span className="text-[8px] font-black uppercase tracking-wider text-neutral-600 text-center px-1 truncate">
                 {group.name}
               </span>
             </div>
@@ -159,11 +159,12 @@ export default function CurvySideDock() {
                     href={item.href}
                     title={item.label}
                     aria-label={item.label}
+                    aria-current={active ? "page" : undefined}
                     className={cn(
                       "w-11 h-11 rounded-2xl flex flex-col items-center justify-center transition-all duration-200 relative cursor-pointer",
                       active
-                        ? "bg-white text-[#2563EB] shadow-sm font-bold"
-                        : "text-white/80 hover:text-white hover:bg-white/15"
+                        ? "bg-neutral-100 text-neutral-950 font-bold"
+                        : "text-neutral-600 hover:text-neutral-950 hover:bg-neutral-100"
                     )}
                   >
                     <Icon className={cn("w-4 h-4", active ? "stroke-[2.5]" : "stroke-[2]")} />
@@ -172,11 +173,6 @@ export default function CurvySideDock() {
                     </span>
 
                     {/* Status pill indicator */}
-                    {item.badge && (
-                      <span className="absolute -top-1.5 -right-2 px-1.5 py-0.5 bg-[#1D4ED8] text-[8px] font-black text-white rounded-full leading-none shadow-xs border border-white/20 select-none">
-                        {item.badge}
-                      </span>
-                    )}
                   </Link>
 
                   {/* Floating Tooltip with accessible label */}
@@ -184,7 +180,7 @@ export default function CurvySideDock() {
                     role="tooltip"
                     className="absolute left-16 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center z-50 pointer-events-none"
                   >
-                    <div className="bg-black text-white text-xs font-semibold px-2.5 py-1 rounded-lg shadow-md whitespace-nowrap border border-blue-200">
+                    <div className="bg-black text-white text-xs font-semibold px-2.5 py-1 rounded-lg shadow-md whitespace-nowrap border border-neutral-200">
                       {item.label}
                     </div>
                   </div>
@@ -204,8 +200,8 @@ export default function CurvySideDock() {
           className={cn(
             "w-11 h-11 rounded-2xl flex flex-col items-center justify-center transition-all duration-200 cursor-pointer group relative",
             isActive("/profile")
-              ? "bg-white text-[#2563EB] shadow-sm"
-              : "text-white/80 hover:text-white hover:bg-white/15"
+              ? "bg-neutral-100 text-neutral-950"
+              : "text-neutral-600 hover:text-neutral-950 hover:bg-neutral-100"
           )}
         >
           <User className="w-4 h-4" />

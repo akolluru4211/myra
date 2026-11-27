@@ -5,10 +5,10 @@
   justify-content: space-between;
   gap: 1.25rem 2rem;
   padding: clamp(1.25rem, 4vw, 2.75rem);
-  border: 1px solid #273e64;
+  border: 1px solid #e2e0dc;
   border-radius: 1.25rem;
-  background: linear-gradient(115deg, #132442 30%, #203c68);
-  color: #e0eafa;
+  background: #fff;
+  color: #57534e;
 }
 
 .welcome > div:first-child {
@@ -17,7 +17,7 @@
 }
 
 .welcomeTitle {
-  color: #fff;
+  color: #1c1917;
   font-size: clamp(1.75rem, 4vw, 2.75rem);
   font-weight: 750;
   line-height: 1.15;
@@ -47,18 +47,18 @@
 .myraButton {
   min-height: 2.75rem;
   padding: 0.625rem 1rem;
-  background: #fff;
-  color: #16345f;
+  background: #292825;
+  color: #fff;
 }
 
 .myraButton:hover {
-  background: #e5efff;
+  background: #45433f;
 }
 
 .nextActivity {
   padding: clamp(1rem, 3vw, 1.5rem);
-  border: 1px solid #d5e1f2;
-  border-inline-start: 3px solid #3971cc;
+  border: 1px solid #e2e0dc;
+  border-inline-start: 3px solid #777468;
   border-radius: 0.875rem;
   background: #fff;
 }
@@ -66,15 +66,15 @@
 .quickLink {
   min-height: 2.5rem;
   padding: 0.4rem 0.75rem;
-  border-color: #dbe3ef;
+  border-color: #e2e0dc;
   background: #fff;
-  color: #344661;
+  color: #44403c;
 }
 
 .quickLink:hover,
 .toolCard:hover {
-  border-color: #8ba8d1;
-  background: #fbfdff;
+  border-color: #a8a29e;
+  background: #faf9f7;
 }
 
 .toolGrid {
@@ -88,7 +88,7 @@
   flex-direction: column;
   gap: 0.875rem;
   padding: 1rem;
-  border: 1px solid #dbe3ef;
+  border: 1px solid #e2e0dc;
   border-radius: 0.875rem;
   background: #fff;
   transition: background-color 150ms ease, border-color 150ms ease;
@@ -107,24 +107,24 @@
   height: 2.25rem;
   place-items: center;
   border-radius: 0.625rem;
-  background: #e9f1ff;
-  color: #2255a6;
+  background: #efeeeb;
+  color: #44403c;
 }
 
 .toolArrow {
   flex-shrink: 0;
-  color: #607591;
+  color: #78716c;
 }
 
 .toolCard h3 {
-  color: #152742;
+  color: #1c1917;
   font-size: 1rem;
   font-weight: 700;
 }
 
 .toolCard p {
   margin-top: 0.25rem;
-  color: #4d5d74;
+  color: #57534e;
   font-size: 0.875rem;
   line-height: 1.5;
 }
@@ -132,12 +132,12 @@
 .myraButton:focus-visible,
 .quickLink:focus-visible,
 .toolCard:focus-visible {
-  outline: 2px solid #2255a6;
+  outline: 2px solid #44403c;
   outline-offset: 3px;
 }
 
 .myraButton:focus-visible {
-  outline-color: #c0d8ff;
+  outline-color: #44403c;
 }
 
 @media (max-width: 480px) {

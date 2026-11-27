@@ -29,6 +29,8 @@ import {
   ShieldCheck,
   Award,
   HelpCircle,
+  Zap,
+  Trophy,
   FileCheck
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -41,18 +43,9 @@ export default function ModernEdworldNavbar() {
   const { isSessionActive, formattedTimeLeft } = useFocusLock();
   const [isRightDrawerOpen, setIsRightDrawerOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previousActiveElementRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 8);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Close menus on route navigation
   useEffect(() => {
@@ -156,28 +149,12 @@ export default function ModernEdworldNavbar() {
     .slice(0, 2)
     .toUpperCase();
 
-  const isLandingPage = pathname === "/";
-
-  const primaryTabs = [
-    { href: "/dashboard", label: "Dashboard" },
-    { href: "/daily", label: "Daily Challenge" },
-    { href: "/leaderboard", label: "Leaderboard" },
-    { href: "/squads", label: "Study Squads" },
-  ];
-
-  const isTabActive = (href: string) => {
-    if (!pathname) return false;
-    if (href === "/dashboard") {
-      return pathname === "/dashboard" || pathname === "/";
-    }
-    return pathname === href || pathname.startsWith(href + "/");
-  };
-
-  // Navigation catalog for the right-side slide-over drawer
+// Navigation catalog for the right-side slide-over drawer
   const learningItems = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, desc: "Overview, streaks & progress" },
     { href: "/learn", label: "Interactive Courses", icon: BookOpen, desc: "CS tracks & verified certs" },
     { href: "/dsa", label: "Practice & DSA Arena", icon: Code2, desc: "1,000+ algorithmic challenges" },
+    { href: "/daily", label: "Daily Challenge", icon: Zap, desc: "Practice with a new challenge" },
     { href: "/focus", label: "Focus Lock Studio", icon: Lock, desc: "Distraction blocker & timer" },
     { href: "/projects", label: "Project Studio", icon: Layers, desc: "Engineering problem briefs" },
   ];
@@ -192,6 +169,8 @@ export default function ModernEdworldNavbar() {
   ];
 
   const communityItems = [
+    { href: "/leaderboard", label: "Leaderboard", icon: Trophy, desc: "See student rankings" },
+    { href: "/squads", label: "Study Squads", icon: Users, desc: "Study with other students" },
     { href: "/edbuild", label: "EdBuild Squads", icon: Users, desc: "Collaborate on projects & get verified" },
     { href: "/network", label: "Member Directory", icon: Users, desc: "Connect with peers & mentors" },
   ];
@@ -201,14 +180,14 @@ export default function ModernEdworldNavbar() {
       <header
         className={cn(
           "sticky top-0 z-30 w-full transition-all duration-200 select-none",
-          "bg-white/90 backdrop-blur-md px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4 border-b border-blue-200/80 shadow-xs"
+          "bg-white/90 backdrop-blur-md px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4 border-b border-neutral-200/80 shadow-xs"
         )}
       >
         <div className="w-full flex items-center justify-between gap-4">
           {/* Left: Brand Monogram & Pill Navigation Switchers */}
           <div className="flex items-center gap-4 sm:gap-6 shrink-0">
             <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2.5 group">
-              <div className="relative w-9 h-9 rounded-2xl overflow-hidden flex items-center justify-center bg-[#2563EB] shadow-sm transition-transform group-hover:scale-105 duration-200 shrink-0 p-1">
+              <div className="relative w-9 h-9 rounded-2xl overflow-hidden flex items-center justify-center bg-[#292825] shadow-sm transition-transform group-hover:scale-105 duration-200 shrink-0 p-1">
                 <Image
                   src="/images/edworld-mark.png"
                   alt="EdWorld Co. Logo"
@@ -222,35 +201,12 @@ export default function ModernEdworldNavbar() {
                 <span className="font-extrabold text-base tracking-tight font-display text-slate-900">
                   EdWorld
                 </span>
-                <span className="text-[10px] font-black px-1.5 py-0.5 rounded-full bg-[#2563EB] text-white shadow-xs font-display">
+                <span className="text-[10px] font-black px-1.5 py-0.5 rounded-full bg-[#292825] text-white shadow-xs font-display">
                   Co.
                 </span>
               </div>
             </Link>
 
-            {/* Pill Tab Switchers (Desktop Navigation - visible on xl screens to leave ample room for right controls at 1280px) */}
-            <nav
-              aria-label="Primary sections"
-              className="hidden xl:flex items-center p-1 bg-blue-100/60 rounded-full border border-blue-200/80 gap-1"
-            >
-              {primaryTabs.map((tab) => {
-                const active = isTabActive(tab.href);
-                return (
-                  <Link
-                    key={tab.href}
-                    href={tab.href}
-                    className={cn(
-                      "px-3 py-1.5 min-h-[44px] inline-flex items-center rounded-full text-xs font-bold transition-all whitespace-nowrap touch-target",
-                      active
-                        ? "bg-white text-[#2563EB] shadow-xs"
-                        : "text-slate-600 hover:text-slate-900 hover:bg-white/50"
-                    )}
-                  >
-                    {tab.label}
-                  </Link>
-                );
-              })}
-            </nav>
           </div>
 
           {/* Center: Search Input with Responsive Collapse to Icon below 2xl */}
@@ -258,11 +214,11 @@ export default function ModernEdworldNavbar() {
             {/* Desktop input on very wide displays (2xl+) */}
             <div
               onClick={() => setIsRightDrawerOpen(true)}
-              className="hidden 2xl:flex w-full items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-blue-200/80 text-xs text-slate-500 shadow-xs hover:border-[#2563EB]/40 hover:shadow-sm transition-all cursor-pointer"
+              className="hidden 2xl:flex w-full items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-neutral-200/80 text-xs text-slate-500 shadow-xs hover:border-[#292825]/40 hover:shadow-sm transition-all cursor-pointer"
             >
               <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
               <span className="truncate flex-1">Search or type command</span>
-              <kbd className="text-[10px] font-mono font-bold bg-blue-50 text-slate-500 px-1.5 py-0.5 rounded border border-blue-200/80">
+              <kbd className="text-[10px] font-mono font-bold bg-neutral-100 text-slate-500 px-1.5 py-0.5 rounded border border-neutral-200/80">
                 ⌘K
               </kbd>
             </div>
@@ -270,7 +226,7 @@ export default function ModernEdworldNavbar() {
             <button
               type="button"
               onClick={() => setIsRightDrawerOpen(true)}
-              className="2xl:hidden p-2 rounded-full bg-white border border-blue-200/80 text-slate-500 hover:text-slate-800 hover:border-slate-300 shadow-xs flex items-center justify-center cursor-pointer min-h-[40px] min-w-[40px]"
+              className="2xl:hidden p-2 rounded-full bg-white border border-neutral-200/80 text-slate-500 hover:text-slate-800 hover:border-slate-300 shadow-xs flex items-center justify-center cursor-pointer min-h-[40px] min-w-[40px]"
               title="Search"
               aria-label="Search"
             >
@@ -292,25 +248,26 @@ export default function ModernEdworldNavbar() {
               </Link>
             )}
 
-            {/* Soft Lavender Secondary Pill Button */}
+            {/* Focus Studio */}
             <Link
               href="/focus"
-              className="hidden 2xl:inline-flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] rounded-full text-xs font-bold bg-[#DBEAFE] hover:bg-[#BFDBFE] text-[#1E40AF] border border-indigo-100/60 shadow-xs transition-all cursor-pointer touch-target"
+              className="hidden 2xl:inline-flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] rounded-full text-xs font-bold bg-[#efeeeb] hover:bg-[#e5e3df] text-neutral-800 border border-neutral-200/60 shadow-xs transition-all cursor-pointer touch-target"
             >
-              <Compass className="w-3.5 h-3.5 text-[#2563EB]" />
+              <Compass className="w-3.5 h-3.5 text-[#292825]" />
               <span>Focus Studio</span>
             </Link>
 
-            {/* Solid Periwinkle Primary Action Button (+ Add New / Ask Myra) */}
-            <button
-              type="button"
-              onClick={handleOpenMyra}
-              className="hidden md:inline-flex px-3.5 py-1.5 min-h-[44px] rounded-full text-xs font-bold text-white bg-[#2563EB] hover:bg-[#1D4ED8] shadow-md shadow-indigo-500/20 items-center gap-1.5 transition-all cursor-pointer touch-target"
-              aria-label="Ask Myra AI Companion"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-white" />
-              <span>Ask Myra</span>
-            </button>
+            {pathname !== "/dashboard" && (
+  <button
+                type="button"
+                onClick={handleOpenMyra}
+                className="hidden lg:inline-flex px-3.5 py-1.5 min-h-[44px] rounded-full text-xs font-bold text-white bg-[#292825] hover:bg-[#45433f] shadow-xs items-center gap-1.5 transition-all cursor-pointer touch-target"
+                aria-label="Ask Myra AI Companion"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-white" />
+                <span>Ask Myra</span>
+              </button>
+            )}
 
             {/* Real-time Role-Scoped Notifications Bell */}
             {user && <RoleScopedNotifications />}
@@ -321,9 +278,9 @@ export default function ModernEdworldNavbar() {
                 <button
                   type="button"
                   onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                  className="inline-flex items-center gap-1.5 px-2 py-1.5 min-h-[44px] rounded-full text-xs font-semibold text-slate-700 bg-white border border-blue-200/80 shadow-xs cursor-pointer hover:bg-slate-50 transition-all touch-target"
+                  className="inline-flex items-center gap-1.5 px-2 py-1.5 min-h-[44px] rounded-full text-xs font-semibold text-slate-700 bg-white border border-neutral-200/80 shadow-xs cursor-pointer hover:bg-slate-50 transition-all touch-target"
                 >
-                  <div className="w-6 h-6 rounded-full bg-[#2563EB] text-white flex items-center justify-center font-bold text-[10px]">
+                  <div className="w-6 h-6 rounded-full bg-[#292825] text-white flex items-center justify-center font-bold text-[10px]">
                     {initials || "U"}
                   </div>
                   <span className="hidden xl:inline max-w-[90px] truncate text-slate-800 font-bold">{studentName}</span>
@@ -331,7 +288,7 @@ export default function ModernEdworldNavbar() {
                 </button>
 
                 {isProfileMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white p-1.5 animate-in fade-in zoom-in-95 duration-150 z-50 shadow-ambient-card border border-blue-200/80 rounded-2xl">
+                  <div className="absolute right-0 mt-2 w-56 bg-white p-1.5 animate-in fade-in zoom-in-95 duration-150 z-50 shadow-ambient-card border border-neutral-200/80 rounded-2xl">
                     <div className="px-4 py-2 border-b border-blue-100">
                       <p className="text-xs font-bold text-slate-900 truncate">{studentName}</p>
                       <p className="text-[11px] text-slate-500 truncate">{user.email}</p>
@@ -342,7 +299,7 @@ export default function ModernEdworldNavbar() {
                       onClick={() => setIsProfileMenuOpen(false)}
                       className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors"
                     >
-                      <LayoutDashboard className="w-3.5 h-3.5 text-[#2563EB]" />
+                      <LayoutDashboard className="w-3.5 h-3.5 text-[#292825]" />
                       <span>Dashboard</span>
                     </Link>
 
@@ -351,7 +308,7 @@ export default function ModernEdworldNavbar() {
                       onClick={() => setIsProfileMenuOpen(false)}
                       className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors"
                     >
-                      <UserIcon className="w-3.5 h-3.5 text-[#2563EB]" />
+                      <UserIcon className="w-3.5 h-3.5 text-[#292825]" />
                       <span>Profile &amp; Settings</span>
                     </Link>
 
@@ -375,13 +332,13 @@ export default function ModernEdworldNavbar() {
               <div className="flex items-center gap-1.5">
                 <Link
                   href="/login"
-                  className="hidden sm:inline-flex items-center justify-center px-3.5 py-1.5 min-h-[44px] rounded-full text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-blue-50 transition-all border border-blue-200/80 touch-target"
+                  className="hidden sm:inline-flex items-center justify-center px-3.5 py-1.5 min-h-[44px] rounded-full text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-neutral-100 transition-all border border-neutral-200/80 touch-target"
                 >
                   Log in
                 </Link>
                 <Link
                   href="/signup"
-                  className="inline-flex items-center justify-center gap-1 px-3.5 py-1.5 min-h-[44px] rounded-full text-xs font-bold transition-all shadow-sm bg-[#2563EB] hover:bg-[#1D4ED8] text-white touch-target"
+                  className="inline-flex items-center justify-center gap-1 px-3.5 py-1.5 min-h-[44px] rounded-full text-xs font-bold transition-all shadow-sm bg-[#292825] hover:bg-[#45433f] text-white touch-target"
                 >
                   <span>Join</span>
                   <ArrowRight className="w-3 h-3" />
@@ -397,8 +354,8 @@ export default function ModernEdworldNavbar() {
                 "p-2 sm:px-3 sm:py-1.5 min-h-[44px] min-w-[44px] rounded-full border text-slate-700 bg-white transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5 touch-target",
                 Boolean(user) && "hidden lg:flex",
                 isRightDrawerOpen
-                  ? "border-[#2563EB] text-[#2563EB] ring-2 ring-[#2563EB]/20"
-                  : "border-blue-200 hover:bg-slate-50 hover:border-slate-300"
+                  ? "border-[#292825] text-[#292825] ring-2 ring-[#292825]/20"
+                  : "border-neutral-200 hover:bg-slate-50 hover:border-slate-300"
               )}
               aria-label="Open Right Side Navigation Menu"
               aria-expanded={isRightDrawerOpen}
@@ -421,15 +378,16 @@ export default function ModernEdworldNavbar() {
       <aside
         ref={drawerRef}
         aria-label="Right Side Navigation Menu"
+        aria-hidden={!isRightDrawerOpen}
         className={cn(
-          "fixed inset-y-0 right-0 z-50 w-full max-w-[calc(100vw-2rem)] sm:w-96 sm:max-w-md bg-white border-l border-blue-200 shadow-2xl flex flex-col transition-transform duration-300 ease-out select-none",
-          isRightDrawerOpen ? "translate-x-0" : "translate-x-full pointer-events-none"
+          "fixed inset-y-0 right-0 z-50 w-full max-w-[calc(100vw-2rem)] sm:w-96 sm:max-w-md bg-white border-l border-neutral-200 shadow-2xl flex flex-col transition-transform duration-300 ease-out select-none",
+          isRightDrawerOpen ? "translate-x-0" : "invisible translate-x-full pointer-events-none"
         )}
       >
         {/* Drawer Header */}
-        <div className="p-4 sm:p-5 border-b border-blue-200/80 flex items-center justify-between shrink-0 bg-[#EFF6FF]">
+        <div className="p-4 sm:p-5 border-b border-neutral-200/80 flex items-center justify-between shrink-0 bg-[#f7f6f4]">
           <div className="flex items-center gap-2.5">
-            <div className="relative w-8 h-8 rounded-xl overflow-hidden flex items-center justify-center bg-[#2563EB] shadow-sm !p-1 shrink-0">
+            <div className="relative w-8 h-8 rounded-xl overflow-hidden flex items-center justify-center bg-[#292825] shadow-sm !p-1 shrink-0">
               <Image
                 src="/images/edworld-mark.png"
                 alt="EdWorld Co. Logo"
@@ -452,7 +410,7 @@ export default function ModernEdworldNavbar() {
             ref={closeButtonRef}
             type="button"
             onClick={() => setIsRightDrawerOpen(false)}
-            className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 hover:bg-blue-50 border border-blue-200/80 transition-colors cursor-pointer touch-target focus-visible:ring-2 focus-visible:ring-[#2563EB]"
+            className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 hover:bg-neutral-100 border border-neutral-200/80 transition-colors cursor-pointer touch-target focus-visible:ring-2 focus-visible:ring-[#292825]"
             aria-label="Close navigation menu"
           >
             <X className="w-4 h-4 text-slate-600" />
@@ -461,8 +419,8 @@ export default function ModernEdworldNavbar() {
 
         {/* User Card inside Drawer */}
         {user ? (
-          <div className="px-5 py-3.5 bg-slate-50 border-b border-blue-200/80 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#2563EB] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
+          <div className="px-5 py-3.5 bg-slate-50 border-b border-neutral-200/80 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-[#292825] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
               {initials || "U"}
             </div>
             <div className="min-w-0 flex-1">
@@ -472,15 +430,15 @@ export default function ModernEdworldNavbar() {
             <div className="w-2.5 h-2.5 rounded-full bg-status-mint animate-pulse shrink-0" title="Online" />
           </div>
         ) : (
-          <div className="px-5 py-3.5 bg-slate-50 border-b border-blue-200/80 flex items-center justify-between">
+          <div className="px-5 py-3.5 bg-slate-50 border-b border-neutral-200/80 flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold text-slate-900">Join 15,000+ Students</p>
+              <p className="text-xs font-bold text-slate-900">New to EdWorld?</p>
               <p className="text-[11px] text-slate-500">Unlock courses, DSA &amp; mock interviews</p>
             </div>
             <Link
               href="/signup"
               onClick={() => setIsRightDrawerOpen(false)}
-              className="px-3 py-1.5 rounded-xl bg-[#2563EB] text-white font-bold text-xs hover:bg-[#1D4ED8] shadow-xs transition-colors shrink-0"
+              className="px-3 py-1.5 rounded-xl bg-[#292825] text-white font-bold text-xs hover:bg-[#45433f] shadow-xs transition-colors shrink-0"
             >
               Sign Up
             </Link>
@@ -490,52 +448,27 @@ export default function ModernEdworldNavbar() {
         {/* Scrollable Navigation Body */}
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6">
           {/* Quick Myra Trigger Card */}
-          <div>
-            <button
-              type="button"
-              onClick={handleOpenMyra}
-              className="w-full text-left p-3.5 rounded-2xl bg-gradient-to-r from-[#EEF0FD] to-[#F4F5FA] border border-indigo-100 hover:border-[#2563EB]/40 transition-all flex items-center gap-3 cursor-pointer group shadow-xs"
-            >
-              <div className="w-9 h-9 rounded-xl bg-[#2563EB] flex items-center justify-center text-white shrink-0 group-hover:scale-105 transition-transform shadow-xs">
-                <Sparkles className="w-5 h-5 text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                  <span>Ask Myra Companion</span>
-                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-[#2563EB]/10 text-[#2563EB]">Live</span>
+          {!user && (
+            <div className="lg:hidden">
+              <button
+                type="button"
+                onClick={handleOpenMyra}
+                className="w-full text-left p-3.5 rounded-2xl bg-neutral-100 border border-neutral-200 hover:border-[#292825]/40 transition-all flex items-center gap-3 cursor-pointer group shadow-xs"
+              >
+                <div className="w-9 h-9 rounded-xl bg-[#292825] flex items-center justify-center text-white shrink-0 group-hover:scale-105 transition-transform shadow-xs">
+                  <Sparkles className="w-5 h-5 text-white" />
                 </div>
-                <div className="text-[11px] text-slate-500">Instant doubts, interview drill &amp; guidance</div>
-              </div>
-              <ArrowRight className="w-4 h-4 text-[#2563EB] group-hover:translate-x-0.5 transition-transform" />
-            </button>
-          </div>
-
-          {/* Mobile Primary Section Switchers (< lg viewports) */}
-          <div className="lg:hidden space-y-1.5">
-            <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-500 px-2">
-              Primary Sections
-            </h4>
-            <div className="grid grid-cols-2 gap-2">
-              {primaryTabs.map((tab) => {
-                const active = isTabActive(tab.href);
-                return (
-                  <Link
-                    key={tab.href}
-                    href={tab.href}
-                    onClick={() => setIsRightDrawerOpen(false)}
-                    className={cn(
-                      "flex items-center justify-center px-3 py-2.5 rounded-xl text-xs font-bold transition-all min-h-[44px] touch-target",
-                      active
-                        ? "bg-[#2563EB] text-white shadow-xs"
-                        : "bg-blue-50 text-slate-700 hover:bg-blue-100"
-                    )}
-                  >
-                    {tab.label}
-                  </Link>
-                );
-              })}
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                    <span>Ask Myra</span>
+                  </div>
+                  <div className="text-[11px] text-slate-500">Get help with study or career questions</div>
+                </div>
+                <ArrowRight className="w-4 h-4 text-[#292825] group-hover:translate-x-0.5 transition-transform" />
+              </button>
             </div>
-          </div>
+          )}
+
 
           {/* Group 1: Core Learning & Practice */}
           <div className="space-y-1.5">
@@ -554,11 +487,11 @@ export default function ModernEdworldNavbar() {
                     className={cn(
                       "flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all group",
                       isActive
-                        ? "bg-[#DBEAFE] text-[#2563EB] font-bold border border-indigo-100"
-                        : "text-slate-700 hover:bg-blue-50 hover:text-slate-900"
+                        ? "bg-[#efeeeb] text-[#292825] font-bold border border-neutral-200"
+                        : "text-slate-700 hover:bg-neutral-100 hover:text-slate-900"
                     )}
                   >
-                    <div className="w-8 h-8 rounded-xl bg-white border border-blue-200/80 shadow-2xs flex items-center justify-center text-[#2563EB] group-hover:scale-105 transition-all shrink-0">
+                    <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200/80 shadow-2xs flex items-center justify-center text-[#292825] group-hover:scale-105 transition-all shrink-0">
                       <Icon className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -588,11 +521,11 @@ export default function ModernEdworldNavbar() {
                     className={cn(
                       "flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all group",
                       isActive
-                        ? "bg-[#DBEAFE] text-[#2563EB] font-bold border border-indigo-100"
-                        : "text-slate-700 hover:bg-blue-50 hover:text-slate-900"
+                        ? "bg-[#efeeeb] text-[#292825] font-bold border border-neutral-200"
+                        : "text-slate-700 hover:bg-neutral-100 hover:text-slate-900"
                     )}
                   >
-                    <div className="w-8 h-8 rounded-xl bg-white border border-blue-200/80 shadow-2xs flex items-center justify-center text-[#2563EB] group-hover:scale-105 transition-all shrink-0">
+                    <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200/80 shadow-2xs flex items-center justify-center text-[#292825] group-hover:scale-105 transition-all shrink-0">
                       <Icon className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -622,11 +555,11 @@ export default function ModernEdworldNavbar() {
                     className={cn(
                       "flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all group",
                       isActive
-                        ? "bg-[#DBEAFE] text-[#2563EB] font-bold border border-indigo-100"
-                        : "text-slate-700 hover:bg-blue-50 hover:text-slate-900"
+                        ? "bg-[#efeeeb] text-[#292825] font-bold border border-neutral-200"
+                        : "text-slate-700 hover:bg-neutral-100 hover:text-slate-900"
                     )}
                   >
-                    <div className="w-8 h-8 rounded-xl bg-white border border-blue-200/80 shadow-2xs flex items-center justify-center text-status-mint group-hover:scale-105 transition-all shrink-0">
+                    <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200/80 shadow-2xs flex items-center justify-center text-status-mint group-hover:scale-105 transition-all shrink-0">
                       <Icon className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -644,11 +577,11 @@ export default function ModernEdworldNavbar() {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all group",
                   pathname === "/messages"
-                    ? "bg-[#DBEAFE] text-[#2563EB] font-bold border border-indigo-100"
-                    : "text-slate-700 hover:bg-blue-50 hover:text-slate-900"
+                    ? "bg-[#efeeeb] text-[#292825] font-bold border border-neutral-200"
+                    : "text-slate-700 hover:bg-neutral-100 hover:text-slate-900"
                 )}
               >
-                <div className="w-8 h-8 rounded-xl bg-white border border-blue-200/80 shadow-2xs flex items-center justify-center text-[#2563EB] group-hover:scale-105 transition-all shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200/80 shadow-2xs flex items-center justify-center text-[#292825] group-hover:scale-105 transition-all shrink-0">
                   <MessageSquare className="w-4 h-4" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -664,11 +597,11 @@ export default function ModernEdworldNavbar() {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all group",
                   pathname === "/student-record"
-                    ? "bg-[#DBEAFE] text-[#2563EB] font-bold border border-indigo-100"
-                    : "text-slate-700 hover:bg-blue-50 hover:text-slate-900"
+                    ? "bg-[#efeeeb] text-[#292825] font-bold border border-neutral-200"
+                    : "text-slate-700 hover:bg-neutral-100 hover:text-slate-900"
                 )}
               >
-                <div className="w-8 h-8 rounded-xl bg-white border border-blue-200/80 shadow-2xs flex items-center justify-center text-amber-500 group-hover:scale-105 transition-all shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200/80 shadow-2xs flex items-center justify-center text-amber-500 group-hover:scale-105 transition-all shrink-0">
                   <FileCheck className="w-4 h-4" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -684,11 +617,11 @@ export default function ModernEdworldNavbar() {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all group",
                   pathname === "/ambassador"
-                    ? "bg-[#DBEAFE] text-[#2563EB] font-bold border border-indigo-100"
-                    : "text-slate-700 hover:bg-blue-50 hover:text-slate-900"
+                    ? "bg-[#efeeeb] text-[#292825] font-bold border border-neutral-200"
+                    : "text-slate-700 hover:bg-neutral-100 hover:text-slate-900"
                 )}
               >
-                <div className="w-8 h-8 rounded-xl bg-white border border-blue-200/80 shadow-2xs flex items-center justify-center text-indigo-500 group-hover:scale-105 transition-all shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200/80 shadow-2xs flex items-center justify-center text-indigo-500 group-hover:scale-105 transition-all shrink-0">
                   <Award className="w-4 h-4" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -708,9 +641,9 @@ export default function ModernEdworldNavbar() {
               <Link
                 href="/profile"
                 onClick={() => setIsRightDrawerOpen(false)}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-2xl text-slate-700 hover:bg-blue-50 transition-all group"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-2xl text-slate-700 hover:bg-neutral-100 transition-all group"
               >
-                <div className="w-8 h-8 rounded-xl bg-white border border-blue-200/80 shadow-2xs flex items-center justify-center text-slate-600 group-hover:scale-105 transition-all shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200/80 shadow-2xs flex items-center justify-center text-slate-600 group-hover:scale-105 transition-all shrink-0">
                   <UserIcon className="w-4 h-4" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -724,7 +657,7 @@ export default function ModernEdworldNavbar() {
                 <Link
                   href="/admin"
                   onClick={() => setIsRightDrawerOpen(false)}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-2xl text-slate-700 hover:bg-blue-50 transition-all group"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-2xl text-slate-700 hover:bg-neutral-100 transition-all group"
                 >
                   <div className="w-8 h-8 rounded-xl bg-slate-900 shadow-2xs flex items-center justify-center text-white group-hover:scale-105 transition-all shrink-0">
                     <ShieldCheck className="w-4 h-4" />
@@ -747,21 +680,21 @@ export default function ModernEdworldNavbar() {
               <Link
                 href="/about"
                 onClick={() => setIsRightDrawerOpen(false)}
-                className="px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-blue-50 text-[11px] font-medium text-slate-600 text-center"
+                className="px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-neutral-100 text-[11px] font-medium text-slate-600 text-center"
               >
                 About
               </Link>
               <Link
                 href="/privacy"
                 onClick={() => setIsRightDrawerOpen(false)}
-                className="px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-blue-50 text-[11px] font-medium text-slate-600 text-center"
+                className="px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-neutral-100 text-[11px] font-medium text-slate-600 text-center"
               >
                 Privacy
               </Link>
               <Link
                 href="/terms"
                 onClick={() => setIsRightDrawerOpen(false)}
-                className="px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-blue-50 text-[11px] font-medium text-slate-600 text-center"
+                className="px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-neutral-100 text-[11px] font-medium text-slate-600 text-center"
               >
                 Terms
               </Link>
@@ -770,7 +703,7 @@ export default function ModernEdworldNavbar() {
         </div>
 
         {/* Drawer Footer */}
-        <div className="p-4 border-t border-blue-200/80 bg-[#EFF6FF] shrink-0 space-y-3">
+        <div className="p-4 border-t border-neutral-200/80 bg-[#f7f6f4] shrink-0 space-y-3">
           {user ? (
             <button
               type="button"
@@ -788,14 +721,14 @@ export default function ModernEdworldNavbar() {
               <Link
                 href="/login"
                 onClick={() => setIsRightDrawerOpen(false)}
-                className="flex items-center justify-center px-3 py-2 min-h-[44px] rounded-2xl text-xs font-semibold text-slate-700 bg-white border border-blue-200 hover:bg-slate-50 transition-colors touch-target"
+                className="flex items-center justify-center px-3 py-2 min-h-[44px] rounded-2xl text-xs font-semibold text-slate-700 bg-white border border-neutral-200 hover:bg-slate-50 transition-colors touch-target"
               >
                 Log In
               </Link>
               <Link
                 href="/signup"
                 onClick={() => setIsRightDrawerOpen(false)}
-                className="flex items-center justify-center px-3 py-2 min-h-[44px] rounded-2xl text-xs font-bold text-white bg-[#2563EB] hover:bg-[#1D4ED8] shadow-xs transition-colors touch-target"
+                className="flex items-center justify-center px-3 py-2 min-h-[44px] rounded-2xl text-xs font-bold text-white bg-[#292825] hover:bg-[#45433f] shadow-xs transition-colors touch-target"
               >
                 Join Now
               </Link>
