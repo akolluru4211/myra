@@ -24,6 +24,24 @@ export const hackathonDirectories = [
 
 const hackathons: (Opportunity & { deadline: string })[] = [
   {
+    id: "unstop-1827472",
+    title: "Finance Next Hackathon 2026",
+    organization: "Proton Solutions",
+    location: "Online",
+    url: "https://unstop.com/hackathons/finance-next-hackathon-2026-proton-solutions-1827472",
+    deadline: "2026-12-30T18:30:00Z",
+    source: "Unstop",
+  },
+  {
+    id: "unstop-1799091",
+    title: "Hacksmart 2.0",
+    organization: "Battery Smart and Geek Room",
+    location: "Gurugram, India",
+    url: "https://unstop.com/hackathons/hacksmart-20-geek-room-1799091",
+    deadline: "2026-12-15T18:29:00Z",
+    source: "Unstop",
+  },
+  {
     id: "unstop-1818968",
     title: "Campus to Cloud Hackathon",
     organization: "IIT Bombay Techfest and AWS",
@@ -46,16 +64,6 @@ const hackathons: (Opportunity & { deadline: string })[] = [
     source: "Unstop",
     summary: "Submit an idea online for a chance to attend the January 15–16 finale at IIT Delhi.",
     eligibility: "Undergraduate and postgraduate students in India",
-  },
-  {
-    id: "unstop-1773675",
-    title: "StarForge",
-    organization: "BMS Institute of Technology & Management",
-    location: "Bengaluru, India",
-    url: "https://unstop.com/o/1773675",
-    deadline: "2026-11-27T23:59:00+05:30",
-    source: "Unstop",
-    summary: "A 24-hour national hackathon on December 12–13.",
   },
   {
     id: "unstop-1806016",
