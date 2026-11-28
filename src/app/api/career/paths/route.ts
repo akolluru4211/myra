@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { queryDb } from "@/lib/db-server";
+import { createClient } from "@/lib/supabase/server";
+import { CAREER_PATH_SEED } from "@/lib/data/career-path-seed";
 
 export const dynamic = "force-dynamic";
 
@@ -14,13 +15,22 @@ export interface CareerPathRecord {
 }
 
 export async function GET() {
+  let rows: CareerPathRecord[];
+  let source = "database";
   try {
-    const { rows } = await queryDb<CareerPathRecord>(
-      `SELECT id, name, category, description, typical_skills, active, display_order
-       FROM public.career_paths
-       WHERE active = true
-       ORDER BY display_order ASC, name ASC;`
-    );
+    const { data, error } = await createClient()
+      .from("career_paths")
+      .select("id,name,category,description,typical_skills,active,display_order")
+      .eq("active", true)
+      .order("display_order")
+      .order("name");
+    if (error) throw error;
+    rows = data ?? [];
+  } catch (err) {
+    console.error("[CareerPathsAPI:GET] Catalog query failed:", err);
+    rows = CAREER_PATH_SEED;
+    source = "seed";
+  }
 
     // Group paths by category preserving order
     const categoriesMap: Record<string, CareerPathRecord[]> = {};
@@ -38,15 +48,10 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
+      source,
       total: rows.length,
       categories,
       paths: rows,
     });
-  } catch (err: any) {
-    console.error("[CareerPathsAPI:GET] Error fetching career paths:", err);
-    return NextResponse.json(
-      { success: false, error: "Failed to fetch career paths" },
-      { status: 500 }
-    );
-  }
 }
+
