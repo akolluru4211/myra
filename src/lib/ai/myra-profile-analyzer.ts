@@ -92,7 +92,7 @@ export class MyraStudentProfileAnalyzer {
     if (gpa === null) {
       return {
         category: "Not Provided",
-        assessment: "Maintain a minimum 7.5 CGPA (or 75%) to clear company eligibility cutoffs for 90%+ campus recruitment drives.",
+        assessment: "No GPA was provided. Check published eligibility requirements for the specific role.",
       };
     }
 
@@ -102,12 +102,12 @@ export class MyraStudentProfileAnalyzer {
     if (normalized >= 8.5) {
       return {
         category: "Honors",
-        assessment: `Outstanding academic score (${gpa}). Clears 100% of campus placement shortlists and top-tier product company cutoffs. Allocate 70% of study time to advanced DSA, system design, and production projects, and 30% to maintaining GPA.`,
+        assessment: `Strong academic score (${gpa}). Check each employer's published requirements before drawing conclusions about eligibility.`,
       };
     } else if (normalized >= 7.5) {
       return {
         category: "Good / Competitive",
-        assessment: `Strong academic score (${gpa}). Fully clears the 7.0-7.5 CGPA eligibility criteria for Tier-1 product firms and MNCs. Use structured 80/20 exam prep to hold this score stable while accelerating project milestones.`,
+        assessment: `Academic score (${gpa}). Eligibility varies by employer and role. Check the specific listing for its cutoff.`,
       };
     } else if (normalized >= 6.5) {
       return {
@@ -160,15 +160,17 @@ export class MyraStudentProfileAnalyzer {
   public static analyze(raw: StudentRawProfile): StudentProfileAnalysis {
     const name = raw.name || "Student";
     const institution = raw.institution || "College / University";
-    const degree = raw.degree || "B.Tech / B.E.";
-    const fieldOfStudy = raw.field_of_study || "Computer Science";
-    const graduationYear = raw.graduation_year || "2026";
-    const targetRole = raw.targetRole || "Software Engineer";
-    const primaryGoal = raw.primaryGoal || "Prepare for technical interviews and build a high-signal ATS resume.";
-    const dailyHours = raw.dailyStudyHours || 2;
+    const degree = raw.degree || "Unspecified";
+    const fieldOfStudy = raw.field_of_study || "Unspecified";
+    const graduationYear = String(raw.graduation_year ?? "");
+    const targetRole = raw.targetRole || "Unspecified";
+    const primaryGoal = raw.primaryGoal || "Unspecified";
+    const dailyHours = raw.dailyStudyHours ?? 0;
 
     const numericGpa = this.parseGpa(raw.cgpa);
-    const academicStage = this.determineStage(degree, fieldOfStudy, graduationYear);
+    const academicStage = raw.degree || raw.field_of_study || graduationYear
+      ? this.determineStage(degree, fieldOfStudy, graduationYear)
+      : "Unspecified";
     const gpaEval = this.evaluateGpa(numericGpa);
     const urgencyEval = this.evaluateUrgency(graduationYear, academicStage);
 
@@ -191,6 +193,10 @@ export class MyraStudentProfileAnalyzer {
       recommendedStrategy = `Balanced progression: ${dailyHours} hours daily. Dedicate 50% to DSA mastery, 35% to hands-on project development (${targetRole}), and 15% to weekly course revision to keep GPA solid.`;
     } else {
       recommendedStrategy = `Foundational exploration: ${dailyHours} hours daily. Build strong programming syntax, participate in hackathons, maintain an 8.5+ CGPA, and learn version control (Git & GitHub).`;
+    }
+
+    if (!dailyHours || academicStage === "Unspecified") {
+      recommendedStrategy = "Answer the question using known details and ask about missing information only when it changes the advice.";
     }
 
     return {
@@ -228,7 +234,7 @@ export class MyraStudentProfileAnalyzer {
 - Placement & Timeline Urgency: ${analysis.urgencyLevel} - ${analysis.urgencyDescription}
 - Target Career Role: ${analysis.targetRole}
 - Primary Stated Goal: ${analysis.primaryGoal}
-- Daily Available Study Bandwidth: ${analysis.dailyHours} hours/day
+- Daily Available Study Bandwidth: ${analysis.dailyHours ? `${analysis.dailyHours} hours/day` : "Unspecified"}
 - Core Declared Skills / Interests: ${analysis.coreSkills.length > 0 ? analysis.coreSkills.join(", ") : "Technology Fundamentals"}
 - Tailored Strategic Blueprint: ${analysis.recommendedStrategy}
 ==========================================================================================

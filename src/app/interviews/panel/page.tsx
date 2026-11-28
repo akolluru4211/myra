@@ -110,7 +110,7 @@ export default function MockPanelInterviewPage() {
           <span>Back to Interview Hub</span>
         </Link>
 
-        <div className="flex flex-wrap items-center justify-between gap-4 p-6 rounded-3xl bg-[#151621] border border-white/10 shadow-xl">
+        <div className="edworld-blue-card flex flex-wrap items-center justify-between gap-4 p-6 rounded-3xl  border border-white/10 shadow-xl">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-lg">
               <Users className="w-6 h-6 text-[#D7FC51]" />
@@ -128,7 +128,7 @@ export default function MockPanelInterviewPage() {
         </div>
 
         {!started ? (
-          <div className="p-8 rounded-3xl bg-[#151621] border border-white/10 space-y-6 text-center">
+          <div className="edworld-blue-card p-8 rounded-3xl  border border-white/10 space-y-6 text-center">
             <div className="max-w-md mx-auto space-y-4">
               <h2 className="text-base font-black text-white">Select Your Target Role</h2>
               <input
@@ -171,7 +171,7 @@ export default function MockPanelInterviewPage() {
               })}
 
               {loadingTurn && (
-                <div className="p-4 rounded-2xl bg-[#151621] border border-white/10 text-xs text-slate-400 animate-pulse">
+                <div className="edworld-blue-card p-4 rounded-2xl  border border-white/10 text-xs text-slate-400 animate-pulse">
                   Interviewer is listening and preparing next response...
                 </div>
               )}

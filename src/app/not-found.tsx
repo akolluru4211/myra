@@ -4,7 +4,6 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
-import EdworldLogo from "@/components/ui/EdworldLogo";
 import { Compass, Home, ArrowLeft, RotateCcw } from "lucide-react";
 
 export default function NotFound() {
@@ -48,10 +47,6 @@ export default function NotFound() {
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Go Back</span>
           </button>
-        </div>
-
-        <div className="pt-4 border-t border-slate-100 flex items-center justify-center">
-          <EdworldLogo size="sm" showText={true} />
         </div>
       </div>
     </div>

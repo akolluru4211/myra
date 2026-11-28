@@ -263,7 +263,7 @@ function EdBuildContent() {
     <AuthGuard>
       <div className="w-full text-white font-sans space-y-6 sm:space-y-8 animate-in fade-in duration-200">
         {/* 1. HERO & ACTION BAR */}
-          <section className="tactile-chassis bg-[#0C101A] border border-white/10 p-6 sm:p-8 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-5 relative overflow-hidden shadow-xl text-white">
+          <section className="edworld-blue-card tactile-chassis  border border-white/10 p-6 sm:p-8 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-5 relative overflow-hidden shadow-xl text-white">
             <div className="space-y-2.5 max-w-2xl relative z-10">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20 font-display">

@@ -352,7 +352,7 @@ export default function UserProfileDetailModal({
                 )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-2xl bg-[#0F1422] border border-white/10">
+                  <div className="edworld-blue-card p-4 rounded-2xl  border border-white/10">
                     <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Career Stage</span>
                     <p className="text-xs font-semibold text-white mt-1 flex items-center gap-1.5">
                       <Briefcase className="w-3.5 h-3.5 text-white" />
@@ -361,7 +361,7 @@ export default function UserProfileDetailModal({
                   </div>
 
                   {user.cgpa && (
-                    <div className="p-4 rounded-2xl bg-[#0F1422] border border-white/10">
+                    <div className="edworld-blue-card p-4 rounded-2xl  border border-white/10">
                       <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Academic Metric</span>
                       <p className="text-xs font-semibold text-white mt-1 flex items-center gap-1.5">
                         <GraduationCap className="w-3.5 h-3.5 text-white" />
@@ -378,7 +378,7 @@ export default function UserProfileDetailModal({
               <div className="space-y-4">
                 {user.projects && user.projects.length > 0 ? (
                   user.projects.map((proj, idx) => (
-                    <div key={idx} className="p-4 rounded-2xl bg-[#0F1422] border border-white/10 space-y-2.5">
+                    <div key={idx} className="edworld-blue-card p-4 rounded-2xl  border border-white/10 space-y-2.5">
                       <div className="flex items-center justify-between">
                         <h4 className="text-sm font-semibold text-white">{proj.title}</h4>
                         <div className="flex items-center gap-2">
@@ -419,7 +419,7 @@ export default function UserProfileDetailModal({
                     </div>
                   ))
                 ) : (
-                  <div className="text-center py-8 bg-[#0F1422] rounded-2xl border border-white/10 text-slate-400 text-xs">
+                  <div className="edworld-blue-card text-center py-8  rounded-2xl border border-white/10 text-slate-400 text-xs">
                     <FolderGit2 className="w-8 h-8 mx-auto text-slate-500 mb-2" />
                     <p>No public portfolio projects listed yet.</p>
                   </div>
@@ -432,7 +432,7 @@ export default function UserProfileDetailModal({
               <div className="space-y-3">
                 {user.certifications && user.certifications.length > 0 ? (
                   user.certifications.map((cert, idx) => (
-                    <div key={idx} className="p-4 rounded-2xl bg-[#0F1422] border border-white/10 flex items-center justify-between gap-3">
+                    <div key={idx} className="edworld-blue-card p-4 rounded-2xl  border border-white/10 flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-xl bg-white/10 text-white border border-white/10 flex items-center justify-center shrink-0">
                           <Award className="w-5 h-5 text-indigo-400" />
@@ -456,7 +456,7 @@ export default function UserProfileDetailModal({
                     </div>
                   ))
                 ) : (
-                  <div className="text-center py-8 bg-[#0F1422] rounded-2xl border border-white/10 text-slate-400 text-xs">
+                  <div className="edworld-blue-card text-center py-8  rounded-2xl border border-white/10 text-slate-400 text-xs">
                     <Award className="w-8 h-8 mx-auto text-slate-500 mb-2" />
                     <p>No verified certifications listed yet.</p>
                   </div>
@@ -467,7 +467,7 @@ export default function UserProfileDetailModal({
             {/* 4. EDUCATION */}
             {activeTab === "education" && (
               <div className="space-y-4">
-                <div className="p-4 rounded-2xl bg-[#0F1422] border border-white/10 space-y-2">
+                <div className="edworld-blue-card p-4 rounded-2xl  border border-white/10 space-y-2">
                   <div className="flex items-center gap-2 text-xs font-semibold text-white">
                     <GraduationCap className="w-4 h-4 text-indigo-400" />
                     <span>Education</span>

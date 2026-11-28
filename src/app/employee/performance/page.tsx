@@ -58,7 +58,7 @@ export default function EmployeePerformancePage() {
     <div className="min-h-screen bg-[#0E0F15] text-white p-4 sm:p-6 lg:p-8 space-y-6 max-w-[1280px] mx-auto">
       
       {/* Header */}
-      <div className="flex items-center justify-between bg-[#13141B] p-6 rounded-3xl border border-white/10 shadow-xl">
+      <div className="edworld-blue-card flex items-center justify-between  p-6 rounded-3xl border border-white/10 shadow-xl">
         <div className="space-y-1">
           <Link href="/employee" className="inline-flex items-center gap-1.5 text-xs text-[#8E95A5] hover:text-[#D7FC51] font-bold mb-1 transition-colors">
             <ChevronLeft className="w-4 h-4" />
@@ -78,7 +78,7 @@ export default function EmployeePerformancePage() {
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 rounded-3xl bg-[#13141B] border border-white/10 space-y-2">
+        <div className="edworld-blue-card p-5 rounded-3xl  border border-white/10 space-y-2">
           <span className="text-[10px] font-bold text-[#8E95A5] uppercase tracking-wider flex items-center gap-1.5">
             <Target className="w-4 h-4 text-purple-400" />
             <span>OKR Pacing</span>
@@ -87,7 +87,7 @@ export default function EmployeePerformancePage() {
           <span className="text-[10px] text-emerald-400 font-bold">On Track for Q1 Deliverables</span>
         </div>
 
-        <div className="p-5 rounded-3xl bg-[#13141B] border border-white/10 space-y-2">
+        <div className="edworld-blue-card p-5 rounded-3xl  border border-white/10 space-y-2">
           <span className="text-[10px] font-bold text-[#8E95A5] uppercase tracking-wider flex items-center gap-1.5">
             <CheckCircle2 className="w-4 h-4 text-[#D7FC51]" />
             <span>Tasks Completed</span>
@@ -96,7 +96,7 @@ export default function EmployeePerformancePage() {
           <span className="text-[10px] text-[#8E95A5] font-mono">{inProgressTasks} currently in progress</span>
         </div>
 
-        <div className="p-5 rounded-3xl bg-[#13141B] border border-white/10 space-y-2">
+        <div className="edworld-blue-card p-5 rounded-3xl  border border-white/10 space-y-2">
           <span className="text-[10px] font-bold text-[#8E95A5] uppercase tracking-wider flex items-center gap-1.5">
             <Clock className="w-4 h-4 text-emerald-400" />
             <span>Attendance Rate</span>
@@ -105,7 +105,7 @@ export default function EmployeePerformancePage() {
           <span className="text-[10px] text-emerald-400 font-bold">Zero Unexcused Absences</span>
         </div>
 
-        <div className="p-5 rounded-3xl bg-[#13141B] border border-white/10 space-y-2">
+        <div className="edworld-blue-card p-5 rounded-3xl  border border-white/10 space-y-2">
           <span className="text-[10px] font-bold text-[#8E95A5] uppercase tracking-wider flex items-center gap-1.5">
             <Award className="w-4 h-4 text-amber-400" />
             <span>Manager Rating</span>
@@ -122,13 +122,13 @@ export default function EmployeePerformancePage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Project Contributions & Code Impact */}
-        <div className="bg-[#13141B] p-6 rounded-3xl border border-white/10 space-y-4 shadow-xl">
+        <div className="edworld-blue-card p-6 rounded-3xl border border-white/10 space-y-4 shadow-xl">
           <h2 className="text-base font-black text-white flex items-center gap-2">
             <Award className="w-5 h-5 text-emerald-400" />
             <span>Verified Project Contributions &amp; Impact</span>
           </h2>
           <div className="space-y-3">
-            <div className="p-4 rounded-2xl bg-[#1C1D26] border border-white/5 space-y-1.5">
+            <div className="edworld-blue-card p-4 rounded-2xl  border border-white/5 space-y-1.5">
               <span className="text-xs font-bold text-white block">Phase 19 Dual-Track RBAC Middleware</span>
               <p className="text-[11px] text-[#8E95A5]">
                 Architected server-side role verification eliminating client-side privilege escalation across 55 internal routes.
@@ -136,7 +136,7 @@ export default function EmployeePerformancePage() {
               <span className="text-[10px] text-emerald-400 font-mono font-bold">Shipped &bull; 0 Regressions</span>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#1C1D26] border border-white/5 space-y-1.5">
+            <div className="edworld-blue-card p-4 rounded-2xl  border border-white/5 space-y-1.5">
               <span className="text-xs font-bold text-white block">Autonomous HR &amp; Placement AI Agents</span>
               <p className="text-[11px] text-[#8E95A5]">
                 Integrated real-time bottleneck detection logic for recruitment workflows and campus placement drive coordination.
@@ -147,13 +147,13 @@ export default function EmployeePerformancePage() {
         </div>
 
         {/* Manager Feedback & Review History */}
-        <div className="bg-[#13141B] p-6 rounded-3xl border border-white/10 space-y-4 shadow-xl">
+        <div className="edworld-blue-card p-6 rounded-3xl border border-white/10 space-y-4 shadow-xl">
           <h2 className="text-base font-black text-white flex items-center gap-2">
             <MessageSquare className="w-5 h-5 text-purple-400" />
             <span>Manager Feedback &amp; Review History</span>
           </h2>
           <div className="space-y-3">
-            <div className="p-4 rounded-2xl bg-[#1C1D26] border border-white/5 space-y-2">
+            <div className="edworld-blue-card p-4 rounded-2xl  border border-white/5 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-white">Sunita Rao (VP of Engineering)</span>
                 <span className="text-[10px] text-[#8E95A5] font-mono">Feb 28, 2026</span>
@@ -168,7 +168,7 @@ export default function EmployeePerformancePage() {
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#1C1D26] border border-white/5 space-y-2">
+            <div className="edworld-blue-card p-4 rounded-2xl  border border-white/5 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-white">H2 2025 Annual Review Summary</span>
                 <span className="text-[10px] text-[#8E95A5] font-mono">Jan 15, 2026</span>

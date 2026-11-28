@@ -198,7 +198,7 @@ export default function BillingPage() {
           {/* Pricing Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
             {/* 1. FREE STARTER TIER */}
-            <div className="tactile-chassis bg-[#0C101A] rounded-3xl p-6 border border-white/10 flex flex-col justify-between space-y-6 shadow-xl">
+            <div className="edworld-blue-card tactile-chassis  rounded-3xl p-6 border border-white/10 flex flex-col justify-between space-y-6 shadow-xl">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
@@ -256,7 +256,7 @@ export default function BillingPage() {
                   Cancel Subscription (End of Period)
                 </button>
               ) : (
-                <div className="p-2.5 text-center bg-[#0F1422] rounded-xl text-slate-300 text-xs font-semibold border border-white/10">
+                <div className="edworld-blue-card p-2.5 text-center  rounded-xl text-slate-300 text-xs font-semibold border border-white/10">
                   Active Free Plan
                 </div>
               )}
@@ -308,7 +308,7 @@ export default function BillingPage() {
 
           {/* Payment History Log */}
           {paymentHistory.length > 0 && (
-            <div className="max-w-4xl mx-auto tactile-chassis bg-[#0C101A] rounded-3xl p-6 border border-white/10 shadow-lg space-y-4">
+            <div className="edworld-blue-card max-w-4xl mx-auto tactile-chassis  rounded-3xl p-6 border border-white/10 shadow-lg space-y-4">
               <h3 className="text-sm font-bold font-display text-white flex items-center gap-2">
                 <Receipt className="w-4 h-4 text-cyan-400" />
                 <span>Payment History &amp; Receipts</span>
@@ -333,7 +333,7 @@ export default function BillingPage() {
           )}
 
           {/* Payment Methods & Guarantee Notice */}
-          <div className="max-w-4xl mx-auto p-4 rounded-2xl tactile-chassis bg-[#0C101A] border border-white/10 text-xs text-slate-300 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
+          <div className="edworld-blue-card max-w-4xl mx-auto p-4 rounded-2xl tactile-chassis  border border-white/10 text-xs text-slate-300 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
               <span>

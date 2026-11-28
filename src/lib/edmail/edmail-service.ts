@@ -249,6 +249,9 @@ export async function dispatchOutboundEdMail(params: {
   const resend = getResendClient();
 
   if (!resend) {
+    if (process.env.NODE_ENV === "production") {
+      return { success: false, status: "failed", error: "Mail delivery is not configured." };
+    }
     // Sandbox / Test Mode: Return deterministic mock provider ID
     const mockId = `sim_msg_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     return {

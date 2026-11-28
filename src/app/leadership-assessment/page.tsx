@@ -67,7 +67,7 @@ export default function LeadershipAssessmentPage() {
           <span>Back to Dashboard</span>
         </Link>
 
-        <div className="p-6 sm:p-8 rounded-3xl bg-[#151621] border border-white/10 shadow-xl space-y-3">
+        <div className="edworld-blue-card p-6 sm:p-8 rounded-3xl  border border-white/10 shadow-xl space-y-3">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-lg">
               <Award className="w-6 h-6 text-[#D7FC51]" />
@@ -83,12 +83,12 @@ export default function LeadershipAssessmentPage() {
         </div>
 
         {reflection ? (
-          <div className="p-6 sm:p-8 rounded-3xl bg-[#151621] border border-white/10 space-y-5 animate-in fade-in">
+          <div className="edworld-blue-card p-6 sm:p-8 rounded-3xl  border border-white/10 space-y-5 animate-in fade-in">
             <h2 className="text-sm font-black text-[#D7FC51] uppercase tracking-wider flex items-center gap-2">
               <Sparkles className="w-4 h-4" />
               <span>Your Qualitative Leadership Reflection</span>
             </h2>
-            <div className="p-5 rounded-2xl bg-slate-900/90 border border-white/5 text-xs text-slate-200 whitespace-pre-wrap leading-relaxed font-sans">
+            <div className="edworld-blue-card p-5 rounded-2xl  border border-white/5 text-xs text-slate-200 whitespace-pre-wrap leading-relaxed font-sans">
               {reflection}
             </div>
             <button
@@ -101,7 +101,7 @@ export default function LeadershipAssessmentPage() {
         ) : (
           <div className="space-y-4">
             {questions.map((q, idx) => (
-              <div key={q.id} className="p-5 rounded-3xl bg-[#151621] border border-white/10 space-y-3">
+              <div key={q.id} className="edworld-blue-card p-5 rounded-3xl  border border-white/10 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-mono font-bold text-indigo-400">Prompt {idx + 1} &bull; {q.topic}</span>
                 </div>

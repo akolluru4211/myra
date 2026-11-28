@@ -90,7 +90,7 @@ function FocusStudioContent() {
   return (
     <div className="w-full text-white font-sans space-y-6 sm:space-y-8 animate-in fade-in duration-200">
       {/* 1. STUDIO HEADER */}
-      <section className="tactile-chassis bg-[#0C101A] border border-white/10 p-6 sm:p-8 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-5 shadow-xl relative overflow-hidden">
+      <section className="edworld-blue-card tactile-chassis  border border-white/10 p-6 sm:p-8 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-5 shadow-xl relative overflow-hidden">
         <div className="space-y-2 max-w-2xl">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="px-3 py-1 rounded-full text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 flex items-center gap-1.5">
@@ -144,7 +144,7 @@ function FocusStudioContent() {
             <div className="lg:col-span-7 space-y-6">
               
               {/* Duration Presets */}
-              <div className="tactile-chassis bg-[#0C101A] border border-white/10 p-6 sm:p-7 rounded-3xl space-y-4 shadow-xl">
+              <div className="edworld-blue-card tactile-chassis  border border-white/10 p-6 sm:p-7 rounded-3xl space-y-4 shadow-xl">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <span className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider block">
@@ -218,7 +218,7 @@ function FocusStudioContent() {
 
                 {/* Custom Minutes Slider if selected */}
                 {isCustomTime && (
-                  <div className="p-4 rounded-2xl bg-[#0F1422] border border-white/10 space-y-2 animate-in fade-in">
+                  <div className="edworld-blue-card p-4 rounded-2xl  border border-white/10 space-y-2 animate-in fade-in">
                     <div className="flex items-center justify-between text-xs font-semibold">
                       <span className="text-slate-400">Custom Duration:</span>
                       <span className="text-sm font-bold text-white">{customMinutes} Minutes</span>
@@ -243,7 +243,7 @@ function FocusStudioContent() {
               </div>
 
               {/* Study Subject Picker */}
-              <div className="tactile-chassis bg-[#0C101A] border border-white/10 p-6 sm:p-7 rounded-3xl space-y-4 shadow-xl">
+              <div className="edworld-blue-card tactile-chassis  border border-white/10 p-6 sm:p-7 rounded-3xl space-y-4 shadow-xl">
                 <div className="space-y-0.5">
                   <span className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider block">
                     Step 2
@@ -294,7 +294,7 @@ function FocusStudioContent() {
             {/* Right Column: Distraction Blacklist & Protocol Trigger (5 Cols) */}
             <div className="lg:col-span-5 space-y-6">
               
-              <div className="tactile-chassis bg-[#0C101A] border border-white/10 p-6 sm:p-7 rounded-3xl space-y-5 shadow-xl">
+              <div className="edworld-blue-card tactile-chassis  border border-white/10 p-6 sm:p-7 rounded-3xl space-y-5 shadow-xl">
                 <div className="space-y-0.5">
                   <span className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider block">
                     Step 3

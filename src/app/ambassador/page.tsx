@@ -26,7 +26,6 @@ import {
   Flame,
   Sparkles
 } from "lucide-react";
-import EdworldLogo from "@/components/ui/EdworldLogo";
 
 export default function CampusAmbassadorPage() {
   const { user, profile, loading: authLoading } = useAuth();
@@ -144,7 +143,6 @@ export default function CampusAmbassadorPage() {
               <ArrowLeft className="w-4 h-4" />
             </Link>
             <div className="flex items-center gap-2">
-              <EdworldLogo className="h-6 w-auto" />
               <span className="text-base font-black font-display text-slate-900">
                 Campus Ambassador Program
               </span>

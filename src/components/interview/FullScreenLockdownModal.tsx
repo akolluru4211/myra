@@ -156,7 +156,7 @@ export default function FullScreenLockdownModal({
       {/* 3. Exit Confirmation Modal */}
       {showExitConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in">
-          <div className="w-full max-w-md bg-[#13141B] border border-white/15 rounded-3xl p-6 text-white text-left space-y-4 shadow-2xl animate-in zoom-in-95">
+          <div className="edworld-blue-card w-full max-w-md  border border-white/15 rounded-3xl p-6 text-white text-left space-y-4 shadow-2xl animate-in zoom-in-95">
             <div className="w-12 h-12 rounded-2xl bg-red-500/20 text-red-400 flex items-center justify-center border border-red-500/30">
               <ShieldAlert className="w-6 h-6" />
             </div>

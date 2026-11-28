@@ -61,10 +61,10 @@ export async function POST(req: NextRequest) {
       "CLIENT", "EMPLOYEE", "HR", "FOUNDER", "EXECUTIVE", "TEACHER", "COLLEGE_ADMIN", "PLACEMENT_OFFICER", "ADMIN", "SUPER_ADMIN"
     ]);
 
-    if (!roleCheck.authorized && roleCheck.statusCode === 401) {
+    if (!roleCheck.authorized) {
       return NextResponse.json(
-        { success: false, error: "Unauthorized: User not found." },
-        { status: 401 }
+        { success: false, error: "Tool access denied." },
+        { status: roleCheck.statusCode }
       );
     }
 

@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { ShieldCheck, Lock, ArrowRight, Loader2, FileText } from "lucide-react";
-import EdworldLogo from "@/components/ui/EdworldLogo";
 import { CURRENT_TOS_VERSION, CURRENT_PRIVACY_VERSION } from "@/lib/types";
 
 interface ReconsentModalProps {
@@ -34,7 +33,6 @@ export const ReconsentModal: React.FC<ReconsentModalProps> = ({
       <div className="max-w-md w-full bg-white rounded-3xl border border-slate-200 shadow-2xl p-8 space-y-6 animate-in zoom-in-95 duration-200">
         <div className="text-center space-y-2">
           <div className="flex justify-center">
-            <EdworldLogo size="md" showText={false} />
           </div>
           <h2 className="text-2xl font-black text-slate-900 tracking-tight">Policy &amp; Terms Update</h2>
           <p className="text-xs text-slate-500">

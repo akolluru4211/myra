@@ -253,7 +253,7 @@ export default function FloatingNav() {
 
                 {/* Profile Options Dropdown */}
                 {isProfileOpen && (
-                  <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-neutral-900 border border-neutral-800 shadow-2xl py-2 z-50 text-xs font-sans animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="edworld-blue-card absolute right-0 mt-2 w-56 rounded-2xl  border border-neutral-800 shadow-2xl py-2 z-50 text-xs font-sans animate-in fade-in slide-in-from-top-2 duration-150">
                     <div className="px-4 py-2 border-b border-neutral-800">
                       <div className="font-bold text-white truncate">
                         {user.name || profile?.name || "Student"}

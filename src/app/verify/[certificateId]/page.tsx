@@ -74,7 +74,7 @@ export default async function CertificateVerifyPage({ params }: VerifyPageProps)
         {isVerified && certificate ? (
           <div className="space-y-8 animate-in fade-in duration-300">
             {/* Status Card */}
-            <div className="p-6 sm:p-8 rounded-3xl bg-neutral-900 border border-neutral-800 shadow-2xl relative overflow-hidden">
+            <div className="edworld-blue-card p-6 sm:p-8 rounded-3xl  border border-neutral-800 shadow-2xl relative overflow-hidden">
               <div className="absolute top-0 right-0 transform translate-x-4 -translate-y-4 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-neutral-800 pb-6">
@@ -105,7 +105,7 @@ export default async function CertificateVerifyPage({ params }: VerifyPageProps)
 
               {/* Certificate Details Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6">
-                <div className="p-4 rounded-2xl bg-black/50 border border-neutral-800/80">
+                <div className="edworld-blue-card p-4 rounded-2xl  border border-neutral-800/80">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-500">
                     Recipient Name
                   </span>
@@ -117,7 +117,7 @@ export default async function CertificateVerifyPage({ params }: VerifyPageProps)
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-black/50 border border-neutral-800/80">
+                <div className="edworld-blue-card p-4 rounded-2xl  border border-neutral-800/80">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-500">
                     Assessment Performance
                   </span>
@@ -129,7 +129,7 @@ export default async function CertificateVerifyPage({ params }: VerifyPageProps)
                   </div>
                 </div>
 
-                <div className="sm:col-span-2 p-5 rounded-2xl bg-black/50 border border-neutral-800/80">
+                <div className="edworld-blue-card sm:col-span-2 p-5 rounded-2xl  border border-neutral-800/80">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-500">
                     Completed Course Curriculum
                   </span>
@@ -201,7 +201,7 @@ export default async function CertificateVerifyPage({ params }: VerifyPageProps)
           </div>
         ) : (
           /* Invalid / Not Found State */
-          <div className="p-8 sm:p-12 rounded-3xl bg-neutral-900 border border-neutral-800 text-center space-y-4">
+          <div className="edworld-blue-card p-8 sm:p-12 rounded-3xl  border border-neutral-800 text-center space-y-4">
             <div className="w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center mx-auto">
               <AlertTriangle className="w-7 h-7" />
             </div>

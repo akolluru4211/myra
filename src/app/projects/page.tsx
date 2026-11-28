@@ -140,7 +140,7 @@ export default function ProjectStudioPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 space-y-6 animate-in fade-in duration-200">
           
           {/* 1. HEADER */}
-          <section className="tactile-chassis bg-[#0C101A] border border-white/10 p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-5 shadow-xl rounded-2xl">
+          <section className="edworld-blue-card tactile-chassis  border border-white/10 p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-5 shadow-xl rounded-2xl">
             <div className="space-y-1.5 max-w-3xl">
               <div className="flex items-center gap-2">
                 <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/30">
@@ -169,7 +169,7 @@ export default function ProjectStudioPage() {
           </section>
 
           {/* 2. TOP SEARCH & FILTER BAR */}
-          <section className="tactile-chassis bg-[#0C101A] border border-white/10 p-5 sm:p-6 space-y-4 shadow-lg rounded-2xl">
+          <section className="edworld-blue-card tactile-chassis  border border-white/10 p-5 sm:p-6 space-y-4 shadow-lg rounded-2xl">
             
             {/* Primary Search Input */}
             <div className="relative">
@@ -477,7 +477,7 @@ export default function ProjectStudioPage() {
           </section>
 
           {/* 4. FOOTER GUIDANCE BANNER */}
-          <section className="p-5 sm:p-6 tactile-chassis bg-[#0C101A] border border-white/10 rounded-2xl text-xs text-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <section className="edworld-blue-card p-5 sm:p-6 tactile-chassis  border border-white/10 rounded-2xl text-xs text-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-slate-300">
               <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
               <span>All problem statements are calibrated to real-world production engineering architectures.</span>

@@ -424,7 +424,7 @@ export default function AdminJobsManagementPage() {
 
       {/* Batch Operations Toolbar */}
       {selectedJobIds.size > 0 && (
-        <div className="bg-neutral-900 text-white rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg animate-in slide-in-from-top-2">
+        <div className="edworld-blue-card text-white rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg animate-in slide-in-from-top-2">
           <div className="flex items-center gap-3">
             <button
               onClick={toggleSelectAll}

@@ -170,7 +170,7 @@ export default function MyraJobMatcherModal({
                   </div>
 
                   {/* Match Meter */}
-                  <div className="flex items-center gap-2 shrink-0 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
+                  <div className="edworld-blue-card flex items-center gap-2 shrink-0  px-3 py-1.5 rounded-xl border border-slate-800">
                     <span className="text-[10px] uppercase font-bold text-slate-400">Match Fit</span>
                     <span className={`text-base font-black font-mono ${
                       job.matchScore >= 85 ? "text-[#00D2B4]" : "text-amber-400"
@@ -181,7 +181,7 @@ export default function MyraJobMatcherModal({
                 </div>
 
                 {/* Myra's Verdict & Fit Reasoning */}
-                <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 text-xs text-slate-300 space-y-1">
+                <div className="edworld-blue-card p-3 rounded-xl  border border-slate-800/80 text-xs text-slate-300 space-y-1">
                   <p className="font-semibold text-[#00D2B4] flex items-center gap-1.5 text-[11px]">
                     <Sparkles className="w-3.5 h-3.5" /> Myra's Assessment:
                   </p>

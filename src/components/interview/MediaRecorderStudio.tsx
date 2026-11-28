@@ -101,6 +101,8 @@ export default function MediaRecorderStudio({
   const [recordingState, setRecordingState] = useState<"idle" | "speaking_question" | "recording" | "evaluating_turn" | "submitting">("idle");
   const [secondsElapsed, setSecondsElapsed] = useState(0);
   const [liveTranscript, setLiveTranscript] = useState<string>("");
+  const [answerError, setAnswerError] = useState("");
+  const primaryAnswerRef = useRef("");
   const [silenceCountdown, setSilenceCountdown] = useState<number | null>(null);
   const [isThinkingPaused, setIsThinkingPaused] = useState<boolean>(false);
 
@@ -141,6 +143,8 @@ export default function MediaRecorderStudio({
     setIsFollowUpRound(false);
     setFollowUpReference(null);
     setLiveTranscript("");
+    setAnswerError("");
+    primaryAnswerRef.current = "";
     setSecondsElapsed(0);
     setIsThinkingPaused(false);
     triggerQuestionSpeech(questionText);
@@ -316,6 +320,12 @@ export default function MediaRecorderStudio({
 
   // 8. Candidate Finishes Answer
   const handleFinishAnswer = async () => {
+    const answerText = liveTranscript.trim();
+    if (!answerText) {
+      setAnswerError("No answer was captured. Try speaking again or switch to typing.");
+      return;
+    }
+    setAnswerError("");
     if (silenceTimerRef.current) clearInterval(silenceTimerRef.current);
     if (timerRef.current) clearInterval(timerRef.current);
 
@@ -325,7 +335,9 @@ export default function MediaRecorderStudio({
 
     setRecordingState("evaluating_turn");
 
-    const answerText = liveTranscript.trim() || "I have completed my answer for this scenario.";
+    const transcript = isFollowUpRound && primaryAnswerRef.current
+      ? [primaryAnswerRef.current, answerText].join("\n\n")
+      : answerText;
 
     try {
       const res = await fetch("/api/interview/turn", {
@@ -353,6 +365,7 @@ export default function MediaRecorderStudio({
       }
 
       if (data.action === "follow_up" && data.followUpQuestion && !isFollowUpRound) {
+        primaryAnswerRef.current = answerText;
         setIsFollowUpRound(true);
         setFollowUpReference(data.referencedPhrase || null);
         setActivePromptText(data.followUpQuestion);
@@ -361,10 +374,10 @@ export default function MediaRecorderStudio({
         return;
       }
 
-      await submitCurrentQuestion(answerText);
+      await submitCurrentQuestion(transcript);
     } catch (turnErr) {
       console.warn("[Turn Evaluation Fallback]:", turnErr);
-      await submitCurrentQuestion(answerText);
+      await submitCurrentQuestion(transcript);
     }
   };
 
@@ -588,7 +601,7 @@ export default function MediaRecorderStudio({
           ) : null}
 
           {/* Active Question Banner */}
-          <div className="p-3.5 rounded-2xl bg-[#141B2D] border border-white/10 space-y-1 mt-1">
+          <div className="edworld-blue-card p-3.5 rounded-2xl  border border-white/10 space-y-1 mt-1">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-400 block">
                 {isFollowUpRound ? `${persona.interviewerName}'s Follow-Up Probe` : "Current Interview Question"}
@@ -639,7 +652,7 @@ export default function MediaRecorderStudio({
                 )}
               </div>
 
-              <div className="p-3 rounded-2xl bg-[#141B2D] border border-white/10 min-h-[70px] max-h-28 overflow-y-auto">
+              <div className="edworld-blue-card p-3 rounded-2xl  border border-white/10 min-h-[70px] max-h-28 overflow-y-auto">
                 <p className="text-xs text-slate-200 leading-relaxed italic font-sans">
                   {liveTranscript || (
                     <span className="text-slate-500 not-italic">
@@ -675,7 +688,7 @@ export default function MediaRecorderStudio({
                 const hasResult = Boolean(transcriptLower.match(/\b(result|increased|reduced|improved|percent|%|achieved|delivered|outcome|latency|saved|speedup)\b/));
 
                 return (
-                  <div className="p-2.5 rounded-2xl bg-[#141B2D] border border-white/10 flex items-center justify-between flex-wrap gap-2 text-[10px]">
+                  <div className="edworld-blue-card p-2.5 rounded-2xl  border border-white/10 flex items-center justify-between flex-wrap gap-2 text-[10px]">
                     <span className="font-mono font-bold uppercase tracking-wider text-slate-400">
                       STAR Score:
                     </span>
@@ -757,6 +770,7 @@ export default function MediaRecorderStudio({
                 type="button"
                 onClick={handleFinishAnswer}
                 disabled={recordingState === "submitting" || recordingState === "evaluating_turn" || isMyraSpeaking}
+                aria-describedby={answerError ? "interview-answer-error" : undefined}
                 className="px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-black text-xs font-bold flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 {recordingState === "evaluating_turn" ? (
@@ -771,6 +785,7 @@ export default function MediaRecorderStudio({
                   </>
                 )}
               </button>
+              {answerError && <p id="interview-answer-error" role="alert" className="text-sm text-rose-700">{answerError}</p>}
             </div>
           </div>
 

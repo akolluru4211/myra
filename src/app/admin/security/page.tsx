@@ -701,7 +701,7 @@ export default function AdminSecuritySOCPage() {
 
           {/* Batch Resolution Bar */}
           {selectedIncidentIds.size > 0 && (
-            <div className="p-3 bg-neutral-900 text-white rounded-2xl flex items-center justify-between gap-3 text-xs animate-in slide-in-from-top-1">
+            <div className="edworld-blue-card p-3  text-white rounded-2xl flex items-center justify-between gap-3 text-xs animate-in slide-in-from-top-1">
               <div className="flex items-center gap-2">
                 <button
                   onClick={toggleSelectAllIncidents}

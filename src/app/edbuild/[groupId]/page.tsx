@@ -447,7 +447,7 @@ export default function EdBuildWorkspacePage() {
           )}
 
           {/* Project Header Info */}
-          <section className="tactile-chassis bg-[#0C101A] rounded-2xl border border-white/10 p-5 sm:p-6 shadow-xl space-y-2 text-white">
+          <section className="edworld-blue-card tactile-chassis  rounded-2xl border border-white/10 p-5 sm:p-6 shadow-xl space-y-2 text-white">
             <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
               <span className="font-semibold text-white">{group?.access_type === "private" ? "Private Squad" : "Public Squad"}</span>
               <span>&bull;</span>
@@ -782,7 +782,7 @@ export default function EdBuildWorkspacePage() {
 
           {/* TAB 2: KANBAN SPRINT BOARD */}
           {activeTab === "kanban" && (
-            <div className="bg-[#0C101A] rounded-2xl border border-white/10 shadow-xl p-5 space-y-5 animate-in fade-in duration-150">
+            <div className="edworld-blue-card rounded-2xl border border-white/10 shadow-xl p-5 space-y-5 animate-in fade-in duration-150">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
                 <div>
                   <h2 className="text-base font-bold text-white flex items-center gap-2 font-display">
@@ -821,7 +821,7 @@ export default function EdBuildWorkspacePage() {
                   };
 
                   return (
-                    <div key={colStatus} className="bg-[#0F1422] border border-white/10 rounded-2xl p-3 flex flex-col space-y-3 min-h-[380px]">
+                    <div key={colStatus} className="edworld-blue-card border border-white/10 rounded-2xl p-3 flex flex-col space-y-3 min-h-[380px]">
                       <div className="flex items-center justify-between pb-2 border-b border-white/10">
                         <span className="text-xs font-bold text-white">
                           {colTitles[colStatus]}
@@ -893,7 +893,7 @@ export default function EdBuildWorkspacePage() {
 
           {/* TAB 3: STARTER REPOSITORIES */}
           {activeTab === "repos" && (
-            <div className="bg-[#0C101A] rounded-2xl border border-white/10 shadow-xl p-5 space-y-5 animate-in fade-in duration-150">
+            <div className="edworld-blue-card rounded-2xl border border-white/10 shadow-xl p-5 space-y-5 animate-in fade-in duration-150">
               <div className="border-b border-white/10 pb-4">
                 <h2 className="text-base font-bold text-white flex items-center gap-2 font-display">
                   <GitBranch className="w-4 h-4 text-cyan-400" />
@@ -972,7 +972,7 @@ export default function EdBuildWorkspacePage() {
             <div className="lg:col-span-4 space-y-5">
               
               {/* Team Members Panel */}
-              <div className="bg-[#0C101A] rounded-2xl border border-white/10 p-4 sm:p-5 shadow-xl space-y-3">
+              <div className="edworld-blue-card rounded-2xl border border-white/10 p-4 sm:p-5 shadow-xl space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5 font-display">
                     <Users className="w-3.5 h-3.5 text-cyan-400" />
@@ -1022,7 +1022,7 @@ export default function EdBuildWorkspacePage() {
               </div>
 
               {/* Project Submission Panel */}
-              <div className="bg-[#0C101A] rounded-2xl border border-white/10 p-4 sm:p-5 shadow-xl space-y-3">
+              <div className="edworld-blue-card rounded-2xl border border-white/10 p-4 sm:p-5 shadow-xl space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5 font-display">
                     <FileCode className="w-3.5 h-3.5 text-cyan-400" />

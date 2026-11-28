@@ -164,7 +164,7 @@ export default function MyraInterviewerAvatar({
   const IconComponent = badge.icon;
 
   return (
-    <div className="relative w-full h-full flex flex-col justify-between p-5 sm:p-6 bg-[#0E131F] border border-white/10 rounded-3xl shadow-xl text-white overflow-hidden select-none">
+    <div className="edworld-blue-card relative w-full h-full flex flex-col justify-between p-5 sm:p-6  border border-white/10 rounded-3xl shadow-xl text-white overflow-hidden select-none">
       
       {/* Background Ambience Glow */}
       <div className={`absolute -top-24 -left-24 w-72 h-72 rounded-full blur-3xl opacity-20 pointer-events-none transition-all duration-700 ${

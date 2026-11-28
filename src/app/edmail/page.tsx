@@ -112,6 +112,7 @@ export default function EdMailWebmailPage() {
   const [composeBcc, setComposeBcc] = useState("");
   const [composeSubject, setComposeSubject] = useState("");
   const [composeBody, setComposeBody] = useState("");
+  const [composeFiles, setComposeFiles] = useState<File[]>([]);
   const [sendingEmail, setSendingEmail] = useState(false);
   const [composeError, setComposeError] = useState<string | null>(null);
   const [composeSuccess, setComposeSuccess] = useState<string | null>(null);
@@ -356,6 +357,16 @@ export default function EdMailWebmailPage() {
       const ccList = composeCc ? composeCc.split(",").map((s) => s.trim()).filter(Boolean) : [];
       const bccList = composeBcc ? composeBcc.split(",").map((s) => s.trim()).filter(Boolean) : [];
 
+      if (composeFiles.length > 10 || composeFiles.reduce((sum, file) => sum + file.size, 0) > 3 * 1024 * 1024) {
+        setComposeError("Attach up to 10 files totaling 3 MB or less.");
+        return;
+      }
+      const attachments = await Promise.all(composeFiles.map(async (file) => {
+        const bytes = new Uint8Array(await file.arrayBuffer());
+        let binary = "";
+        bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+        return { filename: file.name, content: btoa(binary) };
+      }));
       const res = await fetch("/api/edmail/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -365,7 +376,7 @@ export default function EdMailWebmailPage() {
           bcc: bccList,
           subject: composeSubject,
           bodyText: composeBody,
-          bodyHtml: `<div style="font-family: sans-serif; line-height: 1.6; color: #1e293b;">${composeBody.replace(/\n/g, "<br/>")}</div>`,
+          attachments,
           idempotencyKey,
         }),
       });
@@ -378,6 +389,7 @@ export default function EdMailWebmailPage() {
           setComposeTo("");
           setComposeSubject("");
           setComposeBody("");
+          setComposeFiles([]);
           setComposeSuccess(null);
           fetchMessages();
         }, 1200);
@@ -1168,7 +1180,20 @@ export default function EdMailWebmailPage() {
                                   className="p-3 bg-white rounded-xl border border-blue-200 flex items-center justify-between"
                                 >
                                   <div className="truncate mr-2">
-                                    <div className="text-xs font-bold text-slate-800 truncate">{att.filename}</div>
+                                    {att.content_base64 ? (
+                                      <button type="button" className="text-xs font-bold text-blue-700 underline"
+                                        onClick={() => {
+                                          const bytes = Uint8Array.from(atob(att.content_base64), (character) => character.charCodeAt(0));
+                                          const url = URL.createObjectURL(new Blob([bytes], { type: "application/octet-stream" }));
+                                          const link = document.createElement("a");
+                                          link.href = url;
+                                          link.download = att.filename;
+                                          link.click();
+                                          setTimeout(() => URL.revokeObjectURL(url), 1000);
+                                        }}>
+                                        {att.filename}
+                                      </button>
+                                    ) : <div className="text-xs font-bold text-slate-800 truncate">{att.filename}</div>}
                                     <div className="text-[10px] text-slate-400">{(att.byte_size / 1024).toFixed(1)} KB</div>
                                   </div>
                                   <div className="flex items-center gap-1.5 shrink-0">
@@ -1944,13 +1969,19 @@ export default function EdMailWebmailPage() {
 
                 <div className="flex-1 min-h-[160px]">
                   <textarea
-                    required
+                    required={composeFiles.length === 0}
                     value={composeBody}
                     onChange={(e) => setComposeBody(e.target.value)}
                     placeholder="Write your email here..."
                     className="w-full h-full p-3 text-xs border border-blue-200 rounded-xl focus:outline-none focus:border-[#2563EB] resize-none"
                   />
                 </div>
+
+                <label className="block text-sm font-medium">
+                  Attach files or images (3 MB total)
+                  <input type="file" multiple disabled={sendingEmail} className="mt-1 block w-full text-xs"
+                    onChange={(event) => setComposeFiles(Array.from(event.target.files ?? []))} />
+                </label>
 
                 <div className="pt-2 flex items-center justify-between border-t border-blue-100">
                   <div className="text-[10px] text-slate-400">

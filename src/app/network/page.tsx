@@ -217,14 +217,14 @@ export default function NetworkPage() {
     <div className="w-full text-slate-900 font-sans space-y-6 animate-in fade-in duration-200">
       {/* Real-Time Toast Notification */}
       {notificationToast && (
-        <div className="fixed top-20 right-6 z-50 bg-[#111827] text-white px-4 py-3 rounded-xl shadow-lg border border-[#374151] flex items-center gap-3">
+        <div className="edworld-blue-card fixed top-20 right-6 z-50  text-white px-4 py-3 rounded-xl shadow-lg border border-[#374151] flex items-center gap-3">
           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           <p className="text-xs font-semibold text-white">{notificationToast.message}</p>
         </div>
       )}
 
       {/* Header Station */}
-      <div className="tactile-chassis bg-[#0C101A] border border-white/10 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl text-white">
+      <div className="edworld-blue-card tactile-chassis  border border-white/10 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl text-white">
           <div className="space-y-2 max-w-2xl">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#EFF6FF]0/10 text-emerald-300 border border-emerald-500/20 font-display">
@@ -243,7 +243,7 @@ export default function NetworkPage() {
           </div>
 
           {/* Quick Metrics */}
-          <div className="flex items-center gap-3 self-stretch sm:self-auto bg-[#0F1422] p-3 rounded-2xl border border-white/10">
+          <div className="edworld-blue-card flex items-center gap-3 self-stretch sm:self-auto  p-3 rounded-2xl border border-white/10">
             <div className="px-4 py-1.5 text-center border-r border-white/10">
               <div className="text-base sm:text-lg font-bold text-white tabular-nums font-mono">
                 {allMembers.length}
@@ -266,7 +266,7 @@ export default function NetworkPage() {
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="tactile-chassis bg-[#0C101A] border border-white/10 rounded-3xl p-5 space-y-4 shadow-xl text-white">
+        <div className="edworld-blue-card tactile-chassis  border border-white/10 rounded-3xl p-5 space-y-4 shadow-xl text-white">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             {/* Search Input */}
             <div className="relative w-full sm:w-80">
@@ -352,7 +352,7 @@ export default function NetworkPage() {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="tactile-chassis bg-[#0C101A] rounded-3xl p-6 border border-white/10 animate-pulse space-y-4 shadow-xl">
+              <div key={i} className="edworld-blue-card tactile-chassis  rounded-3xl p-6 border border-white/10 animate-pulse space-y-4 shadow-xl">
                 <div className="flex items-center gap-3">
                   <div className="w-11 h-11 rounded-2xl bg-white/10"></div>
                   <div className="space-y-2 flex-1">

@@ -14,7 +14,7 @@ import {
   ShieldCheck
 } from "lucide-react";
 
-export default function ModernEdworldFooter() {
+export default function ModernEdworldFooter({ compact = false }: { compact?: boolean }) {
   const pathname = usePathname();
   const isLandingPage = pathname === "/";
 
@@ -38,18 +38,49 @@ export default function ModernEdworldFooter() {
     }, 600);
   };
 
-  const linkClass = "text-slate-500 hover:text-[#2563EB] transition-colors flex items-center justify-between group";
+  const linkClass = "text-slate-300 hover:text-white transition-colors flex items-center justify-between group";
   const headerClass = "font-extrabold font-display text-xs uppercase tracking-wider text-black";
 
   return (
-    <footer className="bg-white border-t border-blue-200/80 text-slate-500 rounded-t-3xl shadow-ambient-card relative font-sans mt-auto overflow-hidden select-none">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-7 pb-20 sm:pt-8 sm:pb-6 relative z-10">
+    <footer className="bg-slate-950 border-t border-slate-800 text-slate-300 rounded-t-[2rem] shadow-[0_-16px_40px_rgba(15,23,42,0.12)] relative font-sans mt-auto overflow-hidden select-none">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 relative z-10">
         
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-[#cfdfdc] pb-5">
+            <Link href="/" className="inline-flex items-center gap-2.5 group">
+              <div className="relative w-8 h-8 rounded-xl overflow-hidden bg-black shadow-xs !p-0.5 shrink-0 transition-transform group-hover:scale-105 duration-200">
+                <Image
+                  src="/images/edworld-mark.png"
+                  alt=""
+                  width={32}
+                  height={32}
+                  className="w-full h-full object-cover rounded-[7px] brightness-110"
+                />
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1 leading-none">
+                  <span className="font-black text-base tracking-tight font-display text-black">
+                    EdWorld
+                  </span>
+                  <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-[#2563EB] text-white shadow-xs font-display">
+                    Co.
+                  </span>
+                </div>
+                <span className="text-[9.5px] font-mono font-bold uppercase tracking-wider text-slate-500 mt-0.5">
+                  Learn • Grow • Build
+                </span>
+              </div>
+            </Link>
+          {compact && <nav aria-label="Footer" className="flex flex-wrap gap-4 text-sm text-slate-700">
+            <Link href="/privacy">Privacy</Link>
+            <Link href="/terms">Terms</Link>
+          </nav>}
+        </div>
+        {!compact && <>
         {/* 1. Clean Newsletter Subscribe Strip */}
         <div className="mb-7 p-3.5 sm:p-4 rounded-2xl border border-blue-200/80 bg-[#EFF6FF] shadow-xs flex flex-col md:flex-row items-center justify-between gap-3.5">
           <div className="flex items-center gap-2.5 text-center md:text-left flex-wrap justify-center md:justify-start">
             <span className="text-xs font-bold text-black font-display">
-              Weekly Technical Dispatch
+              Weekly technical dispatch
             </span>
             <span className="hidden sm:inline text-slate-400">•</span>
             <span className="text-xs text-slate-500">
@@ -94,30 +125,7 @@ export default function ModernEdworldFooter() {
           
           {/* Column 1: Brand Anchor */}
           <div className="space-y-3 col-span-2 md:col-span-4 lg:col-span-1">
-            <Link href="/" className="inline-flex items-center gap-2.5 group">
-              <div className="relative w-8 h-8 rounded-xl overflow-hidden bg-[#2563EB] shadow-xs !p-0.5 shrink-0 transition-transform group-hover:scale-105 duration-200">
-                <Image
-                  src="/images/edworld-mark.png"
-                  alt="EdWorld Co. Official Monogram Logo"
-                  width={32}
-                  height={32}
-                  className="w-full h-full object-cover rounded-[7px] brightness-110"
-                />
-              </div>
-              <div className="flex flex-col">
-                <div className="flex items-center gap-1 leading-none">
-                  <span className="font-black text-base tracking-tight font-display text-black">
-                    EdWorld
-                  </span>
-                  <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-[#2563EB] text-white shadow-xs font-display">
-                    Co.
-                  </span>
-                </div>
-                <span className="text-[9.5px] font-mono font-bold uppercase tracking-wider text-slate-500 mt-0.5">
-                  Learn • Grow • Build
-                </span>
-              </div>
-            </Link>
+
 
             {/* Contact details */}
             <div className="space-y-1 pt-1 text-[11px] text-slate-500">
@@ -278,6 +286,7 @@ export default function ModernEdworldFooter() {
           </div>
         </div>
 
+        </>}
       </div>
     </footer>
   );

@@ -120,7 +120,7 @@ export default function StudentPortfolioViewPage() {
       </div>
 
       {/* Hero Header Card */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-[#0C101A] border border-white/10 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="edworld-blue-card p-6 sm:p-8 rounded-3xl  border border-white/10 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">
@@ -168,7 +168,7 @@ export default function StudentPortfolioViewPage() {
         </div>
 
         {/* QR Code Card */}
-        <div className="p-4 rounded-2xl bg-[#080B11] border border-white/10 flex flex-col items-center justify-center gap-2 shrink-0 self-start md:self-auto">
+        <div className="edworld-blue-card p-4 rounded-2xl  border border-white/10 flex flex-col items-center justify-center gap-2 shrink-0 self-start md:self-auto">
           <div className="p-2 rounded-xl bg-white shadow-sm">
             <QrCodeView value={portfolioUrl} size={84} fgColor="#0A0A0A" bgColor="#FFFFFF" includeMargin={false} />
           </div>
@@ -189,7 +189,7 @@ export default function StudentPortfolioViewPage() {
         </div>
 
         {projects.length === 0 ? (
-          <div className="p-8 sm:p-12 rounded-3xl bg-[#0C101A] border border-white/10 text-center space-y-3">
+          <div className="edworld-blue-card p-8 sm:p-12 rounded-3xl  border border-white/10 text-center space-y-3">
             <FolderGit2 className="w-8 h-8 text-slate-500 mx-auto" />
             <h3 className="text-sm font-bold text-white">No projects published yet</h3>
             <p className="text-xs text-slate-400 max-w-sm mx-auto font-normal">
@@ -312,7 +312,7 @@ export default function StudentPortfolioViewPage() {
 
       {/* Skills Matrix */}
       {profile?.skills && profile.skills.length > 0 && (
-        <div className="p-6 sm:p-8 rounded-3xl bg-[#0C101A] border border-white/10 space-y-4">
+        <div className="edworld-blue-card p-6 sm:p-8 rounded-3xl  border border-white/10 space-y-4">
           <h2 className="text-sm font-bold font-display text-white uppercase tracking-wider flex items-center gap-2">
             <Layers className="w-4 h-4 text-emerald-400" />
             <span>Validated Technical Competencies</span>

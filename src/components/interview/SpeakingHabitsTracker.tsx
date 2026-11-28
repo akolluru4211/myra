@@ -44,7 +44,7 @@ export default function SpeakingHabitsTracker({
 
   if (!hasData) {
     return (
-      <div className="bg-[#0C101A] border border-white/10 rounded-3xl p-6 sm:p-7 space-y-4 text-white shadow-xl">
+      <div className="edworld-blue-card border border-white/10 rounded-3xl p-6 sm:p-7 space-y-4 text-white shadow-xl">
         <div className="flex items-center gap-2">
           <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 flex items-center gap-1.5">
             <Activity className="w-3 h-3 text-indigo-400" />
@@ -53,7 +53,7 @@ export default function SpeakingHabitsTracker({
         </div>
         <h2 className="text-xl font-bold text-white font-display">Spoken Communication Habits</h2>
 
-        <div className="p-6 rounded-2xl bg-[#0F1422] border border-white/10 text-center space-y-2">
+        <div className="edworld-blue-card p-6 rounded-2xl  border border-white/10 text-center space-y-2">
           <MessageSquare className="w-7 h-7 text-slate-400 mx-auto" />
           <p className="text-xs font-bold text-white">No Interview Audio Sessions Recorded Yet</p>
           <p className="text-[11px] text-slate-400 max-w-md mx-auto">
@@ -77,7 +77,7 @@ export default function SpeakingHabitsTracker({
     : null;
 
   return (
-    <div className="bg-[#0C101A] border border-white/10 rounded-3xl p-6 sm:p-7 space-y-6 text-white shadow-xl">
+    <div className="edworld-blue-card border border-white/10 rounded-3xl p-6 sm:p-7 space-y-6 text-white shadow-xl">
       
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
@@ -94,7 +94,7 @@ export default function SpeakingHabitsTracker({
           <h2 className="text-xl font-bold text-white font-display">Spoken English &amp; Communication Habits</h2>
         </div>
 
-        <div className="flex items-center gap-2 bg-[#0F1422] px-4 py-2 rounded-xl border border-white/10">
+        <div className="edworld-blue-card flex items-center gap-2  px-4 py-2 rounded-xl border border-white/10">
           <span className="text-[11px] font-medium text-slate-400">Score:</span>
           <span className="text-xl font-bold text-white">{currentScore}/100</span>
         </div>
@@ -104,7 +104,7 @@ export default function SpeakingHabitsTracker({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         
         {/* 1. Filler Words Reduction Progression */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-[#0F1422] border border-white/10 space-y-3">
+        <div className="edworld-blue-card p-4 sm:p-5 rounded-2xl  border border-white/10 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider">Filler Words Trend</span>
             {fillerDelta !== null && (
@@ -141,7 +141,7 @@ export default function SpeakingHabitsTracker({
         </div>
 
         {/* 2. Clarity & Structure Score Trajectory */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-[#0F1422] border border-white/10 space-y-3">
+        <div className="edworld-blue-card p-4 sm:p-5 rounded-2xl  border border-white/10 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider">Clarity &amp; STAR Structure</span>
             {clarityDelta !== null && (
@@ -176,7 +176,7 @@ export default function SpeakingHabitsTracker({
         </div>
 
         {/* 3. Speaking Cadence / WPM Calibration */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-[#0F1422] border border-white/10 space-y-3">
+        <div className="edworld-blue-card p-4 sm:p-5 rounded-2xl  border border-white/10 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider">Speaking Cadence</span>
             <span className="text-xs font-semibold text-cyan-400 flex items-center gap-1">

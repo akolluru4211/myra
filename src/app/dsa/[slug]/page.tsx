@@ -328,7 +328,7 @@ export default function DsaTopicDetailPage() {
               )}
 
               {/* Next Action Callout */}
-              <div className="p-5 rounded-2xl bg-black text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="edworld-blue-card p-5 rounded-2xl  text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <h4 className="text-sm font-bold">Ready to test your comprehension?</h4>
                   <p className="text-xs text-neutral-300">

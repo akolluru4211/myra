@@ -352,16 +352,8 @@ describe("Tier 2: Global Shell Architecture", () => {
       );
     });
 
-    it("T2.2.4: applies desktop layout offset lg:pl-28 across Navbar, main container, and Footer", () => {
-      assert(
-        appShellSource.includes("lg:pl-28"),
-        "AppShell must apply lg:pl-28 desktop padding to accommodate CurvySideDock"
-      );
-      const matches = appShellSource.match(/lg:pl-28/g);
-      assert(
-        matches && matches.length >= 2,
-        `lg:pl-28 must be applied to offset layout sections (found ${matches ? matches.length : 0})`
-      );
+    it("T2.2.4: offsets the shared workspace for the desktop sidebar", () => {
+      assert(appShellSource.includes("lg:pl-60 xl:pl-[17rem]"));
     });
 
     it("T2.2.5: grants landing page exemption bypassing dock and navbar padding", () => {
@@ -383,23 +375,14 @@ describe("Tier 2: Global Shell Architecture", () => {
   });
 
   describe("2.3 Curvy Floating Side Navigation Dock (src/components/layout/CurvySideDock.tsx)", () => {
-    it("T2.3.1: configures fixed floating desktop dock container classes", () => {
-      assert(
-        sideDockSource.includes("hidden lg:flex"),
-        "CurvySideDock must be hidden on mobile/tablet and visible on desktop (hidden lg:flex)"
-      );
-      assert(
-        sideDockSource.includes("fixed left-4 top-4 bottom-4"),
-        "CurvySideDock must be fixed floating at left-4 top-4 bottom-4"
-      );
-      assert(
-        sideDockSource.includes("w-20"),
-        "CurvySideDock width must be w-20 (80px)"
-      );
+    it("T2.3.1: uses fixed labeled navigation at desktop widths", () => {
+      assert(sideDockSource.includes("hidden lg:flex fixed left-4 top-4 bottom-4"));
+      assert(sideDockSource.includes("w-52 xl:w-60"));
     });
 
-    it("T2.3.2: uses a light, bordered desktop navigation surface", () => {
-      assert(sideDockSource.includes("bg-white text-neutral-900 rounded-2xl border border-neutral-200"));
+    it("T2.3.2: uses a bordered light sidebar", () => {
+      assert(sideDockSource.includes("bg-[#edf5f4]"));
+      assert(sideDockSource.includes("border-[#cfdfdc]"));
     });
 
     it("T2.3.3: provides a 48px Dashboard link and exposes its active state", () => {
@@ -439,11 +422,9 @@ describe("Tier 2: Global Shell Architecture", () => {
       }
     });
 
-    it("T2.3.5: renders decorative organic wave silhouette SVG element", () => {
-      assert(
-        sideDockSource.includes("<svg") && sideDockSource.includes("M40 0C25 20 10 40 10 70C10 100 25 120 40 140V0Z"),
-        "CurvySideDock must include the organic wave SVG silhouette path"
-      );
+    it("T2.3.5: keeps desktop links readable and scrollable", () => {
+      assert(sideDockSource.includes("overflow-y-auto"));
+      assert(sideDockSource.includes("text-sm font-medium"));
     });
 
     it("T2.3.6: preserves hidden structural test anchor for automated test runners", () => {
@@ -497,15 +478,8 @@ describe("Tier 2: Global Shell Architecture", () => {
       );
     });
 
-    it("T2.4.3: includes pill search input with <kbd>⌘K</kbd> shortcut badge", () => {
-      assert(
-        navbarSource.includes("Search or type command"),
-        "Navbar must render pill search input with 'Search or type command' placeholder"
-      );
-      assert(
-        navbarSource.includes("<kbd") && navbarSource.includes("⌘K"),
-        "Navbar search input must include keyboard shortcut badge <kbd>⌘K</kbd>"
-      );
+    it("T2.4.3: provides a keyboard-accessible Browse tools button", () => {
+      assert(navbarSource.includes("<span>Browse tools</span>"));
     });
 
     it("T2.4.4: provides a secondary Focus Studio action", () => {
@@ -552,32 +526,14 @@ describe("Tier 3: Cross-Feature Boundary & Layout Clearances", () => {
   const globalsCss = readProjectFile("src/app/globals.css");
 
   describe("3.1 Mathematical Proof of Ergonomic Clearance & Touch Targets", () => {
-    it("T3.1.1: proves dock width (80px) + left offset (16px) total footprint equals 96px", () => {
-      // In Tailwind: w-20 = 20 * 0.25rem = 5rem = 80px (at root 16px font-size)
-      // left-4 = 4 * 0.25rem = 1rem = 16px
-      const dockWidthRem = 20 * 0.25; // 5.0 rem
-      const dockLeftOffsetRem = 4 * 0.25; // 1.0 rem
-      const totalOccupiedWidthRem = dockWidthRem + dockLeftOffsetRem; // 6.0 rem
-      const totalOccupiedPixels = totalOccupiedWidthRem * 16; // 96 px
-
-      assert.strictEqual(dockWidthRem, 5.0, "Dock width w-20 must equate to 5.0 rem");
-      assert.strictEqual(dockLeftOffsetRem, 1.0, "Dock offset left-4 must equate to 1.0 rem");
-      assert.strictEqual(totalOccupiedPixels, 96, "Physical horizontal space occupied by dock must be exactly 96px");
-      assert(sideDockSource.includes("w-20"), "CurvySideDock must declare w-20");
-      assert(sideDockSource.includes("left-4"), "CurvySideDock must declare left-4");
+    it("T3.1.1: uses separate laptop and wide desktop sidebar widths", () => {
+      assert(sideDockSource.includes("w-52 xl:w-60"));
     });
 
-    it("T3.1.2: proves desktop layout offset lg:pl-28 (112px) clears dock with a positive 16px gutter", () => {
-      // In Tailwind: pl-28 = 28 * 0.25rem = 7rem = 112px
-      const desktopOffsetRem = 28 * 0.25; // 7.0 rem
-      const desktopOffsetPixels = desktopOffsetRem * 16; // 112 px
-      const dockFootprintPixels = 96; // from T3.1.1
-      const safetyGutterPixels = desktopOffsetPixels - dockFootprintPixels; // 16 px
-
-      assert.strictEqual(desktopOffsetPixels, 112, "lg:pl-28 must equal 112px");
-      assert.strictEqual(safetyGutterPixels, 16, "Clearance safety gutter must equal 16px (1.0 rem)");
-      assert(safetyGutterPixels > 0, "Desktop offset must strictly exceed dock footprint to prevent overlap");
-      assert(appShellSource.includes("lg:pl-28"), "AppShell must declare lg:pl-28");
+    it("T3.1.2: preserves a 16px gutter next to the sidebar at both widths", () => {
+      assert(appShellSource.includes("lg:pl-60 xl:pl-[17rem]"));
+      assert.equal(240 - 208 - 16, 16);
+      assert.equal(272 - 240 - 16, 16);
     });
 
     it("T3.1.3: mathematically verifies touch targets exceed Apple HIG (>= 44px) and Material 3 guidelines", () => {
@@ -588,7 +544,7 @@ describe("Tier 3: Cross-Feature Boundary & Layout Clearances", () => {
       assert(dashboardTargetPx >= 44, "Dashboard target must be >= 44px");
 
       // 2. CurvySideDock navigation icons: w-11 h-11 = 2.75rem = 44px >= 44px
-      assert(sideDockSource.includes("w-11 h-11"), "CurvySideDock must declare w-11 h-11");
+      assert(sideDockSource.includes("min-h-11"), "Desktop links must be at least 44px tall and fill the sidebar");
       const navTargetPx = 11 * 0.25 * 16;
       assert.strictEqual(navTargetPx, 44);
       assert(navTargetPx >= 44, "Nav item target must be >= 44px");
@@ -680,26 +636,14 @@ describe("Tier 3: Cross-Feature Boundary & Layout Clearances", () => {
       );
     });
 
-    it("T3.2.3: enforces subtle hairline borders (border-slate-200 or border-indigo-100)", () => {
-      assert(
-        footerSource.includes("border-slate-200/80") || footerSource.includes("border-slate-200") || footerSource.includes("border-blue-200"),
-        "ModernEdworldFooter must use subtle border border-slate-200"
-      );
-      assert(
-        sideDockSource.includes("border-white/15"),
-        "CurvySideDock must use subtle translucent border border-white/15"
-      );
+    it("T3.2.3: uses borders on footers and desktop navigation", () => {
+      assert(footerSource.includes("border-[#cfdfdc]"));
+      assert(sideDockSource.includes("border-[#cfdfdc]"));
     });
 
-    it("T3.2.4: enforces diffused ambient drop shadows (shadow-ambient-card or shadow-ambient-float)", () => {
-      assert(
-        footerSource.includes("shadow-ambient-card") || footerSource.includes("shadow-sm") || footerSource.includes("shadow-md"),
-        "ModernEdworldFooter must use shadow-ambient-card"
-      );
-      assert(
-        sideDockSource.includes("shadow-ambient-float") || sideDockSource.includes("shadow-md"),
-        "CurvySideDock must use shadow-ambient-float"
-      );
+    it("T3.2.4: keeps the sidebar visually separate from the workspace", () => {
+      assert(appShellSource.includes("bg-[#f1f6f5]"));
+      assert(sideDockSource.includes("bg-[#edf5f4]"));
     });
 
     it("T3.2.5: verifies smooth transitions on interactive cards and buttons", () => {

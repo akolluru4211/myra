@@ -58,9 +58,9 @@ describe("Edworld Mobile Navigation Unit & Regression Suite", () => {
     assert.ok(navbarContent.includes('Boolean(user) && "hidden lg:flex"'), "Top menu button must be hidden on mobile when user is signed in");
   });
 
-  test("6. AppShell cleans up footer when user is signed in and adds bottom padding", () => {
+  test("6. AppShell uses a compact signed-in footer and clears the mobile dock", () => {
     const appShellContent = fs.readFileSync(appShellPath, "utf8");
-    assert.match(appShellContent, /\{!user && \([\s\S]*?<ModernEdworldFooter \/>/);
+    assert.ok(appShellContent.includes("<ModernEdworldFooter compact={Boolean(user)} />"));
     assert.ok(appShellContent.includes('Boolean(user && !isLandingPage) && "pb-[calc(8rem+env(safe-area-inset-bottom))] lg:pb-6"'), "Main workspace must include bottom padding to clear the dock");
   });
 

@@ -110,7 +110,7 @@ export default function OfferComparisonPage() {
           <span>Back to Dashboard</span>
         </Link>
 
-        <div className="flex flex-wrap items-center justify-between gap-4 p-6 rounded-3xl bg-[#151621] border border-white/10 shadow-xl">
+        <div className="edworld-blue-card flex flex-wrap items-center justify-between gap-4 p-6 rounded-3xl  border border-white/10 shadow-xl">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center text-white shadow-xs">
               <Briefcase className="w-6 h-6 text-white" />

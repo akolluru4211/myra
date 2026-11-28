@@ -78,7 +78,7 @@ export default function CompanyResearchPage() {
           <span>Back to Interview Directory</span>
         </Link>
 
-        <div className="p-6 sm:p-8 rounded-3xl bg-[#151621] border border-white/10 shadow-2xl space-y-5">
+        <div className="edworld-blue-card p-6 sm:p-8 rounded-3xl  border border-white/10 shadow-2xl space-y-5">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center font-black text-xl text-white shadow-lg">
@@ -99,18 +99,18 @@ export default function CompanyResearchPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-white/5 text-xs">
-            <div className="p-4 rounded-2xl bg-slate-900/80 border border-white/5 space-y-2">
+            <div className="edworld-blue-card p-4 rounded-2xl  border border-white/5 space-y-2">
               <span className="font-mono text-[10px] uppercase font-bold text-[#D7FC51]">Company Culture &amp; Values</span>
               <p className="text-slate-300 leading-relaxed">{companyData.cultureNotes}</p>
             </div>
-            <div className="p-4 rounded-2xl bg-slate-900/80 border border-white/5 space-y-2">
+            <div className="edworld-blue-card p-4 rounded-2xl  border border-white/5 space-y-2">
               <span className="font-mono text-[10px] uppercase font-bold text-indigo-400">Compensation Insights</span>
               <p className="text-slate-300 leading-relaxed">{companyData.compensationInsights || "Market competitive base with performance bonuses."}</p>
             </div>
           </div>
         </div>
 
-        <div className="p-6 sm:p-8 rounded-3xl bg-[#151621] border border-white/10 space-y-4">
+        <div className="edworld-blue-card p-6 sm:p-8 rounded-3xl  border border-white/10 space-y-4">
           <h2 className="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
             <Briefcase className="w-4 h-4 text-indigo-400" />
             <span>Standard Interview Process &amp; Format</span>
@@ -140,13 +140,13 @@ export default function CompanyResearchPage() {
           </div>
 
           {activeJobs.length === 0 ? (
-            <div className="p-5 rounded-2xl bg-[#151621] border border-white/10 text-center text-xs text-slate-400">
+            <div className="edworld-blue-card p-5 rounded-2xl  border border-white/10 text-center text-xs text-slate-400">
               No current direct openings listed on EdWorld for {companyName}. Check back soon or set up a job alert.
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {activeJobs.map((j) => (
-                <div key={j.id} className="p-4 rounded-2xl bg-[#151621] border border-white/10 flex items-center justify-between gap-3">
+                <div key={j.id} className="edworld-blue-card p-4 rounded-2xl  border border-white/10 flex items-center justify-between gap-3">
                   <div>
                     <h4 className="font-bold text-xs text-white">{j.title}</h4>
                     <p className="text-[10px] text-slate-400">{j.location} &bull; {j.type}</p>

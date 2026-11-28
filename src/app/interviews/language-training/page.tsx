@@ -141,7 +141,7 @@ export default function LanguageTrainingPage() {
       <div className="min-h-screen bg-[#0E0F15] text-white p-4 sm:p-6 lg:p-8 space-y-8 max-w-[1280px] mx-auto">
         
         {/* Header Navigation */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#13141B] p-6 rounded-3xl border border-white/10 shadow-xl">
+        <div className="edworld-blue-card flex flex-col sm:flex-row sm:items-center justify-between gap-4  p-6 rounded-3xl border border-white/10 shadow-xl">
           <div className="space-y-1">
             <Link
               href="/interviews"
@@ -204,7 +204,7 @@ export default function LanguageTrainingPage() {
               onSubmitSession={handleSessionSubmit}
             />
 
-            <div className="p-4 rounded-2xl bg-[#13141B] border border-white/5 space-y-1 text-xs text-[#8E95A5]">
+            <div className="edworld-blue-card p-4 rounded-2xl  border border-white/5 space-y-1 text-xs text-[#8E95A5]">
               <span className="font-bold text-white block uppercase tracking-wider text-[10px]">
                 Coach Focus Tip:
               </span>
@@ -216,7 +216,7 @@ export default function LanguageTrainingPage() {
           <div className="lg:col-span-5 space-y-6">
             
             {currentAnalysis ? (
-              <div className="bg-[#13141B] p-6 rounded-3xl border border-white/10 shadow-2xl space-y-6 animate-in fade-in">
+              <div className="edworld-blue-card p-6 rounded-3xl border border-white/10 shadow-2xl space-y-6 animate-in fade-in">
                 
                 {/* Score Header */}
                 <div className="flex items-center justify-between border-b border-white/10 pb-4">
@@ -228,15 +228,15 @@ export default function LanguageTrainingPage() {
                   </div>
 
                   <div className="grid grid-cols-3 gap-2 text-center">
-                    <div className="bg-[#1C1D26] p-2 rounded-xl border border-white/5">
+                    <div className="edworld-blue-card p-2 rounded-xl border border-white/5">
                       <span className="text-[9px] text-[#8E95A5] uppercase block font-mono">Grammar</span>
                       <strong className="text-xs text-white">{currentAnalysis.grammarScore}</strong>
                     </div>
-                    <div className="bg-[#1C1D26] p-2 rounded-xl border border-white/5">
+                    <div className="edworld-blue-card p-2 rounded-xl border border-white/5">
                       <span className="text-[9px] text-[#8E95A5] uppercase block font-mono">Clarity</span>
                       <strong className="text-xs text-white">{currentAnalysis.clarityScore}</strong>
                     </div>
-                    <div className="bg-[#1C1D26] p-2 rounded-xl border border-white/5">
+                    <div className="edworld-blue-card p-2 rounded-xl border border-white/5">
                       <span className="text-[9px] text-[#8E95A5] uppercase block font-mono">Fillers</span>
                       <strong className="text-xs text-rose-400">{currentAnalysis.fillerWordCount}</strong>
                     </div>
@@ -249,7 +249,7 @@ export default function LanguageTrainingPage() {
                     What You Said vs. Better Way to Say It
                   </span>
 
-                  <div className="p-4 rounded-2xl bg-[#1C1D26] border border-white/5 space-y-1 text-xs">
+                  <div className="edworld-blue-card p-4 rounded-2xl  border border-white/5 space-y-1 text-xs">
                     <span className="text-[10px] font-mono text-[#8E95A5] uppercase block font-bold">What You Said:</span>
                     <p className="text-slate-300 italic leading-relaxed">
                       "{currentAnalysis.whatYouSaid}"
@@ -300,7 +300,7 @@ export default function LanguageTrainingPage() {
 
               </div>
             ) : (
-              <div className="bg-[#13141B] p-8 rounded-3xl border border-white/10 text-center space-y-4 shadow-xl">
+              <div className="edworld-blue-card p-8 rounded-3xl border border-white/10 text-center space-y-4 shadow-xl">
                 <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mx-auto">
                   <Volume2 className="w-7 h-7" />
                 </div>

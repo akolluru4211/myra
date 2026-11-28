@@ -235,13 +235,13 @@ export async function POST(req: NextRequest) {
         try {
           const { queryDb } = await import("@/lib/db-server");
           const { rows } = await queryDb(
-            `SELECT id, name, display_name, target_role, career_stage, headline, institution, degree, field_of_study, graduation_year, cgpa, interests, primary_goal 
+            `SELECT to_jsonb(profiles) AS profile
              FROM public.profiles 
              WHERE id = $1 LIMIT 1`,
             [userId]
           );
           if (rows && rows.length > 0) {
-            dbProfile = rows[0];
+            dbProfile = rows[0].profile;
           }
         } catch (pErr) {
           console.warn("Could not retrieve user db profile:", pErr);
@@ -250,17 +250,17 @@ export async function POST(req: NextRequest) {
 
       // Merge memory, database records, and request profile into authoritative profile context
       const enrichedProfile: StudentProfileContext = {
-        name: profile?.name || dbProfile?.display_name || dbProfile?.name || undefined,
-        institution: profile?.institution || dbProfile?.institution || undefined,
-        degree: profile?.degree || dbProfile?.degree || undefined,
-        field_of_study: profile?.field_of_study || dbProfile?.field_of_study || undefined,
-        graduation_year: profile?.graduation_year || dbProfile?.graduation_year || undefined,
-        cgpa: profile?.cgpa || dbProfile?.cgpa || undefined,
-        targetRole: profile?.targetRole || dbProfile?.target_role || "Software Engineer",
-        primaryGoal: profile?.primaryGoal || dbProfile?.primary_goal || undefined,
-        interests: profile?.interests || (Array.isArray(dbProfile?.interests) ? dbProfile.interests : []),
-        dailyStudyHours: profile?.dailyStudyHours || 2,
-        careerStage: profile?.careerStage || dbProfile?.career_stage || "STUDENT",
+        name: dbProfile?.display_name || dbProfile?.name || profile?.name,
+        institution: dbProfile?.institution || profile?.institution,
+        degree: dbProfile?.degree || profile?.degree,
+        field_of_study: dbProfile?.field_of_study || profile?.field_of_study,
+        graduation_year: dbProfile?.graduation_year ?? profile?.graduation_year,
+        cgpa: dbProfile?.cgpa ?? profile?.cgpa,
+        targetRole: dbProfile?.target_role || profile?.targetRole,
+        primaryGoal: dbProfile?.primary_goal || profile?.primaryGoal,
+        interests: Array.isArray(dbProfile?.interests) ? dbProfile.interests : profile?.interests,
+        dailyStudyHours: dbProfile?.daily_study_hours ?? profile?.dailyStudyHours,
+        careerStage: dbProfile?.career_stage || profile?.careerStage,
         frequentTopics: existingMemory?.frequentTopics?.slice(0, 5) || profile?.frequentTopics,
         searchedTechnologies: existingMemory?.searchedTechnologies?.slice(0, 5) || profile?.searchedTechnologies,
         strugglePoints: existingMemory?.strugglePoints?.slice(-5) || profile?.strugglePoints,

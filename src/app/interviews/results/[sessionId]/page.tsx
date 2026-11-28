@@ -356,7 +356,7 @@ export default function InterviewResultsPage() {
         </div>
 
         {/* Myra Reviewer Hero Header */}
-        <div className="relative overflow-hidden rounded-3xl bg-neutral-900 text-white border border-neutral-800 p-6 sm:p-8 shadow-xl">
+        <div className="edworld-blue-card relative overflow-hidden rounded-3xl  text-white border border-neutral-800 p-6 sm:p-8 shadow-xl">
           <div className="absolute -top-24 -right-24 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
           
           <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
@@ -392,7 +392,7 @@ export default function InterviewResultsPage() {
               <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                 Interview Diagnostic &amp; Upgrade Review
               </h1>
-              <div className="p-4 rounded-2xl bg-black/70 border border-neutral-800 text-xs text-neutral-300 leading-relaxed space-y-2.5">
+              <div className="edworld-blue-card p-4 rounded-2xl  border border-neutral-800 text-xs text-neutral-300 leading-relaxed space-y-2.5">
                 <p className="font-semibold text-emerald-400 flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-emerald-400" /> Myra's Feedback:
                 </p>
@@ -415,14 +415,14 @@ export default function InterviewResultsPage() {
 
             {/* Prominent Overall Score Badge & Status */}
             <div className="flex flex-row md:flex-col items-center gap-3 shrink-0">
-              <div className="p-5 rounded-3xl bg-black border border-neutral-800 text-white text-center min-w-[140px] shadow-sm">
+              <div className="edworld-blue-card p-5 rounded-3xl  border border-neutral-800 text-white text-center min-w-[140px] shadow-sm">
                 <span className="text-[9px] uppercase font-black tracking-wider text-neutral-400 block">Overall Score</span>
                 <div className="text-4xl font-black text-white font-mono mt-0.5">{overallScore}%</div>
                 <div className={`mt-2 px-2.5 py-1 rounded-full text-[9px] font-bold border ${scoreStatus.bg} ${scoreStatus.color}`}>
                   {scoreStatus.label}
                 </div>
               </div>
-              <div className="p-4 rounded-2xl bg-black border border-neutral-800 text-white text-center min-w-[140px] shadow-xs">
+              <div className="edworld-blue-card p-4 rounded-2xl  border border-neutral-800 text-white text-center min-w-[140px] shadow-xs">
                 <span className="text-[9px] uppercase font-extrabold tracking-wider text-neutral-400 block">
                   {sessionData.isTextSession ? "Clarity Score" : "Delivery Score"}
                 </span>
@@ -436,7 +436,7 @@ export default function InterviewResultsPage() {
 
         {/* Anti-Cheat & Screen Lockdown Integrity Badge (Hidden for Text Practice) */}
         {!sessionData.isTextSession && (
-          <div className="flex items-center justify-between p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800 text-xs">
+          <div className="edworld-blue-card flex items-center justify-between p-4 rounded-2xl  border border-neutral-800 text-xs">
             <div className="flex items-center gap-2.5">
               <div className={`p-2 rounded-xl ${exitCount === 0 ? "bg-white/10 text-white" : "bg-neutral-800 text-neutral-300"}`}>
                 {exitCount === 0 ? <ShieldCheck className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
@@ -464,33 +464,33 @@ export default function InterviewResultsPage() {
 
         {/* Category Breakdown Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="bg-neutral-900/80 rounded-3xl p-5 border border-neutral-800 shadow-xs space-y-1">
+          <div className="edworld-blue-card rounded-3xl p-5 border border-neutral-800 shadow-xs space-y-1">
             <span className="text-[10px] uppercase font-extrabold tracking-wider text-neutral-400 block">Technical Depth</span>
             <div className="text-2xl font-black text-white font-mono">{sessionData.contentScore || 85}%</div>
             <p className="text-[10px] text-neutral-400">Architecture &amp; correctness</p>
           </div>
 
-          <div className="bg-neutral-900/80 rounded-3xl p-5 border border-neutral-800 shadow-xs space-y-1">
+          <div className="edworld-blue-card rounded-3xl p-5 border border-neutral-800 shadow-xs space-y-1">
             <span className="text-[10px] uppercase font-extrabold tracking-wider text-neutral-400 block">STAR Storytelling</span>
             <div className="text-2xl font-black text-white font-mono">{sessionData.clarityScore || 82}%</div>
             <p className="text-[10px] text-neutral-400">Narrative arc &amp; structure</p>
           </div>
 
           {sessionData.isTextSession ? (
-            <div className="bg-slate-900/80 rounded-3xl p-5 border border-slate-800 shadow-sm space-y-1">
+            <div className="edworld-blue-card rounded-3xl p-5 border border-slate-800 shadow-sm space-y-1">
               <span className="text-[10px] uppercase font-extrabold tracking-wider text-slate-400 block">Written Precision</span>
               <div className="text-2xl font-black text-emerald-400 font-mono">{sessionData.grammarScore || 88}%</div>
               <p className="text-[10px] text-slate-400">Clarity &amp; role specificity</p>
             </div>
           ) : (
-            <div className="bg-slate-900/80 rounded-3xl p-5 border border-slate-800 shadow-sm space-y-1">
+            <div className="edworld-blue-card rounded-3xl p-5 border border-slate-800 shadow-sm space-y-1">
               <span className="text-[10px] uppercase font-extrabold tracking-wider text-slate-400 block">Pacing &amp; Articulation</span>
               <div className="text-2xl font-black text-[#00D2B4] font-mono">{sessionData.metrics?.wordsPerMinute || 132} <span className="text-xs text-slate-400">WPM</span></div>
               <p className="text-[10px] text-slate-400">{sessionData.metrics?.fillerWordCount || 0} filler words recorded</p>
             </div>
           )}
 
-          <div className="bg-slate-900/80 rounded-3xl p-5 border border-slate-800 shadow-sm space-y-1">
+          <div className="edworld-blue-card rounded-3xl p-5 border border-slate-800 shadow-sm space-y-1">
             <span className="text-[10px] uppercase font-extrabold tracking-wider text-slate-400 block">JD Keyword Match</span>
             <div className="text-2xl font-black text-amber-300 font-mono">{jdAlignmentScore}%</div>
             <p className="text-[10px] text-slate-400">{missingKeywordsCount} high-impact terms to add</p>
@@ -516,7 +516,7 @@ export default function InterviewResultsPage() {
 
           {/* 1. Missing JD Keywords to Add */}
           {sessionData.missingKeywords && sessionData.missingKeywords.length > 0 && (
-            <div className="p-5 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3">
+            <div className="edworld-blue-card p-5 rounded-2xl  border border-slate-800 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-200 flex items-center gap-2">
                   <Flame className="w-4 h-4 text-amber-400" /> High-Impact Keywords &amp; Concepts to Mention Next Time:
@@ -543,7 +543,7 @@ export default function InterviewResultsPage() {
                 <Layers className="w-4 h-4 text-indigo-400" /> STAR Method Alignment &amp; Upgrade Guidance:
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 space-y-1">
+                <div className="edworld-blue-card p-4 rounded-2xl  border border-slate-800/80 space-y-1">
                   <div className="flex items-center justify-between font-bold text-indigo-300">
                     <span>S - Situation</span>
                     <span className="text-[10px] uppercase bg-indigo-950 px-2 py-0.5 rounded text-indigo-400 font-mono">Context</span>
@@ -551,7 +551,7 @@ export default function InterviewResultsPage() {
                   <p className="text-slate-300 text-[11px] leading-relaxed">{sessionData.starBreakdown.situation}</p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 space-y-1">
+                <div className="edworld-blue-card p-4 rounded-2xl  border border-slate-800/80 space-y-1">
                   <div className="flex items-center justify-between font-bold text-blue-300">
                     <span>T - Task</span>
                     <span className="text-[10px] uppercase bg-blue-950 px-2 py-0.5 rounded text-blue-400 font-mono">Goal</span>
@@ -559,7 +559,7 @@ export default function InterviewResultsPage() {
                   <p className="text-slate-300 text-[11px] leading-relaxed">{sessionData.starBreakdown.task}</p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 space-y-1">
+                <div className="edworld-blue-card p-4 rounded-2xl  border border-slate-800/80 space-y-1">
                   <div className="flex items-center justify-between font-bold text-emerald-300">
                     <span>A - Action</span>
                     <span className="text-[10px] uppercase bg-emerald-950 px-2 py-0.5 rounded text-emerald-400 font-mono">Execution</span>
@@ -567,7 +567,7 @@ export default function InterviewResultsPage() {
                   <p className="text-slate-300 text-[11px] leading-relaxed">{sessionData.starBreakdown.action}</p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 space-y-1">
+                <div className="edworld-blue-card p-4 rounded-2xl  border border-slate-800/80 space-y-1">
                   <div className="flex items-center justify-between font-bold text-[#D7FC51]">
                     <span>R - Result</span>
                     <span className="text-[10px] uppercase bg-lime-950 px-2 py-0.5 rounded text-lime-400 font-mono">Metrics</span>
@@ -585,14 +585,14 @@ export default function InterviewResultsPage() {
                 <Sparkles className="w-4 h-4 text-white" /> Response Rewrite: What You Said vs. Senior Benchmark Model Answer
               </span>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 rounded-2xl bg-neutral-950 border border-neutral-800 space-y-2 text-xs">
+                <div className="edworld-blue-card p-4 rounded-2xl  border border-neutral-800 space-y-2 text-xs">
                   <span className="text-[10px] font-mono text-neutral-400 uppercase block font-bold">What You Said:</span>
                   <p className="text-neutral-300 italic leading-relaxed">
                     &ldquo;{sessionData.whatYouSaid}&rdquo;
                   </p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-neutral-900 border border-neutral-700 space-y-2 text-xs">
+                <div className="edworld-blue-card p-4 rounded-2xl  border border-neutral-700 space-y-2 text-xs">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-mono text-white uppercase block font-bold">Benchmark Model Version:</span>
                     <span className="text-[9px] uppercase font-mono font-bold text-white bg-neutral-800 px-2 py-0.5 rounded border border-neutral-700">Senior Tier</span>
@@ -627,7 +627,7 @@ export default function InterviewResultsPage() {
 
         {/* Strengths & Improvement Areas ("What worked" and "What to improve") */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="p-6 rounded-3xl bg-neutral-900 border border-neutral-800 text-xs text-white space-y-3 shadow-sm">
+          <div className="edworld-blue-card p-6 rounded-3xl  border border-neutral-800 text-xs text-white space-y-3 shadow-sm">
             <span className="font-extrabold flex items-center gap-2 text-emerald-400 text-sm">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" /> What worked
             </span>
@@ -638,7 +638,7 @@ export default function InterviewResultsPage() {
             </ul>
           </div>
 
-          <div className="p-6 rounded-3xl bg-neutral-900 border border-neutral-800 text-xs text-white space-y-3 shadow-sm">
+          <div className="edworld-blue-card p-6 rounded-3xl  border border-neutral-800 text-xs text-white space-y-3 shadow-sm">
             <span className="font-extrabold flex items-center gap-2 text-amber-400 text-sm">
               <TrendingUp className="w-4 h-4 text-amber-400" /> What to improve
             </span>
@@ -651,7 +651,7 @@ export default function InterviewResultsPage() {
         </div>
 
         {/* Annotated Speech Transcript */}
-        <div className="bg-slate-900/70 rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-sm space-y-6">
+        <div className="edworld-blue-card rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-sm space-y-6">
           <div className="flex items-center justify-between border-b border-slate-800 pb-4 flex-wrap gap-2">
             <div>
               <h2 className="text-base font-black text-white">Annotated Speech Transcript</h2>
@@ -666,7 +666,7 @@ export default function InterviewResultsPage() {
             <p className="whitespace-pre-wrap">
               {annotations.length > 0 ? (
                 <span>
-                  &ldquo;{sessionData.whatYouSaid || sessionData.transcript || "In my past work, I identified a bottleneck in our data pipeline where API queries were timing out under concurrent traffic. I redesigned the endpoint using Redis caching and asynchronous job queues, which reduced latency by 65 percent and stabilized overall uptime."}&rdquo;
+                  &ldquo;{sessionData.whatYouSaid || sessionData.transcript || "No transcript recorded."}&rdquo;
                 </span>
               ) : (
                 <span>&ldquo;{sessionData.transcript || sessionData.whatYouSaid || "No transcript recorded."}&rdquo;</span>
@@ -742,7 +742,7 @@ export default function InterviewResultsPage() {
         )}
 
         {/* 1-Click Action Hub */}
-        <div className="bg-neutral-900 rounded-3xl p-6 sm:p-8 border border-neutral-800 space-y-4">
+        <div className="edworld-blue-card rounded-3xl p-6 sm:p-8 border border-neutral-800 space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div>
               <h3 className="text-sm font-black text-white">Next Steps to Elevate Your Profile</h3>

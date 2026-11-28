@@ -48,6 +48,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const { data: attachments } = await supabase
       .from("edmail_attachments")
       .select("*")
+      .eq("mailbox_id", mailbox.id)
       .eq("message_id", messageId);
 
     // Fetch entire thread if part of a conversation

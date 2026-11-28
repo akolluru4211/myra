@@ -220,25 +220,25 @@ export async function generateAndSendOtp(
   requestHistory.set(identifier, recentRequests);
 
   // 4. Dispatch Email OTP via Resend if real email identifier
-  const isTestAccount =
+  const isTestAccount = process.env.NODE_ENV !== "production" && (
     identifier.includes("burst_parallel") ||
     identifier.includes("lockout_target") ||
     identifier.includes("auth_strong_tester") ||
     identifier.includes("test_user") ||
     identifier.endsWith("@test.com") ||
     identifier.endsWith("@example.com") ||
-    identifier.endsWith("@edworld.test");
+    identifier.endsWith("@edworld.test"));
 
   if (identifier.includes("@") && !isTestAccount) {
-    try {
-      await sendOtpVerificationEmail({
+    const delivery = await sendOtpVerificationEmail({
         email: identifier,
         otp: rawCode,
         purpose,
         expiresMinutes: 5,
-      });
-    } catch (emailErr: any) {
-      console.error("[generateAndSendOtp] Failed to dispatch Resend email:", emailErr?.message || emailErr);
+    });
+    if (!delivery.success) {
+      if (otpStore.get(identifier) === otpRecord) otpStore.delete(identifier);
+      throw new Error("We couldn’t send a verification email. Please try again.");
     }
   } else if (isTestAccount) {
     console.info(`[OTP Test Mode] Suppressed outbound Resend email for test account: ${identifier}`);

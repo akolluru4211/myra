@@ -125,7 +125,7 @@ export default function InterviewExperiencesPage() {
   return (
     <div className="min-h-screen bg-[#0E0F15] text-slate-100 p-4 sm:p-8 font-sans">
       <div className="max-w-5xl mx-auto space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-4 p-6 rounded-3xl bg-[#151621] border border-white/10 shadow-xl">
+        <div className="edworld-blue-card flex flex-wrap items-center justify-between gap-4 p-6 rounded-3xl  border border-white/10 shadow-xl">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-rose-500 flex items-center justify-center text-white shadow-lg">
               <Building2 className="w-6 h-6 text-[#D7FC51]" />
@@ -151,7 +151,7 @@ export default function InterviewExperiencesPage() {
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-[#151621] border border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="edworld-blue-card p-4 rounded-2xl  border border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
             <input
@@ -243,7 +243,7 @@ export default function InterviewExperiencesPage() {
 
                       <div className="grid grid-cols-1 gap-2.5">
                         {exp.rounds.map((rnd: any, rIdx: number) => (
-                          <div key={rIdx} className="p-3.5 rounded-2xl bg-slate-900/80 border border-white/5 space-y-2">
+                          <div key={rIdx} className="edworld-blue-card p-3.5 rounded-2xl  border border-white/5 space-y-2">
                             <div className="flex items-center justify-between text-xs">
                               <span className="font-bold text-white">{rnd.roundName}</span>
                               <span className="px-2 py-0.5 rounded-md bg-white/10 text-slate-300 text-[10px] font-mono">
@@ -270,7 +270,7 @@ export default function InterviewExperiencesPage() {
 
         {showSubmitModal && (
           <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-            <div className="bg-[#151621] border border-white/10 shadow-2xl rounded-3xl max-w-xl w-full p-6 space-y-5">
+            <div className="edworld-blue-card border border-white/10 shadow-2xl rounded-3xl max-w-xl w-full p-6 space-y-5">
               <div className="flex items-center justify-between border-b border-white/10 pb-3">
                 <div>
                   <h3 className="font-bold text-base text-white">Share Interview Experience</h3>
@@ -339,7 +339,7 @@ export default function InterviewExperiencesPage() {
                   </div>
 
                   {formRounds.map((rnd, idx) => (
-                    <div key={idx} className="p-3 rounded-2xl bg-slate-900/60 border border-white/5 space-y-2">
+                    <div key={idx} className="edworld-blue-card p-3 rounded-2xl  border border-white/5 space-y-2">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <input
                           type="text"

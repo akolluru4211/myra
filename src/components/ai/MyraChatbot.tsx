@@ -59,20 +59,20 @@ if (typeof window !== "undefined") {
 
 const STARTER_PROMPTS = [
   {
-    title: "Optimize resume bullets",
+    title: "Improve my resume",
     prompt: "Help me rewrite my resume bullet points using action verbs and measurable metrics for maximum ATS scoring.",
   },
   {
-    title: "Practice mock interview",
-    prompt: "Can you conduct a 1-on-1 mock interview with me for a Software Engineering role? Start with the first question.",
+    title: "Practice an interview",
+    prompt: "Run a practice interview for my target role. Ask one question, wait for my answer, then give specific feedback.",
   },
   {
-    title: "Explain DSA concepts",
-    prompt: "Explain Dynamic Programming versus Greedy algorithms with clear intuition, step-by-step logic, and edge cases.",
+    title: "Learn a topic",
+    prompt: "Help me learn at my current level. Ask which subject I want to work on, then offer a short example and a practice question.",
   },
   {
-    title: "System design architecture",
-    prompt: "Walk me through how to design a high-concurrency real-time URL shortener with caching, database sharding, and rate limiting.",
+    title: "Plan my next step",
+    prompt: "Based on my stage and goals, suggest one practical next step. Ask one focused question if my goal is unclear.",
   },
 ];
 
@@ -753,7 +753,7 @@ export default function MyraChatbot({ showLauncher = true }: { showLauncher?: bo
               <div className="min-h-full flex flex-col justify-center items-center text-center px-2 py-6 space-y-6">
                 <div className="space-y-2">
                   <h2 className="text-xl sm:text-2xl font-semibold font-display text-black tracking-tight">
-                    What can I help with today?
+                    What are you working on?
                   </h2>
                 </div>
 

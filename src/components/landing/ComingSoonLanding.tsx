@@ -157,7 +157,7 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
         {/* Countdown Timer Grid with Crisp Solid Cards */}
         <div className="grid grid-cols-4 gap-3 sm:gap-6 max-w-xl mx-auto mb-10">
           {/* Days */}
-          <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col items-center justify-center">
+          <div className="edworld-blue-card border border-neutral-800 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col items-center justify-center">
             <span className="text-3xl sm:text-5xl font-mono font-bold text-white tracking-tight">
               {String(timeLeft.days).padStart(2, "0")}
             </span>
@@ -167,7 +167,7 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
           </div>
 
           {/* Hours */}
-          <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col items-center justify-center">
+          <div className="edworld-blue-card border border-neutral-800 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col items-center justify-center">
             <span className="text-3xl sm:text-5xl font-mono font-bold text-white tracking-tight">
               {String(timeLeft.hours).padStart(2, "0")}
             </span>
@@ -177,7 +177,7 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
           </div>
 
           {/* Minutes */}
-          <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col items-center justify-center">
+          <div className="edworld-blue-card border border-neutral-800 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col items-center justify-center">
             <span className="text-3xl sm:text-5xl font-mono font-bold text-white tracking-tight">
               {String(timeLeft.minutes).padStart(2, "0")}
             </span>
@@ -187,7 +187,7 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
           </div>
 
           {/* Seconds */}
-          <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col items-center justify-center">
+          <div className="edworld-blue-card border border-neutral-800 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col items-center justify-center">
             <span className="text-3xl sm:text-5xl font-mono font-bold text-blue-400 tracking-tight">
               {String(timeLeft.seconds).padStart(2, "0")}
             </span>
@@ -256,7 +256,7 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
 
         {/* Feature Teasers Bento */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-left">
-          <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-2xl">
+          <div className="edworld-blue-card p-4  border border-neutral-800 rounded-2xl">
             <div className="w-9 h-9 metallic-icon-badge metallic-cyan mb-3">
               <Mic className="w-4 h-4 stroke-[1.85]" />
             </div>
@@ -266,7 +266,7 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
             </p>
           </div>
 
-          <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-2xl">
+          <div className="edworld-blue-card p-4  border border-neutral-800 rounded-2xl">
             <div className="w-9 h-9 metallic-icon-badge metallic-indigo mb-3">
               <FileText className="w-4 h-4 stroke-[1.85]" />
             </div>
@@ -276,7 +276,7 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
             </p>
           </div>
 
-          <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-2xl">
+          <div className="edworld-blue-card p-4  border border-neutral-800 rounded-2xl">
             <div className="w-9 h-9 metallic-icon-badge metallic-emerald mb-3">
               <Briefcase className="w-4 h-4 stroke-[1.85]" />
             </div>
@@ -286,7 +286,7 @@ export default function ComingSoonLanding({ onBypassComingSoon, targetLaunchDate
             </p>
           </div>
 
-          <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-2xl">
+          <div className="edworld-blue-card p-4  border border-neutral-800 rounded-2xl">
             <div className="w-9 h-9 metallic-icon-badge metallic-amber mb-3">
               <Users className="w-4 h-4 stroke-[1.85]" />
             </div>

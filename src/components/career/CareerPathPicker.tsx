@@ -371,7 +371,7 @@ export default function CareerPathPicker({
       </div>
 
       {/* Selected Paths Tray (Compact horizontal tags) */}
-      <div className="p-3.5 bg-[#0F1422] border border-white/10 rounded-xl space-y-2.5">
+      <div className="edworld-blue-card p-3.5  border border-white/10 rounded-xl space-y-2.5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
             Active Trajectory:

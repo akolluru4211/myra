@@ -121,9 +121,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div
       className={cn(
-        "min-h-screen flex flex-col font-sans antialiased selection:bg-[#2563EB] selection:text-white relative overflow-x-hidden",
+        "min-h-screen flex flex-col font-sans antialiased selection:bg-[#2563EB] selection:text-white relative overflow-x-clip lg:pl-60 xl:pl-[17rem]",
         "text-black",
-        "bg-[#f8f7f5]"
+        "bg-[#f1f6f5]"
       )}
     >
       <a
@@ -137,8 +137,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       {!isLandingPage && <CurvySideDock />}
 
       {/* Modern Sticky Glassmorphic Navbar */}
-      <div className={cn("relative z-40", !isLandingPage && "lg:pl-28")}>
-        <ModernEdworldNavbar />
+      <div className="sticky top-0 z-40">
+        <ModernEdworldNavbar sidebarVisible />
       </div>
 
       {/* Main Workspace Container */}
@@ -149,18 +149,16 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           "flex-1 outline-none relative z-10",
           isLandingPage
             ? "w-full"
-            : "max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 lg:pl-28",
+            : "max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8",
           Boolean(user && !isLandingPage) && "pb-[calc(8rem+env(safe-area-inset-bottom))] lg:pb-6"
         )}
       >
         {children}
       </main>
 
-      {!user && (
-        <div className="relative z-20 lg:pl-28">
-          <ModernEdworldFooter />
-        </div>
-      )}
+      <div className={cn("relative z-20", user && "pb-[calc(6rem+env(safe-area-inset-bottom))] lg:pb-0")}>
+        <ModernEdworldFooter compact={Boolean(user)} />
+      </div>
 
       {/* Mobile Bottom Navigation for Authenticated Users */}
       {user && !isLandingPage && <MobileBottomNav />}

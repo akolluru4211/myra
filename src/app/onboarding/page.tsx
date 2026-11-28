@@ -31,7 +31,6 @@ import {
   Star,
   FileText
 } from "lucide-react";
-import EdworldLogo from "@/components/ui/EdworldLogo";
 import { supabase } from "@/lib/supabase";
 import CareerPathPicker from "@/components/career/CareerPathPicker";
 import MyraOnboardingAssistantCard from "@/components/onboarding/MyraOnboardingAssistantCard";
@@ -631,7 +630,6 @@ export default function OnboardingPage() {
         
         <header className="space-y-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <EdworldLogo />
             <button
               type="button"
               onClick={handleSkipToDashboard}

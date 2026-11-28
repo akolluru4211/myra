@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import Link from "next/link";
-import EdworldLogo from "@/components/ui/EdworldLogo";
 import Button from "@/components/ui/Button";
 import {
   Briefcase,
@@ -123,7 +122,6 @@ export default function ProfessionalOnboardingPage() {
       {/* Top Header */}
       <div className="max-w-2xl mx-auto w-full flex items-center justify-between py-4 border-b border-amber-900/40">
         <div className="flex items-center gap-3">
-          <EdworldLogo size="sm" showText={false} />
           <div>
             <div className="text-xs font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
               <Briefcase className="w-3.5 h-3.5" />
@@ -139,7 +137,7 @@ export default function ProfessionalOnboardingPage() {
       </div>
 
       {/* Main Form Container */}
-      <div className="max-w-2xl mx-auto w-full my-8 bg-slate-900 border border-amber-900/50 rounded-3xl p-6 sm:p-8 shadow-2xl">
+      <div className="edworld-blue-card max-w-2xl mx-auto w-full my-8  border border-amber-900/50 rounded-3xl p-6 sm:p-8 shadow-2xl">
         {/* Progress bar */}
         <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mb-6">
           <div

@@ -31,6 +31,14 @@ export async function POST(req: NextRequest) {
       attachments = [],
     } = body;
 
+    if (!Array.isArray(attachments) || attachments.length > 10 ||
+        attachments.some((file) => typeof file?.filename !== "string" || !file.filename.trim() ||
+          typeof file.content !== "string" || !/^[A-Za-z0-9+/]*={0,2}$/.test(file.content) ||
+          file.content.length % 4 !== 0) ||
+        attachments.reduce((sum, file) => sum + Buffer.from(file.content, "base64").length, 0) > 3 * 1024 * 1024) {
+      return NextResponse.json({ error: "Attach up to 10 valid files totaling 3 MB or less." }, { status: 400 });
+    }
+
     // 1. Verify mailbox existence and ownership
     const { data: mailbox, error: boxErr } = await supabase
       .from("edmail_mailboxes")
@@ -100,11 +108,15 @@ export async function POST(req: NextRequest) {
       bcc: cleanBcc,
       subject: subject || "(No Subject)",
       text: bodyText || "",
-      html: bodyHtml || `<p>${bodyText}</p>`,
+      html: bodyHtml ? sanitizeEmailHtml(bodyHtml, false) : bodyText ? "" : "<p></p>",
       idempotencyKey,
+      attachments: attachments.map(({ filename, content }) => ({ filename, content })),
     });
 
-    const deliveryStatus = dispatchRes.status === "accepted" ? "accepted" : "failed";
+    if (!dispatchRes.success || dispatchRes.status !== "accepted") {
+      return NextResponse.json({ error: dispatchRes.error || "Mail provider could not accept the message." }, { status: 502 });
+    }
+    const deliveryStatus = "accepted";
 
     // 6. Record outbound message in database under Sent folder
     const snippet = (bodyText || subject || "").slice(0, 140);
@@ -124,7 +136,7 @@ export async function POST(req: NextRequest) {
         subject: subject || "(No Subject)",
         snippet,
         body_text: bodyText || "",
-        body_html: bodyHtml || `<p>${bodyText}</p>`,
+        body_html: bodyHtml ? sanitizeEmailHtml(bodyHtml, false) : "",
         is_read: true,
         is_starred: false,
         labels: [],
@@ -139,12 +151,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: saveErr.message }, { status: 500 });
     }
 
+    if (attachments.length) {
+      const { error } = await supabase.from("edmail_attachments").insert(
+        attachments.map(({ filename, content }) => ({
+          message_id: savedMsg.id,
+          mailbox_id: mailbox.id,
+          filename,
+          content_type: "application/octet-stream",
+          byte_size: Buffer.from(content, "base64").length,
+          content_base64: content,
+        })),
+      );
+      if (error) console.error("Could not save sent attachment copies:", error.message);
+    }
+
     // 7. If this was sent from an existing draft, delete or remove that draft
     if (draftId) {
       await supabase
         .from("edmail_messages")
         .delete()
         .eq("id", draftId)
+        .eq("folder", "drafts")
         .eq("mailbox_id", mailbox.id);
     }
 

@@ -79,6 +79,9 @@ export async function sendEmailNotification(payload: EmailDispatchPayload): Prom
     // but NEVER BCC master admin for user authentication, OTP verification codes, or passwords!
     const bccList = Array.isArray(payload.bcc) ? [...payload.bcc] : payload.bcc ? [payload.bcc] : [];
     const isAuthCategory = payload.category === "auth";
+    if (isAuthCategory && !resend) {
+      return { success: false, error: "Authentication email delivery is not configured." };
+    }
     if (!isAuthCategory && !recipients.includes(PRIMARY_ADMIN_EMAIL) && !bccList.includes(PRIMARY_ADMIN_EMAIL)) {
       bccList.push(PRIMARY_ADMIN_EMAIL);
     }
@@ -129,7 +132,10 @@ export async function sendEmailNotification(payload: EmailDispatchPayload): Prom
       console.warn("[Email DB Audit Log Note]:", dbErr);
     }
 
-    const isMock = !getResendClient();
+    if (isAuthCategory && !messageId) {
+      return { success: false, error: "Resend did not accept the authentication email." };
+    }
+    const isMock = !resend;
     console.info(`[Email Routing Active] Subject: "${payload.subject}" | Target: ${recipients.join(", ")} | Master Admin: ${PRIMARY_ADMIN_EMAIL}`);
     return { success: true, id: messageId, isMock };
   } catch (err: any) {

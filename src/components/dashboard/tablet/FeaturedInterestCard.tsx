@@ -6,7 +6,7 @@ import { ArrowRight, Sparkles, BookOpen } from "lucide-react";
 
 export default function FeaturedInterestCard() {
   return (
-    <div className="rounded-xl bg-[#111827] text-white p-6 shadow-xs flex flex-col justify-between select-none w-full border border-gray-800 h-full">
+    <div className="edworld-blue-card rounded-xl  text-white p-6 shadow-xs flex flex-col justify-between select-none w-full border border-gray-800 h-full">
       <div>
         <div className="text-xs font-semibold tracking-wider uppercase text-blue-400 flex items-center gap-1.5">
           <Sparkles className="w-3.5 h-3.5 text-blue-400" />

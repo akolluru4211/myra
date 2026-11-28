@@ -1,404 +1,49 @@
-"use client";
-
-import React, { useState } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  Compass,
-  Award,
-  Zap,
-  Flame,
-  CheckCircle2,
-  Clock,
-  ArrowRight,
-  Sparkles,
-  TrendingUp,
-  Cpu,
-  Layers,
-  Terminal,
-  ExternalLink,
-  ShieldCheck,
-  ChevronRight,
-  ShieldAlert,
-  Bell
-} from "lucide-react";
+import { ArrowUpRight, Bell, Compass, FileText, FolderKanban, ShieldCheck, Video } from "lucide-react";
 
-export default function CareerOsPage() {
-  const [activeQuarter, setActiveQuarter] = useState<number>(2);
+export const metadata: Metadata = { title: "Career" };
 
-  const radarMetrics = [
-    { label: "Algorithms & DSA", candidate: 92, target: 85 },
-    { label: "System Design", candidate: 78, target: 80 },
-    { label: "STAR Communication", candidate: 88, target: 80 },
-    { label: "Databases & Storage", candidate: 82, target: 75 },
-    { label: "DevOps & CI/CD", candidate: 70, target: 75 },
-  ];
+const tools = [
+  { href: "/career/roadmap", title: "Career roadmap", description: "Set a goal and plan your next steps.", icon: Compass, color: "bg-teal-100 text-teal-900" },
+  { href: "/resumes", title: "Resume builder", description: "Create and refine your resume.", icon: FileText, color: "bg-sky-100 text-sky-900" },
+  { href: "/interviews", title: "Mock interviews", description: "Practice for your next interview.", icon: Video, color: "bg-violet-100 text-violet-900" },
+  { href: "/projects", title: "Project studio", description: "Build projects and show your skills.", icon: FolderKanban, color: "bg-amber-100 text-amber-950" },
+  { href: "/career/scam-checker", title: "Offer checker", description: "Review a job offer for warning signs.", icon: ShieldCheck, color: "bg-rose-100 text-rose-900" },
+  { href: "/settings/alerts", title: "Alert settings", description: "Choose which updates you receive.", icon: Bell, color: "bg-indigo-100 text-indigo-900" },
+];
 
-  const milestones = [
-    {
-      q: 1,
-      title: "Foundations & Algorithmic Patterns",
-      status: "completed",
-      badge: "Completed",
-      description: "Mastered essential patterns: Sliding Window, Two Pointers, Dynamic Programming, and Graph Traversals.",
-      tasks: ["45 Practice Drills Cleared", "Time/Space Complexity Profiling", "Zero-Code Visualizer Exercises"],
-    },
-    {
-      q: 2,
-      title: "High-Concurrency Distributed Systems",
-      status: "active",
-      badge: "Current Milestone • 85%",
-      description: "Architecting resilient distributed primitives: Redis Sliding Windows, Idempotent Kafka Consumers, and Partition Pruning.",
-      tasks: ["System Design & Distributed Labs", "Cache Stampede Prevention Drill", "Simulated Technical System Rounds"],
-    },
-    {
-      q: 3,
-      title: "Production Chaos & Security Drills",
-      status: "upcoming",
-      badge: "Upcoming Q3",
-      description: "Mitigating race conditions, thread starvation, SQL deadlock resolution, and proactive client security.",
-      tasks: ["Security Sentinel Labs", "Load Balancing Under P0 Latency Spike", "Microservice Failover Simulation"],
-    },
-    {
-      q: 4,
-      title: "Executive STAR & Staff Calibration",
-      status: "upcoming",
-      badge: "Upcoming Q4",
-      description: "Calibrated engineering metrics: System Trade-Off Negotiations, STAR Incident Debriefs, and Architecture RFCs.",
-      tasks: ["Executive Panel Simulation", "Live Whiteboard Defense", "Full-Scope Placement Verification"],
-    },
-  ];
-
-  const studioProjects = [
-    {
-      id: "proj-1",
-      title: "Distributed Rate Limiter with Sliding Window Counter",
-      tags: ["Go", "Redis", "Docker", "gRPC"],
-      xp: "+350 XP",
-      difficulty: "Advanced",
-      summary: "Engineer an in-memory token bucket rate limiter sustaining 50,000 req/sec with atomicity under split-brain network scenarios.",
-      status: "Verified",
-    },
-    {
-      id: "proj-2",
-      title: "Real-Time Collaborative Code Editor with CRDTs",
-      tags: ["TypeScript", "WebSockets", "CRDT (Yjs)", "React"],
-      xp: "+400 XP",
-      difficulty: "Intermediate",
-      summary: "Build an operational conflict-free document editor supporting multi-cursor live synchronization and offline reconciliation.",
-      status: "In Progress",
-    },
-    {
-      id: "proj-3",
-      title: "High-Throughput Kafka Event Bus with Idempotent Consumer",
-      tags: ["Java / Spring", "Apache Kafka", "PostgreSQL"],
-      xp: "+500 XP",
-      difficulty: "Hard",
-      summary: "Prevent duplicate financial transactions during network partitions using distributed deduplication tables and outbox patterns.",
-      status: "Ready to Start",
-    },
-  ];
-
+export default function CareerPage() {
   return (
-    <div className="space-y-8 animate-in fade-in duration-200 text-black font-sans pb-12">
-      {/* Header Banner */}
-      <div className="space-y-2.5 text-center max-w-3xl mx-auto pt-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 border border-blue-200 text-[#2563EB] text-xs font-semibold">
-          <Compass className="w-3.5 h-3.5 text-[#2563EB]" />
-          <span>Career Operating System • Competency &amp; Milestones</span>
-        </div>
-        <h1 className="text-3xl sm:text-4xl font-black text-black tracking-tight font-display">
-          Competency Roadmaps &amp; Career Calibration
+    <section aria-labelledby="career-title" className="mx-auto w-full max-w-6xl py-2 sm:py-6">
+      <header className="rounded-3xl border border-teal-100 bg-[#eaf7f4] px-6 py-8 sm:px-10 sm:py-11">
+        <h1 id="career-title" className="text-4xl font-semibold tracking-tight text-[#173630] sm:text-5xl">
+          Career workspace
         </h1>
-        <p className="text-sm text-slate-700">
-          Continuous skills tracking, milestone assessments, and verifiable engineering studios.
+        <p className="mt-3 max-w-lg text-base leading-relaxed text-[#36554f]">
+          Plan your path, build your resume, and prepare for interviews.
         </p>
-      </div>
+      </header>
 
-      {/* Level, XP & Streak Bento Banner */}
-      <div className="bg-[#EFF6FF] border border-[#BFDBFE] p-6 rounded-3xl shadow-sm">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-          {/* Level Card */}
-          <div className="flex items-center gap-4 border-b md:border-b-0 md:border-r border-blue-200 pb-4 md:pb-0 md:pr-6">
-            <div className="w-12 h-12 rounded-2xl bg-blue-100 border border-blue-200 text-[#2563EB] flex items-center justify-center shrink-0 shadow-2xs">
-              <Award className="w-6 h-6 text-[#2563EB]" />
-            </div>
-            <div className="space-y-0.5">
-              <div className="text-xs font-medium text-slate-600">Current Tier</div>
-              <div className="text-lg font-bold text-black">Level 4 Scholar</div>
-              <span className="inline-block text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 border border-blue-200 text-[#1E40AF]">
-                Top 8th Percentile
-              </span>
-            </div>
-          </div>
-
-          {/* XP Progress */}
-          <div className="space-y-1.5 border-b md:border-b-0 md:border-r border-blue-200 pb-4 md:pb-0 md:pr-6">
-            <div className="flex justify-between text-xs">
-              <span className="font-medium text-slate-600">Experience Progress</span>
-              <span className="font-semibold text-black tabular-nums">3,450 / 5,000 XP</span>
-            </div>
-            <div className="w-full h-2 bg-white rounded-full overflow-hidden p-0.5 border border-blue-200">
-              <div className="h-full bg-[#2563EB] rounded-full" style={{ width: "69%" }} />
-            </div>
-            <div className="text-xs text-slate-600 flex items-center justify-between">
-              <span>+350 XP this week</span>
-              <span className="text-[#2563EB] font-medium">1,550 XP to Level 5</span>
-            </div>
-          </div>
-
-          {/* Quick Shortcuts */}
-          <div className="flex items-center justify-start md:justify-end gap-3">
-            <Link
-              href="/interviews"
-              className="text-xs font-bold py-2 px-4 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white shadow-sm inline-flex items-center gap-1.5 cursor-pointer transition-all"
-            >
-              <span>Mock Interview</span>
-              <ArrowRight className="w-3.5 h-3.5 text-white" />
-            </Link>
-            <Link
-              href="/resumes"
-              className="text-xs font-semibold py-2 px-4 rounded-xl bg-[#DBEAFE] hover:bg-blue-200 border border-blue-200 text-[#1E40AF] cursor-pointer transition-all"
-            >
-              <span>ATS Resume</span>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* High-Impact Career Tools Banner */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Link
-          href="/career/roadmap"
-          className="p-5 bg-[#EFF6FF] border border-[#BFDBFE] hover:border-blue-300 rounded-2xl transition-all group shadow-sm space-y-2 block"
-        >
-          <div className="flex items-center justify-between">
-            <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-[#2563EB]">
-              <Compass className="w-4 h-4 stroke-[1.85]" />
-            </div>
-            <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-full bg-white border border-blue-200 text-slate-700">
-              1 / 3 / 5 Yr
+      <nav aria-label="Career tools" className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {tools.map(({ href, title, description, icon: Icon, color }) => (
+          <Link
+            key={href}
+            href={href}
+            prefetch={false}
+            className="group flex h-full items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-slate-950 hover:border-teal-400 hover:bg-teal-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 sm:p-5"
+          >
+            <span className={`grid size-11 shrink-0 place-items-center rounded-xl ${color}`}>
+              <Icon size={22} aria-hidden="true" />
             </span>
-          </div>
-          <h3 className="text-sm font-bold text-black group-hover:text-[#2563EB] transition-colors flex items-center gap-1 font-display">
-            <span>AI Career Roadmap</span>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:translate-x-0.5 transition-transform" />
-          </h3>
-          <p className="text-xs text-slate-700 leading-relaxed">
-            Generate customized multi-horizon milestones, month-by-month checklists, and skill progression.
-          </p>
-        </Link>
-
-        <Link
-          href="/career/scam-checker"
-          className="p-5 bg-[#EFF6FF] border border-[#BFDBFE] hover:border-blue-300 rounded-2xl transition-all group shadow-sm space-y-2 block"
-        >
-          <div className="flex items-center justify-between">
-            <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-[#2563EB]">
-              <ShieldAlert className="w-4 h-4 stroke-[1.85]" />
-            </div>
-            <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-full bg-blue-100 text-[#1E40AF] border border-blue-200">
-              Fraud Shield
+            <span className="min-w-0 flex-1">
+              <span className="block font-semibold">{title}</span>
+              <span className="mt-1 block text-sm leading-relaxed text-slate-600">{description}</span>
             </span>
-          </div>
-          <h3 className="text-sm font-bold text-black group-hover:text-[#2563EB] transition-colors flex items-center gap-1 font-display">
-            <span>Scam Offer Checker</span>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:translate-x-0.5 transition-transform" />
-          </h3>
-          <p className="text-xs text-slate-700 leading-relaxed">
-            Scan job offers or recruiter emails for fee extortion, fake domains, and unofficial communications.
-          </p>
-        </Link>
-
-        <Link
-          href="/settings/alerts"
-          className="p-5 bg-[#EFF6FF] border border-[#BFDBFE] hover:border-blue-300 rounded-2xl transition-all group shadow-sm space-y-2 block"
-        >
-          <div className="flex items-center justify-between">
-            <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-[#2563EB]">
-              <Bell className="w-4 h-4 stroke-[1.85]" />
-            </div>
-            <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-full bg-blue-100 text-[#1E40AF] border border-blue-200">
-              Push Pings
-            </span>
-          </div>
-          <h3 className="text-sm font-bold text-black group-hover:text-[#2563EB] transition-colors flex items-center gap-1 font-display">
-            <span>WhatsApp &amp; Telegram Alerts</span>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-500 group-hover:translate-x-0.5 transition-transform" />
-          </h3>
-          <p className="text-xs text-slate-700 leading-relaxed">
-            Get instant opportunity pings, hackathons, and application deadlines filtered by your roles and cities.
-          </p>
-        </Link>
-      </div>
-
-      {/* Main Grid: Competency Radar vs Milestone Progression */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Radar & Competencies */}
-        <div className="lg:col-span-5 bg-[#EFF6FF] border border-[#BFDBFE] p-6 rounded-3xl shadow-sm space-y-5">
-          <div>
-            <h2 className="text-base font-bold text-black font-display">
-              Competency Radar &amp; Calibration
-            </h2>
-            <p className="text-xs text-slate-600 mt-0.5">
-              Benchmarked against campus placement standards
-            </p>
-          </div>
-
-          {/* Metric Bars */}
-          <div className="space-y-3.5 pt-2">
-            {radarMetrics.map((m) => (
-              <div key={m.label} className="space-y-1 text-xs">
-                <div className="flex justify-between">
-                  <span className="font-medium text-black">{m.label}</span>
-                  <span className="font-semibold text-black">
-                    {m.candidate}% <span className="text-slate-600 font-normal">/ target {m.target}%</span>
-                  </span>
-                </div>
-                <div className="w-full h-2 bg-white rounded-full overflow-hidden p-0.5 border border-blue-200">
-                  <div
-                    className="h-full rounded-full transition-all duration-300 bg-[#2563EB]"
-                    style={{ width: `${m.candidate}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="p-4 rounded-2xl bg-white border border-[#BFDBFE] text-xs text-slate-700 space-y-1">
-            <div className="font-semibold text-black flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
-              <span>Myra AI Calibration Insight</span>
-            </div>
-            <p className="leading-relaxed text-slate-600">
-              Your algorithmic problem solving exceeds the benchmark. Focus on distributed systems and incident mitigations to optimize your placement readiness.
-            </p>
-          </div>
-        </div>
-
-        {/* Milestone Quarter Tabs & Roadmaps */}
-        <div className="lg:col-span-7 bg-[#EFF6FF] border border-[#BFDBFE] p-6 rounded-3xl shadow-sm space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <h2 className="text-base font-bold text-black font-display">
-                Milestone Roadmap
-              </h2>
-              <p className="text-xs text-slate-600 mt-0.5">
-                Structured path toward engineering placement readiness
-              </p>
-            </div>
-
-            {/* Quarter Pill Selector */}
-            <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-blue-200">
-              {[1, 2, 3, 4].map((q) => (
-                <button
-                  key={q}
-                  type="button"
-                  onClick={() => setActiveQuarter(q)}
-                  className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                    activeQuarter === q
-                      ? "bg-[#2563EB] text-white shadow-2xs"
-                      : "text-slate-700 hover:text-black"
-                  }`}
-                >
-                  Q{q}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Active Milestone Card */}
-          {milestones
-            .filter((m) => m.q === activeQuarter)
-            .map((m) => (
-              <div key={m.q} className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-base font-bold text-black">{m.title}</h3>
-                  <span
-                    className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
-                      m.status === "completed"
-                        ? "bg-blue-100 text-[#1E40AF] border-blue-200"
-                        : m.status === "active"
-                        ? "bg-blue-200 text-[#1E40AF] border-blue-300"
-                        : "bg-white text-slate-600 border-blue-200"
-                    }`}
-                  >
-                    {m.badge}
-                  </span>
-                </div>
-
-                <p className="text-xs text-slate-700 leading-relaxed">
-                  {m.description}
-                </p>
-
-                <div className="space-y-2 pt-2 border-t border-blue-200">
-                  <div className="text-xs font-semibold text-black">Verification Checkpoints:</div>
-                  <div className="space-y-1.5">
-                    {m.tasks.map((task, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-xs text-slate-800">
-                        <CheckCircle2
-                          className={`w-3.5 h-3.5 shrink-0 ${
-                            m.status === "completed" || (m.status === "active" && idx === 0)
-                              ? "text-[#2563EB]"
-                              : "text-slate-400"
-                          }`}
-                        />
-                        <span>{task}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-        </div>
-      </div>
-
-      {/* Proof-of-Work Projects Studio */}
-      <div className="space-y-4">
-        <div>
-          <h2 className="text-xl font-black text-black">Proof-of-Work Project Studios</h2>
-          <p className="text-xs text-slate-700 mt-0.5">
-            Production-grade systems projects designed to demonstrate engineering rigor.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {studioProjects.map((proj) => (
-            <div
-              key={proj.id}
-              className="bg-[#EFF6FF] border border-[#BFDBFE] hover:border-blue-300 p-6 rounded-3xl flex flex-col justify-between transition-all group shadow-sm"
-            >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white border border-blue-200 text-slate-700">
-                    {proj.difficulty}
-                  </span>
-                  <span className="text-xs font-bold text-[#2563EB]">{proj.xp}</span>
-                </div>
-                <h3 className="font-bold text-sm text-black leading-snug group-hover:text-[#2563EB] transition-colors">{proj.title}</h3>
-                <p className="text-xs text-slate-700 leading-relaxed">{proj.summary}</p>
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {proj.tags.map((t) => (
-                    <span key={t} className="px-2 py-0.5 rounded-full text-slate-800 text-[10px] bg-white border border-blue-200">
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="pt-4 mt-4 border-t border-blue-200 flex items-center justify-between">
-                <span className="text-[11px] font-medium text-black">{proj.status}</span>
-                <Link
-                  href="/projects"
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-[#2563EB] hover:text-blue-800"
-                >
-                  <span>Open Lab</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#2563EB]" />
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+            <ArrowUpRight size={17} className="mt-1 shrink-0 text-slate-500 group-hover:text-teal-800" aria-hidden="true" />
+          </Link>
+        ))}
+      </nav>
+    </section>
   );
 }

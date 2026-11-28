@@ -1182,6 +1182,18 @@ export default function ActiveInterviewStudioPage() {
                   &ldquo;{currentQ.text}&rdquo;
                 </h2>
 
+                <button
+                  type="button"
+                  className="rounded-lg border border-blue-200 bg-white px-3 py-2 text-sm font-semibold text-blue-900"
+                  onClick={() => window.dispatchEvent(new CustomEvent("open-myra-copilot", {
+                    detail: {
+                      prompt: `Help me practice this mock interview question: "${currentQ.text}". Ask me to answer first, then give specific feedback and a short example answer. Label any invented details as examples.`,
+                    },
+                  }))}
+                >
+                  Practice this question with Myra
+                </button>
+
                 {currentQ.keyPoints && currentQ.keyPoints.length > 0 && (
                   <div className="pt-2 border-t border-neutral-200/60 flex items-center gap-2 flex-wrap">
                     <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-wider">Evaluated on:</span>

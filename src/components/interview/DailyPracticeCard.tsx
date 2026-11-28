@@ -63,7 +63,7 @@ export default function DailyPracticeCard({
         </div>
 
         {/* Guidelines Checklist */}
-        <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 space-y-2">
+        <div className="edworld-blue-card p-4 rounded-2xl  border border-slate-800/80 space-y-2">
           <span className="text-[10px] font-mono uppercase text-slate-400 font-bold block">
             Success Checklist:
           </span>

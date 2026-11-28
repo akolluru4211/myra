@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { sanitizeEmailHtml } from "@/lib/edmail/edmail-service";
 import crypto from "crypto";
+import { Resend } from "resend";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,7 @@ export const dynamic = "force-dynamic";
 function verifySvixSignature(rawBody: string, req: NextRequest): boolean {
   const secret = process.env.EDMAIL_WEBHOOK_SECRET || process.env.RESEND_WEBHOOK_SECRET;
   if (!secret || secret.includes("placeholder") || secret.includes("test")) {
-    return true; // Safe fallback in local development and sandbox tests
+    return process.env.NODE_ENV !== "production";
   }
 
   const svixId = req.headers.get("svix-id");
@@ -25,7 +26,7 @@ function verifySvixSignature(rawBody: string, req: NextRequest): boolean {
   // Prevent replay attacks (5 minutes tolerance)
   const timestampNum = parseInt(svixTimestamp, 10);
   const now = Math.floor(Date.now() / 1000);
-  if (Math.abs(now - timestampNum) > 300) {
+  if (!Number.isSafeInteger(timestampNum) || Math.abs(now - timestampNum) > 300) {
     return false;
   }
 
@@ -102,10 +103,39 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, processed: eventType });
     }
 
+    if (eventType === "email.received") {
+      const eventData = payload.data;
+      const emailId = eventData?.email_id;
+      if (typeof emailId !== "string") {
+        return NextResponse.json({ error: "Missing received email ID" }, { status: 400 });
+      }
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      const { data, error } = await resend.emails.receiving.get(emailId);
+      if (error || !data) throw new Error("Could not retrieve received email");
+      const attachments = [];
+      for (const attachment of eventData.attachments ?? []) {
+        const result = await resend.emails.receiving.attachments.get({ emailId, id: attachment.id });
+        if (result.error || !result.data) throw new Error("Could not retrieve received attachment");
+        if (result.data.size > 15 * 1024 * 1024) {
+          attachments.push({ ...attachment, size: result.data.size });
+          continue;
+        }
+        const response = await fetch(result.data.download_url, { signal: AbortSignal.timeout(15000) });
+        if (!response.ok) throw new Error("Could not download received attachment");
+        const bytes = Buffer.from(await response.arrayBuffer());
+        attachments.push({ ...attachment, size: bytes.length, content: bytes.toString("base64") });
+      }
+      payload = { ...eventData, ...data, id: emailId, attachments };
+    } else if (eventType !== "email.inbound") {
+      return NextResponse.json({ success: true });
+    }
+
     // 3. Handle Real Inbound Email
     const toRecipients = Array.isArray(payload.to) ? payload.to : payload.to ? [payload.to] : [];
-    const fromAddress = payload.from || payload.sender || "unknown@external.com";
-    const fromName = payload.from_name || fromAddress.split("@")[0];
+    const sender = payload.from || payload.sender || "unknown@external.com";
+    const senderMatch = sender.match(/^(.*?)\s*<([^>]+)>$/);
+    const fromAddress = senderMatch?.[2] || sender;
+    const fromName = payload.from_name || senderMatch?.[1] || fromAddress.split("@")[0];
     const subject = payload.subject || "(No Subject)";
     const bodyText = payload.text || "";
     const bodyHtml = payload.html || `<p>${bodyText}</p>`;

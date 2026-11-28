@@ -143,7 +143,7 @@ export default function ContactPage() {
             <p className="text-[11px] text-slate-400 leading-relaxed">
               In accordance with the Digital Personal Data Protection Act 2023 &amp; IT Act 2000:
             </p>
-            <div className="p-3 rounded-xl tactile-chassis bg-[#0C101A] border border-white/10 text-white bg-white/60 border-white/80 text-[11px] space-y-1 text-slate-700">
+            <div className="edworld-blue-card p-3 rounded-xl tactile-chassis  border border-white/10 text-white bg-white/60 border-white/80 text-[11px] space-y-1 text-slate-700">
               <div><strong className="text-white">Designation:</strong> Head of Compliance &amp; Data Privacy</div>
               <div><strong className="text-white">Email:</strong> edworld.eden@gmail.com</div>
               <div><strong className="text-white">Response SLA:</strong> Within 24–48 working hours</div>

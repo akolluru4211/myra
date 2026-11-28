@@ -231,7 +231,7 @@ export default function MobilePrototypePage() {
         </div>
 
         {/* Edge State Simulator Bar */}
-        <div className="w-full flex items-center justify-between gap-2 px-3.5 py-2 bg-[#0C101A] rounded-xl border border-white/10 text-xs text-slate-400 shadow-md">
+        <div className="edworld-blue-card w-full flex items-center justify-between gap-2 px-3.5 py-2  rounded-xl border border-white/10 text-xs text-slate-400 shadow-md">
           <span className="font-bold uppercase tracking-wider text-[10px] text-slate-500">
             Simulate Edge States:
           </span>

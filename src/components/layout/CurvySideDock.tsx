@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
-  LayoutGrid,
   Zap,
   Trophy,
   Users,
@@ -13,7 +12,6 @@ import {
   FileText,
   Briefcase,
   User,
-  Sparkles,
   BookOpen,
   Code2,
   GraduationCap,
@@ -65,7 +63,7 @@ export default function CurvySideDock() {
     {
       name: "Career",
       items: [
-        { href: "/career", label: "Roadmap", icon: Compass },
+        { href: "/career", label: "Career", icon: Compass },
         { href: "/interviews", label: "Interviews", icon: Video },
         { href: "/resumes", label: "Resume", icon: FileText },
         { href: "/jobs", label: "Jobs", icon: Briefcase },
@@ -84,8 +82,8 @@ export default function CurvySideDock() {
       aria-label="Curvy Floating Side Navigation"
       className={cn(
         "hidden lg:flex fixed left-4 top-4 bottom-4 z-40",
-        "w-20 bg-white text-neutral-900 rounded-2xl border border-neutral-200 shadow-xs",
-        "flex-col items-center py-5 gap-3.5 select-none overflow-hidden"
+        "w-52 xl:w-60 bg-[#edf5f4] text-slate-900 rounded-2xl border border-[#cfdfdc]",
+        "flex-col px-3 py-4 gap-3 overflow-hidden"
       )}
     >
       {/* Hidden structural anchors for automated test suites */}
@@ -93,26 +91,8 @@ export default function CurvySideDock() {
         Student Panel Navigation Career Panel Navigation Admin Panel Navigation Career Hub Code Sandbox NETWORK & MENTORSHIP Mentorship Direct Messages /career/dashboard /problems /networking/mentors /networking/messages /leaderboard /squads
       </span>
 
-      {/* Decorative Organic Wave Silhouette on the upper section */}
-      <div
-        className="absolute top-0 right-0 w-8 h-28 pointer-events-none opacity-20 overflow-hidden"
-        aria-hidden="true"
-      >
-        <svg
-          viewBox="0 0 40 140"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full text-white"
-        >
-          <path
-            d="M40 0C25 20 10 40 10 70C10 100 25 120 40 140V0Z"
-            fill="currentColor"
-          />
-        </svg>
-      </div>
-
       {/* Top Active Squircle Button (Dashboard Home with Official Edworld Logo Mark) */}
-      <div className="relative z-10 shrink-0 flex flex-col items-center gap-1">
+      <div className="flex shrink-0 items-center gap-3 px-2">
         <Link
           href="/dashboard"
           title="Dashboard"
@@ -134,18 +114,18 @@ export default function CurvySideDock() {
             priority
           />
         </Link>
-        <span className="text-[9px] font-black tracking-tight text-neutral-800">
-          Home
+        <span className="text-lg font-semibold tracking-tight text-slate-900">
+          EdWorld Co.
         </span>
       </div>
 
       {/* Grouped Navigation Icons Column */}
-      <nav className="flex-1 flex flex-col items-center justify-start gap-3 w-full px-2 z-10 overflow-y-auto no-scrollbar pt-1">
+      <nav className="flex-1 space-y-4 overflow-y-auto px-1 py-1">
         {navGroups.map((group) => (
-          <div key={group.name} className="w-full flex flex-col items-center gap-1.5">
+          <div key={group.name} className="space-y-1">
             {/* Semantic Group Label Divider */}
-            <div className="w-full flex items-center justify-center py-0.5">
-              <span className="text-[8px] font-black uppercase tracking-wider text-neutral-600 text-center px-1 truncate">
+            <div className="px-3 py-1">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-600">
                 {group.name}
               </span>
             </div>
@@ -154,36 +134,24 @@ export default function CurvySideDock() {
               const Icon = item.icon;
               const active = isActive(item.href);
               return (
-                <div key={item.href} className="relative group flex flex-col items-center justify-center w-full">
+                <div key={item.href} className="w-full">
                   <Link
                     href={item.href}
                     title={item.label}
                     aria-label={item.label}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "w-11 h-11 rounded-2xl flex flex-col items-center justify-center transition-all duration-200 relative cursor-pointer",
+                      "min-h-11 rounded-xl flex items-center gap-3 px-3 transition-colors",
                       active
-                        ? "bg-neutral-100 text-neutral-950 font-bold"
-                        : "text-neutral-600 hover:text-neutral-950 hover:bg-neutral-100"
+                        ? "bg-[#d6eae5] text-[#123b35] font-semibold"
+                        : "text-slate-700 hover:bg-white"
                     )}
                   >
                     <Icon className={cn("w-4 h-4", active ? "stroke-[2.5]" : "stroke-[2]")} />
-                    <span className="text-[8.5px] font-bold tracking-tight mt-0.5 leading-none">
+                    <span className="text-sm font-medium">
                       {item.label}
                     </span>
-
-                    {/* Status pill indicator */}
                   </Link>
-
-                  {/* Floating Tooltip with accessible label */}
-                  <div
-                    role="tooltip"
-                    className="absolute left-16 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center z-50 pointer-events-none"
-                  >
-                    <div className="bg-black text-white text-xs font-semibold px-2.5 py-1 rounded-lg shadow-md whitespace-nowrap border border-neutral-200">
-                      {item.label}
-                    </div>
-                  </div>
                 </div>
               );
             })}
@@ -192,27 +160,22 @@ export default function CurvySideDock() {
       </nav>
 
       {/* Bottom Profile Anchor */}
-      <div className="relative z-10 shrink-0 pt-2 border-t border-white/15 flex flex-col items-center gap-1 w-full">
+      <div className="shrink-0 border-t border-[#cfdfdc] pt-2">
         <Link
           href="/profile"
           title="Student Profile"
           aria-label="Student Profile"
           className={cn(
-            "w-11 h-11 rounded-2xl flex flex-col items-center justify-center transition-all duration-200 cursor-pointer group relative",
+            "min-h-11 rounded-xl flex items-center gap-3 px-3 transition-colors",
             isActive("/profile")
               ? "bg-neutral-100 text-neutral-950"
               : "text-neutral-600 hover:text-neutral-950 hover:bg-neutral-100"
           )}
         >
           <User className="w-4 h-4" />
-          <span className="text-[8.5px] font-bold tracking-tight mt-0.5 leading-none">
+          <span className="text-sm font-medium">
             Profile
           </span>
-          <div className="absolute left-16 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center z-50 pointer-events-none">
-            <div className="bg-black text-white text-xs font-semibold px-2.5 py-1 rounded-lg shadow-md whitespace-nowrap">
-              Profile
-            </div>
-          </div>
         </Link>
       </div>
     </aside>

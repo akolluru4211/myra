@@ -33,7 +33,7 @@ export default function TryAgainComparisonModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-slate-900 rounded-3xl max-w-2xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto border border-slate-800 shadow-2xl p-5 sm:p-8 space-y-5 animate-in zoom-in-95 text-white">
+      <div className="edworld-blue-card rounded-3xl max-w-2xl w-full max-h-[calc(100dvh-2rem)] overflow-y-auto border border-slate-800 shadow-2xl p-5 sm:p-8 space-y-5 animate-in zoom-in-95 text-white">
         
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-4">
@@ -53,7 +53,7 @@ export default function TryAgainComparisonModal({
         </div>
 
         {/* Question Banner */}
-        <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-xs text-slate-300 italic">
+        <div className="edworld-blue-card p-3.5 rounded-2xl  border border-slate-800 text-xs text-slate-300 italic">
           "{questionText}"
         </div>
 
@@ -61,7 +61,7 @@ export default function TryAgainComparisonModal({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           
           {/* 1. Language Score */}
-          <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+          <div className="edworld-blue-card p-3.5 rounded-2xl  border border-slate-800 space-y-1">
             <span className="text-[10px] font-mono text-slate-400 uppercase block">Language Score</span>
             <div className="flex items-baseline gap-2">
               <span className="text-lg font-black text-white">{attempt2.languageScore}</span>
@@ -74,7 +74,7 @@ export default function TryAgainComparisonModal({
           </div>
 
           {/* 2. Clarity Score */}
-          <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+          <div className="edworld-blue-card p-3.5 rounded-2xl  border border-slate-800 space-y-1">
             <span className="text-[10px] font-mono text-slate-400 uppercase block">Clarity</span>
             <div className="flex items-baseline gap-2">
               <span className="text-lg font-black text-white">{attempt2.clarityScore}</span>
@@ -87,7 +87,7 @@ export default function TryAgainComparisonModal({
           </div>
 
           {/* 3. Filler Words */}
-          <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+          <div className="edworld-blue-card p-3.5 rounded-2xl  border border-slate-800 space-y-1">
             <span className="text-[10px] font-mono text-slate-400 uppercase block">Filler Words</span>
             <div className="flex items-baseline gap-2">
               <span className="text-lg font-black text-white">{attempt2.fillerCount}</span>
@@ -99,7 +99,7 @@ export default function TryAgainComparisonModal({
           </div>
 
           {/* 4. Speaking Pace */}
-          <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+          <div className="edworld-blue-card p-3.5 rounded-2xl  border border-slate-800 space-y-1">
             <span className="text-[10px] font-mono text-slate-400 uppercase block">Speaking Pace</span>
             <div className="flex items-baseline gap-2">
               <span className="text-lg font-black text-white">{attempt2.wpm}</span>

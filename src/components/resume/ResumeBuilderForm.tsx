@@ -1129,7 +1129,7 @@ export default function ResumeBuilderForm({ content, onChange }: ResumeBuilderFo
 
             {/* Project Studio Picker Modal */}
             {showProjectPicker && (
-              <div className="p-4 rounded-2xl bg-slate-900 text-white space-y-3 animate-in fade-in">
+              <div className="edworld-blue-card p-4 rounded-2xl  text-white space-y-3 animate-in fade-in">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <FolderGit2 className="w-4 h-4 text-brand-300" />
@@ -1644,7 +1644,7 @@ export default function ResumeBuilderForm({ content, onChange }: ResumeBuilderFo
                     </div>
                   )}
 
-                  <div className="p-4 rounded-2xl bg-slate-900 text-white flex items-center justify-between gap-4">
+                  <div className="edworld-blue-card p-4 rounded-2xl  text-white flex items-center justify-between gap-4">
                     <div>
                       <h4 className="font-bold text-xs text-white flex items-center gap-2">
                         <span>Ready to interview for this position?</span>

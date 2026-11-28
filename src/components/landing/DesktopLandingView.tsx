@@ -348,7 +348,7 @@ export default function DesktopLandingView() {
                   </div>
 
                   {/* Learner Quote */}
-                  <div className="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-1">
+                  <div className="edworld-blue-card p-3.5 rounded-2xl  border border-slate-800 space-y-1">
                     <p className="text-xs text-slate-300 italic leading-relaxed">
                       {DESKTOP_STAGES.pro.humanQuote}
                     </p>
@@ -360,7 +360,7 @@ export default function DesktopLandingView() {
                   {/* Stats */}
                   <div className="grid grid-cols-3 gap-2 pt-1">
                     {DESKTOP_STAGES.pro.stats.map((s, idx) => (
-                      <div key={idx} className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-center transition-transform duration-200 hover:scale-105">
+                      <div key={idx} className="edworld-blue-card p-2.5 rounded-xl  border border-slate-800 text-center transition-transform duration-200 hover:scale-105">
                         <span className="block text-[9px] font-mono font-bold uppercase text-slate-400">
                           {s.label}
                         </span>

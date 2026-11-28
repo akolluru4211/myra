@@ -37,7 +37,7 @@ import { cn } from "@/lib/utils";
 import RoleScopedNotifications from "@/components/notifications/RoleScopedNotifications";
 import { useFocusLock } from "@/hooks/useFocusLock";
 
-export default function ModernEdworldNavbar() {
+export default function ModernEdworldNavbar({ sidebarVisible = false }: { sidebarVisible?: boolean }) {
   const pathname = usePathname();
   const { user, profile, logout } = useAuth();
   const { isSessionActive, formattedTimeLeft } = useFocusLock();
@@ -160,7 +160,7 @@ export default function ModernEdworldNavbar() {
   ];
 
   const careerItems = [
-    { href: "/career", label: "Career OS Overview", icon: Compass, desc: "Role readiness & milestones" },
+    { href: "/career", label: "Career workspace", icon: Compass, desc: "Career planning and preparation" },
     { href: "/career/roadmap", label: "Smart Career Roadmap", icon: Compass, desc: "1, 3, & 5-year trajectories" },
     { href: "/interviews", label: "Interactive Mock Interviews", icon: Video, desc: "46-sector simulated rounds" },
     { href: "/resumes", label: "ATS Resume Architect", icon: FileText, desc: "Single-column Harvard format" },
@@ -180,12 +180,12 @@ export default function ModernEdworldNavbar() {
       <header
         className={cn(
           "sticky top-0 z-30 w-full transition-all duration-200 select-none",
-          "bg-white/90 backdrop-blur-md px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4 border-b border-neutral-200/80 shadow-xs"
+              "bg-white/90 backdrop-blur-xl px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4 border-b border-slate-200/80 shadow-[0_8px_24px_rgba(15,23,42,0.04)]"
         )}
       >
         <div className="w-full flex items-center justify-between gap-4">
           {/* Left: Brand Monogram & Pill Navigation Switchers */}
-          <div className="flex items-center gap-4 sm:gap-6 shrink-0">
+          <div className={cn("flex items-center gap-4 sm:gap-6 shrink-0", sidebarVisible && "lg:hidden")}>
             <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2.5 group">
               <div className="relative w-9 h-9 rounded-2xl overflow-hidden flex items-center justify-center bg-[#292825] shadow-sm transition-transform group-hover:scale-105 duration-200 shrink-0 p-1">
                 <Image
@@ -212,23 +212,21 @@ export default function ModernEdworldNavbar() {
           {/* Center: Search Input with Responsive Collapse to Icon below 2xl */}
           <div className="flex-1 max-w-xs justify-center hidden sm:flex mx-1">
             {/* Desktop input on very wide displays (2xl+) */}
-            <div
+            <button
+              type="button"
               onClick={() => setIsRightDrawerOpen(true)}
-              className="hidden 2xl:flex w-full items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-neutral-200/80 text-xs text-slate-500 shadow-xs hover:border-[#292825]/40 hover:shadow-sm transition-all cursor-pointer"
+              className="hidden lg:flex w-full min-h-11 items-center gap-2 px-4 rounded-full bg-slate-50 border border-neutral-200 text-sm text-slate-700 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal-700"
             >
               <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-              <span className="truncate flex-1">Search or type command</span>
-              <kbd className="text-[10px] font-mono font-bold bg-neutral-100 text-slate-500 px-1.5 py-0.5 rounded border border-neutral-200/80">
-                ⌘K
-              </kbd>
-            </div>
+              <span>Browse tools</span>
+            </button>
             {/* Collapsed search icon button on standard desktop and tablet (below 2xl) */}
             <button
               type="button"
               onClick={() => setIsRightDrawerOpen(true)}
-              className="2xl:hidden p-2 rounded-full bg-white border border-neutral-200/80 text-slate-500 hover:text-slate-800 hover:border-slate-300 shadow-xs flex items-center justify-center cursor-pointer min-h-[40px] min-w-[40px]"
-              title="Search"
-              aria-label="Search"
+              className="lg:hidden p-2 rounded-full bg-white border border-neutral-200/80 text-slate-500 hover:text-slate-800 hover:border-slate-300 shadow-xs flex items-center justify-center cursor-pointer min-h-[44px] min-w-[44px]"
+              title="Browse tools"
+              aria-label="Browse tools"
             >
               <Search className="w-4 h-4 text-slate-500" />
             </button>
