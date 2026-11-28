@@ -4,6 +4,7 @@ import { verifyUserRole } from "@/lib/server-role-guard";
 import { MCPAuthContext } from "@/lib/mcp/types";
 import { createClient } from "@/lib/supabase/server";
 import { validateSession } from "@/lib/otp-service";
+import { redactForFrontend } from "@/lib/security/data-redaction";
 
 export const dynamic = "force-dynamic";
 
@@ -81,7 +82,7 @@ export async function POST(req: NextRequest) {
     // Execute MCP tool via central engine with full RBAC & audit logging
     const result = await executeMCPTool(tool, params || {}, authContext);
 
-    return NextResponse.json(result, { status: result.statusCode || (result.success ? 200 : 400) });
+    return NextResponse.json(redactForFrontend(result), { status: result.statusCode || (result.success ? 200 : 400) });
   } catch (err: any) {
     console.error("[MCP Execute API Exception]:", err);
     return NextResponse.json(
