@@ -185,7 +185,7 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
       >
         <div className="w-full flex items-center justify-between gap-4">
           {/* Left: Brand Monogram & Pill Navigation Switchers */}
-          <div className={cn("flex items-center gap-4 sm:gap-6 shrink-0", sidebarVisible && "lg:hidden")}>
+          <div className="flex items-center gap-4 sm:gap-6 shrink-0">
             <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2.5 group">
               <div className="relative w-9 h-9 rounded-2xl overflow-hidden flex items-center justify-center bg-[#292825] shadow-sm transition-transform group-hover:scale-105 duration-200 shrink-0 p-1">
                 <Image
