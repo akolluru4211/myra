@@ -33,6 +33,12 @@
       },
       {
         "type": "promptString",
+        "id": "leetcode_session",
+        "description": "Optional LeetCode session cookie for the signed-in user's private statistics",
+        "password": true
+      },
+      {
+        "type": "promptString",
         "id": "google_oauth_client_id",
         "description": "Google Workspace OAuth Client ID",
         "password": false
@@ -92,6 +98,16 @@
         ],
         "env": {
           "GITHUB_PERSONAL_ACCESS_TOKEN": "${input:github_personal_access_token}"
+        }
+      },
+      "leetcode": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@jinzcdev/leetcode-mcp-server"
+        ],
+        "env": {
+          "LEETCODE_SESSION": "${input:leetcode_session}"
         }
       },
       "linkedin": {
