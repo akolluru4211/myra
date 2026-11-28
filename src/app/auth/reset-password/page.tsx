@@ -202,7 +202,7 @@ export default function ResetPasswordPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-[#F4F5FA] flex items-center justify-center">
-          <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center gap-3">
+          <div className="p-6 border-slate-200 flex items-center gap-3 border-b">
             <Loader2 className="w-5 h-5 animate-spin text-[#57534e]" />
             <span className="text-sm font-semibold text-slate-800">Loading reset...</span>
           </div>

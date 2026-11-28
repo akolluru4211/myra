@@ -294,9 +294,9 @@
 .card-interactive-light,
 .lucid-card,
 .lucid-card-hover {
-  background-color: #EFF6FF;
-  border: 1px solid #BFDBFE;
-  border-radius: 1rem;
+  background-color: transparent;
+  border-block-end: 1px solid #dbeafe;
+  border-radius: 0;
   color: #000000;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -308,7 +308,7 @@
 .card-interactive-light:hover,
 .lucid-card-hover:hover {
   border-color: #60A5FA;
-  transform: translateY(-2px);
+  background-color: #eff6ff;
 }
 
 /* Hairline borders & neutral badges */
@@ -541,16 +541,14 @@ textarea {
 }
 
 .card-interactive {
-  background-color: #FFFFFF;
-  border: 1px solid #E5E7EB;
-  border-radius: 0.75rem;
-  transition: all 0.2s ease-out;
+  background-color: transparent;
+  border-block-end: 1px solid #dbeafe;
+  border-radius: 0;
+  transition: background-color 0.2s ease-out;
 }
 
 .card-interactive:hover {
-  border-color: #D1D5DB;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-  transform: translateY(-2px);
+  background-color: #eff6ff;
 }
 
 /* ========================================================================= */

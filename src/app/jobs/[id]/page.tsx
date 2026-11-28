@@ -150,7 +150,7 @@ export default function JobDetailsPage() {
   if (!isAdult && user) {
     return (
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-6 bg-[#FAF8F5] font-sans text-stone-900">
-        <div className="max-w-md w-full bg-white rounded-3xl border border-stone-200 shadow-sm p-8 text-center space-y-6">
+        <div className="max-w-md w-full border-stone-200 p-8 text-center space-y-6 border-b">
           <div className="w-16 h-16 rounded-2xl bg-stone-100 border border-stone-200 text-stone-800 flex items-center justify-center mx-auto">
             <AlertCircle className="w-8 h-8" />
           </div>
@@ -205,7 +205,7 @@ export default function JobDetailsPage() {
         )}
 
         {/* Provenance Banner */}
-        <div className="p-4 rounded-2xl bg-white border border-stone-200 text-xs text-stone-700 flex items-center justify-between flex-wrap gap-2 shadow-sm">
+        <div className="p-4 border-stone-200 text-xs text-stone-700 flex items-center justify-between flex-wrap gap-2 border-b">
           <div className="flex items-center gap-2.5">
             {job.sourceType === "employer_posted" ? (
               <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
@@ -229,7 +229,7 @@ export default function JobDetailsPage() {
         </div>
 
         {/* Hero Card */}
-        <div className="bg-white rounded-3xl border border-stone-200 shadow-sm p-6 sm:p-8 lg:p-10 space-y-6 lg:space-y-8">
+        <div className="border-stone-200 p-6 sm:p-8 lg:p-10 space-y-6 lg:space-y-8 border-b">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex items-start gap-4 sm:gap-5">
               <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-emerald-900 text-emerald-100 font-serif font-black text-2xl sm:text-3xl flex items-center justify-center shadow-sm shrink-0">
@@ -315,7 +315,7 @@ export default function JobDetailsPage() {
         </div>
 
         {/* Personalized Match Rationale Breakdown */}
-        <div className="bg-white rounded-3xl border border-stone-200 shadow-sm p-6 sm:p-8 lg:p-10 space-y-5">
+        <div className="border-stone-200 p-6 sm:p-8 lg:p-10 space-y-5 border-b">
           <div className="flex items-center gap-2.5 border-b border-stone-100 pb-3.5">
             <Sparkles className="w-5 h-5 text-emerald-700" />
             <h2 className="text-base sm:text-lg font-bold text-stone-900 font-serif">
@@ -375,7 +375,7 @@ export default function JobDetailsPage() {
         </div>
 
         {/* Detailed Description */}
-        <div className="bg-white rounded-3xl border border-stone-200 shadow-sm p-6 sm:p-8 lg:p-10 space-y-5">
+        <div className="border-stone-200 p-6 sm:p-8 lg:p-10 space-y-5 border-b">
           <h2 className="text-base sm:text-lg font-bold text-stone-900 font-serif">Role Overview & Responsibilities</h2>
           <div className="prose max-w-none text-xs sm:text-sm text-stone-600 leading-relaxed whitespace-pre-line">
             {job.description}

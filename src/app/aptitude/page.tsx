@@ -192,7 +192,7 @@ export default function AptitudeStudioPage() {
       {/* 1. STRICT PROCTORING VIOLATION MODAL */}
       {activeWarning && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
-          <div className="max-w-md w-full bg-white rounded-2xl p-6 sm:p-8 border border-[#E5E7EB] shadow-xl text-center space-y-4">
+          <div className="max-w-md w-full p-6 sm:p-8 border-[#E5E7EB] text-center space-y-4 border-b">
             <div className={`w-14 h-14 rounded-2xl mx-auto flex items-center justify-center border ${
               isDisqualified ? "bg-rose-50 border-rose-200 text-rose-600" : "bg-amber-50 border-amber-200 text-amber-600"
             }`}>
@@ -243,7 +243,7 @@ export default function AptitudeStudioPage() {
       <div className="max-w-4xl mx-auto space-y-6">
         
         {/* Top Header Card */}
-        <div className="flex flex-wrap items-center justify-between gap-4 p-5 sm:p-6 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs">
+        <div className="flex flex-wrap items-center justify-between gap-4 p-5 sm:p-6 border-[#E5E7EB] border-b">
           <div className="flex items-center gap-3.5">
             <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-blue-50 text-[#2563EB] border border-blue-200 flex items-center justify-center font-bold">
               <Brain className="w-6 h-6" />
@@ -284,7 +284,7 @@ export default function AptitudeStudioPage() {
 
         {/* 2. PRE-FLIGHT LOCKDOWN PROCTORING SCREEN */}
         {!examStarted && !result ? (
-          <div className="p-8 sm:p-12 rounded-2xl bg-white border border-[#E5E7EB] text-center max-w-2xl mx-auto space-y-6 shadow-xs">
+          <div className="p-8 sm:p-12 border-[#E5E7EB] text-center max-w-2xl mx-auto space-y-6 border-b">
             <div className="w-16 h-16 rounded-2xl bg-blue-50 text-[#2563EB] border border-blue-200 flex items-center justify-center mx-auto">
               <Lock className="w-8 h-8" />
             </div>
@@ -345,7 +345,7 @@ export default function AptitudeStudioPage() {
         ) : result ? (
           /* Results View */
           <div className="space-y-6">
-            <div className="p-6 sm:p-10 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs space-y-6 text-center">
+            <div className="p-6 sm:p-10 border-[#E5E7EB] space-y-6 text-center border-b">
               <div className={`inline-flex p-3 rounded-2xl border ${
                 result.passed ? "bg-emerald-50 border-emerald-200 text-emerald-700" : "bg-rose-50 border-rose-200 text-rose-700"
               }`}>
@@ -476,7 +476,7 @@ export default function AptitudeStudioPage() {
         ) : (
           <div className="space-y-6">
             {/* Progress indicators */}
-            <div className="bg-white p-4 rounded-2xl border border-[#E5E7EB] shadow-xs space-y-3">
+            <div className="p-4 border-[#E5E7EB] space-y-3 border-b">
               <div className="flex items-center justify-between text-xs font-semibold text-[#6B7280]">
                 <span>Question {currentIdx + 1} of {questions.length}</span>
                 <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200">{answeredCount} of {questions.length} Answered</span>
@@ -507,7 +507,7 @@ export default function AptitudeStudioPage() {
 
             {/* Question card */}
             {currentQ && (
-              <div className="bg-white rounded-2xl p-6 sm:p-8 border border-[#E5E7EB] shadow-xs space-y-6">
+              <div className="p-6 sm:p-8 border-[#E5E7EB] space-y-6 border-b">
                 <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-4">
                   <span className="px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#F8F9FA] text-[#6B7280] border border-[#E5E7EB] uppercase">
                     {currentQ.category}

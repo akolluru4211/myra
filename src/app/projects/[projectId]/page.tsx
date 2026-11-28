@@ -124,7 +124,7 @@ export default function PublicProjectDetailPage() {
   if (!project) {
     return (
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4 bg-slate-50">
-        <div className="max-w-md w-full bg-white rounded-3xl p-8 border border-slate-200 text-center space-y-4 shadow-xl">
+        <div className="max-w-md w-full p-8 border-slate-200 text-center space-y-4 border-b">
           <div className="w-14 h-14 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center mx-auto">
             <Code2 className="w-7 h-7" />
           </div>
@@ -148,7 +148,7 @@ export default function PublicProjectDetailPage() {
   if (!project.isPublic && !isOwner) {
     return (
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4 bg-slate-50">
-        <div className="max-w-md w-full bg-white rounded-3xl p-8 border border-slate-200 text-center space-y-4 shadow-xl">
+        <div className="max-w-md w-full p-8 border-slate-200 text-center space-y-4 border-b">
           <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center mx-auto">
             <Lock className="w-7 h-7" />
           </div>
@@ -192,7 +192,7 @@ export default function PublicProjectDetailPage() {
         </div>
 
         {/* Hero Card */}
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+        <div className="border-slate-200 p-6 sm:p-8 space-y-6 border-b">
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2">
               {project.isVerified ? (
@@ -278,7 +278,7 @@ export default function PublicProjectDetailPage() {
 
         {/* Screenshots Gallery (if present) */}
         {project.images && project.images.length > 0 && (
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-4">
+          <div className="border-slate-200 p-6 sm:p-8 space-y-4 border-b">
             <h3 className="font-bold text-base text-slate-900">Project Screenshots &amp; Previews</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {project.images.map((img, idx) => (
@@ -292,7 +292,7 @@ export default function PublicProjectDetailPage() {
 
         {/* Sanitized README Viewer */}
         {project.readmeHtml && (
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-4">
+          <div className="border-slate-200 p-6 sm:p-8 space-y-4 border-b">
             <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
               <Code2 className="w-5 h-5 text-slate-700" />
               <h3 className="font-bold text-base text-slate-900">Project README &amp; Documentation</h3>

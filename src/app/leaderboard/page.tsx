@@ -106,7 +106,7 @@ export default function LeaderboardPage() {
           </div>
 
           {/* Banner Card */}
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs relative overflow-hidden">
+          <div className="p-6 sm:p-8 border-slate-200/80 relative overflow-hidden border-b">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
@@ -139,7 +139,7 @@ export default function LeaderboardPage() {
 
           {/* Minor Wellbeing Protection Policy Notice */}
           {isMinor && (
-            <div className="bg-blue-50 border border-blue-200 rounded-3xl p-6 text-center space-y-3">
+            <div className="border-blue-200 p-6 text-center space-y-3 border-b">
               <div className="w-10 h-10 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center mx-auto">
                 <ShieldCheck className="w-5 h-5" />
               </div>
@@ -161,7 +161,7 @@ export default function LeaderboardPage() {
 
           {/* Standings Table */}
           {!isMinor && (
-            <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+            <div className="border-slate-200/80 overflow-hidden border-b">
               <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Medal className="w-4 h-4 text-slate-400" />

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { UserRole } from "@/lib/types";
-import AuthLoadingScreen from "@/components/ui/AuthLoadingScreen";
+import PageLoadingScreen from "@/components/ui/PageLoadingScreen";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -76,7 +76,7 @@ export default function AuthGuard({
   }, [user, profile, role, loading, pathname, allowedRoles, requireAuth, router]);
 
   if (loading || !isAuthorized) {
-    return <AuthLoadingScreen message={loading ? "Checking session..." : "Verifying permissions..."} />;
+    return <PageLoadingScreen />;
   }
 
   return <>{children}</>;

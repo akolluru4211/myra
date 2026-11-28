@@ -130,7 +130,7 @@ export default function ResearchPaperLibraryPage() {
         </div>
 
         {/* Filter & Search Bar */}
-        <div className="bg-white rounded-2xl p-3 border border-blue-200/80 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="p-3 border-blue-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 border-b">
           <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 scrollbar-none">
             {[
               { id: "all", label: "All Papers" },

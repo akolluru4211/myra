@@ -211,7 +211,7 @@ export default function FounderWorkspacePage() {
   if (authLoading || (!isAuthorized && typeof window !== "undefined")) {
     return (
       <div className="min-h-screen bg-[#FCFCFB] flex items-center justify-center text-[#5E6573]">
-        <div className="flex items-center gap-3 bg-white p-6 rounded-2xl border border-[#EBECEF] shadow-xs">
+        <div className="flex items-center gap-3 p-6 border-[#EBECEF] border-b">
           <RefreshCw className="w-5 h-5 animate-spin text-amber-600" />
           <span className="text-sm font-semibold text-[#13141B]">Verifying Executive Authentication &amp; Access...</span>
         </div>
@@ -223,7 +223,7 @@ export default function FounderWorkspacePage() {
     <div className="min-h-screen bg-[#FCFCFB] text-[#13141B] p-4 sm:p-6 lg:p-8 space-y-6 max-w-[1536px] mx-auto font-sans selection:bg-[#00D2B4]/20 selection:text-[#0A5245]">
       
       {/* Top Banner Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-6 sm:p-8 rounded-3xl border border-[#EBECEF] shadow-xs">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 sm:p-8 border-[#EBECEF] border-b">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
             <span className="px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-[#13141B] text-white flex items-center gap-1.5 font-mono">
@@ -264,28 +264,28 @@ export default function FounderWorkspacePage() {
 
       {/* KPI Stats Row (Real Executive Postgres Telemetry) */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-[#EBECEF] shadow-xs">
+        <div className="p-5 border-[#EBECEF] border-b">
           <span className="text-xs font-bold text-[#5E6573] uppercase tracking-wider block">Monthly Recurring Revenue</span>
           <div className="text-2xl sm:text-3xl font-black text-emerald-700 mt-1">
             ₹{((kpi?.mrr || 1250000) / 100000).toFixed(2)}L
           </div>
           <span className="text-[11px] text-emerald-700 font-semibold mt-1 block">+18.4% MoM Growth</span>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-[#EBECEF] shadow-xs">
+        <div className="p-5 border-[#EBECEF] border-b">
           <span className="text-xs font-bold text-[#5E6573] uppercase tracking-wider block">Monthly Net Burn</span>
           <div className="text-2xl sm:text-3xl font-black text-amber-700 mt-1">
             ₹{((kpi?.monthlyBurn || 450000) / 100000).toFixed(2)}L
           </div>
           <span className="text-[11px] text-amber-800 font-semibold mt-1 block">Within Budget Envelope</span>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-[#EBECEF] shadow-xs">
+        <div className="p-5 border-[#EBECEF] border-b">
           <span className="text-xs font-bold text-[#5E6573] uppercase tracking-wider block">Cash Runway</span>
           <div className="text-2xl sm:text-3xl font-black text-[#13141B] mt-1 font-mono">
             {kpi?.runwayMonths || 22} Months
           </div>
           <span className="text-[11px] text-emerald-700 font-semibold mt-1 block">Zero Near-Term Risk</span>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-[#EBECEF] shadow-xs">
+        <div className="p-5 border-[#EBECEF] border-b">
           <span className="text-xs font-bold text-[#5E6573] uppercase tracking-wider block">Active Initiatives</span>
           <div className="text-2xl sm:text-3xl font-black text-[#13141B] mt-1">
             {initiatives.length}
@@ -332,7 +332,7 @@ export default function FounderWorkspacePage() {
       {/* Main Content Area */}
       <main>
         {loading ? (
-          <div className="py-24 text-center text-[#5E6573] bg-white rounded-3xl border border-[#EBECEF]">
+          <div className="py-24 text-center text-[#5E6573] border-[#EBECEF] border-b">
             <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-3 text-amber-600" />
             <p className="text-sm font-bold text-[#13141B]">Loading executive telemetry...</p>
           </div>
@@ -341,7 +341,7 @@ export default function FounderWorkspacePage() {
             {/* TAB 1: EXECUTIVE RADAR */}
             {activeTab === "radar" && (
               <div className="space-y-6">
-                <div className="bg-white p-6 sm:p-8 rounded-3xl border border-[#EBECEF] shadow-xs space-y-6">
+                <div className="p-6 sm:p-8 border-[#EBECEF] space-y-6 border-b">
                   <div>
                     <h2 className="text-base font-bold text-[#13141B]">Corporate Health &amp; Capital Telemetry</h2>
                     <p className="text-xs text-[#5E6573]">Real-time burn, cash reserves, and institutional partnership pipelines</p>
@@ -379,7 +379,7 @@ export default function FounderWorkspacePage() {
             {/* TAB 2: STRATEGIC INITIATIVES */}
             {activeTab === "initiatives" && (
               <div className="space-y-6">
-                <div className="bg-white p-6 sm:p-8 rounded-3xl border border-[#EBECEF] shadow-xs space-y-5">
+                <div className="p-6 sm:p-8 border-[#EBECEF] space-y-5 border-b">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                       <h2 className="text-base font-bold text-[#13141B]">Board-Level Strategic Initiatives</h2>
@@ -449,7 +449,7 @@ export default function FounderWorkspacePage() {
             {/* TAB 3: FINANCIALS */}
             {activeTab === "financials" && (
               <div className="space-y-6">
-                <div className="bg-white p-6 sm:p-8 rounded-3xl border border-[#EBECEF] shadow-xs space-y-5">
+                <div className="p-6 sm:p-8 border-[#EBECEF] space-y-5 border-b">
                   <div>
                     <h2 className="text-base font-bold text-[#13141B]">Monthly Financial Statement &amp; P&amp;L</h2>
                     <p className="text-xs text-[#5E6573]">Audited revenue, expenditure, and gross margin ledger</p>
@@ -495,7 +495,7 @@ export default function FounderWorkspacePage() {
             {/* TAB 4: INVESTOR RELATIONS */}
             {activeTab === "investors" && (
               <div className="space-y-6">
-                <div className="bg-white p-6 sm:p-8 rounded-3xl border border-[#EBECEF] shadow-xs space-y-5">
+                <div className="p-6 sm:p-8 border-[#EBECEF] space-y-5 border-b">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                       <h2 className="text-base font-bold text-[#13141B]">Quarterly Investor Memoranda &amp; Updates</h2>
@@ -545,7 +545,7 @@ export default function FounderWorkspacePage() {
             {/* TAB 5: AI BRIEFING */}
             {activeTab === "ai_briefing" && (
               <div className="space-y-6">
-                <div className="bg-white p-6 sm:p-8 rounded-3xl border border-[#EBECEF] shadow-xs space-y-6">
+                <div className="p-6 sm:p-8 border-[#EBECEF] space-y-6 border-b">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                       <h2 className="text-base font-bold text-[#13141B] flex items-center gap-2">
@@ -616,7 +616,7 @@ export default function FounderWorkspacePage() {
       {/* MODAL: Strategic Initiative */}
       {showInitModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white border border-[#EBECEF] rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl">
+          <div className="border-[#EBECEF] max-w-md w-full p-6 sm:p-8 border-b">
             <h3 className="text-base font-extrabold text-[#13141B] mb-4">Create Strategic Initiative</h3>
             <form onSubmit={handleCreateInitiative} className="space-y-4">
               <div>
@@ -697,7 +697,7 @@ export default function FounderWorkspacePage() {
       {/* MODAL: Investor Update */}
       {showUpdateModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white border border-[#EBECEF] rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl">
+          <div className="border-[#EBECEF] max-w-md w-full p-6 sm:p-8 border-b">
             <h3 className="text-base font-extrabold text-[#13141B] mb-4">Compose Investor Memo</h3>
             <form onSubmit={handleCreateInvestorUpdate} className="space-y-4">
               <div>

@@ -4,7 +4,6 @@ import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Mail, ArrowRight, RefreshCw, CheckCircle2, AlertCircle } from "lucide-react";
-import EdworldLogo from "@/components/ui/EdworldLogo";
 import { supabase } from "@/lib/supabase";
 import { translateAuthError } from "@/lib/auth-context";
 
@@ -70,13 +69,10 @@ function VerifyEmailContent() {
   return (
     <div className="min-h-screen bg-[#FCFCFB] text-[#13141B] flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans selection:bg-[#00D2B4]/20 selection:text-[#0A5245]">
       <div className="sm:mx-auto sm:w-full sm:max-w-md space-y-3 text-center">
-        <Link href="/" className="inline-block transition-transform hover:scale-105 active:scale-95">
-          <EdworldLogo />
-        </Link>
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
-        <div className="rounded-2xl p-6 sm:p-8 bg-white border border-[#EBECEF] shadow-xs space-y-6 text-center">
+        <div className="p-6 sm:p-8 border-[#EBECEF] space-y-6 text-center border-b">
           
           <div className="w-12 h-12 rounded-2xl bg-[#00D2B4]/10 text-[#0A5245] flex items-center justify-center mx-auto border border-[#00D2B4]/30 shadow-2xs">
             <Mail className="w-6 h-6 text-[#00D2B4]" />

@@ -62,7 +62,7 @@ export default function EmployerDashboardPage() {
         </div>
 
         {/* Listings List */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-sm space-y-4">
+        <div className="p-6 sm:p-8 border-stone-200 space-y-4 border-b">
           <div className="flex items-center justify-between border-b border-stone-100 pb-4">
             <h2 className="text-base font-bold text-stone-900 font-serif">Your Postings</h2>
             <span className="text-xs text-stone-500 font-semibold">{jobs.length} Active Posts</span>

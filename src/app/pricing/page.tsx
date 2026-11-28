@@ -43,7 +43,7 @@ export default function PricingPage() {
       features: [
         "1 Single-Column ATS Vector Resume",
         "2 AI Mock Interviews / month",
-        "View-Only Job & Internship Board",
+        "Browse jobs and apply directly on employer sites",
         "Community Discord & Pod Access",
         "Basic STAR Rubric Feedback",
       ],
@@ -53,20 +53,20 @@ export default function PricingPage() {
     },
     {
       id: "pro",
-      name: "Career Pro",
-      priceInr: billingCycle === "monthly" ? 49 : 39,
-      period: "month",
-      description: "Maximum velocity for campus placements and off-campus tech drives.",
+      name: "EdPro Placement",
+      priceInr: billingCycle === "monthly" ? 49 : 490,
+      period: billingCycle === "monthly" ? "month" : "year",
+      description: "Prepare a job-specific résumé, rehearse interviews, and keep your applications organized.",
       badge: "✦ Most Popular",
       features: [
         "Unlimited ATS Resumes & Job Tailoring",
         "Unlimited AI Voice & Video Mock Interviews",
         "Real-Time Waveform & Speech Cadence",
-        "Direct Applications to Verified Jobs",
+        "Application tracking and EdMail in one workspace",
         "Focus Lock Distraction Blocker",
         "Priority Recruiter Visibility Badge",
       ],
-      ctaLabel: billingCycle === "monthly" ? "Upgrade to Pro (₹49)" : "Upgrade to Pro (₹39/mo)",
+      ctaLabel: "Choose EdPro",
       ctaHref: "/settings/billing?plan=pro",
       isPopular: true,
     },
@@ -96,7 +96,7 @@ export default function PricingPage() {
     { feature: "Job Description Keyword Matcher", free: "Basic Match", pro: "Deep Parser & Chips", campus: "Deep Parser & Chips" },
     { feature: "AI Mock Interviews (Voice + Video)", free: "2 / month", pro: "Unlimited", campus: "Unlimited" },
     { feature: "Speech Cadence & Filler-Word Counter", free: "✗", pro: "✓ (130-160 WPM Target)", campus: "✓ (130-160 WPM Target)" },
-    { feature: "Direct Verified Job Applications", free: "View Only", pro: "✓ Direct Apply", campus: "✓ Priority Cohort Pools" },
+    { feature: "Direct employer Apply links", free: "Included", pro: "Included", campus: "Included" },
     { feature: "Focus Lock Distraction Blocker", free: "Standard", pro: "✓ Full Access", campus: "✓ Institutional Control" },
     { feature: "TPO Placement Analytics Portal", free: "✗", pro: "✗", campus: "✓ Real-Time Telemetry" },
     { feature: "Support SLA", free: "Community", pro: "Priority Email", campus: "Dedicated Account Manager" },
@@ -108,8 +108,8 @@ export default function PricingPage() {
       a: "Yes! Our Free Student Starter is ₹0 forever. It includes 1 vector ATS resume, 2 AI mock interviews every month, and complete access to the curated job board and community.",
     },
     {
-      q: "How does Career Pro billing work?",
-      a: "Career Pro is ₹49 per month (or ₹39 per month billed annually). You get unlimited AI mock interviews in 3D lockdown mode, unlimited resume tailoring, and full access to Focus Lock deep study features.",
+      q: "How does EdPro billing work?",
+      a: "EdPro Placement is ₹49 per month or ₹490 per year.",
     },
     {
       q: "Are there any hidden platform charges or lock-ins?",
@@ -145,7 +145,7 @@ export default function PricingPage() {
 
         {/* Monthly / Annual Billing Toggle */}
         <div className="pt-4 flex items-center justify-center gap-2">
-          <div className="inline-flex items-center gap-1.5 p-1.5 bg-[#EFF6FF] border border-[#BFDBFE] rounded-2xl shadow-sm">
+          <div className="inline-flex items-center gap-1.5 p-1.5 border-[#BFDBFE] border-b">
             <button
               onClick={() => setBillingCycle("monthly")}
               className={`px-4 py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${
@@ -167,7 +167,7 @@ export default function PricingPage() {
             >
               <span>Annual Billing</span>
               <span className="px-1.5 py-0.5 bg-blue-100 text-blue-800 text-[10px] font-bold rounded-md border border-blue-200">
-                Save 20%
+                Save ₹98
               </span>
             </button>
           </div>
@@ -175,6 +175,18 @@ export default function PricingPage() {
       </section>
 
       {/* 2. THREE PRICING TIERS */}
+      <section aria-label="Placement workflow" className="mx-auto grid max-w-6xl gap-4 border-y border-blue-200 py-5 sm:grid-cols-2 lg:grid-cols-4">
+        {[
+          ["Find a role", "/jobs"],
+          ["Prepare your résumé", "/resumes"],
+          ["Track applications", "/profile/applied"],
+          ["Check EdMail replies", "/edmail"],
+        ].map(([label, href]) => (
+          <Link key={href} href={href} className="flex items-center justify-between gap-2 px-2 py-2 text-sm font-semibold text-blue-900 hover:underline">
+            {label}<ArrowRight size={16} aria-hidden="true" />
+          </Link>
+        ))}
+      </section>
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
         {plans.map((p) => (
           <div
@@ -257,7 +269,7 @@ export default function PricingPage() {
       </section>
 
       {/* 3. FEATURE COMPARISON MATRIX TABLE */}
-      <section className="bg-[#EFF6FF] border border-[#BFDBFE] p-6 sm:p-8 max-w-5xl mx-auto space-y-6 rounded-3xl shadow-sm text-black">
+      <section className="border-[#BFDBFE] p-6 sm:p-8 max-w-5xl mx-auto space-y-6 text-black border-b">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-blue-100 text-blue-800 border border-blue-200 text-xs font-semibold rounded-full font-display">
             <Sparkles className="w-3.5 h-3.5 text-blue-600" />
@@ -271,7 +283,7 @@ export default function PricingPage() {
           </p>
         </div>
 
-        <div className="overflow-x-auto border border-[#BFDBFE] rounded-2xl bg-white shadow-sm">
+        <div className="overflow-x-auto border-[#BFDBFE] border-b">
           <table className="w-full text-xs text-left">
             <thead>
               <tr className="bg-[#EFF6FF] border-b border-blue-200 text-black font-bold uppercase tracking-wider font-display">
@@ -300,7 +312,7 @@ export default function PricingPage() {
       </section>
 
       {/* 4. 100% TRANSPARENT BILLING GUARANTEE */}
-      <section className="bg-[#EFF6FF] border border-[#BFDBFE] p-6 sm:p-8 text-center space-y-3 max-w-4xl mx-auto shadow-sm rounded-3xl text-black">
+      <section className="border-[#BFDBFE] p-6 sm:p-8 text-center space-y-3 max-w-4xl mx-auto text-black border-b">
         <div className="flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm font-bold text-black font-display">
           <span>✦ All prices inclusive of applicable GST (18%)</span>
           <span className="text-slate-400">&bull;</span>

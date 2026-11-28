@@ -311,7 +311,7 @@ export default function EmployeeWorkspacePage() {
   if (authLoading || (!isAuthorized && typeof window !== "undefined")) {
     return (
       <div className="min-h-screen bg-[#FCFCFB] flex items-center justify-center text-[#5E6573]">
-        <div className="flex items-center gap-3 bg-white p-6 rounded-2xl border border-[#EBECEF] shadow-xs">
+        <div className="flex items-center gap-3 p-6 border-[#EBECEF] border-b">
           <RefreshCw className="w-5 h-5 animate-spin text-cyan-600" />
           <span className="text-sm font-semibold text-[#13141B]">Verifying Employee Workplace Authentication...</span>
         </div>
@@ -343,7 +343,7 @@ export default function EmployeeWorkspacePage() {
     <div className="min-h-screen bg-[#FCFCFB] text-[#13141B] p-4 sm:p-6 lg:p-8 space-y-6 max-w-[1536px] mx-auto font-sans selection:bg-[#00D2B4]/20 selection:text-[#0A5245]">
       
       {/* Top Banner Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-6 sm:p-8 rounded-3xl border border-[#EBECEF] shadow-xs">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 sm:p-8 border-[#EBECEF] border-b">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
             <span className="px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-[#13141B] text-white flex items-center gap-1.5 font-mono">
@@ -392,24 +392,24 @@ export default function EmployeeWorkspacePage() {
 
       {/* KPI Stats Row (Real Postgres Telemetry Only) */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-[#EBECEF] shadow-xs">
+        <div className="p-5 border-[#EBECEF] border-b">
           <span className="text-xs font-bold text-[#5E6573] uppercase tracking-wider block">Assigned Tasks</span>
           <div className="text-2xl sm:text-3xl font-black text-[#13141B] mt-1">{tasks.length}</div>
           <span className="text-[11px] text-emerald-600 font-semibold mt-1 block">
             {tasks.filter(t => t.status === "COMPLETED").length} Completed
           </span>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-[#EBECEF] shadow-xs">
+        <div className="p-5 border-[#EBECEF] border-b">
           <span className="text-xs font-bold text-[#5E6573] uppercase tracking-wider block">Platform Signups</span>
           <div className="text-2xl sm:text-3xl font-black text-indigo-700 mt-1">{platformUsers.length}</div>
           <span className="text-[11px] text-indigo-800 font-semibold mt-1 block">Registered Users</span>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-[#EBECEF] shadow-xs">
+        <div className="p-5 border-[#EBECEF] border-b">
           <span className="text-xs font-bold text-[#5E6573] uppercase tracking-wider block">Open Support Tickets</span>
           <div className="text-2xl sm:text-3xl font-black text-cyan-700 mt-1">{openTicketsCount}</div>
           <span className="text-[11px] text-cyan-800 font-semibold mt-1 block">User Inquiries &amp; Triage</span>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-[#EBECEF] shadow-xs">
+        <div className="p-5 border-[#EBECEF] border-b">
           <span className="text-xs font-bold text-[#5E6573] uppercase tracking-wider block">Quarterly OKRs</span>
           <div className="text-2xl sm:text-3xl font-black text-[#13141B] mt-1">{okrs.length}</div>
           <span className="text-[11px] text-[#5E6573] font-semibold mt-1 block">Performance Targets</span>
@@ -456,7 +456,7 @@ export default function EmployeeWorkspacePage() {
       {/* Main Content Area */}
       <main>
         {loading ? (
-          <div className="py-24 text-center text-[#5E6573] bg-white rounded-3xl border border-[#EBECEF]">
+          <div className="py-24 text-center text-[#5E6573] border-[#EBECEF] border-b">
             <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-3 text-cyan-600" />
             <p className="text-sm font-bold text-[#13141B]">Loading workplace data...</p>
           </div>
@@ -465,7 +465,7 @@ export default function EmployeeWorkspacePage() {
             {/* TAB 1: MY WORK */}
             {activeTab === "my_work" && (
               <div className="space-y-6">
-                <div className="bg-white p-6 rounded-3xl border border-[#EBECEF] shadow-xs space-y-4">
+                <div className="p-6 border-[#EBECEF] space-y-4 border-b">
                   <div className="flex items-center justify-between">
                     <div>
                       <h2 className="text-base font-bold text-[#13141B]">My Assigned Tasks</h2>
@@ -537,7 +537,7 @@ export default function EmployeeWorkspacePage() {
             {/* TAB 2: WEBSITE REGISTERED USERS */}
             {activeTab === "registered_users" && (
               <div className="space-y-6">
-                <div className="bg-white p-6 rounded-3xl border border-[#EBECEF] shadow-xs space-y-4">
+                <div className="p-6 border-[#EBECEF] space-y-4 border-b">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                       <h2 className="text-base font-bold text-[#13141B] flex items-center gap-2">
@@ -630,7 +630,7 @@ export default function EmployeeWorkspacePage() {
             {/* TAB 3: SUPPORT TICKETS & ISSUE RESOLUTION */}
             {activeTab === "tickets" && (
               <div className="space-y-6">
-                <div className="bg-white p-6 rounded-3xl border border-[#EBECEF] shadow-xs space-y-4">
+                <div className="p-6 border-[#EBECEF] space-y-4 border-b">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                       <h2 className="text-base font-bold text-[#13141B] flex items-center gap-2">
@@ -762,7 +762,7 @@ export default function EmployeeWorkspacePage() {
             {/* TAB 4: PERFORMANCE / OKRS */}
             {activeTab === "my_performance" && (
               <div className="space-y-6">
-                <div className="bg-white p-6 rounded-3xl border border-[#EBECEF] shadow-xs space-y-4">
+                <div className="p-6 border-[#EBECEF] space-y-4 border-b">
                   <div>
                     <h2 className="text-base font-bold text-[#13141B]">My Objectives &amp; Key Results (OKRs)</h2>
                     <p className="text-xs text-[#5E6573]">Track progress against your personal deliverables</p>
@@ -801,7 +801,7 @@ export default function EmployeeWorkspacePage() {
             {/* TAB 5: LEAVES & PAYROLL */}
             {activeTab === "my_hr" && (
               <div className="space-y-6">
-                <div className="bg-white p-6 rounded-3xl border border-[#EBECEF] shadow-xs space-y-4">
+                <div className="p-6 border-[#EBECEF] space-y-4 border-b">
                   <div className="flex items-center justify-between">
                     <div>
                       <h2 className="text-base font-bold text-[#13141B]">Leave Balance &amp; Time Off</h2>
@@ -847,7 +847,7 @@ export default function EmployeeWorkspacePage() {
                 </div>
 
                 {/* Payslips Snapshot */}
-                <div className="bg-white p-6 rounded-3xl border border-[#EBECEF] shadow-xs space-y-4">
+                <div className="p-6 border-[#EBECEF] space-y-4 border-b">
                   <div>
                     <h2 className="text-base font-bold text-[#13141B]">My Disbursed Payslips</h2>
                     <p className="text-xs text-[#5E6573]">Official monthly compensation summaries</p>
@@ -878,7 +878,7 @@ export default function EmployeeWorkspacePage() {
             {/* TAB 6: COMPANY DIRECTORY */}
             {activeTab === "company" && (
               <div className="space-y-6">
-                <div className="bg-white p-6 rounded-3xl border border-[#EBECEF] shadow-xs space-y-4">
+                <div className="p-6 border-[#EBECEF] space-y-4 border-b">
                   <div>
                     <h2 className="text-base font-bold text-[#13141B]">Team &amp; Colleague Directory</h2>
                     <p className="text-xs text-[#5E6573]">Colleagues and internal staff across EdWorld Organization</p>
@@ -905,7 +905,7 @@ export default function EmployeeWorkspacePage() {
             {/* TAB 7: AI WORK COPILOT */}
             {activeTab === "ai_assistant" && (
               <div className="space-y-6">
-                <div className="bg-white p-6 rounded-3xl border border-[#EBECEF] shadow-xs space-y-6">
+                <div className="p-6 border-[#EBECEF] space-y-6 border-b">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                       <h2 className="text-base font-bold text-[#13141B] flex items-center gap-2">
@@ -976,7 +976,7 @@ export default function EmployeeWorkspacePage() {
       {/* MODAL: Create Task */}
       {showTaskModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white border border-[#EBECEF] rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl">
+          <div className="border-[#EBECEF] max-w-md w-full p-6 sm:p-8 border-b">
             <h3 className="text-base font-extrabold text-[#13141B] mb-4">Create Personal Task</h3>
             <form onSubmit={handleCreateTask} className="space-y-4">
               <div>
@@ -1049,7 +1049,7 @@ export default function EmployeeWorkspacePage() {
       {/* MODAL: Request Leave */}
       {showLeaveModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white border border-[#EBECEF] rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl">
+          <div className="border-[#EBECEF] max-w-md w-full p-6 sm:p-8 border-b">
             <h3 className="text-base font-extrabold text-[#13141B] mb-4">Submit Time-Off Request</h3>
             <form onSubmit={handleCreateLeaveRequest} className="space-y-4">
               <div>

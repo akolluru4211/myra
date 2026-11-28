@@ -119,8 +119,8 @@ export default function OpportunityBoard({ initialHackathons = [], hackathonsOnl
       <div className="mt-5 flex flex-wrap items-center gap-3">
         {hackathonsOnly ? (
           <nav aria-label="Other opportunities" className="flex gap-4 text-sm font-semibold text-blue-800">
-            <Link href="/opportunities?type=internships" className="hover:underline">Internships</Link>
-            <Link href="/opportunities?type=jobs" className="hover:underline">Jobs</Link>
+            <Link href="/internships" className="hover:underline">Internships</Link>
+            <Link href="/jobs" className="hover:underline">Jobs</Link>
           </nav>
         ) : (
           <div role="group" aria-label="Opportunity type" className="flex flex-wrap gap-1 rounded-lg bg-slate-100 p-1">

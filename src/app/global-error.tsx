@@ -3,7 +3,6 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
-import EdworldLogo from "@/components/ui/EdworldLogo";
 
 export default function GlobalError({
   error,
@@ -60,9 +59,6 @@ export default function GlobalError({
             </a>
           </div>
 
-          <div className="pt-4 border-t border-[#E8ECF2] flex items-center justify-center">
-            <EdworldLogo size="sm" showText={true} />
-          </div>
         </div>
       </body>
     </html>

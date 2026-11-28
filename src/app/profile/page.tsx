@@ -397,8 +397,8 @@ export default function ProfilePage() {
         {/* ========================================================================= */}
         {/* 1. PAGE HEADER: Pure White Elevated Overview Card                         */}
         {/* ========================================================================= */}
-        <div className="p-6 sm:p-8 bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex items-start gap-4 sm:gap-5">
+        <header className="flex flex-wrap items-start justify-between gap-x-8 gap-y-5 border-b border-blue-100 pb-6">
+          <div className="flex min-w-0 flex-[1_1_21rem] items-start gap-4 sm:gap-5">
             <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-[#EEF0FD] to-[#E0E3FA] text-[#5C59E8] font-bold text-2xl flex items-center justify-center shrink-0 shadow-xs overflow-hidden border-2 border-indigo-100">
               {avatarUrl ? (
                 <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" />
@@ -409,31 +409,23 @@ export default function ProfilePage() {
 
             <div className="space-y-1.5 min-w-0">
               <div className="flex items-center gap-2.5 flex-wrap">
-                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                <h1 className="break-words text-2xl font-bold tracking-tight text-black [overflow-wrap:anywhere] sm:text-3xl">
                   {displayName}
                 </h1>
-                <span className="px-3 py-1 rounded-full bg-[#EEF0FD] text-[#5C59E8] font-bold text-xs border border-indigo-100/80 flex items-center gap-1.5 shadow-2xs">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#5C59E8]" />
-                  <span>Verified Member</span>
-                </span>
-                <Link href="/profile/applied" className="text-sm font-semibold text-blue-800 hover:underline">Applied</Link>
               </div>
 
-              <p className="text-xs sm:text-sm text-slate-600 font-medium">
-                {headline || "Software Engineer & Platform Builder"}
-              </p>
+              {headline && <p className="break-words text-sm text-slate-700">{headline}</p>}
 
               <div className="flex items-center gap-2.5 text-xs text-slate-500 pt-0.5 flex-wrap">
-                <span>{user?.email}</span>
-                <span>&bull;</span>
-                <span className="text-[#5C59E8] font-bold">{profile?.careerStage || "Career Track"}</span>
+                {user?.email && <span className="[overflow-wrap:anywhere]">{user.email}</span>}
+                {profile?.careerStage && <span className="font-semibold text-blue-800">{profile.careerStage}</span>}
               </div>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 self-start md:self-auto shrink-0">
+          <div className="flex max-w-full flex-wrap items-center gap-x-5 gap-y-3 self-start">
             {/* Circular Profile Strength Gauge */}
-            <div className="px-4 py-2.5 rounded-2xl bg-[#F8F9FD] border border-indigo-50/80 flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <div className="relative w-14 h-14 shrink-0 flex items-center justify-center">
                 <svg className="w-14 h-14 -rotate-90 transform" viewBox="0 0 60 60">
                   <circle
@@ -472,16 +464,20 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <Link
+            <Link href="/profile/applied" className="text-sm font-semibold text-blue-800 hover:underline">
+              Applications
+            </Link>
+            {isPublic && profile?.username && <Link
               href={`/${profile?.username || user?.uid}`}
               target="_blank"
-              className="px-4 py-2.5 rounded-2xl bg-[#EEF0FD] hover:bg-[#E0E3FA] text-[#3730A3] border border-indigo-100/60 text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-800 hover:underline"
             >
               <ExternalLink className="w-3.5 h-3.5 text-[#5C59E8]" />
               <span>Public Portfolio</span>
-            </Link>
+            </Link>}
           </div>
-        </div>
+        </header>
 
         {/* ========================================================================= */}
         {/* 2. EDWORLD DIGITAL IDENTITY CARD                                          */}
@@ -496,7 +492,7 @@ export default function ProfilePage() {
           <EdworldDigitalIdCard
             userId={user?.uid}
             name={displayName}
-            headline={headline || "Software Engineer & Builder"}
+            headline={headline}
             email={user?.email}
             username={profile?.username || user?.uid}
             college={college || (profile as any)?.institution}
@@ -524,11 +520,11 @@ export default function ProfilePage() {
         {/* ========================================================================= */}
         {/* 4. MAIN FORM & INTEGRATIONS GRID                                          */}
         {/* ========================================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
           {/* Left 2 Columns: Identity, Career Goals, Certs & Accounts */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="min-w-0 space-y-6 xl:col-span-2">
             {/* 4A. PERSONAL & PROFESSIONAL IDENTITY FORM */}
-            <div className="p-6 sm:p-8 bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] space-y-6">
+            <div className="space-y-6 border-b border-blue-100 pb-6">
               <div className="border-b border-slate-100 pb-4">
                 <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
                   <div className="w-8 h-8 rounded-xl bg-[#EEF0FD] text-[#5C59E8] flex items-center justify-center font-bold">
@@ -752,7 +748,7 @@ export default function ProfilePage() {
             </div>
 
             {/* 4B. CAREER DIRECTION & GOALS */}
-            <div className="p-6 sm:p-8 bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] space-y-6">
+            <div className="p-6 sm:p-8 border-slate-100/80 space-y-6 border-b">
               <div className="border-b border-slate-100 pb-4">
                 <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
                   <div className="w-8 h-8 rounded-xl bg-[#EEF0FD] text-[#5C59E8] flex items-center justify-center font-bold">
@@ -819,7 +815,7 @@ export default function ProfilePage() {
             </div>
 
             {/* 4C. CERTIFICATIONS & LICENSES */}
-            <div className="p-6 sm:p-8 bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] space-y-5">
+            <div className="p-6 sm:p-8 border-slate-100/80 space-y-5 border-b">
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div>
                   <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
@@ -943,7 +939,7 @@ export default function ProfilePage() {
           {/* Right 1 Column: Security & Preferences */}
           <div className="space-y-6">
             {/* 4E. ACCOUNT & SECURITY SETTINGS */}
-            <div className="p-6 sm:p-8 bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] space-y-5">
+            <div className="p-6 sm:p-8 border-slate-100/80 space-y-5 border-b">
               <div className="border-b border-slate-100 pb-4">
                 <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                   <div className="w-8 h-8 rounded-xl bg-[#EEF0FD] text-[#5C59E8] flex items-center justify-center font-bold">
@@ -979,7 +975,7 @@ export default function ProfilePage() {
             </div>
 
             {/* 4F. WORKSPACE NOTIFICATIONS */}
-            <div className="p-6 sm:p-8 bg-white rounded-3xl border border-slate-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] space-y-4">
+            <div className="p-6 sm:p-8 border-slate-100/80 space-y-4 border-b">
               <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-4">
                 <div className="w-8 h-8 rounded-xl bg-[#EEF0FD] text-[#5C59E8] flex items-center justify-center font-bold">
                   <Bell className="w-4 h-4" />

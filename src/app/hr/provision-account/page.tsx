@@ -163,7 +163,7 @@ export default function HrProvisionAccountPage() {
     <div className="min-h-screen bg-[#FCFCFB] text-[#13141B] p-4 sm:p-6 lg:p-8 space-y-6 max-w-[1536px] mx-auto font-sans selection:bg-[#00D2B4]/20 selection:text-[#0A5245]">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 sm:p-8 rounded-3xl border border-[#EBECEF] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-8 border-[#EBECEF] border-b">
         <div className="space-y-1.5">
           <Link href="/hr" className="inline-flex items-center gap-1.5 text-xs text-[#5E6573] hover:text-[#13141B] font-bold mb-1 transition-colors">
             <ChevronLeft className="w-4 h-4" />
@@ -191,7 +191,7 @@ export default function HrProvisionAccountPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Left 2 Cols: Provisioning Form */}
-        <div className="lg:col-span-2 bg-white p-6 sm:p-8 rounded-3xl border border-[#EBECEF] space-y-6 shadow-xs">
+        <div className="lg:col-span-2 p-6 sm:p-8 border-[#EBECEF] space-y-6 border-b">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-[#13141B] flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-emerald-600" />
@@ -343,7 +343,7 @@ export default function HrProvisionAccountPage() {
         <div className="space-y-6">
           
           {/* Activation Dispatch Preview */}
-          <div className="bg-white p-6 rounded-3xl border border-[#EBECEF] space-y-4 shadow-xs">
+          <div className="p-6 border-[#EBECEF] space-y-4 border-b">
             <h3 className="text-xs font-bold text-[#13141B] uppercase tracking-wider flex items-center gap-1.5">
               <KeyRound className="w-4 h-4 text-emerald-600" />
               <span>One-Time Activation Token</span>
@@ -377,7 +377,7 @@ export default function HrProvisionAccountPage() {
           </div>
 
           {/* Provisioned Roster */}
-          <div className="bg-white p-6 rounded-3xl border border-[#EBECEF] space-y-3 shadow-xs">
+          <div className="p-6 border-[#EBECEF] space-y-3 border-b">
             <h3 className="text-xs font-bold text-[#13141B] uppercase tracking-wider">
               Recent Provisioned Staff ({roster.length})
             </h3>

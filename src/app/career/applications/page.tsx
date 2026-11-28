@@ -156,7 +156,7 @@ export default function ApplicationsCommandCenterPage() {
       <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 sm:p-8 rounded-3xl border border-[#E8ECF2] shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 sm:p-8 border-[#E8ECF2] border-b">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E0FAF6] text-[#00D2B4] text-xs font-bold font-mono">
               <Briefcase className="w-3.5 h-3.5" />
@@ -188,7 +188,7 @@ export default function ApplicationsCommandCenterPage() {
         </div>
 
         {/* Filter & Search Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-[#E8ECF2] shadow-sm">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 border-[#E8ECF2] border-b">
           <div className="relative w-full sm:w-80">
             <Search className="w-4 h-4 text-[#8E95A5] absolute left-3 top-1/2 -translate-y-1/2" />
             <input
@@ -228,12 +228,12 @@ export default function ApplicationsCommandCenterPage() {
 
         {/* Applications List / Empty State */}
         {loading ? (
-          <div className="bg-white rounded-3xl p-12 border border-[#E8ECF2] text-center space-y-3">
+          <div className="p-12 border-[#E8ECF2] text-center space-y-3 border-b">
             <Loader2 className="w-8 h-8 text-[#7B57FF] animate-spin mx-auto" />
             <p className="text-xs text-[#5E6573] font-bold">Loading your application pipeline...</p>
           </div>
         ) : filteredApps.length === 0 ? (
-          <div className="bg-white rounded-3xl p-12 border border-[#E8ECF2] text-center space-y-4 shadow-sm">
+          <div className="p-12 border-[#E8ECF2] text-center space-y-4 border-b">
             <div className="w-14 h-14 rounded-2xl bg-[#F4F6FB] text-[#8E95A5] flex items-center justify-center mx-auto">
               <Briefcase className="w-7 h-7" />
             </div>
@@ -352,7 +352,7 @@ export default function ApplicationsCommandCenterPage() {
         {/* Modal: Add New Application */}
         {showAddModal && (
           <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-            <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-[#E8ECF2] shadow-2xl space-y-5 animate-in zoom-in-95">
+            <div className="p-6 sm:p-8 max-w-lg w-full border-[#E8ECF2] space-y-5 animate-in zoom-in-95 border-b">
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-black text-[#13141B]">Track New Opportunity</h3>
                 <button 

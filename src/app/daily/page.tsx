@@ -188,23 +188,10 @@ export default function DailyChallengePage() {
             </h1>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Coral Streak Flame Pill */}
-            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EFF6FF] text-[#2563EB] text-xs font-bold shadow-2xs">
-              <Flame className="w-4 h-4 fill-[#F43F5E]" />
-              <span>4-Day Habit Streak</span>
-            </div>
-
-            {/* Streak Freeze Indicator */}
-            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/70 text-blue-700 text-xs font-bold">
-              <Shield className="w-3.5 h-3.5 text-blue-600" />
-              <span>{streakFreezes}/3 Freezes</span>
-            </div>
-          </div>
         </div>
 
         {/* HERO CARD: Circular Progress Gauge & Date Summary */}
-        <section className="bg-white rounded-3xl border border-blue-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <section className="border-t border-slate-200 py-6 sm:py-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3 max-w-xl">
             <div className="flex items-center gap-2">
               <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#EFF6FF] text-[#4338CA]">
@@ -242,7 +229,7 @@ export default function DailyChallengePage() {
           </div>
 
           {/* Circular Completion Ring */}
-          <div className="flex items-center gap-5 shrink-0 bg-[#EFF6FF] p-5 rounded-3xl border border-blue-100">
+          <div className="flex flex-wrap items-center gap-5 self-start md:self-center">
             <div className="relative w-24 h-24 flex items-center justify-center">
               <svg className="w-24 h-24 -rotate-90" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r={radius} stroke="#E2E8F0" strokeWidth="8" fill="none" />
@@ -287,7 +274,7 @@ export default function DailyChallengePage() {
         <div className="space-y-6">
           
           {/* TASK 1: 1 DSA Problem */}
-          <section className="bg-white rounded-3xl border border-blue-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 space-y-4">
+          <section className="border-t border-slate-200 py-6 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-100 pb-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
@@ -332,7 +319,7 @@ export default function DailyChallengePage() {
               Given an input string <code>s</code>, reverse the order of the words. A word is defined as a sequence of non-space characters. The words in <code>s</code> will be separated by at least one space. Return a string of the words in reverse order concatenated by a single space.
             </p>
 
-            <div className="p-3.5 rounded-2xl bg-[#EFF6FF] border border-blue-100/90 font-mono text-xs text-slate-700 space-y-1">
+            <div className="p-3.5 border-blue-100/90 font-mono text-xs text-slate-700 space-y-1 border-b">
               <div><strong>Input:</strong> s = &quot;the sky is blue&quot;</div>
               <div><strong>Output:</strong> &quot;blue is sky the&quot;</div>
             </div>
@@ -351,7 +338,7 @@ export default function DailyChallengePage() {
 
           {/* TASK 2: Aptitude Q1 (Quantitative) */}
           {quantQuestion && (
-            <section className="bg-white rounded-3xl border border-blue-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 space-y-4">
+            <section className="border-t border-slate-200 py-6 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-100 pb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] text-[#1E40AF] border border-blue-200/60 flex items-center justify-center shrink-0">
@@ -414,7 +401,7 @@ export default function DailyChallengePage() {
 
           {/* TASK 3: Aptitude Q2 (Logical Reasoning) */}
           {logicalQuestion && (
-            <section className="bg-white rounded-3xl border border-blue-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 space-y-4">
+            <section className="border-t border-slate-200 py-6 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-100 pb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-cyan-50 text-cyan-700 border border-cyan-200/60 flex items-center justify-center shrink-0">
@@ -476,7 +463,7 @@ export default function DailyChallengePage() {
 
           {/* TASK 4: Aptitude Q3 (Verbal) */}
           {verbalQuestion && (
-            <section className="bg-white rounded-3xl border border-blue-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 space-y-4">
+            <section className="border-t border-slate-200 py-6 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-100 pb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-[#EFF6FF] text-[#1E40AF] border border-blue-200/60 flex items-center justify-center shrink-0">
@@ -537,7 +524,7 @@ export default function DailyChallengePage() {
           )}
 
           {/* TASK 5: Daily Interview Drill (STAR Recording) */}
-          <section className="bg-white rounded-3xl border border-blue-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 space-y-4">
+          <section className="border-t border-slate-200 py-6 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-100 pb-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-rose-50 text-rose-700 border border-rose-200/60 flex items-center justify-center shrink-0">
@@ -578,7 +565,7 @@ export default function DailyChallengePage() {
             </div>
 
             {/* Recording Controls */}
-            <div className="p-4 rounded-2xl bg-[#EFF6FF] border border-blue-100/90 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="p-4 border-blue-100/90 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b">
               <div className="flex items-center gap-3">
                 <button
                   type="button"

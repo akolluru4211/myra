@@ -144,7 +144,7 @@ export default function AdminHubPage() {
   return (
     <div className="space-y-6 font-sans">
       {/* Top Welcome & Review Summary */}
-      <div className="bg-white rounded-3xl border border-blue-200/80 p-6 shadow-2xs space-y-4">
+      <div className="border-blue-200/80 p-6 space-y-4 border-b">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div>
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#EFF6FF] text-[#2563EB] border border-blue-200">
@@ -280,7 +280,7 @@ export default function AdminHubPage() {
       </div>
 
       {/* Unified Review Queue Table */}
-      <div className="bg-white rounded-3xl border border-blue-200/80 shadow-2xs overflow-hidden">
+      <div className="border-blue-200/80 overflow-hidden border-b">
         <div className="p-4 sm:p-5 border-b border-blue-100 flex items-center justify-between">
           <div className="text-sm font-black font-display text-slate-900">
             Queue Items ({queueItems.length})

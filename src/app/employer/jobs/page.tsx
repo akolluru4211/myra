@@ -253,7 +253,7 @@ export default function EmployerStudioPage() {
   if (!isAdult && user) {
     return (
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-6 bg-[#FAF8F5]">
-        <div className="max-w-md w-full bg-white rounded-3xl border border-stone-200 shadow-sm p-8 text-center space-y-6">
+        <div className="max-w-md w-full border-stone-200 p-8 text-center space-y-6 border-b">
           <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center mx-auto shadow-sm">
             <Lock className="w-8 h-8" />
           </div>
@@ -297,7 +297,7 @@ export default function EmployerStudioPage() {
         </div>
 
         {/* Header Bar */}
-        <div className="bg-white rounded-2xl border border-[#E5E7EB] shadow-xs p-6 sm:p-7 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div className="border-[#E5E7EB] p-6 sm:p-7 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-b">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-[#2563EB] bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
@@ -360,7 +360,7 @@ export default function EmployerStudioPage() {
         </div>
 
         {/* Candidate Pipeline Section */}
-        <div className="bg-white rounded-2xl border border-[#E5E7EB] shadow-xs p-5 sm:p-7 space-y-6">
+        <div className="border-[#E5E7EB] p-5 sm:p-7 space-y-6 border-b">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E5E7EB] pb-4">
             <div>
               <h2 className="text-lg font-bold text-[#111827]">Candidate Pipeline &amp; Queue</h2>
@@ -809,7 +809,7 @@ export default function EmployerStudioPage() {
         {/* Feedback Note Modal */}
         {feedbackModalApp && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm animate-in fade-in">
-            <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-stone-200">
+            <div className="max-w-md w-full p-6 space-y-4 border-stone-200 border-b">
               <div className="flex items-center justify-between border-b border-stone-100 pb-3">
                 <h3 className="font-bold text-stone-900 font-serif">
                   {feedbackModalApp.targetStatus === "shortlisted" ? "Shortlist Candidate" : "Decline Candidate"}

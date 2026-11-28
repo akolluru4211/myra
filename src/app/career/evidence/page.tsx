@@ -302,7 +302,7 @@ export default function CareerEvidencePage() {
         {/* Modal: Add Evidence */}
         {isModalOpen && (
           <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-[#E8ECF2] space-y-5 animate-in fade-in zoom-in-95">
+            <div className="p-6 sm:p-8 max-w-lg w-full border-[#E8ECF2] space-y-5 animate-in fade-in zoom-in-95 border-b">
               <div className="flex items-center justify-between border-b border-[#E8ECF2] pb-3">
                 <h2 className="text-lg font-black text-[#181920]">Add Career Evidence</h2>
                 <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 font-bold">&times;</button>

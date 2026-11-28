@@ -85,7 +85,7 @@ export default function DsaCurriculumHubPage() {
     return (
       <AuthGuard>
         <div className="min-h-[calc(100vh-5rem)] flex items-center justify-center p-6 font-sans">
-          <div className="max-w-md w-full bg-[#EFF6FF] border border-[#BFDBFE] text-black p-8 text-center space-y-6 rounded-3xl shadow-sm">
+          <div className="max-w-md w-full border-[#BFDBFE] text-black p-8 text-center space-y-6 border-b">
             <div className="w-14 h-14 rounded-2xl bg-blue-100 text-[#2563EB] flex items-center justify-center mx-auto shadow-2xs border border-blue-200">
               <Lock className="w-7 h-7" />
             </div>
@@ -128,7 +128,7 @@ export default function DsaCurriculumHubPage() {
     <AuthGuard>
       <div className="w-full text-black font-sans space-y-6 animate-in fade-in duration-200">
         {/* Header Banner */}
-        <div className="p-6 sm:p-8 bg-[#EFF6FF] border border-[#BFDBFE] text-black flex flex-col md:flex-row items-start md:items-center justify-between gap-6 rounded-3xl shadow-sm">
+        <div className="p-6 sm:p-8 border-[#BFDBFE] text-black flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-b">
           <div className="space-y-1.5">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-black tracking-tight font-display">
               Data Structures &amp; Algorithms Studio
@@ -139,7 +139,7 @@ export default function DsaCurriculumHubPage() {
           </div>
 
           {/* Quick Metrics Capsule */}
-          <div className="w-full md:w-auto grid grid-cols-3 md:flex items-center gap-2 sm:gap-4 bg-white border border-[#BFDBFE] p-3.5 rounded-2xl shadow-2xs">
+          <div className="w-full md:w-auto grid grid-cols-3 md:flex items-center gap-2 sm:gap-4 border-[#BFDBFE] p-3.5 border-b">
             <div className="text-center px-2 sm:px-3 border-r border-blue-100">
               <span className="text-lg sm:text-2xl font-bold text-black tabular-nums">
                 {completedCount}/{topics.length || 20}

@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import { ToastProvider } from "@/lib/toast-context";
 import AppShell from "@/components/AppShell";
+import OfflineNotice from "@/components/ui/OfflineNotice";
 
 const inter = localFont({
   src: "../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2",
@@ -108,6 +109,7 @@ export default function RootLayout({
         <AuthProvider>
           <ToastProvider>
             <AppShell>{children}</AppShell>
+            <OfflineNotice />
           </ToastProvider>
         </AuthProvider>
       </body>

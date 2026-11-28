@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ShieldCheck, Lock, CheckCircle2, AlertTriangle, ArrowRight, Loader2, XCircle, Clock } from "lucide-react";
-import EdworldLogo from "@/components/ui/EdworldLogo";
 
 type ConsentState = "ready" | "verified" | "revoked" | "expired" | "used" | "error";
 
@@ -66,12 +65,9 @@ export default function GuardianConsentVerifyPage() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4 sm:p-6 bg-slate-50">
-      <div className="max-w-lg w-full bg-white rounded-3xl border border-slate-200 shadow-2xl p-8 space-y-6 animate-in fade-in duration-200">
+      <div className="max-w-lg w-full border-slate-200 p-8 space-y-6 animate-in fade-in duration-200 border-b">
         {/* Brand Header */}
         <div className="text-center space-y-2 border-b border-slate-100 pb-6">
-          <div className="flex justify-center">
-            <EdworldLogo size="md" showText={false} />
-          </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tight">Parent / Guardian Consent Portal</h1>
           <p className="text-xs text-slate-500">Under-18 Data Protection &amp; Safety Verification</p>
         </div>

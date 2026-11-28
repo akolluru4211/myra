@@ -42,7 +42,7 @@ function UnsubscribeContent() {
 
   return (
     <div className="min-h-screen bg-[#FCFCFB] py-16 px-4 sm:px-6 lg:px-8 flex items-center justify-center font-sans text-[#13141B]">
-      <div className="w-full max-w-md bg-white p-8 rounded-3xl border border-[#EBECEF] shadow-xs space-y-6 text-center">
+      <div className="w-full max-w-md p-8 border-[#EBECEF] space-y-6 text-center border-b">
         
         {success ? (
           <div className="space-y-4">

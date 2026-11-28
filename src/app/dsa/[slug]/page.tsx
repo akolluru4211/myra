@@ -107,7 +107,7 @@ export default function DsaTopicDetailPage() {
     return (
       <AuthGuard>
         <div className="min-h-[calc(100vh-5rem)] flex items-center justify-center p-6 bg-white font-sans">
-          <div className="max-w-md w-full bg-white rounded-3xl border border-neutral-200 shadow-xl p-8 text-center space-y-6">
+          <div className="max-w-md w-full border-neutral-200 p-8 text-center space-y-6 border-b">
             <div className="w-14 h-14 rounded-2xl bg-neutral-100 text-black flex items-center justify-center mx-auto">
               <Lock className="w-6 h-6" />
             </div>
@@ -245,7 +245,7 @@ export default function DsaTopicDetailPage() {
               
               {/* Concept Triad (Concept, Why It Matters, Common Use) */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-5 rounded-2xl bg-white border border-neutral-200 space-y-2">
+                <div className="p-5 border-neutral-200 space-y-2 border-b">
                   <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">
                     Core Concept
                   </span>
@@ -255,7 +255,7 @@ export default function DsaTopicDetailPage() {
                   </p>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-white border border-neutral-200 space-y-2">
+                <div className="p-5 border-neutral-200 space-y-2 border-b">
                   <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">
                     Industry Impact
                   </span>
@@ -265,7 +265,7 @@ export default function DsaTopicDetailPage() {
                   </p>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-white border border-neutral-200 space-y-2">
+                <div className="p-5 border-neutral-200 space-y-2 border-b">
                   <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">
                     Interview Patterns
                   </span>

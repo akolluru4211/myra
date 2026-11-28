@@ -168,11 +168,11 @@ export default function CareerPathSelectorWidget() {
   });
 
   return (
-    <div className="bg-[#EFF6FF] border border-[#BFDBFE] p-6 sm:p-7 rounded-3xl space-y-6 shadow-sm text-black">
+    <div className="space-y-6 border-t border-blue-100 py-6 text-black">
       {/* Section Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#2563EB] bg-blue-100 border border-blue-200 px-2.5 py-0.5 rounded-full font-display">
               Career Trajectory
             </span>
@@ -194,17 +194,17 @@ export default function CareerPathSelectorWidget() {
       </div>
 
       {saveSuccess && (
-        <div className="p-3.5 rounded-xl bg-blue-50 border border-blue-200 text-xs font-semibold text-[#1E40AF] flex items-center gap-2 animate-in fade-in duration-200">
+        <div className="p-3.5 rounded-xl bg-blue-50 border border-blue-200 text-xs font-semibold text-[#1E40AF] flex flex-wrap items-center gap-2 animate-in fade-in duration-200">
           <CheckCircle2 className="w-4 h-4 text-[#2563EB] shrink-0" />
           <span>Career trajectory successfully updated to <strong>{selectedPath.name}</strong>. Timetable and practice tracks adjusted.</span>
         </div>
       )}
 
       {/* Primary Selected Path Card */}
-      <div className="bg-white border border-[#BFDBFE] p-6 space-y-4 rounded-2xl shadow-2xs text-black">
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+      <div className="space-y-4 border-t border-blue-100 pt-4 text-black">
+        <div className="flex flex-col items-start gap-3">
           <div className="space-y-2 max-w-2xl">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs font-semibold text-[#2563EB] px-2.5 py-0.5 bg-blue-50 border border-blue-200 rounded-full font-display">
                 {selectedPath.category}
               </span>
@@ -316,7 +316,7 @@ export default function CareerPathSelectorWidget() {
                     }`}
                   >
                     <div className="space-y-1">
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-600">
                           {path.category}
                         </span>

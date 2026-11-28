@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import {
@@ -42,6 +41,8 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
   const { user, profile, logout } = useAuth();
   const { isSessionActive, formattedTimeLeft } = useFocusLock();
   const [isRightDrawerOpen, setIsRightDrawerOpen] = useState(false);
+  const [toolQuery, setToolQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -103,7 +104,7 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
       previousActiveElementRef.current = document.activeElement as HTMLElement | null;
       document.body.style.overflow = "hidden";
       setTimeout(() => {
-        closeButtonRef.current?.focus();
+        (searchInputRef.current ?? closeButtonRef.current)?.focus();
       }, 50);
     } else {
       document.body.style.overflow = "";
@@ -165,7 +166,8 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
     { href: "/interviews", label: "Interactive Mock Interviews", icon: Video, desc: "46-sector simulated rounds" },
     { href: "/resumes", label: "ATS Resume Architect", icon: FileText, desc: "Single-column Harvard format" },
     { href: "/hackathons", label: "Hackathons", icon: Code2, desc: "Open online and in-person events" },
-    { href: "/jobs", label: "Opportunities & Jobs", icon: Briefcase, desc: "Curated internships & roles" },
+    { href: "/jobs", label: "Jobs", icon: Briefcase, desc: "Open roles and employer application links" },
+    { href: "/internships", label: "Internships", icon: Briefcase, desc: "Internship openings and employer application links" },
   ];
 
   const communityItems = [
@@ -175,62 +177,21 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
     { href: "/network", label: "Member Directory", icon: Users, desc: "Connect with peers & mentors" },
   ];
 
+  const search = toolQuery.trim().toLowerCase();
+  const matchesTool = (item: (typeof learningItems)[number]) =>
+    `${item.label} ${item.desc} ${item.href}`.toLowerCase().includes(search);
+  const hasToolMatches = [...learningItems, ...careerItems, ...communityItems].some(matchesTool);
+
   return (
     <>
       <header
         className={cn(
-          "sticky top-0 z-30 w-full transition-all duration-200 select-none",
-              "bg-white/90 backdrop-blur-xl px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4 border-b border-slate-200/80 shadow-[0_8px_24px_rgba(15,23,42,0.04)]"
+          "w-full select-none",
+          "px-4 sm:px-8 py-1 flex items-center"
         )}
       >
-        <div className="w-full flex items-center justify-between gap-4">
-          {/* Left: Brand Monogram & Pill Navigation Switchers */}
-          <div className="flex items-center gap-4 sm:gap-6 shrink-0">
-            <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2.5 group">
-              <div className="relative w-9 h-9 rounded-2xl overflow-hidden flex items-center justify-center bg-[#292825] shadow-sm transition-transform group-hover:scale-105 duration-200 shrink-0 p-1">
-                <Image
-                  src="/images/edworld-mark.png"
-                  alt="EdWorld Co. Logo"
-                  width={28}
-                  height={28}
-                  className="w-full h-full object-cover rounded-md brightness-110"
-                  priority
-                />
-              </div>
-              <div className="flex items-center gap-1.5 leading-none">
-                <span className="font-extrabold text-base tracking-tight font-display text-slate-900">
-                  EdWorld
-                </span>
-                <span className="text-[10px] font-black px-1.5 py-0.5 rounded-full bg-[#292825] text-white shadow-xs font-display">
-                  Co.
-                </span>
-              </div>
-            </Link>
+        <div className="flex w-full items-center justify-end">
 
-          </div>
-
-          {/* Center: Search Input with Responsive Collapse to Icon below 2xl */}
-          <div className="flex-1 max-w-xs justify-center hidden sm:flex mx-1">
-            {/* Desktop input on very wide displays (2xl+) */}
-            <button
-              type="button"
-              onClick={() => setIsRightDrawerOpen(true)}
-              className="hidden lg:flex w-full min-h-11 items-center gap-2 px-4 rounded-full bg-slate-50 border border-neutral-200 text-sm text-slate-700 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal-700"
-            >
-              <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-              <span>Browse tools</span>
-            </button>
-            {/* Collapsed search icon button on standard desktop and tablet (below 2xl) */}
-            <button
-              type="button"
-              onClick={() => setIsRightDrawerOpen(true)}
-              className="lg:hidden p-2 rounded-full bg-white border border-neutral-200/80 text-slate-500 hover:text-slate-800 hover:border-slate-300 shadow-xs flex items-center justify-center cursor-pointer min-h-[44px] min-w-[44px]"
-              title="Browse tools"
-              aria-label="Browse tools"
-            >
-              <Search className="w-4 h-4 text-slate-500" />
-            </button>
-          </div>
 
           {/* Right: Floating Action Buttons, Myra, Notifications & Auth/Menu */}
           <div className="flex items-center gap-2 shrink-0">
@@ -249,9 +210,9 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
             {/* Focus Studio */}
             <Link
               href="/focus"
-              className="hidden 2xl:inline-flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] rounded-full text-xs font-bold bg-[#efeeeb] hover:bg-[#e5e3df] text-neutral-800 border border-neutral-200/60 shadow-xs transition-all cursor-pointer touch-target"
+              className="hidden 2xl:inline-flex items-center gap-1.5 px-3 py-1.5 min-h-11 text-sm font-medium text-black hover:text-blue-700 transition-colors"
             >
-              <Compass className="w-3.5 h-3.5 text-[#292825]" />
+              <Compass className="w-3.5 h-3.5 text-[#1d4ed8]" />
               <span>Focus Studio</span>
             </Link>
 
@@ -259,14 +220,24 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
   <button
                 type="button"
                 onClick={handleOpenMyra}
-                className="hidden lg:inline-flex px-3.5 py-1.5 min-h-[44px] rounded-full text-xs font-bold text-white bg-[#292825] hover:bg-[#45433f] shadow-xs items-center gap-1.5 transition-all cursor-pointer touch-target"
+                className="hidden lg:inline-flex px-3 py-1.5 min-h-11 text-sm font-medium text-black hover:text-blue-700 items-center gap-1.5 transition-colors"
                 aria-label="Ask Myra AI Companion"
               >
-                <Sparkles className="w-3.5 h-3.5 text-white" />
+                <Sparkles className="w-3.5 h-3.5 text-blue-700" />
                 <span>Ask Myra</span>
               </button>
             )}
 
+            <button
+              type="button"
+              onClick={() => setIsRightDrawerOpen(true)}
+              aria-label="Browse tools"
+              title="Browse tools"
+              className="flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-2 px-2.5 text-sm font-medium text-black hover:text-blue-700"
+            >
+              <Search aria-hidden="true" className="size-4 text-blue-600" />
+              <span className="hidden lg:inline">Browse tools</span>
+            </button>
             {/* Real-time Role-Scoped Notifications Bell */}
             {user && <RoleScopedNotifications />}
 
@@ -276,9 +247,11 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
                 <button
                   type="button"
                   onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                  className="inline-flex items-center gap-1.5 px-2 py-1.5 min-h-[44px] rounded-full text-xs font-semibold text-slate-700 bg-white border border-neutral-200/80 shadow-xs cursor-pointer hover:bg-slate-50 transition-all touch-target"
+                  aria-label="Account menu"
+                  aria-expanded={isProfileMenuOpen}
+                  className="inline-flex items-center gap-1.5 px-2 py-1.5 min-h-11 text-xs font-semibold text-black hover:text-blue-700 transition-colors touch-target"
                 >
-                  <div className="w-6 h-6 rounded-full bg-[#292825] text-white flex items-center justify-center font-bold text-[10px]">
+                  <div className="w-6 h-6 rounded-full bg-[#1d4ed8] text-white flex items-center justify-center font-bold text-[10px]">
                     {initials || "U"}
                   </div>
                   <span className="hidden xl:inline max-w-[90px] truncate text-slate-800 font-bold">{studentName}</span>
@@ -295,18 +268,18 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
                     <Link
                       href="/dashboard"
                       onClick={() => setIsProfileMenuOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors"
+                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-black hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors"
                     >
-                      <LayoutDashboard className="w-3.5 h-3.5 text-[#292825]" />
+                      <LayoutDashboard className="w-3.5 h-3.5 text-[#1d4ed8]" />
                       <span>Dashboard</span>
                     </Link>
 
                     <Link
                       href="/profile"
                       onClick={() => setIsProfileMenuOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors"
+                      className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-black hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors"
                     >
-                      <UserIcon className="w-3.5 h-3.5 text-[#292825]" />
+                      <UserIcon className="w-3.5 h-3.5 text-[#1d4ed8]" />
                       <span>Profile &amp; Settings</span>
                     </Link>
 
@@ -330,13 +303,13 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
               <div className="flex items-center gap-1.5">
                 <Link
                   href="/login"
-                  className="hidden sm:inline-flex items-center justify-center px-3.5 py-1.5 min-h-[44px] rounded-full text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-neutral-100 transition-all border border-neutral-200/80 touch-target"
+                  className="hidden sm:inline-flex items-center justify-center px-3.5 py-1.5 min-h-[44px] rounded-full text-xs font-semibold text-black hover:text-slate-900 hover:bg-neutral-100 transition-all border border-neutral-200/80 touch-target"
                 >
                   Log in
                 </Link>
                 <Link
                   href="/signup"
-                  className="inline-flex items-center justify-center gap-1 px-3.5 py-1.5 min-h-[44px] rounded-full text-xs font-bold transition-all shadow-sm bg-[#292825] hover:bg-[#45433f] text-white touch-target"
+                  className="inline-flex items-center justify-center gap-1 px-3.5 py-1.5 min-h-[44px] rounded-full text-xs font-bold transition-all shadow-sm bg-[#1d4ed8] hover:bg-[#1e40af] text-white touch-target"
                 >
                   <span>Join</span>
                   <ArrowRight className="w-3 h-3" />
@@ -349,17 +322,16 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
               type="button"
               onClick={() => setIsRightDrawerOpen(!isRightDrawerOpen)}
               className={cn(
-                "p-2 sm:px-3 sm:py-1.5 min-h-[44px] min-w-[44px] rounded-full border text-slate-700 bg-white transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5 touch-target",
-                Boolean(user) && "hidden lg:flex",
+                "p-2 sm:px-3 sm:py-1.5 min-h-[44px] min-w-[44px] rounded-full border text-black bg-white transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5 touch-target",
+                user ? "hidden" : "lg:hidden",
                 isRightDrawerOpen
-                  ? "border-[#292825] text-[#292825] ring-2 ring-[#292825]/20"
+                  ? "border-[#1d4ed8] text-[#1d4ed8] ring-2 ring-[#1d4ed8]/20"
                   : "border-neutral-200 hover:bg-slate-50 hover:border-slate-300"
               )}
               aria-label="Open Right Side Navigation Menu"
               aria-expanded={isRightDrawerOpen}
             >
-              <Menu className="w-4 h-4 text-slate-700" />
-              <span className="hidden sm:inline text-xs font-bold text-slate-700">Menu</span>
+              <Menu className="w-4 h-4 text-black" />
             </button>
           </div>
         </div>
@@ -384,41 +356,40 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
       >
         {/* Drawer Header */}
         <div className="p-4 sm:p-5 border-b border-neutral-200/80 flex items-center justify-between shrink-0 bg-[#f7f6f4]">
-          <div className="flex items-center gap-2.5">
-            <div className="relative w-8 h-8 rounded-xl overflow-hidden flex items-center justify-center bg-[#292825] shadow-sm !p-1 shrink-0">
-              <Image
-                src="/images/edworld-mark.png"
-                alt="EdWorld Co. Logo"
-                width={24}
-                height={24}
-                className="w-full h-full object-cover rounded brightness-110"
-              />
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5 leading-none">
-                <span className="font-extrabold text-sm tracking-tight text-slate-900 font-display">
-                  EdWorld Menu
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-500 mt-0.5">Campus Learning &amp; Placement OS</p>
-            </div>
-          </div>
+          <h2 className="text-sm font-semibold text-black">Browse tools</h2>
 
           <button
             ref={closeButtonRef}
             type="button"
             onClick={() => setIsRightDrawerOpen(false)}
-            className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 hover:bg-neutral-100 border border-neutral-200/80 transition-colors cursor-pointer touch-target focus-visible:ring-2 focus-visible:ring-[#292825]"
+            className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 hover:bg-neutral-100 border border-neutral-200/80 transition-colors cursor-pointer touch-target focus-visible:ring-2 focus-visible:ring-[#1d4ed8]"
             aria-label="Close navigation menu"
           >
             <X className="w-4 h-4 text-slate-600" />
           </button>
         </div>
 
+        <div className="shrink-0 border-b border-blue-100 px-4 py-3">
+          <label htmlFor="browse-tools-search" className="sr-only">Search tools</label>
+          <div className="flex items-center gap-2">
+            <Search aria-hidden="true" className="size-4 shrink-0 text-blue-700" />
+            <input
+              id="browse-tools-search"
+              ref={searchInputRef}
+              type="search"
+              value={toolQuery}
+              onChange={(event) => setToolQuery(event.target.value)}
+              placeholder="Search courses, interviews, jobs…"
+              className="min-h-11 min-w-0 flex-1 border-b border-blue-200 bg-white px-2 text-sm text-black"
+            />
+          </div>
+          {search && !hasToolMatches && <p role="status" className="mt-2 text-sm text-slate-600">No tools match that search.</p>}
+        </div>
+
         {/* User Card inside Drawer */}
         {user ? (
           <div className="px-5 py-3.5 bg-slate-50 border-b border-neutral-200/80 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#292825] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
+            <div className="w-10 h-10 rounded-2xl bg-[#1d4ed8] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
               {initials || "U"}
             </div>
             <div className="min-w-0 flex-1">
@@ -436,7 +407,7 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
             <Link
               href="/signup"
               onClick={() => setIsRightDrawerOpen(false)}
-              className="px-3 py-1.5 rounded-xl bg-[#292825] text-white font-bold text-xs hover:bg-[#45433f] shadow-xs transition-colors shrink-0"
+              className="px-3 py-1.5 rounded-xl bg-[#1d4ed8] text-white font-bold text-xs hover:bg-[#1e40af] shadow-xs transition-colors shrink-0"
             >
               Sign Up
             </Link>
@@ -451,9 +422,9 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
               <button
                 type="button"
                 onClick={handleOpenMyra}
-                className="w-full text-left p-3.5 rounded-2xl bg-neutral-100 border border-neutral-200 hover:border-[#292825]/40 transition-all flex items-center gap-3 cursor-pointer group shadow-xs"
+                className="w-full text-left p-3.5 rounded-2xl bg-neutral-100 border border-neutral-200 hover:border-[#1d4ed8]/40 transition-all flex items-center gap-3 cursor-pointer group shadow-xs"
               >
-                <div className="w-9 h-9 rounded-xl bg-[#292825] flex items-center justify-center text-white shrink-0 group-hover:scale-105 transition-transform shadow-xs">
+                <div className="w-9 h-9 rounded-xl bg-[#1d4ed8] flex items-center justify-center text-white shrink-0 group-hover:scale-105 transition-transform shadow-xs">
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -462,7 +433,7 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
                   </div>
                   <div className="text-[11px] text-slate-500">Get help with study or career questions</div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-[#292825] group-hover:translate-x-0.5 transition-transform" />
+                <ArrowRight className="w-4 h-4 text-[#1d4ed8] group-hover:translate-x-0.5 transition-transform" />
               </button>
             </div>
           )}
@@ -474,7 +445,7 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
               Core Learning &amp; Practice
             </h4>
             <div className="space-y-1">
-              {learningItems.map((item) => {
+              {learningItems.filter(matchesTool).map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
                 return (
@@ -485,11 +456,11 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
                     className={cn(
                       "flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all group",
                       isActive
-                        ? "bg-[#efeeeb] text-[#292825] font-bold border border-neutral-200"
-                        : "text-slate-700 hover:bg-neutral-100 hover:text-slate-900"
+                        ? "bg-[#eff6ff] text-[#1d4ed8] font-bold border border-neutral-200"
+                        : "text-black hover:bg-neutral-100 hover:text-slate-900"
                     )}
                   >
-                    <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200/80 shadow-2xs flex items-center justify-center text-[#292825] group-hover:scale-105 transition-all shrink-0">
+                    <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200/80 shadow-2xs flex items-center justify-center text-[#1d4ed8] group-hover:scale-105 transition-all shrink-0">
                       <Icon className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -508,7 +479,7 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
               Career OS &amp; Opportunities
             </h4>
             <div className="space-y-1">
-              {careerItems.map((item) => {
+              {careerItems.filter(matchesTool).map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
                 return (
@@ -519,11 +490,11 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
                     className={cn(
                       "flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all group",
                       isActive
-                        ? "bg-[#efeeeb] text-[#292825] font-bold border border-neutral-200"
-                        : "text-slate-700 hover:bg-neutral-100 hover:text-slate-900"
+                        ? "bg-[#eff6ff] text-[#1d4ed8] font-bold border border-neutral-200"
+                        : "text-black hover:bg-neutral-100 hover:text-slate-900"
                     )}
                   >
-                    <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200/80 shadow-2xs flex items-center justify-center text-[#292825] group-hover:scale-105 transition-all shrink-0">
+                    <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200/80 shadow-2xs flex items-center justify-center text-[#1d4ed8] group-hover:scale-105 transition-all shrink-0">
                       <Icon className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -542,7 +513,7 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
               Community &amp; Projects
             </h4>
             <div className="space-y-1">
-              {communityItems.map((item) => {
+              {communityItems.filter(matchesTool).map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
                 return (
@@ -553,8 +524,8 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
                     className={cn(
                       "flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all group",
                       isActive
-                        ? "bg-[#efeeeb] text-[#292825] font-bold border border-neutral-200"
-                        : "text-slate-700 hover:bg-neutral-100 hover:text-slate-900"
+                        ? "bg-[#eff6ff] text-[#1d4ed8] font-bold border border-neutral-200"
+                        : "text-black hover:bg-neutral-100 hover:text-slate-900"
                     )}
                   >
                     <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200/80 shadow-2xs flex items-center justify-center text-status-mint group-hover:scale-105 transition-all shrink-0">
@@ -575,11 +546,11 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all group",
                   pathname === "/messages"
-                    ? "bg-[#efeeeb] text-[#292825] font-bold border border-neutral-200"
-                    : "text-slate-700 hover:bg-neutral-100 hover:text-slate-900"
+                    ? "bg-[#eff6ff] text-[#1d4ed8] font-bold border border-neutral-200"
+                    : "text-black hover:bg-neutral-100 hover:text-slate-900"
                 )}
               >
-                <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200/80 shadow-2xs flex items-center justify-center text-[#292825] group-hover:scale-105 transition-all shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200/80 shadow-2xs flex items-center justify-center text-[#1d4ed8] group-hover:scale-105 transition-all shrink-0">
                   <MessageSquare className="w-4 h-4" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -595,8 +566,8 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all group",
                   pathname === "/student-record"
-                    ? "bg-[#efeeeb] text-[#292825] font-bold border border-neutral-200"
-                    : "text-slate-700 hover:bg-neutral-100 hover:text-slate-900"
+                    ? "bg-[#eff6ff] text-[#1d4ed8] font-bold border border-neutral-200"
+                    : "text-black hover:bg-neutral-100 hover:text-slate-900"
                 )}
               >
                 <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200/80 shadow-2xs flex items-center justify-center text-amber-500 group-hover:scale-105 transition-all shrink-0">
@@ -615,8 +586,8 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all group",
                   pathname === "/ambassador"
-                    ? "bg-[#efeeeb] text-[#292825] font-bold border border-neutral-200"
-                    : "text-slate-700 hover:bg-neutral-100 hover:text-slate-900"
+                    ? "bg-[#eff6ff] text-[#1d4ed8] font-bold border border-neutral-200"
+                    : "text-black hover:bg-neutral-100 hover:text-slate-900"
                 )}
               >
                 <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200/80 shadow-2xs flex items-center justify-center text-indigo-500 group-hover:scale-105 transition-all shrink-0">
@@ -639,7 +610,7 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
               <Link
                 href="/profile"
                 onClick={() => setIsRightDrawerOpen(false)}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-2xl text-slate-700 hover:bg-neutral-100 transition-all group"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-2xl text-black hover:bg-neutral-100 transition-all group"
               >
                 <div className="w-8 h-8 rounded-xl bg-white border border-neutral-200/80 shadow-2xs flex items-center justify-center text-slate-600 group-hover:scale-105 transition-all shrink-0">
                   <UserIcon className="w-4 h-4" />
@@ -655,7 +626,7 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
                 <Link
                   href="/admin"
                   onClick={() => setIsRightDrawerOpen(false)}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-2xl text-slate-700 hover:bg-neutral-100 transition-all group"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-2xl text-black hover:bg-neutral-100 transition-all group"
                 >
                   <div className="w-8 h-8 rounded-xl bg-slate-900 shadow-2xs flex items-center justify-center text-white group-hover:scale-105 transition-all shrink-0">
                     <ShieldCheck className="w-4 h-4" />
@@ -719,14 +690,14 @@ export default function ModernEdworldNavbar({ sidebarVisible = false }: { sideba
               <Link
                 href="/login"
                 onClick={() => setIsRightDrawerOpen(false)}
-                className="flex items-center justify-center px-3 py-2 min-h-[44px] rounded-2xl text-xs font-semibold text-slate-700 bg-white border border-neutral-200 hover:bg-slate-50 transition-colors touch-target"
+                className="flex items-center justify-center px-3 py-2 min-h-[44px] rounded-2xl text-xs font-semibold text-black bg-white border border-neutral-200 hover:bg-slate-50 transition-colors touch-target"
               >
                 Log In
               </Link>
               <Link
                 href="/signup"
                 onClick={() => setIsRightDrawerOpen(false)}
-                className="flex items-center justify-center px-3 py-2 min-h-[44px] rounded-2xl text-xs font-bold text-white bg-[#292825] hover:bg-[#45433f] shadow-xs transition-colors touch-target"
+                className="flex items-center justify-center px-3 py-2 min-h-[44px] rounded-2xl text-xs font-bold text-white bg-[#1d4ed8] hover:bg-[#1e40af] shadow-xs transition-colors touch-target"
               >
                 Join Now
               </Link>

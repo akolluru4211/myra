@@ -283,6 +283,30 @@ export async function POST(req: NextRequest) {
         }
       }
       const finalStudentQuery = rawStudentQuery || detectedScreenContext || "Hello Myra";
+      let studentRecordsContext = "";
+      if (userId && /\b(appl(?:y|ied|ications?)|progress|courses?|lessons?|certificates?|certifications?)\b/i.test(finalStudentQuery)) {
+        try {
+          const { queryDb } = await import("@/lib/db-server");
+          const { rows } = await queryDb(
+            `SELECT
+              (SELECT count(*)::int FROM public.job_applications_pipeline WHERE user_id = $1) AS tracked_applications,
+              (SELECT count(*)::int FROM public.edlearn_progress WHERE user_id = $1) AS courses_with_progress,
+              (SELECT count(*)::int FROM public.course_certificates WHERE user_id = $1 AND passed = true) AS earned_course_certificates`,
+            [userId]
+          );
+          const summary = rows[0];
+          if (summary) {
+            studentRecordsContext = [
+              "Verified counts for the signed-in student. Use only when relevant. Tracked applications may include saved external listings and do not prove an application was submitted.",
+              `Tracked applications: ${summary.tracked_applications}.`,
+              `Courses with recorded progress: ${summary.courses_with_progress}.`,
+              `Issued course certificates: ${summary.earned_course_certificates}.`,
+            ].join("\n");
+          }
+        } catch {
+          studentRecordsContext = "Student record counts are unavailable. Do not guess them.";
+        }
+      }
 
       // 2. Dynamically resolve live GitHub repository or web URL / search reach ONLY if explicitly enabled
       const isSearchOptedIn = Boolean(webSearch);
@@ -311,7 +335,7 @@ export async function POST(req: NextRequest) {
       );
 
       const toolPrompt = formatToolRegistrySystemPrompt();
-      const combinedSystemPrompt = `${systemPrompt}\n\n${toolPrompt}`;
+      const combinedSystemPrompt = [systemPrompt, toolPrompt, studentRecordsContext].filter(Boolean).join("\n\n");
 
       // 4. Generate AI response through centralized Myra Orchestration Service
       const orchestrationResult = await MyraOrchestrator.execute({

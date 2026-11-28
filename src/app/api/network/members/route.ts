@@ -2,12 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDbPool } from "@/lib/db-server";
 import { PublicUserProfile } from "@/lib/types";
 import { formatEdId } from "@/lib/utils";
+import { resolveMyraUser } from "@/lib/ai/myra-session";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
-    const currentUserId = req.headers.get("x-user-id") || req.nextUrl.searchParams.get("userId") || null;
+    const currentUserId = await resolveMyraUser(req);
+    if (!currentUserId) {
+      return NextResponse.json({ error: "Sign in to view the member directory." }, { status: 401 });
+    }
     const networkType = (req.nextUrl.searchParams.get("type") || "all").toLowerCase();
     const searchQuery = (req.nextUrl.searchParams.get("query") || "").trim().toLowerCase();
     const limit = Math.min(parseInt(req.nextUrl.searchParams.get("limit") || "50", 10), 100);
@@ -31,13 +35,13 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // 2. Query all registered members from profiles joined with users (real data, public, Career track only)
+    // List public adult profiles across all tracks.
     const membersRes = await pool.query(`
       SELECT 
         p.id,
         p.name,
-        p.email,
         p.username,
+        p.age_band,
         p.headline,
         p.bio,
         p.grade_level,
@@ -54,9 +58,8 @@ export async function GET(req: NextRequest) {
       FROM public.profiles p
       LEFT JOIN public.users u ON u.id = p.id
       WHERE p.is_public = true
-        AND (p.visual_mode = 'career' OR p.visual_mode IS NULL)
         AND (p.career_stage IS NULL OR LOWER(p.career_stage) != 'junior')
-        AND (p.age_band IS NULL OR p.age_band = '18+')
+        AND p.age_band = '18+'
       ORDER BY p.created_at DESC
     `);
 
@@ -163,7 +166,7 @@ export async function GET(req: NextRequest) {
         else if (conn.status === "BLOCKED") connectionStatus = "blocked";
       }
 
-      const displayName = p.name || (p.email ? p.email.split("@")[0].replace(/[^a-zA-Z0-9]/g, " ") : "Member");
+      const displayName = p.name || p.username || "Member";
       const displayUsername = p.username || displayName.toLowerCase().replace(/\s+/g, "_");
 
       return {

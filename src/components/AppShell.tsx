@@ -19,6 +19,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user } = useAuth();
   const [showReconsent, setShowReconsent] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const isLandingPage = pathname === "/";
   const isAuthPage =
@@ -82,7 +83,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   if (isAuthPage) {
     return (
       <div className="min-h-screen w-full bg-white text-black font-sans antialiased relative overflow-hidden selection:bg-[#2563EB] selection:text-white">
-        <div className="relative z-10 w-full min-h-screen flex flex-col justify-center">
+        <div className="relative z-10 has-[[data-page-loading]]:z-auto w-full min-h-screen flex flex-col justify-center">
           {children}
         </div>
         <CookieConsentBanner />
@@ -121,9 +122,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div
       className={cn(
-        "min-h-screen flex flex-col font-sans antialiased selection:bg-[#2563EB] selection:text-white relative overflow-x-clip lg:pl-60 xl:pl-[17rem]",
+        "min-h-screen flex flex-col font-sans antialiased selection:bg-[#2563EB] selection:text-white relative overflow-x-clip",
+        sidebarOpen ? "lg:pl-60 xl:pl-[17rem]" : "lg:pl-24",
         "text-black",
-        "bg-[#f1f6f5]"
+        "bg-white"
       )}
     >
       <a
@@ -134,11 +136,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       </a>
 
       {/* Curvy Floating Side Navigation Dock for Desktop */}
-      {!isLandingPage && <CurvySideDock />}
+      <CurvySideDock expanded={sidebarOpen} onToggle={() => setSidebarOpen((open) => !open)} />
 
       {/* Modern Sticky Glassmorphic Navbar */}
-      <div className="sticky top-0 z-40">
-        <ModernEdworldNavbar sidebarVisible />
+      <div className="relative z-40">
+        <ModernEdworldNavbar sidebarVisible={sidebarOpen} />
       </div>
 
       {/* Main Workspace Container */}
@@ -146,7 +148,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         id="main-content"
         tabIndex={-1}
         className={cn(
-          "flex-1 outline-none relative z-10",
+          "flex-1 outline-none relative z-10 has-[[data-page-loading]]:z-auto",
           isLandingPage
             ? "w-full"
             : "max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8",
@@ -157,7 +159,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       </main>
 
       <div className={cn("relative z-20", user && "pb-[calc(6rem+env(safe-area-inset-bottom))] lg:pb-0")}>
-        <ModernEdworldFooter compact={Boolean(user)} />
+        <ModernEdworldFooter />
       </div>
 
       {/* Mobile Bottom Navigation for Authenticated Users */}

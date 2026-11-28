@@ -353,7 +353,7 @@ export default function ResumesDirectEditorPage() {
         </header>
 
         {/* User Identity Greeting Context Sub-Bar */}
-        <div className="border border-blue-100/80 bg-white rounded-3xl px-4 sm:px-6 lg:px-8 py-3.5 shadow-[0_10px_30px_rgba(80,90,130,0.06)]">
+        <div className="border-blue-100/80 px-4 sm:px-6 lg:px-8 py-3.5 border-b">
           <div className="max-w-[1536px] mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="px-3 py-1 rounded-full text-xs font-semibold text-[#1E40AF] bg-[#EFF6FF] border border-blue-200/60 flex items-center gap-1.5">
@@ -378,7 +378,7 @@ export default function ResumesDirectEditorPage() {
 
         {/* Pre-fill Alert Banner for New Resumes */}
         {showPreFillBanner && (
-          <div className="bg-[#EFF6FF] border border-blue-200 text-slate-800 rounded-3xl px-4 sm:px-6 lg:px-8 py-3.5 text-xs sm:text-sm flex items-center justify-between shadow-sm">
+          <div className="border-blue-200 text-slate-800 px-4 sm:px-6 lg:px-8 py-3.5 text-xs sm:text-sm flex items-center justify-between border-b">
             <div className="flex items-center gap-2.5 max-w-5xl mx-auto flex-1">
               <Info className="w-4 h-4 sm:w-5 sm:h-5 text-[#2563EB] shrink-0" />
               <span className="text-slate-700">
@@ -432,7 +432,7 @@ export default function ResumesDirectEditorPage() {
 
           {/* Live Preview Column */}
           <div className={`lg:col-span-6 w-full lg:sticky lg:top-24 ${mobileTab === "edit" ? "hidden lg:block" : "block"}`}>
-            <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-3xl border border-blue-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] relative overflow-hidden">
+            <div className="p-4 sm:p-6 lg:p-8 border-blue-100/80 relative overflow-hidden border-b">
               <div className="flex items-center justify-between mb-3 text-xs text-slate-500 px-1 font-medium">
                 <span className="font-semibold text-slate-900">ATS Preview • {activeTemplate.charAt(0).toUpperCase() + activeTemplate.slice(1)}</span>
                 <span className="px-2 py-0.5 rounded-full bg-slate-100 text-[10px] text-slate-600 border border-blue-200/80">Text Selectable</span>

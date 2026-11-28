@@ -220,7 +220,7 @@ export default function MultiChannelAlertsPage() {
             <div className="lg:col-span-7 space-y-6">
               
               {/* Channel 1: WhatsApp Setup Card */}
-              <div className="p-5 sm:p-6 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs space-y-4">
+              <div className="p-5 sm:p-6 border-[#E5E7EB] space-y-4 border-b">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-2.5">
                     <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
@@ -286,7 +286,7 @@ export default function MultiChannelAlertsPage() {
               </div>
 
               {/* Channel 2: Telegram Setup Card */}
-              <div className="p-5 sm:p-6 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs space-y-4">
+              <div className="p-5 sm:p-6 border-[#E5E7EB] space-y-4 border-b">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-2.5">
                     <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center font-bold">
@@ -367,7 +367,7 @@ export default function MultiChannelAlertsPage() {
               </div>
 
               {/* Roles Preference Section */}
-              <div className="p-5 sm:p-6 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs space-y-4">
+              <div className="p-5 sm:p-6 border-[#E5E7EB] space-y-4 border-b">
                 <div className="flex items-center gap-2">
                   <Briefcase className="w-4 h-4 text-[#2563EB]" />
                   <h3 className="text-sm font-bold text-[#111827]">
@@ -397,7 +397,7 @@ export default function MultiChannelAlertsPage() {
               </div>
 
               {/* Cities Preference Section */}
-              <div className="p-5 sm:p-6 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs space-y-4">
+              <div className="p-5 sm:p-6 border-[#E5E7EB] space-y-4 border-b">
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-[#2563EB]" />
                   <h3 className="text-sm font-bold text-[#111827]">
@@ -427,7 +427,7 @@ export default function MultiChannelAlertsPage() {
               </div>
 
               {/* Frequency Selector */}
-              <div className="p-5 sm:p-6 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs space-y-4">
+              <div className="p-5 sm:p-6 border-[#E5E7EB] space-y-4 border-b">
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-[#2563EB]" />
                   <h3 className="text-sm font-bold text-[#111827]">Alert Pacing &amp; Frequency</h3>
@@ -493,7 +493,7 @@ export default function MultiChannelAlertsPage() {
             <div className="lg:col-span-5 space-y-6">
               
               {/* Message Payload Preview Card */}
-              <div className="p-5 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs space-y-4">
+              <div className="p-5 border-[#E5E7EB] space-y-4 border-b">
                 <div className="flex items-center justify-between">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[#111827]">
                     Live Alert Template Preview
@@ -542,7 +542,7 @@ export default function MultiChannelAlertsPage() {
               </div>
 
               {/* Privacy & Opt-Out Policy */}
-              <div className="p-5 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs space-y-3">
+              <div className="p-5 border-[#E5E7EB] space-y-3 border-b">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-[#2563EB]" />
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[#111827]">

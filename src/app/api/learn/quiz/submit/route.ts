@@ -1,19 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { queryDb } from "@/lib/db-server";
+import { resolveMyraUser } from "@/lib/ai/myra-session";
 import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { slug, recipientName, userId, answers = {} } = body || {};
+    const userId = await resolveMyraUser(req);
+    if (!userId) {
+      return NextResponse.json({ success: false, error: "Sign in to submit your quiz." }, { status: 401 });
+    }
 
-    if (!slug) {
+    const body = await req.json().catch(() => null);
+    const { slug, recipientName, answers } = body || {};
+
+    if (typeof slug !== "string" || !slug.trim()) {
       return NextResponse.json({ success: false, error: "Course slug is required." }, { status: 400 });
     }
 
-    const trimmedName = (recipientName || "").trim();
+    if (!answers || typeof answers !== "object" || Array.isArray(answers)) {
+      return NextResponse.json({ success: false, error: "Quiz answers are required." }, { status: 400 });
+    }
+
+    const trimmedName = typeof recipientName === "string" ? recipientName.trim() : "";
     if (!trimmedName) {
       return NextResponse.json({ success: false, error: "Recipient name is required for certificate issuance." }, { status: 400 });
     }
@@ -57,14 +67,14 @@ export async function POST(req: NextRequest) {
     });
 
     const scorePercentage = Math.round((correctCount / questions.length) * 100);
-    const passed = scorePercentage >= passingScore;
+    const passed = correctCount * 100 >= passingScore * questions.length;
 
     let certificateRecord = null;
 
     // 3. If passed, issue verifiable certificate
     if (passed) {
       const randomSuffix = crypto.randomBytes(3).toString("hex").toUpperCase();
-      const certificateCode = `EDW-CERT-2026-${randomSuffix}`;
+      const certificateCode = `EDW-CERT-${new Date().getUTCFullYear()}-${randomSuffix}`;
       
       const payloadToHash = `${certificateCode}:${trimmedName}:${course.slug}:${scorePercentage}:${Date.now()}`;
       const verificationHash = crypto.createHash("sha256").update(payloadToHash).digest("hex");
@@ -78,7 +88,7 @@ export async function POST(req: NextRequest) {
                   score_percentage, passed, verification_hash, issued_at`,
         [
           certificateCode,
-          userId || null,
+          userId,
           trimmedName,
           course.id,
           course.title,

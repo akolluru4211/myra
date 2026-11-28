@@ -146,7 +146,7 @@ export default function CourseOutlinePage() {
       {/* Main Container */}
       <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-6 space-y-6">
         {/* Course Banner */}
-        <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-4">
+        <div className="border-slate-200/80 p-6 sm:p-8 space-y-4 border-b">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded bg-indigo-50 text-[#5C59E8] border border-indigo-100">
               Interactive Practical Track

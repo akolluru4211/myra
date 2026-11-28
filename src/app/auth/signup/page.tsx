@@ -40,6 +40,7 @@ function SignupForm() {
   const [referralCode, setReferralCode] = useState(searchParams?.get("ref") || "");
   const [termsAgreed, setTermsAgreed] = useState(false);
   const [ageConsent, setAgeConsent] = useState(false);
+  const [birthDate, setBirthDate] = useState("");
   const [wantsEdMail, setWantsEdMail] = useState(false);
   const [edMailHandle, setEdMailHandle] = useState("");
   const [edMailAvailable, setEdMailAvailable] = useState<boolean | null>(null);
@@ -251,7 +252,7 @@ function SignupForm() {
           name.trim(),
           email.trim().toLowerCase(),
           password,
-          undefined,
+          birthDate || undefined,
           undefined,
           phone.trim() || undefined,
           careerStage
@@ -600,6 +601,14 @@ function SignupForm() {
 
                 {/* Terms & Age Eligibility Checkboxes */}
                 <div className="space-y-2 pt-2 border-t border-neutral-200">
+                  <p className="text-xs text-slate-600">
+                    New profiles for members aged 18 and older are public by default. You can make your profile private in Profile Settings.
+                  </p>
+                  <label className="block space-y-1 text-sm font-medium text-slate-800">
+                    <span>Date of birth <span className="text-xs font-normal text-slate-600">(optional)</span></span>
+                    <input type="date" autoComplete="bday" value={birthDate} onChange={(event) => setBirthDate(event.target.value)} className="block w-full rounded-lg border border-blue-200 bg-white px-3 py-2" />
+                    <span className="block text-xs font-normal text-slate-600">Leave blank to keep your profile private.</span>
+                  </label>
                   <label className="flex items-start gap-2.5 cursor-pointer text-xs text-slate-600">
                     <input
                       type="checkbox"
@@ -749,7 +758,7 @@ export default function SignupPage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-[#F4F5FA] flex items-center justify-center">
-          <div className="p-6 rounded-2xl bg-white border border-neutral-200 shadow-sm flex items-center gap-3">
+          <div className="p-6 border-neutral-200 flex items-center gap-3 border-b">
             <Loader2 className="w-5 h-5 animate-spin text-[#292825]" />
             <span className="text-sm font-semibold text-slate-800">Loading sign up...</span>
           </div>

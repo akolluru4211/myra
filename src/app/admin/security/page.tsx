@@ -280,7 +280,7 @@ export default function AdminSecuritySOCPage() {
       <div className="space-y-6 animate-in fade-in duration-200">
         
         {/* Header Bar */}
-        <div className="bg-white border border-neutral-200 rounded-3xl p-6 sm:p-8 shadow-xs">
+        <div className="border-neutral-200 p-6 sm:p-8 border-b">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
@@ -349,7 +349,7 @@ export default function AdminSecuritySOCPage() {
 
         {/* Quick Metrics Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white border border-neutral-200 p-5 rounded-2xl shadow-xs">
+          <div className="border-neutral-200 p-5 border-b">
             <div className="flex items-center justify-between text-neutral-400">
               <span className="text-xs font-mono uppercase font-bold">Total Interceptions</span>
               <Activity className="w-4 h-4 text-black" />
@@ -362,7 +362,7 @@ export default function AdminSecuritySOCPage() {
             </span>
           </div>
 
-          <div className="bg-white border border-neutral-200 p-5 rounded-2xl shadow-xs">
+          <div className="border-neutral-200 p-5 border-b">
             <div className="flex items-center justify-between text-neutral-400">
               <span className="text-xs font-mono uppercase font-bold">Quarantined IPs</span>
               <Lock className="w-4 h-4 text-red-500" />
@@ -375,7 +375,7 @@ export default function AdminSecuritySOCPage() {
             </span>
           </div>
 
-          <div className="bg-white border border-neutral-200 p-5 rounded-2xl shadow-xs">
+          <div className="border-neutral-200 p-5 border-b">
             <div className="flex items-center justify-between text-neutral-400">
               <span className="text-xs font-mono uppercase font-bold">Shield Status</span>
               <ShieldCheck className="w-4 h-4 text-emerald-500" />
@@ -388,7 +388,7 @@ export default function AdminSecuritySOCPage() {
             </span>
           </div>
 
-          <div className="bg-white border border-neutral-200 p-5 rounded-2xl shadow-xs">
+          <div className="border-neutral-200 p-5 border-b">
             <div className="flex items-center justify-between text-neutral-400">
               <span className="text-xs font-mono uppercase font-bold">Vector Coverage</span>
               <Cpu className="w-4 h-4 text-black" />
@@ -404,7 +404,7 @@ export default function AdminSecuritySOCPage() {
 
         {/* Active Quarantined IPs List */}
         {quarantinedIPs.length > 0 && (
-          <div className="bg-white border border-red-200 p-5 rounded-2xl shadow-xs space-y-3">
+          <div className="border-red-200 p-5 space-y-3 border-b">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-red-700">
                 <ShieldAlert className="w-4 h-4" />
@@ -438,7 +438,7 @@ export default function AdminSecuritySOCPage() {
         )}
 
         {/* Attack Vector Distribution & Active Rules */}
-        <div className="bg-white border border-neutral-200 p-6 sm:p-7 rounded-3xl shadow-xs space-y-4">
+        <div className="border-neutral-200 p-6 sm:p-7 space-y-4 border-b">
           <h2 className="text-base font-extrabold text-black flex items-center gap-2">
             <Activity className="w-4 h-4 text-black" />
             <span>Attack Vector Distribution &bull; Aegis Threat Matrix</span>
@@ -471,7 +471,7 @@ export default function AdminSecuritySOCPage() {
         </div>
 
         {/* Interactive Attack & Threat Simulator */}
-        <div className="bg-white border border-neutral-200 p-6 sm:p-7 rounded-3xl shadow-xs space-y-5">
+        <div className="border-neutral-200 p-6 sm:p-7 space-y-5 border-b">
           <div className="space-y-1">
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">
               Security Sandbox &bull; Forensic Verification
@@ -589,7 +589,7 @@ export default function AdminSecuritySOCPage() {
         </div>
 
         {/* Ask Sentinel AI Analyst */}
-        <div className="bg-white border border-neutral-200 p-6 sm:p-7 rounded-3xl shadow-xs space-y-4">
+        <div className="border-neutral-200 p-6 sm:p-7 space-y-4 border-b">
           <div className="space-y-1">
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-neutral-400">
               Natural Language Security Copilot
@@ -629,7 +629,7 @@ export default function AdminSecuritySOCPage() {
         </div>
 
         {/* Live Incident & Threat Log with Triage and Export */}
-        <div className="bg-white border border-neutral-200 p-6 sm:p-7 rounded-3xl shadow-xs space-y-4">
+        <div className="border-neutral-200 p-6 sm:p-7 space-y-4 border-b">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-neutral-200 pb-3 gap-3">
             <div>
               <h2 className="text-base font-extrabold text-black flex items-center gap-2">

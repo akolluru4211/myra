@@ -168,7 +168,7 @@ export default function PublicProfileViewPage() {
   if (errorStatus || !profile) {
     return (
       <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-3xl border border-stone-200/80 p-8 text-center space-y-6 shadow-sm">
+        <div className="max-w-md w-full border-stone-200/80 p-8 text-center space-y-6 border-b">
           <div className="w-14 h-14 rounded-2xl bg-stone-100 text-stone-400 flex items-center justify-center mx-auto">
             {errorStatus === 403 ? <Lock className="w-7 h-7 text-amber-600" /> : <UserX className="w-7 h-7" />}
           </div>
@@ -213,7 +213,7 @@ export default function PublicProfileViewPage() {
   if (isMinor) {
     return (
       <div className="min-h-screen bg-[#FAF8F5] flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-3xl border border-stone-200 p-8 text-center space-y-4 shadow-sm">
+        <div className="max-w-md w-full border-stone-200 p-8 text-center space-y-4 border-b">
           <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto">
             <Lock className="w-6 h-6" />
           </div>
@@ -258,7 +258,7 @@ export default function PublicProfileViewPage() {
         )}
 
         {/* Profile Card */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-stone-200/80 shadow-xs space-y-6">
+        <div className="p-6 sm:p-8 border-stone-200/80 space-y-6 border-b">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
             
             <div className="flex items-start gap-4 sm:gap-5">
@@ -401,7 +401,7 @@ export default function PublicProfileViewPage() {
               <Layers className="w-4 h-4 text-emerald-700" />
               <span>Skills &amp; Technologies</span>
             </h2>
-            <div className="p-5 rounded-3xl bg-white border border-stone-200/80 shadow-xs flex flex-wrap gap-2">
+            <div className="p-5 border-stone-200/80 flex flex-wrap gap-2 border-b">
               {profile.skills.map((skill: any, idx: number) => {
                 const name = typeof skill === "string" ? skill : skill.name || skill.id;
                 return (
@@ -425,7 +425,7 @@ export default function PublicProfileViewPage() {
           </h2>
 
           {projects.length === 0 ? (
-            <div className="p-8 rounded-3xl bg-white border border-stone-200/80 text-center text-xs text-stone-500">
+            <div className="p-8 border-stone-200/80 text-center text-xs text-stone-500 border-b">
               No public projects published yet.
             </div>
           ) : (

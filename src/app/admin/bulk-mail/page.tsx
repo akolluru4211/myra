@@ -141,7 +141,7 @@ export default function AdminBulkMailSenderPage() {
     <div className="space-y-6 animate-in fade-in duration-200">
       
       {/* Header Banner */}
-      <div className="bg-white border border-neutral-200 rounded-3xl p-6 sm:p-8 shadow-xs">
+      <div className="border-neutral-200 p-6 sm:p-8 border-b">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-2 text-xs font-bold text-neutral-500 uppercase tracking-wider">
@@ -190,7 +190,7 @@ export default function AdminBulkMailSenderPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Left Column: Email Composer Form */}
-        <div className="lg:col-span-7 bg-white border border-neutral-200 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
+        <div className="lg:col-span-7 border-neutral-200 p-6 sm:p-8 space-y-6 border-b">
           <div className="flex items-center justify-between border-b border-neutral-200 pb-4">
             <h2 className="text-lg font-black text-black">Compose Broadcast</h2>
             <span className="text-xs font-mono font-bold text-neutral-500">
@@ -359,7 +359,7 @@ export default function AdminBulkMailSenderPage() {
 
         {/* Right Column: Live Email Preview Card */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="bg-white border border-neutral-200 rounded-3xl p-6 shadow-xs space-y-4">
+          <div className="border-neutral-200 p-6 space-y-4 border-b">
             <div className="flex items-center justify-between border-b border-neutral-200 pb-3">
               <span className="text-xs font-bold text-black uppercase tracking-wider flex items-center gap-1.5">
                 <Eye className="w-3.5 h-3.5 text-neutral-500" />
@@ -428,7 +428,7 @@ export default function AdminBulkMailSenderPage() {
           </div>
 
           {/* Past Broadcast History */}
-          <div className="bg-white border border-neutral-200 rounded-3xl p-6 shadow-xs space-y-3">
+          <div className="border-neutral-200 p-6 space-y-3 border-b">
             <h3 className="text-sm font-bold text-black">Recent Dispatches</h3>
             {recentBroadcasts.length === 0 ? (
               <p className="text-xs text-neutral-500">No broadcasts recorded yet.</p>

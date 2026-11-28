@@ -577,7 +577,7 @@ export default function ActiveInterviewStudioPage() {
   if (isMinorUser) {
     return (
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-6 bg-white">
-        <div className="max-w-md w-full bg-white rounded-3xl p-8 border border-neutral-200 shadow-xl text-center space-y-4">
+        <div className="max-w-md w-full p-8 border-neutral-200 text-center space-y-4 border-b">
           <div className="w-12 h-12 rounded-2xl bg-neutral-100 text-black flex items-center justify-center mx-auto">
             <Lock className="w-6 h-6" />
           </div>
@@ -731,7 +731,7 @@ export default function ActiveInterviewStudioPage() {
 
         {!sessionStarted ? (
           /* RESUME-FIRST PRE-SESSION SETUP: 3-STEP FLOW */
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-neutral-200 shadow-xs space-y-8 animate-in fade-in">
+          <div className="p-6 sm:p-8 border-neutral-200 space-y-8 animate-in fade-in border-b">
             
             {/* 3-Step Flow Stepper Header */}
             <div className="space-y-4">
@@ -1145,7 +1145,7 @@ export default function ActiveInterviewStudioPage() {
           /* ACTIVE INTERVIEW STUDIO (Text Practice or Voice MediaRecorderStudio) */
           interviewMode === "text" ? (
             /* TEXT PRACTICE STUDIO: No mic, no camera, no proctoring */
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-neutral-200 shadow-sm space-y-6 animate-in fade-in">
+            <div className="p-6 sm:p-8 border-neutral-200 space-y-6 animate-in fade-in border-b">
               {/* Top Progress & Mode Header */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-neutral-100 pb-4">
                 <div className="space-y-1">
@@ -1273,7 +1273,7 @@ export default function ActiveInterviewStudioPage() {
             /* VOICE STUDIO (Full MediaRecorderStudio with Screen Lockdown) */
             <div className="space-y-4">
               {/* Header with AI Model Badge, Generation Source Label & Progress */}
-              <div className="bg-white rounded-2xl p-4 border border-neutral-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="p-4 border-neutral-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase bg-black text-white">
@@ -1325,7 +1325,7 @@ export default function ActiveInterviewStudioPage() {
         {/* Multi-Stage Branded Progress Loader during Generation or Scoring */}
         {(generating || isScoring) && (
           <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in">
-            <div className="max-w-md w-full bg-white border border-neutral-300 rounded-3xl p-6 sm:p-8 text-center space-y-5 shadow-2xl">
+            <div className="max-w-md w-full border-neutral-300 p-6 sm:p-8 text-center space-y-5 border-b">
               <div className="relative w-16 h-16 mx-auto">
                 <div className="w-16 h-16 rounded-full border-4 border-black border-t-transparent animate-spin flex items-center justify-center">
                   <Sparkles className="w-6 h-6 text-black" />

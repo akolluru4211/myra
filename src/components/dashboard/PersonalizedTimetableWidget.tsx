@@ -212,10 +212,10 @@ export default function PersonalizedTimetableWidget() {
   ];
 
   return (
-    <div className="bg-white rounded-3xl border border-blue-100/80 shadow-[0_10px_30px_rgba(80,90,130,0.06)] p-6 sm:p-7 shadow-xl text-slate-900 space-y-6">
+    <div className="space-y-6 border-t border-blue-100 py-6 text-slate-900">
       
       {/* Widget Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-blue-100">
+      <div className="flex flex-wrap items-start justify-between gap-4 pb-5 border-b border-blue-100">
         <div>
           <div className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-xl bg-[#EFF6FF] flex items-center justify-center text-[#2563EB] shrink-0">
@@ -236,7 +236,7 @@ export default function PersonalizedTimetableWidget() {
         </div>
 
         {/* Study Hours Selector */}
-        <div className="flex items-center gap-1.5 self-start sm:self-auto bg-[#EFF6FF] border border-blue-200/80 p-1.5 rounded-2xl shadow-2xs">
+        <div className="flex flex-wrap items-center gap-1.5 self-start bg-[#EFF6FF] border border-blue-200/80 p-1.5 rounded-2xl shadow-2xs">
           <span className="text-[11px] font-medium text-slate-500 px-2 flex items-center gap-1">
             <Clock className="w-3.5 h-3.5 text-[#2563EB]" />
             Study Time:

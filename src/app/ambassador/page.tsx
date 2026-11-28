@@ -181,7 +181,7 @@ export default function CampusAmbassadorPage() {
         {isApproved ? (
           <div className="space-y-6">
             {/* Ambassador Verified Details */}
-            <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-2xs space-y-4">
+            <div className="border-slate-200/80 p-6 space-y-4 border-b">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
@@ -253,7 +253,7 @@ export default function CampusAmbassadorPage() {
             {/* Assigned Tasks & Campus Events */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Tasks */}
-              <div className="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-2xs space-y-3">
+              <div className="border-slate-200/80 p-5 space-y-3 border-b">
                 <div className="flex items-center gap-2 text-xs font-bold text-slate-900 font-display">
                   <ListTodo className="w-4 h-4 text-[#5C59E8]" />
                   <span>Assigned Campus Tasks</span>
@@ -275,7 +275,7 @@ export default function CampusAmbassadorPage() {
               </div>
 
               {/* Campus Events */}
-              <div className="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-2xs space-y-3">
+              <div className="border-slate-200/80 p-5 space-y-3 border-b">
                 <div className="flex items-center gap-2 text-xs font-bold text-slate-900 font-display">
                   <Calendar className="w-4 h-4 text-amber-500" />
                   <span>Approved Campus Events</span>
@@ -299,7 +299,7 @@ export default function CampusAmbassadorPage() {
           </div>
         ) : (
           /* Application Flow / Status Tracking */
-          <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-2xs space-y-5">
+          <div className="border-slate-200/80 p-6 sm:p-8 space-y-5 border-b">
             {/* Status Display if Application Exists */}
             {application && (
               <div

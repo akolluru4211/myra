@@ -19,7 +19,6 @@ import {
   Clock,
   Plus,
   Users,
-  GitBranch,
   Trophy,
   CheckCircle2,
 } from "lucide-react";
@@ -30,11 +29,10 @@ import { useAuth } from "@/lib/auth-context";
 import StudentProgressWidget from "@/components/dashboard/StudentProgressWidget";
 import PersonalizedTimetableWidget from "@/components/dashboard/PersonalizedTimetableWidget";
 import CareerPathSelectorWidget from "@/components/dashboard/CareerPathSelectorWidget";
-import ContinueDsaWidget from "@/components/dashboard/ContinueDsaWidget";
-import DailyHabitHeroCard from "@/components/dashboard/DailyHabitHeroCard";
-import PromotionalMotivationCard from "@/components/dashboard/PromotionalMotivationCard";
+
+
+
 import FeaturedEventsCarousel from "@/components/dashboard/FeaturedEventsCarousel";
-import OpportunityBoard from "@/components/dashboard/OpportunityBoard";
 
 export default function DashboardPage() {
   const { user, profile } = useAuth();
@@ -207,7 +205,7 @@ export default function DashboardPage() {
         
         {/* Onboarding Incomplete Alert Banner */}
         {!isOnboardingDone && profile?.onboarding_completed === false && (
-          <div className="p-4 sm:p-5 rounded-2xl bg-white border border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+          <div className="p-4 sm:p-5 border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-[#efeeeb] flex items-center justify-center shrink-0 font-bold text-[#292825]">
                 <Sparkles className="w-5 h-5 stroke-[2]" />
@@ -235,7 +233,12 @@ export default function DashboardPage() {
           <div className={styles.welcome}>
             <div>
               <h1 className={styles.welcomeTitle}>Hi, {studentName}!</h1>
-              <p>Pick up where you left off or ask Myra to help you plan your next study session.</p>
+              <p>Continue studying or plan your next session with Myra.</p>
+            </div>
+            <div className={styles.heroArt} aria-hidden="true">
+              <span />
+              <span />
+              <span />
             </div>
 
             {/* Primary Action Button: Ask Myra */}
@@ -310,65 +313,30 @@ export default function DashboardPage() {
                   href="/dsa"
                   className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-neutral-200 text-slate-800 font-bold shrink-0 self-start sm:self-auto transition-colors"
                 >
-                  Browse practice problems
+                  Browse DSA practice
                 </Link>
               </div>
             )}
           </div>
 
-          {/* COMPACT TOOL SHORTCUTS (Clear, Non-Duplicative Navigation) */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm font-semibold text-slate-600 mr-1">
-              Shortcuts
-            </span>
-            <Link
-              href="/dsa"
-              className={styles.quickLink}
-            >
-              <span>DSA Practice</span>
-            </Link>
-            <Link
-              href="/interviews"
-              className={styles.quickLink}
-            >
-              <span>Mock Interviews</span>
-            </Link>
-            <Link
-              href="/daily"
-              className={styles.quickLink}
-            >
-              <span>Daily Challenge</span>
-            </Link>
-            <Link
-              href="/edmail"
-              className={styles.quickLink}
-            >
-              <Mail className="w-3.5 h-3.5 text-[#292825]" />
-              <span>EdMail</span>
-            </Link>
-            <Link
-              href="/student-record"
-              className={styles.quickLink}
-            >
-              <GraduationCap className="w-3.5 h-3.5 text-[#292825]" />
-              <span>Student Record</span>
-            </Link>
-          </div>
-
-          {/* SLIDING UPCOMING EVENTS BANNER STRIP (16:9 ratio, responsive) */}
-          <div className="pt-2">
-            <FeaturedEventsCarousel userId={user?.uid} />
-          </div>
-
-          <OpportunityBoard />
+          <Link href="/interviews" className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 border-b border-blue-100 pb-4 sm:gap-6">
+            <div className="py-5">
+              <h2 className="text-xl font-bold tracking-tight text-black sm:text-3xl">Practice your next interview</h2>
+              <span className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-blue-800 group-hover:underline">
+                Open Mock Interviews <ArrowRight aria-hidden="true" size={16} />
+              </span>
+            </div>
+            <img src="/images/interview-banner-art.png" alt="" width={1024} height={1024} loading="lazy" className="aspect-square w-20 object-cover sm:w-32" />
+          </Link>
 
           <div className="space-y-3">
             <h2 className="text-lg font-bold text-slate-900">Study tools</h2>
             <div className={styles.toolGrid}>
               {[
-                { href: "/dsa", title: "Problem Arena", description: "Practice data structures and algorithms with curated problems.", icon: Target },
-                { href: "/daily", title: "Daily Habit Loop", description: "Build a streak with short coding, aptitude, and interview drills.", icon: Flame },
-                { href: "/profile", title: "Synced Profiles", description: "Show verified GitHub and LeetCode activity on your student card.", icon: GitBranch },
+                { href: "/dsa", title: "DSA Practice", description: "Practice data structures and algorithms with curated problems.", icon: Target },
+                { href: "/daily", title: "Daily Challenge", description: "Build a streak with short coding, aptitude, and interview drills.", icon: Flame },
+                { href: "/student-record", title: "Student Record", description: "See your saved work and certificates.", icon: GraduationCap },
+                { href: "/edmail", title: "EdMail", description: "Check your inbox and replies.", icon: Mail },
                 { href: "/squads", title: "Study Squads", description: "Study with peers and work toward shared weekly goals.", icon: Users },
               ].map(({ href, title, description, icon: Icon }) => (
                 <Link key={href} href={href} className={styles.toolCard}>
@@ -387,18 +355,13 @@ export default function DashboardPage() {
         </section>
 
         {/* 1.5 DEEP WORK FOCUS LOCK STRIP */}
-        <section className="p-6 rounded-3xl bg-white border border-blue-100 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-5 text-slate-900">
+        <section className="border-t border-blue-100 py-6 flex flex-col md:flex-row md:items-center justify-between gap-5 text-slate-900">
           <div className="space-y-1.5 max-w-xl">
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#efeeeb] text-[#4338CA]">
-                Focus Mode
-              </span>
-            </div>
             <h3 className="text-lg font-bold text-slate-900 font-display">
-              Lock In for a Distraction-Free Study Session
+              Focus Studio
             </h3>
             <p className="text-xs text-slate-500 font-normal leading-relaxed">
-              Restrict distracting websites and apps until your study timer completes to build deep algorithmic practice.
+              Set a timer for your next focused study session.
             </p>
           </div>
 
@@ -414,15 +377,10 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {/* CHUNKED MODULAR 3-COLUMN GRID HOUSING THE WIDGETS */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 items-start">
+        <div className="flex flex-wrap items-start gap-6 sm:gap-8">
           
           {/* LEFT 2-COLUMNS: Daily Habit, Student Progress, and Personalized Timetable */}
-          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
-            {/* 2. DAILY HABIT LOOP HERO CARD */}
-            <section aria-label="Daily Habit Loop">
-              <DailyHabitHeroCard userId={user?.uid} />
-            </section>
+          <div className="min-w-0 flex-[2_1_38rem] space-y-6 sm:space-y-8">
 
             {/* 3. SECTION 1: LEARNING PROGRESS WIDGET */}
             <section aria-label="Student Learning Progress">
@@ -436,17 +394,7 @@ export default function DashboardPage() {
           </div>
 
           {/* RIGHT 1-COLUMN: Continue DSA, Promotional Motivation Card, Career Path Selector */}
-          <div className="lg:col-span-1 space-y-6 sm:space-y-8">
-            {/* 5. CONTINUE DSA WIDGET */}
-            <section aria-label="Continue DSA Practice" data-section="continue_dsa">
-              <ContinueDsaWidget userId={user?.uid} />
-            </section>
-
-            {/* 6. PROMOTIONAL MOTIVATION CARD */}
-            <section aria-label="Community Placement Motivation">
-              <PromotionalMotivationCard />
-            </section>
-
+          <div className="min-w-0 flex-[1_1_20rem] space-y-6 sm:space-y-8">
             {/* 7. CAREER PATH SELECTION WIDGET */}
             <section aria-label="Career Path Selection">
               <CareerPathSelectorWidget />
@@ -455,6 +403,14 @@ export default function DashboardPage() {
 
         </div>
 
+        <section className="space-y-5 border-t border-blue-100 pt-6" aria-label="Opportunities">
+          <FeaturedEventsCarousel userId={user?.uid} />
+          <nav aria-label="Browse opportunities" className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-blue-800">
+            <Link href="/jobs" className="hover:underline">Jobs</Link>
+            <Link href="/internships" className="hover:underline">Internships</Link>
+            <Link href="/hackathons" className="hover:underline">Hackathons</Link>
+          </nav>
+        </section>
       </div>
     </AuthGuard>
   );

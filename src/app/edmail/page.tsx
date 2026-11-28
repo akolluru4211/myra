@@ -647,7 +647,7 @@ export default function EdMailWebmailPage() {
         {/* Unregistered State */}
         {mailboxStatus === "unregistered" && (
           <div className="flex-1 max-w-2xl mx-auto w-full p-4 sm:p-8 flex items-center justify-center">
-            <div className="bg-white rounded-3xl border border-blue-200 p-6 sm:p-8 shadow-xs space-y-6 w-full">
+            <div className="border-blue-200 p-6 sm:p-8 space-y-6 w-full border-b">
               <div className="w-12 h-12 rounded-2xl bg-[#EFF6FF] border border-blue-200 flex items-center justify-center text-[#2563EB]">
                 <Mail className="w-6 h-6" />
               </div>
@@ -1626,7 +1626,7 @@ export default function EdMailWebmailPage() {
         {/* MODAL: Save to Marks */}
         {saveToMarksModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-2xs animate-in fade-in">
-            <div className="bg-white w-full max-w-md rounded-3xl border border-blue-200 shadow-xl p-6 space-y-4">
+            <div className="w-full max-w-md border-blue-200 p-6 space-y-4 border-b">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 font-bold text-base text-slate-900">
                   <GraduationCap className="w-5 h-5 text-[#2563EB]" />
@@ -1715,7 +1715,7 @@ export default function EdMailWebmailPage() {
         {/* MODAL: Add to Calendar / Events */}
         {saveToEventModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-2xs animate-in fade-in">
-            <div className="bg-white w-full max-w-md rounded-3xl border border-blue-200 shadow-xl p-6 space-y-4">
+            <div className="w-full max-w-md border-blue-200 p-6 space-y-4 border-b">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 font-bold text-base text-slate-900">
                   <Calendar className="w-5 h-5 text-[#2563EB]" />
@@ -1802,7 +1802,7 @@ export default function EdMailWebmailPage() {
         {/* MODAL: Save Certificate */}
         {saveCertModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-2xs animate-in fade-in">
-            <div className="bg-white w-full max-w-md rounded-3xl border border-blue-200 shadow-xl p-6 space-y-4">
+            <div className="w-full max-w-md border-blue-200 p-6 space-y-4 border-b">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 font-bold text-base text-slate-900">
                   <Award className="w-5 h-5 text-amber-500" />
@@ -1876,7 +1876,7 @@ export default function EdMailWebmailPage() {
         {/* MODAL: Upload Document */}
         {uploadDocModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-2xs animate-in fade-in">
-            <div className="bg-white w-full max-w-md rounded-3xl border border-blue-200 shadow-xl p-6 space-y-4">
+            <div className="w-full max-w-md border-blue-200 p-6 space-y-4 border-b">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-base text-slate-900">Upload to Study Files</h3>
                 <button onClick={() => setUploadDocModalOpen(false)} className="text-slate-400 hover:text-slate-600">

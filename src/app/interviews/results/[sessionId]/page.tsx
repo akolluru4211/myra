@@ -253,7 +253,7 @@ export default function InterviewResultsPage() {
   if (loading) {
     return (
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-white p-4">
-        <div className="max-w-md w-full bg-white border border-neutral-200 rounded-3xl p-8 text-center space-y-5 shadow-lg">
+        <div className="max-w-md w-full border-neutral-200 p-8 text-center space-y-5 border-b">
           <div className="relative w-16 h-16 mx-auto">
             <div className="w-16 h-16 rounded-full border-4 border-emerald-600 border-t-transparent animate-spin flex items-center justify-center">
               <Sparkles className="w-6 h-6 text-emerald-600" />
@@ -276,7 +276,7 @@ export default function InterviewResultsPage() {
   if (!sessionData) {
     return (
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-white p-4">
-        <div className="max-w-md w-full bg-white border border-neutral-300 rounded-3xl p-8 text-center space-y-5 shadow-lg">
+        <div className="max-w-md w-full border-neutral-300 p-8 text-center space-y-5 border-b">
           <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-200">
             <AlertCircle className="w-7 h-7" />
           </div>
@@ -708,7 +708,7 @@ export default function InterviewResultsPage() {
 
         {/* Voice Privacy & Audio Retention Controls (Only for Voice Sessions) */}
         {!sessionData.isTextSession && (
-          <div className="bg-white rounded-3xl p-5 sm:p-6 border border-neutral-200 shadow-xs space-y-3 text-black">
+          <div className="p-5 sm:p-6 border-neutral-200 space-y-3 text-black border-b">
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div className="space-y-0.5">
                 <div className="flex items-center gap-2">

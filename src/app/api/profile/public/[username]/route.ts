@@ -143,8 +143,9 @@ export async function GET(
       (sessionUserId && (sessionUserId === targetUserId || sessionUserId === profile.id || sessionUserId === profile.user_id))
     );
 
-    // 4. Public Student Portfolios are open and accessible to all peers and recruiters
-    // Everyone on the network can view public showcase portfolios.
+    if (!isOwner && (profile.is_public !== true || profile.age_band !== "18+")) {
+      return apiError("RESOURCE_NOT_FOUND", "Public profile not found.", 404, {}, requestId);
+    }
 
     // 5. Fetch verified public projects & student record published projects
     let projects: any[] = [];

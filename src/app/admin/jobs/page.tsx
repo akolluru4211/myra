@@ -293,7 +293,7 @@ export default function AdminJobsManagementPage() {
     <div className="space-y-6 animate-in fade-in duration-200">
       
       {/* Page Header Banner */}
-      <div className="bg-white border border-neutral-200 rounded-3xl p-6 sm:p-8 shadow-xs">
+      <div className="border-neutral-200 p-6 sm:p-8 border-b">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-2 text-xs font-bold text-neutral-500 uppercase tracking-wider">
@@ -480,12 +480,12 @@ export default function AdminJobsManagementPage() {
       {/* Role Listings Grid */}
       <div className="space-y-3">
         {loading ? (
-          <div className="bg-white border border-neutral-200 rounded-3xl text-center py-24 space-y-3 shadow-xs">
+          <div className="border-neutral-200 text-center py-24 space-y-3 border-b">
             <RefreshCw className="w-6 h-6 animate-spin text-black mx-auto" />
             <p className="text-xs font-mono text-neutral-500">Retrieving active job &amp; internship listings...</p>
           </div>
         ) : filteredRoles.length === 0 ? (
-          <div className="bg-white border border-neutral-200 rounded-3xl text-center py-24 space-y-3 shadow-xs">
+          <div className="border-neutral-200 text-center py-24 space-y-3 border-b">
             <Briefcase className="w-10 h-10 text-neutral-300 mx-auto" />
             <p className="text-sm font-bold text-black">No roles found matching criteria.</p>
             <button

@@ -66,7 +66,7 @@ export default function CareerReadinessPage() {
       <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 sm:p-8 rounded-3xl border border-[#E8ECF2] shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 sm:p-8 border-[#E8ECF2] border-b">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E0FAF6] text-[#00D2B4] text-xs font-bold font-mono">
               <ShieldCheck className="w-3.5 h-3.5" />
@@ -96,7 +96,7 @@ export default function CareerReadinessPage() {
         </div>
 
         {loading || !readiness ? (
-          <div className="bg-white rounded-3xl p-16 border border-[#E8ECF2] text-center space-y-3">
+          <div className="p-16 border-[#E8ECF2] text-center space-y-3 border-b">
             <Loader2 className="w-8 h-8 text-[#7B57FF] animate-spin mx-auto" />
             <p className="text-xs text-[#5E6573] font-bold">Evaluating multi-source evidence & readiness dimensions...</p>
           </div>
@@ -104,7 +104,7 @@ export default function CareerReadinessPage() {
           <div className="space-y-6">
             
             {/* Overview Banner Card */}
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E8ECF2] shadow-sm space-y-4">
+            <div className="p-6 sm:p-8 border-[#E8ECF2] space-y-4 border-b">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
@@ -199,7 +199,7 @@ export default function CareerReadinessPage() {
 
             {/* Detailed Skill Gap Analysis */}
             {gapAnalysis && (
-              <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E8ECF2] shadow-sm space-y-6">
+              <div className="p-6 sm:p-8 border-[#E8ECF2] space-y-6 border-b">
                 <div className="space-y-1">
                   <h3 className="text-xl font-black text-[#13141B]">Target Skill Gap Deep-Dive</h3>
                   <p className="text-xs text-[#5E6573]">

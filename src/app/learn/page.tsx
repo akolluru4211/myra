@@ -23,7 +23,6 @@ import {
   ChevronRight,
   ShieldCheck
 } from "lucide-react";
-import EdworldLogo from "@/components/ui/EdworldLogo";
 
 interface EdLearnCatalogCourse {
   slug: string;
@@ -101,27 +100,13 @@ export default function EdLearnHubPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-800 pb-16">
-      {/* Top Header */}
-      <header className="bg-white border-b border-blue-200/80 sticky top-0 z-30 shadow-2xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <EdworldLogo className="h-7 w-auto" />
-            <div className="h-4 w-px bg-slate-200 hidden sm:block" />
-            <div className="flex items-center gap-1.5">
-              <span className="text-base sm:text-lg font-black font-display text-slate-900 tracking-tight">
-                EdLearn
-              </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EFF6FF] text-[#2563EB] border border-blue-200 font-mono">
-                Practical Hub
-              </span>
-            </div>
-          </div>
+    <div className="min-h-screen font-sans text-slate-800 pb-16">
+      <nav aria-label="EdLearn navigation" className="flex justify-end border-b border-blue-100 py-2">
 
           <div className="flex items-center gap-2.5">
             <Link
               href="/learn/papers"
-              className="px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-blue-200 text-xs font-bold text-slate-700 flex items-center gap-1.5 transition-all shadow-2xs"
+              className="flex items-center gap-1.5 px-2 py-2 text-sm font-medium text-blue-800 hover:underline"
             >
               <FileText className="w-3.5 h-3.5 text-[#2563EB]" />
               <span className="hidden sm:inline">Research Library</span>
@@ -130,28 +115,19 @@ export default function EdLearnHubPage() {
 
             <Link
               href="/dashboard"
-              className="px-3.5 py-1.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs"
+              className="flex items-center gap-1.5 px-2 py-2 text-sm font-medium text-blue-800 hover:underline"
             >
               <span>Dashboard</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
-        </div>
-      </header>
+      </nav>
 
       {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
+      <div className="w-full pt-6 space-y-6">
         {/* Hero Section */}
-        <div className="bg-[#EFF6FF] border border-[#BFDBFE] rounded-3xl p-6 sm:p-8 text-black relative overflow-hidden shadow-sm">
+        <div className="border-b border-blue-100 pb-6 text-black">
           <div className="relative z-10 max-w-3xl space-y-3">
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider bg-blue-100 text-[#2563EB]">
-                Student Learning Journey
-              </span>
-              <span className="text-xs text-slate-600">
-                Learn concept &rarr; Practice &rarr; Ask Myra &rarr; Capstone &rarr; Certificate
-              </span>
-            </div>
 
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black font-display tracking-tight text-black leading-tight">
               Master High-Yield Industry Skills Through Active Practice
@@ -183,7 +159,7 @@ export default function EdLearnHubPage() {
         </div>
 
         {/* Filter & Search Bar */}
-        <div className="bg-white rounded-2xl p-3 border border-blue-200/80 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="pb-3 border-blue-100 flex flex-col sm:flex-row items-center justify-between gap-3 border-b">
           {/* Track Filter Buttons */}
           <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 scrollbar-none">
             {[
@@ -234,7 +210,7 @@ export default function EdLearnHubPage() {
             filteredCourses.map((course) => (
               <div
                 key={course.slug}
-                className="bg-white rounded-3xl border border-blue-200/80 p-5 sm:p-6 flex flex-col justify-between shadow-2xs hover:shadow-md hover:border-blue-200 transition-all duration-200 group"
+                className="group flex flex-col justify-between border-b border-blue-100 py-5"
               >
                 <div className="space-y-4">
                   {/* Top Track & Level Badge */}
@@ -284,7 +260,7 @@ export default function EdLearnHubPage() {
                   </div>
 
                   {/* Capstone Preview */}
-                  <div className="p-3 rounded-2xl bg-[#EFF6FF]/60 border border-blue-200 space-y-1">
+                  <div className="space-y-1 border-l-2 border-blue-200 pl-3">
                     <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#2563EB] uppercase tracking-wider font-mono">
                       <Award className="w-3.5 h-3.5" />
                       <span>Capstone Credential</span>
@@ -331,7 +307,7 @@ export default function EdLearnHubPage() {
             ))
           )}
         </div>
-      </main>
+      </div>
     </div>
   );
 }

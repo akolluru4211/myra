@@ -550,7 +550,7 @@ function EdBuildContent() {
                     </h3>
 
                     {createSuccessData.accessType === "private" && createSuccessData.joinKey && (
-                      <div className="p-5 rounded-2xl bg-[#EFF6FF] border border-blue-200 max-w-sm mx-auto space-y-2.5">
+                      <div className="p-5 border-blue-200 max-w-sm mx-auto space-y-2.5 border-b">
                         <span className="text-[11px] font-semibold text-slate-600 uppercase tracking-wider block">
                           Your Private Room Join Key
                         </span>
@@ -773,7 +773,7 @@ function EdBuildContent() {
           {/* 5. JOIN WITH PRIVATE KEY MODAL */}
           {isJoinKeyModalOpen && (
             <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
-              <div className="bg-white border border-[#BFDBFE] shadow-xl w-full max-w-md overflow-hidden text-black font-sans rounded-3xl">
+              <div className="border-[#BFDBFE] w-full max-w-md overflow-hidden text-black font-sans border-b">
                 <div className="p-5 border-b border-blue-200 flex items-center justify-between bg-[#EFF6FF]">
                   <div className="flex items-center gap-2">
                     <Key className="w-5 h-5 text-[#2563EB]" />

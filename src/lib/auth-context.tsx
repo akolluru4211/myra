@@ -590,7 +590,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           email: cleanEmail,
           password: pass,
           name: name.trim(),
-          dob: defaultDob,
+          dob,
           gradeLevel: gradeLevel || "College",
           phone: cleanPhone,
           careerStage: resolvedStage,

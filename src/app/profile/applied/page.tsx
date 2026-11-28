@@ -52,7 +52,7 @@ export default async function AppliedPage() {
   ].sort((a, b) => (Date.parse(b.appliedAt ?? "") || 0) - (Date.parse(a.appliedAt ?? "") || 0));
 
   return (
-    <section className="mx-auto max-w-3xl space-y-5 rounded-2xl border border-slate-200 bg-white p-5 sm:p-8">
+    <section className="mx-auto max-w-3xl space-y-5 border-slate-200 p-5 sm:p-8 border-b">
       <div>
         <Link href="/profile" className="text-sm font-semibold text-blue-800 hover:underline">Back to profile</Link>
         <h1 className="mt-3 text-3xl font-bold text-slate-900">Applied</h1>

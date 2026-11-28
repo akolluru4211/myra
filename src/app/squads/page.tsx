@@ -185,7 +185,7 @@ export default function StudySquadsDirectoryPage() {
           {loading && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="bg-white rounded-2xl p-6 border border-blue-200/80 shadow-2xs animate-pulse">
+                <div key={i} className="p-6 border-blue-200/80 animate-pulse border-b">
                   <div className="h-4 bg-slate-200 rounded w-1/3 mb-4"></div>
                   <div className="h-6 bg-slate-200 rounded w-3/4 mb-3"></div>
                   <div className="h-4 bg-slate-100 rounded w-full mb-2"></div>
@@ -201,7 +201,7 @@ export default function StudySquadsDirectoryPage() {
 
           {/* Error & Retry State */}
           {!loading && error && (
-            <div className="bg-white rounded-2xl p-8 border border-rose-200 shadow-2xs text-center max-w-lg mx-auto">
+            <div className="p-8 border-rose-200 text-center max-w-lg mx-auto border-b">
               <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-3">
                 <AlertCircle className="w-6 h-6" />
               </div>
@@ -219,7 +219,7 @@ export default function StudySquadsDirectoryPage() {
 
           {/* Empty State */}
           {!loading && !error && squads.length === 0 && (
-            <div className="bg-white rounded-2xl p-10 border border-blue-200/80 shadow-2xs text-center max-w-md mx-auto my-8">
+            <div className="p-10 border-blue-200/80 text-center max-w-md mx-auto my-8 border-b">
               <div className="w-14 h-14 rounded-2xl bg-[#EFF6FF] text-indigo-600 flex items-center justify-center mx-auto mb-4">
                 <Compass className="w-7 h-7" />
               </div>

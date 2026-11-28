@@ -168,7 +168,7 @@ export default function MyraMemorySettingsPage() {
           </div>
 
           {/* Header Card */}
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs relative overflow-hidden">
+          <div className="p-6 sm:p-8 border-slate-200/80 relative overflow-hidden border-b">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
@@ -239,7 +239,7 @@ export default function MyraMemorySettingsPage() {
 
           {/* Memory Content */}
           {loading ? (
-            <div className="bg-white rounded-3xl p-12 text-center border border-slate-200/80 shadow-xs space-y-3">
+            <div className="p-12 text-center border-slate-200/80 space-y-3 border-b">
               <RefreshCw className="w-6 h-6 animate-spin text-blue-600 mx-auto" />
               <p className="text-xs text-slate-500 font-medium">Loading your Myra memory profile...</p>
             </div>
@@ -248,7 +248,7 @@ export default function MyraMemorySettingsPage() {
             (!memory.searchedTechnologies || memory.searchedTechnologies.length === 0) &&
             (!memory.strugglePoints || memory.strugglePoints.length === 0)
           ) ? (
-            <div className="bg-white rounded-3xl p-12 text-center border border-slate-200/80 shadow-xs space-y-4">
+            <div className="p-12 text-center border-slate-200/80 space-y-4 border-b">
               <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
                 <Brain className="w-6 h-6" />
               </div>
@@ -268,7 +268,7 @@ export default function MyraMemorySettingsPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Card 1: Frequent Study Topics */}
-              <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+              <div className="p-6 border-slate-200/80 space-y-4 border-b">
                 <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
                   <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
                     <BookOpen className="w-4 h-4" />
@@ -304,7 +304,7 @@ export default function MyraMemorySettingsPage() {
               </div>
 
               {/* Card 2: Searched Technologies */}
-              <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+              <div className="p-6 border-slate-200/80 space-y-4 border-b">
                 <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
                   <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
                     <Code2 className="w-4 h-4" />
@@ -335,7 +335,7 @@ export default function MyraMemorySettingsPage() {
               </div>
 
               {/* Card 3: Identified Struggle Points */}
-              <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4 md:col-span-2">
+              <div className="p-6 border-slate-200/80 space-y-4 md:col-span-2 border-b">
                 <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
                   <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
                     <AlertTriangle className="w-4 h-4" />
@@ -369,7 +369,7 @@ export default function MyraMemorySettingsPage() {
               </div>
 
               {/* Card 4: Learning Style Preference */}
-              <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-3 md:col-span-2">
+              <div className="p-6 border-slate-200/80 space-y-3 md:col-span-2 border-b">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
@@ -391,7 +391,7 @@ export default function MyraMemorySettingsPage() {
           {/* Reset Confirmation Modal */}
           {showConfirmModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
-              <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 border border-slate-200 shadow-2xl space-y-4">
+              <div className="max-w-md w-full p-6 sm:p-7 border-slate-200 space-y-4 border-b">
                 <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto border border-rose-100">
                   <Trash2 className="w-6 h-6" />
                 </div>

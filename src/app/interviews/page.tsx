@@ -170,7 +170,7 @@ export default function InterviewsHubPage() {
     return (
       <AuthGuard>
         <div className="min-h-[calc(100vh-5rem)] flex items-center justify-center p-6 bg-white">
-          <div className="max-w-md w-full bg-white border border-blue-100/80 p-8 text-center space-y-6 rounded-3xl shadow-[0_10px_30px_rgba(80,90,130,0.06)]">
+          <div className="max-w-md w-full border-blue-100/80 p-8 text-center space-y-6 border-b">
             <div className="w-14 h-14 rounded-2xl bg-[#EFF6FF] border border-blue-200 text-[#1E40AF] flex items-center justify-center mx-auto shadow-xs">
               <Lock className="w-7 h-7" />
             </div>
@@ -202,21 +202,21 @@ export default function InterviewsHubPage() {
     <AuthGuard>
       <div className="w-full text-slate-900 font-sans space-y-8 animate-in fade-in duration-300">
         {/* Header */}
-        <div className="p-6 sm:p-8 bg-white border border-blue-100/80 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-[0_10px_30px_rgba(80,90,130,0.06)] relative overflow-hidden">
+        <div className="p-6 sm:p-8 border-blue-100/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden border-b">
           <div className="space-y-1">
             <UserGreeting
               context="interview"
             />
           </div>
 
-          <div className="p-3.5 px-4 rounded-2xl bg-[#EFF6FF] border border-blue-200 flex items-center gap-3 text-xs text-[#3730A3] shadow-xs">
+          <div className="p-3.5 px-4 border-blue-200 flex items-center gap-3 text-xs text-[#3730A3] border-b">
             <TrendingUp className="w-4 h-4 text-[#2563EB] shrink-0" />
             <p className="font-bold text-sm text-[#1E1B4B]">STAR Evaluation &amp; Speech Calibration</p>
           </div>
         </div>
 
         {/* Primary Hero Action: Start Text Practice (No resume, no mic, no camera needed) */}
-        <div className="p-6 sm:p-8 bg-white border border-neutral-200 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-[0_10px_30px_rgba(80,90,130,0.06)] relative overflow-hidden">
+        <div className="p-6 sm:p-8 border-neutral-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden border-b">
           <div className="space-y-2 max-w-2xl">
             <div className="flex items-center gap-2">
               <span className="px-2.5 py-0.5 rounded-full text-xs font-bold text-emerald-800 bg-[#EFF6FF] border border-blue-200 uppercase tracking-wider font-display">
@@ -250,7 +250,7 @@ export default function InterviewsHubPage() {
         </div>
 
         {/* 1,000 Questions Bank & 46 Sectors Explorer */}
-        <div className="p-6 sm:p-8 bg-white border border-blue-100/80 rounded-3xl space-y-5 shadow-[0_10px_30px_rgba(80,90,130,0.06)]">
+        <div className="p-6 sm:p-8 border-blue-100/80 space-y-5 border-b">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-100 pb-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
@@ -313,7 +313,7 @@ export default function InterviewsHubPage() {
         </div>
 
         {/* Resume Step Callout */}
-        <div className="p-4 sm:p-5 bg-white border border-blue-100/80 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-[0_10px_30px_rgba(80,90,130,0.06)]">
+        <div className="p-4 sm:p-5 border-blue-100/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b">
           <div className="flex items-center gap-3 flex-wrap">
             <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold text-amber-800 bg-[#EFF6FF] border border-blue-200">
               {activeResume ? "Resume Connected" : "Step 1: Resume Required"}
@@ -363,7 +363,7 @@ export default function InterviewsHubPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {/* Format 1: EdSpeech */}
-            <div className="p-5 sm:p-6 bg-white border border-blue-100/80 rounded-2xl hover:border-slate-300 space-y-4 flex flex-col justify-between transition-all group shadow-sm">
+            <div className="p-5 sm:p-6 border-blue-100/80 hover:border-slate-300 space-y-4 flex flex-col justify-between transition-all group border-b">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center">
@@ -385,7 +385,7 @@ export default function InterviewsHubPage() {
             </div>
 
             {/* Format 2: Full Verbal */}
-            <div className="p-5 sm:p-6 bg-white border border-blue-100/80 rounded-2xl hover:border-slate-300 space-y-4 flex flex-col justify-between transition-all group shadow-sm">
+            <div className="p-5 sm:p-6 border-blue-100/80 hover:border-slate-300 space-y-4 flex flex-col justify-between transition-all group border-b">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center">
@@ -407,7 +407,7 @@ export default function InterviewsHubPage() {
             </div>
 
             {/* Format 3: Code Reasoning */}
-            <div className="p-5 sm:p-6 bg-white border border-blue-100/80 rounded-2xl hover:border-slate-300 space-y-4 flex flex-col justify-between transition-all group shadow-sm">
+            <div className="p-5 sm:p-6 border-blue-100/80 hover:border-slate-300 space-y-4 flex flex-col justify-between transition-all group border-b">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center border border-blue-200">
@@ -429,7 +429,7 @@ export default function InterviewsHubPage() {
             </div>
 
             {/* Format 4: Group Discussion */}
-            <div className="p-5 sm:p-6 bg-white border border-blue-100/80 rounded-2xl hover:border-slate-300 space-y-4 flex flex-col justify-between transition-all group shadow-sm">
+            <div className="p-5 sm:p-6 border-blue-100/80 hover:border-slate-300 space-y-4 flex flex-col justify-between transition-all group border-b">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center border border-blue-200">
@@ -528,7 +528,7 @@ export default function InterviewsHubPage() {
         </div>
 
         {/* 5. Recorded Sessions & Score History */}
-        <div className="p-6 sm:p-8 bg-white border border-blue-100/80 rounded-3xl space-y-5 shadow-[0_10px_30px_rgba(80,90,130,0.06)]">
+        <div className="p-6 sm:p-8 border-blue-100/80 space-y-5 border-b">
           <div className="flex items-center justify-between border-b border-blue-100 pb-4">
             <div className="flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-xl bg-[#EFF6FF] border border-blue-200 flex items-center justify-center text-[#2563EB]">

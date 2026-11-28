@@ -70,6 +70,7 @@ export async function GET(req: NextRequest) {
               role: "CLIENT",
               career_stage: "STUDENT",
               onboarding_completed: false,
+              is_public: false,
               interests: [
                 { id: "swe", name: "Software Engineering", category: "Engineering", selfLevel: 0, effectiveLevel: 0 },
                 { id: "fullstack", name: "Full Stack Development", category: "Engineering", selfLevel: 0, effectiveLevel: 0 },

@@ -217,7 +217,7 @@ export default function CollegesPlacementHubPage() {
       <div className="min-h-screen bg-[#F7F8FA] text-[#111827] p-4 sm:p-6 lg:p-8 xl:px-10 space-y-8 max-w-[1536px] mx-auto font-sans">
       
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-6 sm:p-8 rounded-2xl border border-[#E5E7EB] shadow-xs">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 sm:p-8 border-[#E5E7EB] border-b">
         <div className="space-y-2">
           <div className="flex items-center gap-2.5">
             <span className="px-2.5 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-[#2563EB] border border-blue-100">
@@ -254,7 +254,7 @@ export default function CollegesPlacementHubPage() {
 
       {/* Placement Insight Agent */}
       {aiInsights.length > 0 && (
-        <div className="p-5 rounded-2xl bg-white border border-[#E5E7EB] shadow-xs space-y-3">
+        <div className="p-5 border-[#E5E7EB] space-y-3 border-b">
           <div className="flex items-center gap-2 text-[#2563EB]">
             <Sparkles className="w-4 h-4" />
             <span className="text-xs font-medium">Placement insight telemetry</span>
@@ -312,7 +312,7 @@ export default function CollegesPlacementHubPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {drives.map((d) => (
-              <div key={d.id} className="p-5 rounded-2xl bg-white border border-[#E5E7EB] space-y-4 shadow-xs hover:border-[#2563EB]/40 transition-colors">
+              <div key={d.id} className="p-5 border-[#E5E7EB] space-y-4 hover:border-[#2563EB]/40 transition-colors border-b">
                 <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
                   <div>
                     <h3 className="text-base font-bold text-[#111827]">{d.companyName}</h3>
@@ -358,7 +358,7 @@ export default function CollegesPlacementHubPage() {
 
       {/* TAB 2: STUDENT RADAR */}
       {activeTab === "student_radar" && (
-        <div className="bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-xs space-y-4">
+        <div className="p-6 border-[#E5E7EB] space-y-4 border-b">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold text-[#111827]">Student placement funnel radar</h2>
             <span className="text-xs text-[#6B7280] tabular-nums">{students.length} tracked candidates</span>
@@ -395,7 +395,7 @@ export default function CollegesPlacementHubPage() {
       {activeTab === "syllabus_alignment" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          <div className="bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-xs space-y-4">
+          <div className="p-6 border-[#E5E7EB] space-y-4 border-b">
             <h2 className="text-base font-semibold text-[#111827]">Map Subject to Industry Role</h2>
             <form onSubmit={handleSaveSyllabusMap} className="space-y-3 text-xs">
               <div>
@@ -458,7 +458,7 @@ export default function CollegesPlacementHubPage() {
             </form>
           </div>
 
-          <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-xs space-y-4">
+          <div className="lg:col-span-2 p-6 border-[#E5E7EB] space-y-4 border-b">
             <h2 className="text-base font-bold text-[#111827]">Curriculum vs Industry Skill Alignments</h2>
             <div className="space-y-3">
               {syllabusMaps.map((sm) => (
@@ -485,7 +485,7 @@ export default function CollegesPlacementHubPage() {
 
       {/* TAB 4: COMPANY CRM */}
       {activeTab === "company_crm" && (
-        <div className="bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-xs space-y-4">
+        <div className="p-6 border-[#E5E7EB] space-y-4 border-b">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-bold text-[#111827]">Corporate Recruiting Partners</h2>
             <span className="text-xs text-[#6B7280]">{partners.length} Active Partners</span>
@@ -517,7 +517,7 @@ export default function CollegesPlacementHubPage() {
 
       {/* TAB 5: PLACEMENT ANALYTICS */}
       {activeTab === "analytics" && (
-        <div className="bg-white p-6 rounded-2xl border border-[#E5E7EB] shadow-xs space-y-6">
+        <div className="p-6 border-[#E5E7EB] space-y-6 border-b">
           <h2 className="text-base font-semibold text-[#111827]">Annual placement statistics (2026 batch)</h2>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -551,7 +551,7 @@ export default function CollegesPlacementHubPage() {
       {/* Schedule Drive Modal */}
       {showDriveModal && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-white border border-[#E5E7EB] rounded-2xl p-6 space-y-4 shadow-xl text-[#111827]">
+          <div className="max-w-md w-full border-[#E5E7EB] p-6 space-y-4 text-[#111827] border-b">
             <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
               <h3 className="text-base font-semibold text-[#111827]">Schedule campus placement drive</h3>
               <button

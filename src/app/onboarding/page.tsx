@@ -707,7 +707,7 @@ export default function OnboardingPage() {
 
         {/* Completed Splash Card */}
         {isCompleted ? (
-          <div className="space-y-5 rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+          <div className="space-y-5 border-slate-200 p-8 text-center border-b">
             <div className="w-16 h-16 rounded-2xl bg-[#DBEAFE] border border-blue-300 text-black mx-auto flex items-center justify-center shadow-md animate-bounce">
               <CheckCircle2 className="w-8 h-8 text-black" />
             </div>
@@ -728,7 +728,7 @@ export default function OnboardingPage() {
           </div>
         ) : (
           /* Form Step Container */
-          <div className="space-y-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-8">
+          <div className="space-y-6 border-slate-200 p-4 sm:p-8 border-b">
             
             {/* Top Global Alert Banner if errors exist */}
             {error && (

@@ -69,9 +69,18 @@ export async function POST(req: NextRequest) {
   }
 
   // Derive age band
-  const birthYear = parseInt(cleanDob.split("-")[0], 10) || 2002;
-  const approxAge = new Date().getFullYear() - birthYear;
-  const ageBand = approxAge < 16 ? "13-15" : approxAge < 18 ? "16-18" : "18+";
+  const birthDate = new Date(`${cleanDob}T00:00:00Z`);
+  const today = new Date();
+  const eighteenthBirthday = new Date(birthDate);
+  eighteenthBirthday.setUTCFullYear(birthDate.getUTCFullYear() + 18);
+  const isPublicByDefault = typeof dob === "string" &&
+    cleanDob === dob &&
+    Number.isFinite(birthDate.getTime()) &&
+    birthDate.toISOString().slice(0, 10) === cleanDob &&
+    eighteenthBirthday <= today;
+  const sixteenthBirthday = new Date(birthDate);
+  sixteenthBirthday.setUTCFullYear(birthDate.getUTCFullYear() + 16);
+  const ageBand = isPublicByDefault ? "18+" : sixteenthBirthday <= today ? "16-18" : "13-15";
 
   // Check roles: Public signups default strictly to CLIENT with is_admin = false.
   // Administrative privileges cannot be self-assigned via email prefix; they must be provisioned.
@@ -259,7 +268,7 @@ export async function POST(req: NextRequest) {
         $8,
         $9::jsonb,
         $10,
-        false,
+        $12,
         $11,
         NOW(),
         NOW()
@@ -283,6 +292,7 @@ export async function POST(req: NextRequest) {
         sanitizedInterests,
         dbCareerStage,
         isAdmin,
+        isPublicByDefault,
       ]
     );
 

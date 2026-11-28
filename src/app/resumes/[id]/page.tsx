@@ -189,7 +189,7 @@ export default function ResumeStudioPage() {
   if (!user) {
     return (
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-6 bg-slate-50">
-        <div className="max-w-md w-full bg-white rounded-3xl border border-slate-200 shadow-xl p-8 text-center space-y-6">
+        <div className="max-w-md w-full border-slate-200 p-8 text-center space-y-6 border-b">
           <div className="w-16 h-16 rounded-2xl bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center mx-auto shadow-sm">
             <Lock className="w-8 h-8" />
           </div>
@@ -215,7 +215,7 @@ export default function ResumeStudioPage() {
   if (isJuniorTrack) {
     return (
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-6 bg-slate-50">
-        <div className="max-w-md w-full bg-white rounded-3xl border border-slate-200 shadow-xl p-8 text-center space-y-6">
+        <div className="max-w-md w-full border-slate-200 p-8 text-center space-y-6 border-b">
           <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center mx-auto shadow-sm">
             <Lock className="w-8 h-8" />
           </div>

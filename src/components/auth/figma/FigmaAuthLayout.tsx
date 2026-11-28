@@ -37,12 +37,6 @@ export default function FigmaAuthLayout({ children, title, subtitle, activeTab, 
       <div className="min-w-0 lg:h-svh lg:overflow-y-auto lg:overscroll-contain">
         <div className="mx-auto grid min-h-full max-w-[34rem] items-center px-5 py-8 sm:px-10 sm:py-12">
           <div className="mx-auto w-full max-w-md">
-            <div className="mb-4 flex items-center gap-3">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-black">
-                <Image src="/images/edworld-mark.png" alt="" width={29} height={29} />
-              </span>
-              <span className="font-display text-lg font-semibold tracking-tight">EdWorld Co.</span>
-            </div>
 
             <nav aria-label="Account access" className="mb-6 grid grid-cols-2 gap-1 rounded-xl border border-neutral-200 bg-neutral-100 p-1">
               {tabs.map(({ id, label, href }) => (

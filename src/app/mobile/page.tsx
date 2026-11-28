@@ -470,7 +470,7 @@ export default function MobilePrototypePage() {
         {/* EdWorld Feature Launch Modal */}
         {activeFeatureModal && (
           <div className="absolute inset-0 z-50 flex items-end justify-center bg-black/60 p-3 animate-in fade-in duration-200">
-            <div className="w-full bg-white dark:bg-[#161922] rounded-3xl p-5 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+            <div className="w-full dark:bg-[#161922] p-5 border-slate-200 dark:border-slate-800 space-y-4 border-b">
               <div className="flex items-start justify-between">
                 <div>
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#3D3BF3] dark:text-[#5856FF] bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded-full">

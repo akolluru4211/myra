@@ -250,7 +250,7 @@ export default function StudentRecordPage() {
         {/* Workspace Hub */}
         <div className="max-w-6xl mx-auto w-full p-4 sm:p-6 lg:p-8 flex-1 flex flex-col space-y-6">
           {/* Hero Banner */}
-          <div className="bg-white rounded-3xl border border-blue-200 p-6 sm:p-8 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="border-blue-200 p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b">
             <div className="space-y-1">
               <h1 className="text-2xl font-black text-slate-900 font-display">My Academic Organizer</h1>
               <p className="text-xs sm:text-sm text-slate-600">
@@ -318,7 +318,7 @@ export default function StudentRecordPage() {
           </div>
 
           {/* Tab Content */}
-          <div className="flex-1 bg-white rounded-3xl border border-blue-200 p-6 shadow-xs">
+          <div className="flex-1 border-blue-200 p-6 border-b">
             {loading ? (
               <div className="py-16 text-center">
                 <Loader2 className="w-6 h-6 animate-spin text-indigo-600 mx-auto mb-2" />
@@ -656,7 +656,7 @@ export default function StudentRecordPage() {
         {/* MODAL: ADD MARK */}
         {addMarkOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
-            <div className="bg-white rounded-3xl border border-blue-200 p-6 max-w-md w-full shadow-xl space-y-4">
+            <div className="border-blue-200 p-6 max-w-md w-full space-y-4 border-b">
               <div className="flex items-center justify-between">
                 <h3 className="text-base font-bold text-slate-900 font-display">Add Assessment Result</h3>
                 <button onClick={() => setAddMarkOpen(false)} className="p-1 rounded-lg text-slate-400 hover:bg-slate-100">
@@ -743,7 +743,7 @@ export default function StudentRecordPage() {
         {/* MODAL: ADD EVENT */}
         {addEventOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
-            <div className="bg-white rounded-3xl border border-blue-200 p-6 max-w-md w-full shadow-xl space-y-4">
+            <div className="border-blue-200 p-6 max-w-md w-full space-y-4 border-b">
               <div className="flex items-center justify-between">
                 <h3 className="text-base font-bold text-slate-900 font-display">Schedule Academic Event</h3>
                 <button onClick={() => setAddEventOpen(false)} className="p-1 rounded-lg text-slate-400 hover:bg-slate-100">
@@ -821,7 +821,7 @@ export default function StudentRecordPage() {
         {/* MODAL: ADD CERTIFICATE */}
         {addCertOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
-            <div className="bg-white rounded-3xl border border-blue-200 p-6 max-w-md w-full shadow-xl space-y-4">
+            <div className="border-blue-200 p-6 max-w-md w-full space-y-4 border-b">
               <div className="flex items-center justify-between">
                 <h3 className="text-base font-bold text-slate-900 font-display">Add Certificate Record</h3>
                 <button onClick={() => setAddCertOpen(false)} className="p-1 rounded-lg text-slate-400 hover:bg-slate-100">
