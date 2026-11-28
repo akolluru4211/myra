@@ -155,6 +155,9 @@
       },
       "openaiDeveloperDocs": {
         "serverUrl": "https://developers.openai.com/mcp"
+      },
+      "resend": {
+        "serverUrl": "https://mcp.resend.com/mcp"
       }
     }
   }
